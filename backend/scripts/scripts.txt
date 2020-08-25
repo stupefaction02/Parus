@@ -1,0 +1,15 @@
+# build
+dotnet build Naturistic.Backend --no-dependencies
+dotnet build Naturistic.WebUI --no-dependencies
+
+# run
+dotnet run -p Naturistic.Backend --no-build
+dotnet run -p Naturistic.WebUI --no-build
+
+# ef nuget
+EntityFrameworkCore\Update-Database -Project Naturistic.Infrastructure -Context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+EntityFrameworkCore\Add-Migrations -Project Naturistic.Infrastructure -Context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+
+# ef cli
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+dotnet ef migrations add --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
