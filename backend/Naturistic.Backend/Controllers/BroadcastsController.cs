@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +38,8 @@ namespace Naturistic.Backend.Controllers
 		/// <summary>
 		/// Yes.
 		/// </summary>
-		private Dictionary<int, BroadcastSessionInfo> broadcastsSessionStore 
+		/// TODO: Move it to a repository
+		private static Dictionary<int, BroadcastSessionInfo> broadcastsSessionStore 
 			= new Dictionary<int, BroadcastSessionInfo>();
 
 		public BroadcastController(IBroadcastRepository broadcasts)
@@ -54,7 +54,7 @@ namespace Naturistic.Backend.Controllers
         [HttpGet]
 		[Route("api/broadcasts/startSession")]
 		public IActionResult StartChannelSession(int channelId)
-        {
+        {  
 			string chsk = generateRandomHash();
 			var info = new BroadcastSessionInfo { SessionKey = chsk, StreamingStart = DateTime.Now };
 			if (broadcastsSessionStore.ContainsKey(channelId))
@@ -64,17 +64,25 @@ namespace Naturistic.Backend.Controllers
 
             #region Logging
 
-            Console.WriteLine($"Touched one channel with id = {channelId}");
+            Console.WriteLine($"Start broadcast on a channel with id = {channelId}");
 			Console.WriteLine("Current session store:");
 
 			foreach (var ch in broadcastsSessionStore)
 				Console.WriteLine($"Channel id: {ch.Key} session key: {ch.Value.SessionKey}");
 
-			Console.WriteLine("\r\n /---------------------------------/");
+			Console.WriteLine("/*_____________----_____________*/");
 
             #endregion
 			
             return Ok(new { channelSessionKey = chsk });
+        }
+
+		[HttpGet]
+		[Route("api/broadcasts/endSession")]
+		public IActionResult EndChannelSession(int channelId)
+        {
+
+			return Ok();
         }
 
 		[HttpGet]
@@ -102,7 +110,7 @@ namespace Naturistic.Backend.Controllers
 				return Ok(new { channelSessionKey = info.SessionKey });
 			}
 
-			return StatusCode(500);
+			return BadRequest();
         }
 
 		private string generateRandomHash()
