@@ -16,87 +16,71 @@ namespace Naturistic.Hsl
 
 		public VideoController()
 		{
-			videoStoreDir = Path.Combine("video_temp", "live");
+			videoStoreDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "video_temp", "live");
 		}
 
 		[HttpGet]
-		[Route("/hls/live/segment")]
-		// TODO: Replace method below to a middleware that intercepts any file access requests
-		public async Task<object> GetVideoSegment(string segmentFileName)
-		{
-			var headers = HttpContext.Response.Headers;
-			headers.Add("Accept-Ranges", "bytes");
-			headers.Add("Access-Control-Allow-Origin", "*");
-			// Since we use .ts or mp4 extension let's use this mime-type
-			// But if we would use mpeg type, we can set to video/mpeg 
-			headers.Add("Transfer-Encoding", "chunked");
-
-			Stream file;
-			var fp = Path.Combine(videoStoreDir, segmentFileName);
-
-			try
-			{
-				file = System.IO.File.Open(fp, FileMode.Open);
-			}
-			catch (Exception)
-            {
-				return NotFound();
-            }
-
-			// TODO: use Application.Octet
-			return new FileStreamResult(file, "application/octet-stream");
-		}
-
-		[HttpGet]
-		[Route("/hls/live/playlist")]
-		public async Task<object> GetManifest(string manifestFile)
+		[Route("/hls/live/files")]
+		public async Task<object> GetFile(string fn)
 		{
 			var headers = HttpContext.Response.Headers;
 			headers.Add("Access-Control-Allow-Origin", "*");
 			headers.Add("Transfer-Encoding", "chunked");
-
+			
 			// Adding this header causes download error(undefined file) on Mozilla 
 			// headers.Add("Content-Encoding", "gzip");
 			headers.Add("Cache-Control", "no-cache, no-store, private");
 			headers.Add("Vary", "Accept-Encoding");
 
-			Stream file;
+			Stream fs;
 			var respStream = new MemoryStream();
-			var fp = Path.Combine(videoStoreDir, manifestFile);
+			var fp = Path.Combine(videoStoreDir, fn);
 
 			try
 			{
-				file = System.IO.File.Open(fp, FileMode.Open);
-				await file.CopyToAsync(respStream);
+				fs = System.IO.File.Open(fp, FileMode.Open, FileAccess.Read, FileShare.Read);
+				await fs.CopyToAsync(respStream);
 
-				System.IO.File.Delete(fp);
+				fs.Close();
+
+				//System.IO.File.Delete(fp);
 			}
-			catch (Exception)
-			{
+			catch (FileNotFoundException)
+            {
+				Console.WriteLine($"file {fn} not found in live video store.");
 				return NotFound();
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"Error! {e.GetType().Name} {e.Message}");
+				return StatusCode(500);
 			}
 
 			// "application/vnd.apple.mpegurl" - preferable ct, but it returns undefined file
-			return new FileStreamResult(file, "application/octet-stream");
+			return new FileContentResult(respStream.ToArray(), "application/octet-stream");
 		}
 
 		/// <summary>
 		/// Post file on a server, either video segment or manifest
 		/// </summary>
-		/// <param name="file"></param>
+		/// <param name="segmentFile"></param>
 		/// <returns>200 code respond if file has been saved successfully, and 500 code if it hasn't</returns>
 		[HttpPost]
 		[Route("hls/live/files")]
 		[Consumes("multipart/form-data")]
-		public async Task<IActionResult> PostFile([FromForm]IFormFile file)
+		public async Task<IActionResult> PostFile([FromForm]IFormFile segmentFile)
 		{
-			if (file != null)
+			if (segmentFile != null)
 			{
-				var fp = Path.Combine($"{AppDomain.CurrentDomain.BaseDirectory}", videoStoreDir, file.FileName);
+				var fp = Path.Combine(videoStoreDir, segmentFile.FileName);
 				var createdf = System.IO.File.Create(fp);
-				await file.CopyToAsync(createdf);
+				await segmentFile.CopyToAsync(createdf);
 
-				Console.WriteLine($"File saved, name: {file.FileName}");
+				createdf.Close();
+
+				Console.WriteLine($"File saved, name: {segmentFile.FileName}");
+
+				return Ok();
 			}
 
 			return BadRequest("Provided file ...");
