@@ -5,13 +5,10 @@ import '../css/single-broadcast.css';
 
 export default function SingleBroadcast({ match }) {
   return (
-   <div className="single_broadcast_page_content">
-     <div className="video_player_container">
-          <VideoPlayer broadcastsId={match.id} />
-        </div>
-        <div className="chat_container">
-          <ChatBox />
-        </div>
+      <div className="single_broadcast_page_content">
+          <div className="video_player_container">
+        <VideoPlayer broadcastsId={match.id} />
+    </div>
    </div>
   );
 }
