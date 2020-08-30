@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
-import MJPEGParser from '../../services/video/MJPEGParser.js'
 import Hls from 'hls.js';
-import CtyproJs from 'crypto-js';
+import CryptoJS from 'crypto-js';
 
 export default class VideoPlayer extends Component {
 
@@ -14,15 +13,21 @@ export default class VideoPlayer extends Component {
         super(props);
 
         this.state = {};
+
+        this.videoStyles = {
+            width: 736,
+            height: 550,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: '25px',
+            display: 'block'
+        };
     }
 
     componentDidMount() {
 
-        //var localUrl = 'https://localhost:5001/hls/live/segment?channelId=1';
-
-		var hlsServiceUrl = "https://localhost:5001";
+		var hlsServiceUrl = "https://localhost:2020";
 		var playlistUrl = "hls/live/playlist";
-		var hlsServiceFiles = "hls/files";
 		
 		var serverUrl = "https://localhost:3939";
 		var serverBroadcastsUrl = "api/broadcasts/sessions";
@@ -30,37 +35,48 @@ export default class VideoPlayer extends Component {
 		// Channel we got previously when we loaded channel, so
 		var channelId = 1;
 		var localManifestUrl = `${serverUrl}/${serverBroadcastsUrl}?channelId=` + channelId;
-		
-		debugger
-		
-		var sessionKey = "";
-		var localManifest = fetch(localManifestUrl).then(data => { debugger });
+        
+        fetch(localManifestUrl).then(response => {
 
-		//var manifestFileNameHash = (localManifest);
+            response.json().then(function (data) {
 
-        var video = document.getElementById('video');
-        var videoSrc = `${hlsServiceUrl}/${hlsServiceFiles}/`;
+                console.log(`Got a channel from server: ${data.channelSessionKey}`);
 
-        if (Hls.isSupported()) {
-
-            console.log('Loading url ... \n' + videoSrc);
-
-            var hls = new Hls();
-            hls.loadSource(videoSrc);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function() {
                 debugger
-                video.play();
-            });
 
-            hls.on(Hls.Events.ERROR, function (event, data) {
-                var errorType = data.type;
-                var errorDetails = data.details;
-                var errorFatal = data.fatal;
+                var manifestFilename = CryptoJS.MD5(data.channelSessionKey + 'master_manifest').toString();
 
-                debugger 
+                if (manifestFilename != "") {
+
+                    var video = document.getElementById('video');
+                    var videoSrc = `${hlsServiceUrl}/${playlistUrl}?manifestFile=${manifestFilename}.m3u8`;
+
+                    if (Hls.isSupported()) {
+
+                        console.log('Loading url ... \n' + videoSrc);
+
+                        var hls = new Hls();
+                        hls.loadSource(videoSrc);
+                        hls.attachMedia(video);
+                        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                            debugger
+                            video.play();
+                        });
+
+                        hls.on(Hls.Events.ERROR, function (event, data) {
+                            var errorType = data.type;
+                            var errorDetails = data.details;
+                            var errorFatal = data.fatal;
+
+                            debugger
+                        });
+                    }
+                }
+                else {
+                    console.log("Can't get channel key from a server");
+                }
             });
-        }
+        });
     }
 
     __componentDidMount() {
@@ -133,21 +149,10 @@ export default class VideoPlayer extends Component {
 
     render() {
         return (
-            <video id="video" width="856" height="640" controls>
+            <video id="video" style={this.videoStyles} controls>
                 <source src="movie.mp4" type="video/mp4" />
             </video>
         )
     };
 
 }
-
-/*
-Pragma: no-cache
-Transfer-Encoding: chunked
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Headers: *
-Cache-Control: no-cache,no-store,max-age=0,must-revalidate
-Date: Fri, 31 Jul 2020 18:25:18 GMT
-Expires: Sat, 26 Jul 1997 05:00:00 GMT
-Server: Microsoft-HTTPAPI/2.0 Microsoft-HTTPAPI/2.0
-*/
