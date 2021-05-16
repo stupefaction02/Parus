@@ -7,7 +7,7 @@ namespace DummyPublisher
     {
         static void Main(string[] args)
         {
-            var y = new Publisher();//.Start();
+            new Publisher().Start();
 
             Console.ReadKey();
         }

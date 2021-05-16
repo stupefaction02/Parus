@@ -20,7 +20,8 @@ namespace Naturistic.Hsl
 		}
 
 		[HttpGet]
-		[Route("/hls/live/files")]
+		[Route("/hls/live/segments")]
+		[Route("/hls/live/playlists")]
 		public async Task<object> GetFile(string fn)
 		{
 			var headers = HttpContext.Response.Headers;
@@ -42,8 +43,6 @@ namespace Naturistic.Hsl
 				await fs.CopyToAsync(respStream);
 
 				fs.Close();
-
-				//System.IO.File.Delete(fp);
 			}
 			catch (FileNotFoundException)
             {
@@ -66,9 +65,9 @@ namespace Naturistic.Hsl
 		/// <param name="segmentFile"></param>
 		/// <returns>200 code respond if file has been saved successfully, and 500 code if it hasn't</returns>
 		[HttpPost]
-		[Route("hls/live/files")]
+		[Route("hls/live/segments")]
 		[Consumes("multipart/form-data")]
-		public async Task<IActionResult> PostFile([FromForm]IFormFile segmentFile)
+		public async Task<IActionResult> PostSegment([FromForm]IFormFile segmentFile)
 		{
 			if (segmentFile != null)
 			{
@@ -79,6 +78,27 @@ namespace Naturistic.Hsl
 				createdf.Close();
 
 				Console.WriteLine($"File saved, name: {segmentFile.FileName}");
+
+				return Ok();
+			}
+
+			return BadRequest("Provided file ...");
+		}
+		
+		[HttpPost]
+		[Route("hls/live/playlists")]
+		[Consumes("multipart/form-data")]
+		public async Task<IActionResult> PostPlaylist([FromForm]IFormFile playlistFile)
+		{
+			if (playlistFile != null)
+			{
+				var fp = Path.Combine(videoStoreDir, playlistFile.FileName);
+				var createdf = System.IO.File.Create(fp);
+				await playlistFile.CopyToAsync(createdf);
+
+				createdf.Close();
+
+				Console.WriteLine($"File saved, name: {playlistFile.FileName}");
 
 				return Ok();
 			}

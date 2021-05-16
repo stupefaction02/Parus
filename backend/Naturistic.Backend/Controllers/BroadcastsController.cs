@@ -119,8 +119,7 @@ namespace Naturistic.Backend.Controllers
 			using (var rng = new RNGCryptoServiceProvider())
 				rng.GetBytes(bytes);
 
-			string hash2;
-			return hash2 = BitConverter.ToString(bytes).Replace("-", "").ToLower();
+			return BitConverter.ToString(bytes).Replace("-", "").ToLower();
 		}
 	}
 }
