@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 
-using Microsoft.AspNet.Identity.EntityFramework;
-
 using Naturistic.Infrastructure.Identity;
 using Naturistic.Infrastructure.DLA;
 using Naturistic.Core;

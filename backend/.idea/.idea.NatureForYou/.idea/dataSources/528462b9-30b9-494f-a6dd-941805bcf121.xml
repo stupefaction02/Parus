@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="naturistic.bl.dev@LAPTOP-U99UI870">
+  <database-model serializer="dbm" dbms="MSSQL" family-id="MSSQL" format-version="4.32">
+    <root id="1"/>
+    <database id="2" parent="1" name="master">
+      <Collation>Japanese_CI_AS</Collation>
+      <ObjectId>1</ObjectId>
+    </database>
+    <database id="3" parent="1" name="model">
+      <Collation>Japanese_CI_AS</Collation>
+      <ObjectId>3</ObjectId>
+    </database>
+    <database id="4" parent="1" name="msdb">
+      <Collation>Japanese_CI_AS</Collation>
+      <ObjectId>4</ObjectId>
+    </database>
+    <database id="5" parent="1" name="naturistic.bl.dev">
+      <Collation>Japanese_CI_AS</Collation>
+      <Current>1</Current>
+      <Fingerprint>5.44370/80C53D91-FD6A-4AB9-AD2F-6FBD0B0C4366@LAPTOP-U99UI870\SQLEXPRESS</Fingerprint>
+      <Grants>5|database||5|alter|G
+5|database||5|alter any application role|G
+5|database||5|alter any assembly|G
+5|database||5|alter any asymmetric key|G
+5|database||5|alter any certificate|G
+5|database||5|alter any contract|G
+5|database||5|alter any database audit|G
+5|database||5|alter any database ddl trigger|G
+5|database||5|alter any database event notification|G
+5|database||5|alter any dataspace|G
+5|database||5|alter any external data source|G
+5|database||5|alter any external file format|G
+5|database||5|alter any fulltext catalog|G
+5|database||5|alter any mask|G
+5|database||5|alter any message type|G
+5|database||5|alter any remote service binding|G
+5|database||5|alter any role|G
+5|database||5|alter any route|G
+5|database||5|alter any schema|G
+5|database||5|alter any security policy|G
+5|database||5|alter any sensitivity classification|G
+5|database||5|alter any service|G
+5|database||5|alter any symmetric key|G
+5|database||5|alter any user|G
+5|database||5|authenticate|G
+5|database||5|backup database|G
+5|database||5|backup log|G
+5|database||5|checkpoint|G
+5|database||1|connect|G
+5|database||5|connect|G
+5|database||5|connect replication|G
+5|database||5|control|G
+5|database||5|create aggregate|G
+5|database||5|create assembly|G
+5|database||5|create asymmetric key|G
+5|database||5|create certificate|G
+5|database||5|create contract|G
+5|database||5|create database ddl event notification|G
+5|database||5|create default|G
+5|database||5|create fulltext catalog|G
+5|database||5|create function|G
+5|database||5|create message type|G
+5|database||5|create procedure|G
+5|database||5|create queue|G
+5|database||5|create remote service binding|G
+5|database||5|create role|G
+5|database||5|create route|G
+5|database||5|create rule|G
+5|database||5|create schema|G
+5|database||5|create service|G
+5|database||5|create symmetric key|G
+5|database||5|create synonym|G
+5|database||5|create table|G
+5|database||5|create type|G
+5|database||5|create view|G
+5|database||5|create xml schema collection|G
+5|database||5|delete|G
+5|database||5|execute|G
+5|database||5|insert|G
+5|database||5|references|G
+5|database||5|select|G
+5|database||5|showplan|G
+5|database||5|subscribe query notifications|G
+5|database||5|take ownership|G
+5|database||5|unmask|G
+5|database||5|update|G
+5|database||0|view any column encryption key definition|G
+5|database||5|view any column encryption key definition|G
+5|database||0|view any column master key definition|G
+5|database||5|view any column master key definition|G
+5|database||5|view any sensitivity classification|G
+5|database||5|view database state|G
+5|database||5|view definition|G</Grants>
+      <ObjectId>5</ObjectId>
+      <PermissionsCheckSum>85812398239</PermissionsCheckSum>
+    </database>
+    <database id="6" parent="1" name="tempdb">
+      <Collation>Japanese_CI_AS</Collation>
+      <ObjectId>2</ObjectId>
+    </database>
+    <login id="7" parent="1" name="sa">
+      <DefaultDatabase>master</DefaultDatabase>
+      <ObjectId>1</ObjectId>
+    </login>
+    <login id="8" parent="1" name="public">
+      <Enabled>1</Enabled>
+      <ObjectId>2</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="9" parent="1" name="sysadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>3</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="10" parent="1" name="securityadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>4</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="11" parent="1" name="serveradmin">
+      <Enabled>1</Enabled>
+      <ObjectId>5</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="12" parent="1" name="setupadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>6</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="13" parent="1" name="processadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>7</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="14" parent="1" name="diskadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>8</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="15" parent="1" name="dbcreator">
+      <Enabled>1</Enabled>
+      <ObjectId>9</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="16" parent="1" name="bulkadmin">
+      <Enabled>1</Enabled>
+      <ObjectId>10</ObjectId>
+      <Type>server-role</Type>
+    </login>
+    <login id="17" parent="1" name="##MS_SQLResourceSigningCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>101</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="18" parent="1" name="##MS_SQLReplicationSigningCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>102</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="19" parent="1" name="##MS_SQLAuthenticatorCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>103</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="20" parent="1" name="##MS_PolicySigningCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>105</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="21" parent="1" name="##MS_SmoExtendedSigningCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>106</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="22" parent="1" name="##MS_PolicyEventProcessingLogin##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <ObjectId>256</ObjectId>
+    </login>
+    <login id="23" parent="1" name="##MS_PolicyTsqlExecutionLogin##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <ObjectId>257</ObjectId>
+    </login>
+    <login id="24" parent="1" name="##MS_AgentSigningCertificate##">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>258</ObjectId>
+      <Type>certificate-mapped-login</Type>
+    </login>
+    <login id="25" parent="1" name="LAPTOP-U99UI870\Ivan">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>259</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="26" parent="1" name="NT SERVICE\SQLWriter">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>260</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="27" parent="1" name="NT SERVICE\Winmgmt">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>261</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="28" parent="1" name="NT Service\MSSQL$SQLEXPRESS">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>262</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="29" parent="1" name="BUILTIN\Пользователи">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>263</ObjectId>
+      <Type>windows-group</Type>
+    </login>
+    <login id="30" parent="1" name="NT AUTHORITY\СИСТЕМА">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>264</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="31" parent="1" name="NT SERVICE\SQLTELEMETRY$SQLEXPRESS">
+      <DefaultDatabase>master</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>265</ObjectId>
+      <Type>windows-login</Type>
+    </login>
+    <login id="32" parent="1" name="naturistic_admin">
+      <DefaultDatabase>naturistic.bl.dev</DefaultDatabase>
+      <Enabled>1</Enabled>
+      <ObjectId>266</ObjectId>
+    </login>
+    <role id="33" parent="5" name="INFORMATION_SCHEMA">
+      <AuthType>none</AuthType>
+      <ObjectId>3</ObjectId>
+    </role>
+    <role id="34" parent="5" name="db_accessadmin">
+      <AuthType>none</AuthType>
+      <ObjectId>16385</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="35" parent="5" name="db_backupoperator">
+      <AuthType>none</AuthType>
+      <ObjectId>16389</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="36" parent="5" name="db_datareader">
+      <AuthType>none</AuthType>
+      <ObjectId>16390</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="37" parent="5" name="db_datawriter">
+      <AuthType>none</AuthType>
+      <ObjectId>16391</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="38" parent="5" name="db_ddladmin">
+      <AuthType>none</AuthType>
+      <ObjectId>16387</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="39" parent="5" name="db_denydatareader">
+      <AuthType>none</AuthType>
+      <ObjectId>16392</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="40" parent="5" name="db_denydatawriter">
+      <AuthType>none</AuthType>
+      <ObjectId>16393</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="41" parent="5" name="db_owner">
+      <AuthType>none</AuthType>
+      <ObjectId>16384</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="42" parent="5" name="db_securityadmin">
+      <AuthType>none</AuthType>
+      <ObjectId>16386</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="43" parent="5" name="dbo">
+      <AuthType>windows</AuthType>
+      <DefaultSchema>dbo</DefaultSchema>
+      <ObjectId>1</ObjectId>
+      <Type>windows-user</Type>
+    </role>
+    <role id="44" parent="5" name="guest">
+      <AuthType>none</AuthType>
+      <DefaultSchema>guest</DefaultSchema>
+      <ObjectId>2</ObjectId>
+    </role>
+    <role id="45" parent="5" name="naturistic_admin">
+      <AuthType>instance</AuthType>
+      <DefaultSchema>dbo</DefaultSchema>
+      <ObjectId>5</ObjectId>
+    </role>
+    <role id="46" parent="5" name="public">
+      <AuthType>none</AuthType>
+      <ObjectId>0</ObjectId>
+      <Type>database-role</Type>
+      <OwnerId>1</OwnerId>
+    </role>
+    <role id="47" parent="5" name="sys">
+      <AuthType>none</AuthType>
+      <ObjectId>4</ObjectId>
+    </role>
+    <schema id="48" parent="5" name="INFORMATION_SCHEMA">
+      <ObjectId>3</ObjectId>
+    </schema>
+    <schema id="49" parent="5" name="db_accessadmin">
+      <ObjectId>16385</ObjectId>
+    </schema>
+    <schema id="50" parent="5" name="db_backupoperator">
+      <ObjectId>16389</ObjectId>
+    </schema>
+    <schema id="51" parent="5" name="db_datareader">
+      <ObjectId>16390</ObjectId>
+    </schema>
+    <schema id="52" parent="5" name="db_datawriter">
+      <ObjectId>16391</ObjectId>
+    </schema>
+    <schema id="53" parent="5" name="db_ddladmin">
+      <ObjectId>16387</ObjectId>
+    </schema>
+    <schema id="54" parent="5" name="db_denydatareader">
+      <ObjectId>16392</ObjectId>
+    </schema>
+    <schema id="55" parent="5" name="db_denydatawriter">
+      <ObjectId>16393</ObjectId>
+    </schema>
+    <schema id="56" parent="5" name="db_owner">
+      <ObjectId>16384</ObjectId>
+    </schema>
+    <schema id="57" parent="5" name="db_securityadmin">
+      <ObjectId>16386</ObjectId>
+    </schema>
+    <schema id="58" parent="5" name="dbo">
+      <Current>1</Current>
+      <IntrospectionTimestamp>2021-06-25.02:27:42.937</IntrospectionTimestamp>
+      <ObjectId>1</ObjectId>
+    </schema>
+    <schema id="59" parent="5" name="guest">
+      <ObjectId>2</ObjectId>
+    </schema>
+    <schema id="60" parent="5" name="sys">
+      <ObjectId>4</ObjectId>
+    </schema>
+  </database-model>
+</dataSource>

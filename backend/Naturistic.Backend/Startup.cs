@@ -11,10 +11,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Microsoft.AspNetCore.Identity;
-
+using Naturistic.Backend.Extensions;
+using Naturistic.Backend.Middlewares;
+using Naturistic.Backend.Services.Chat.SignalR;
 using Naturistic.Infrastructure.DLA;
 using Naturistic.Infrastructure.Identity;
 using Naturistic.Core.Interfaces.Repositories;
+using Naturistic.Infrastructure.DLA.Repositories;
 
 namespace Naturistic.Backend
 {
@@ -31,29 +34,36 @@ namespace Naturistic.Backend
         {
             services.AddControllers();
 
-			services.AddCors();
+            services.AddSignalR();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config => 
+            services.AddCors(options =>
             {
-                config.Password.RequiredLength = 6;
-                config.Password.RequireDigit = false;
-                config.Password.RequireLowercase = false;
-                config.Password.RequireUppercase = false;
-                config.Password.RequireNonAlphanumeric = false;
-
-                config.SignIn.RequireConfirmedEmail = true;
-            })
-            .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
-
-			services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
-
-            string connectionString = Configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-            string identityConenctionString = Configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-            services.AddDbContext<ApplicationDbContext>(options => {
-                options.UseSqlServer(connectionString);
-                options.EnableSensitiveDataLogging();
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
             });
-            services.AddDbContext<ApplicationIdentityDbContext>(options => options.UseSqlServer(identityConenctionString));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+                {
+                    config.Password.RequiredLength = 6;
+                    config.Password.RequireDigit = false;
+                    config.Password.RequireLowercase = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequireNonAlphanumeric = false;
+
+                    config.SignIn.RequireConfirmedEmail = true;
+                })
+                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+                .AddDefaultTokenProviders();
+
+            //services.AddTransient<CassandraDbIdentityContext>();
+
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -67,8 +77,8 @@ namespace Naturistic.Backend
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-			
-			app.UseCors(builder => builder.AllowAnyOrigin());
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -77,9 +87,13 @@ namespace Naturistic.Backend
 
             app.UseAuthorization();
 
+            //app.UseMiddleware<SignalRCorsMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
-				endpoints.MapControllers();
+                endpoints.MapControllers();
+
+                endpoints.MapHub<ChatHub>("/chat");
             });
         }
     }

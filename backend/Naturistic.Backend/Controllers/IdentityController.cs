@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-
+using Cassandra;
 using Microsoft.AspNetCore.Identity;
 
-using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 using Naturistic.Infrastructure.Identity;
 using Naturistic.Infrastructure.DLA;
@@ -31,58 +31,72 @@ namespace Naturistic.Backend.Controllers
 
         private readonly SignInManager<ApplicationUser> signInManager;
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration configuration;
 
         public IdentityController(IWebHostEnvironment hostEnviroment, UserManager<ApplicationUser> userManager,
                            SignInManager<ApplicationUser> signInManager, IConfiguration configuration, ILogger<IdentityController> logger)
         {
             this.hostEnviroment = hostEnviroment;
-            Configuration = configuration;
+            this.configuration = configuration;
 			this.userManager = userManager;
             this.signInManager = signInManager;
+            this.logger = logger;
         }
 
         [HttpGet]
         [Route("api/test")]
         public object Test()
         {
+            
             return "Test";
         }
 
         [HttpPost]
-        [Route("api/login")]
-        public async Task<object> Login(string email, string password)
+        [Route("api/user/login")]
+        public async Task<object> Login(string nickname, string password)
         {
-            var user = await userManager.FindByEmailAsync(email);
+            logger.LogInformation($"Attempt to login {nickname}");
+            var user = await userManager.FindByNameAsync(nickname);
 
             if (user != null)
             {
                 var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 
                 if (signInResult.Succeeded)
+                {
+                    logger.LogInformation($"{nickname} login successfully!");
                     return StatusCode(200, new { Success = true, Message = "Login was successful" });
+                }
             }
              
+            logger.LogInformation($"Failed to login {nickname}");
+
             return StatusCode(500, new { Success = false, Message = "Server Error!" });
         }
 
         [HttpPost]
-        [Route("api/register")]
-		public async Task<object> Register(string nickname, string lastname, string firstname, string email, string password)
+        [Route("api/user/register")]
+		public async Task<object> Register(string nickname, string email, string password)
 		{
-			Console.WriteLine($"User to register: {firstname} : {email}");
-
+			logger.LogInformation($"User to register: {email}");
+            
             var user = new ApplicationUser
             {
-                Nickname = nickname,
-                FirstName = firstname,
-                LastName = lastname,
+                UserName = nickname,
                 Email = email
             };
 
             var created = await userManager.CreateAsync(user, password);
-            
-			return null;
+
+            if (created.Succeeded)
+            {
+                logger.LogInformation("User registered successfully!");
+                return Ok($"{nickname} {email} registered successfully!");
+            }
+            else
+            {
+                return null;
+            }
 		}
     }
 }

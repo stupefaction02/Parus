@@ -1,0 +1,12 @@
+.broadcast_item {
+    width: 250px;
+    height: 250px;
+    margin: 5px;
+    background-color: #222222;
+}
+
+.broadcast_gallery {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

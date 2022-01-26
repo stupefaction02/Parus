@@ -81,9 +81,6 @@ public class IdentityController : Controller
 
         var user = new ApplicationUser
         {
-            Nickname = nickname,
-            FirstName = firstname,
-            LastName = lastname,
             Email = email
         };
 

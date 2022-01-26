@@ -1,0 +1,8 @@
+1) OBS Studio
+
+Once translation startedm Fidder captures literally nothing...
+We need to inspect this...
+	
+Fiddler sucks!
+
+On the other hand, in Wireshark I can see something relatable, so. We need to go deeper

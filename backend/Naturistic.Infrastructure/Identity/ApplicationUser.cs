@@ -4,13 +4,7 @@ namespace Naturistic.Infrastructure.Identity
 {
     public class ApplicationUser : IdentityUser
     {
-        public override string UserName { get => Nickname; set => base.UserName = value; }
-
-        public string LastName { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string Nickname { get; set; }
+        public string ChatColor { get; set; }
     }
 
     public enum Gender
