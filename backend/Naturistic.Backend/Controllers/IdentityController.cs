@@ -17,6 +17,7 @@ using Naturistic.Infrastructure.Identity;
 using Naturistic.Infrastructure.DLA;
 using Naturistic.Core;
 using Naturistic.Core.Entities;
+using Naturistic.Core.Interfaces.Repositories;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -32,13 +33,23 @@ namespace Naturistic.Backend.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
 
         private IConfiguration configuration;
+        private readonly IViewerUsersRepository viewerUsersRepository;
+        private readonly IChatsRepository chatsRepository;
+        private readonly IBroadcastRepository broadcastRepository;
 
-        public IdentityController(IWebHostEnvironment hostEnviroment, UserManager<ApplicationUser> userManager,
-                           SignInManager<ApplicationUser> signInManager, IConfiguration configuration, ILogger<IdentityController> logger)
+        public IdentityController(IWebHostEnvironment hostEnviroment, 
+                           UserManager<ApplicationUser> userManager,
+                           SignInManager<ApplicationUser> signInManager, 
+                           IConfiguration configuration,
+                           IViewerUsersRepository channelRepository,
+                           IChatsRepository chatsRepository,
+                           ILogger<IdentityController> logger)
         {
             this.hostEnviroment = hostEnviroment;
             this.configuration = configuration;
-			this.userManager = userManager;
+            this.viewerUsersRepository = channelRepository;
+            this.chatsRepository = chatsRepository;
+            this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
         }
@@ -76,9 +87,10 @@ namespace Naturistic.Backend.Controllers
 
         [HttpPost]
         [Route("api/user/register")]
-		public async Task<object> Register(string nickname, string email, string password)
+		public async Task<object> Register(string nickname, string email,
+         string password, string passwordRepeat, RegisterType registerType)
 		{
-			logger.LogInformation($"User to register: {email}");
+			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
             var user = new ApplicationUser
             {
@@ -90,7 +102,47 @@ namespace Naturistic.Backend.Controllers
 
             if (created.Succeeded)
             {
+                switch (registerType)
+                {
+                    case RegisterType.BroadcastUser:
+                    {
+                        // As an idea, add BroadcasterUserManager or smth
+
+                        logger.LogInformation("Create broadcast user...");
+
+                        /* creating a channel. each identity user has its own channel */
+                        var bcUser = new BroadcastUser
+                        {
+                            IdentityUserId = user.Id
+                        };
+
+                        logger.LogInformation("Create cha and attach to broadcast user...");
+
+                        var bcChat = new Chat
+                        {
+                            BroadcastUser = bcUser
+                        };
+
+                        chatsRepository.Add(bcChat);
+                    }
+                    break;
+
+                    default:
+                    case RegisterType.ViewerUser:
+                    {
+                        /* creating a channel. each identity user has its own channel */
+                        var channel = new ViewerUser
+                        {
+                            IdentityUserId = user.Id
+                        };
+                        logger.LogInformation("Creating the channel binded to user...");
+                        viewerUsersRepository.Add(channel);
+                    }
+                    break;
+                }
+
                 logger.LogInformation("User registered successfully!");
+
                 return Ok($"{nickname} {email} registered successfully!");
             }
             else
@@ -98,5 +150,25 @@ namespace Naturistic.Backend.Controllers
                 return null;
             }
 		}
+
+        [HttpGet]
+        [Route("api/users")]
+        public object GetUsers()
+        {
+            return Ok(userManager.Users);
+        }
+
+        [HttpGet]
+        [Route("api/users/current")]
+        public object GetCurrentUser()
+        {
+            return Ok(User);
+        }
+
+        public enum RegisterType : sbyte
+        {
+            ViewerUser = 2,
+            BroadcastUser = 1
+        }
     }
 }

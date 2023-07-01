@@ -48,13 +48,14 @@ namespace Naturistic.WebUI
             })
             .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
 
-            string identityConenctionString = Configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-            services.AddDbContext<ApplicationIdentityDbContext>(options => options.UseSqlServer(identityConenctionString));
+            // string identityConenctionString = "";
+            // services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            //  options.UseSqlServer(identityConenctionString));
 
-            var mailKitOptions = Configuration.GetSection("Email").Get<MailKitOptions>();
-            services.AddMailKit(config => {
-                config.UseMailKit(mailKitOptions);
-            });
+            // var mailKitOptions = Configuration.GetSection("Email").Get<MailKitOptions>();
+            // services.AddMailKit(config => {
+            //     config.UseMailKit(mailKitOptions);
+            // });
 
             services.AddAuthorization(config => {
         //        var defaultAuthBuilder = new AuthorizationPolicyBuilder();
@@ -89,8 +90,8 @@ namespace Naturistic.WebUI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDefaultControllerRoute();
-              //  endpoints.MapRazorPages();
+                //endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();
             });
         }
     }

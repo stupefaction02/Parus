@@ -9,33 +9,60 @@
   </head>
   <body>
 
+    <div class="tesbar" style="height: 20px; width: 100%; visibility: collapse;"></div>
     <div class="sign-up-in-popup">
       <div class="sign-up-in-popup-bg">
       </div>
       <div class="sign-up-in-popup-content">
-        <div class="form_wrapper">
-          <div class="form_container">
-            <div class="title_container">
-              <h2>Responsive Registration Form</h2>
+        <div class="sign-up-popup-content">
+          <div class="form_wrapper">
+            <div class="form_container">
+              <div class="title_container">
+                <h2>Responsive Registration Form</h2>
+              </div>
+              <div class="row clearfix">
+                <div class="">
+                  <form id="register-form">
+                    <div class="input_field"> 
+                      <input value="flash_dancer" type="text" name="nickname" placeholder="Nickname" required />
+                    </div>
+                    <div class="input_field"> 
+                      <input value="mail@to.com" type="email" name="email" placeholder="Email" required />
+                    </div>
+                    <div class="input_field"> 
+                      <input value="123" type="password" name="password" placeholder="Password" required />
+                    </div>
+                    <div class="input_field">
+                      <input value="123" type="password" name="password" placeholder="Re-type Password" required />
+                    </div>
+                    
+                    <input class="button register-btn" type="submit" value="Register" />
+                  </form>
+                </div>
+              </div>
             </div>
-            <div class="row clearfix">
-              <div class="">
-                <form id="register-form">
-                  <div class="input_field"> 
-                    <input value="flash_dancer" type="text" name="nickname" placeholder="Nickname" required />
-                  </div>
-                  <div class="input_field"> 
-                    <input value="mail@to.com" type="email" name="email" placeholder="Email" required />
-                  </div>
-                  <div class="input_field"> 
-                    <input value="123" type="password" name="password" placeholder="Password" required />
-                  </div>
-                  <div class="input_field">
-                    <input value="123" type="password" name="password" placeholder="Re-type Password" required />
-                  </div>
-                  
-                  <input class="button register-btn" type="submit" value="Register" />
-                </form>
+          </div>
+        </div>
+
+        <div class="sign-in-popup-content">
+          <div class="form_wrapper">
+            <div class="form_container">
+              <div class="title_container">
+                <h2>Login</h2>
+              </div>
+              <div class="row clearfix">
+                <div class="">
+                  <form id="login-form">
+                    <div class="input_field"> 
+                      <input value="flash_dancer" type="text" name="nickname" placeholder="Nickname" required />
+                    </div>
+                    <div class="input_field"> 
+                      <input value="123" type="password" name="password" placeholder="Password" required />
+                    </div>
+                    
+                    <input class="button login-btn" type="submit" value="Login" />
+                  </form>
+                </div>
               </div>
             </div>
           </div>

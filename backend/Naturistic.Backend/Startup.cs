@@ -18,6 +18,7 @@ using Naturistic.Infrastructure.DLA;
 using Naturistic.Infrastructure.Identity;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
+using System.Diagnostics;
 
 namespace Naturistic.Backend
 {
@@ -32,38 +33,23 @@ namespace Naturistic.Backend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddRazorPages();
+
+            //services.AddControllers();
 
             services.AddSignalR();
 
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    builder.WithOrigins("http://localhost:3000")
-                        .AllowAnyHeader()
-                        .AllowCredentials();
-                });
-            });
+            services.AddDbContext<ApplicationDbContext>();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
-                {
-                    config.Password.RequiredLength = 6;
-                    config.Password.RequireDigit = false;
-                    config.Password.RequireLowercase = false;
-                    config.Password.RequireUppercase = false;
-                    config.Password.RequireNonAlphanumeric = false;
+            services.ConfigureCors();
 
-                    config.SignIn.RequireConfirmedEmail = true;
-                })
-                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
-                .AddDefaultTokenProviders();
+            services.ConfigureIdentity();
 
             //services.AddTransient<CassandraDbIdentityContext>();
 
 
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
+            //services.AddTransient<IUserRepository, UserRepository>();
+            services.ConfigureRepositories();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -78,7 +64,7 @@ namespace Naturistic.Backend
                 app.UseHsts();
             }
 
-            app.UseCors();
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -86,11 +72,13 @@ namespace Naturistic.Backend
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             //app.UseMiddleware<SignalRCorsMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.MapRazorPages
+                
                 endpoints.MapControllers();
 
                 endpoints.MapHub<ChatHub>("/chat");

@@ -5,26 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
 namespace Naturistic.Infrastructure.Identity
 {
+    public class SampleContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
+    {
+        public ApplicationIdentityDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
+
+            return new ApplicationIdentityDbContext(optionsBuilder.Options);
+        }
+    }
+
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
-        // public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
-        //     : base(options)
-        // {
-        //     
-        // }
-
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
         {
-            
-        }
-
-        public ApplicationIdentityDbContext()
-        { 
             
         }
 
@@ -35,13 +35,9 @@ namespace Naturistic.Infrastructure.Identity
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
-                string connectionString =
-                    "Data Source=fd;Database=naturistic_users;User Id=sa;Password=!Kronos39!;";
-                optionsBuilder.UseSqlServer(connectionString);
-            }
+            string connectionString =
+                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.Users";
+            optionsBuilder.UseSqlServer(connectionString);
         }
        
     }
