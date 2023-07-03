@@ -9,19 +9,27 @@ using Microsoft.Extensions.Logging;
 using Naturistic.WebUI.Services;
 using Naturistic.Infrastructure.Identity;
 using System.Net.Http;
+using Cassandra;
+using Microsoft.AspNetCore.Identity;
 
 namespace Naturistic.WebUI.Pages.Identity.Login
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly ILogger<IndexModel> logger;
 
 		private readonly IApiClient apiClient;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
 
-        public IndexModel(ILogger<IndexModel> logger, IApiClient apiClient)
+        public IndexModel(ILogger<IndexModel> logger, IApiClient apiClient,
+            UserManager<ApplicationUser> userManager, 
+            SignInManager<ApplicationUser> signInManager)
         {
-            _logger = logger;
+            this.logger = logger;
 			this.apiClient = apiClient;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         public IActionResult OnGet()
@@ -31,34 +39,22 @@ namespace Naturistic.WebUI.Pages.Identity.Login
 		
 		public async Task<IActionResult> OnPostAsync()
 		{
-            Console.WriteLine("Log In...");
+            string nickname = Request.Form["nickname"];
+            string password = Request.Form["password"];
+            logger.LogInformation($"Attempt to login {nickname}");
+            var user = await userManager.FindByNameAsync(nickname);
 
-            var response = await apiClient.LoginAsync(Request.Form["nickname"], Request.Form["password"]);
-            
-            if (response is HttpResponseMessage httpResponse)
+            var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
+
+            if (signInResult.Succeeded)
             {
-                IEnumerable<string> vals;
-                httpResponse.Headers.TryGetValues("Set-Cookie", out vals);
+                logger.LogInformation($"{nickname} login successfully!");
 
-                var identityCookie = vals.First();
-
-                Response.Headers.Add("Set-Cookie", identityCookie);
-                Request.Headers.Add("Set-Cookie", identityCookie);
-
-                foreach (var header in httpResponse.Content.Headers)
-                {
-                    Console.WriteLine(header.Key + " " + header.Value);
-                }
-
-                if (httpResponse.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"Log In API Call succeded");
-
-                    return RedirectToPage("./Index");
-                }
+                return StatusCode(200);
             }
 
-            Console.WriteLine($"Log In API Call failed");
+            string errorMessage = $"Wrong password for user {user.UserName}";
+            logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
 
             // highlight error
             return null;
