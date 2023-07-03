@@ -216,6 +216,44 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "8c19b273-1243-4d64-a820-da152dddc098",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "0ac15898-98e5-41ff-8d30-6450bf1e8b6b",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "40af9b83-b34d-4664-8488-60da9fe163bc",
+                            TwoFactorEnabled = false,
+                            UserName = "Guts"
+                        },
+                        new
+                        {
+                            Id = "9ab64d0d-e286-4c24-8c9a-af75f187249c",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e87746b4-b49a-4de2-9d9f-5c5296ac899c",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "1b72a38f-68c6-49aa-b0ae-1876ab2dc8f8",
+                            TwoFactorEnabled = false,
+                            UserName = "Griffith"
+                        },
+                        new
+                        {
+                            Id = "52b19553-ae84-4daa-9ea7-ed3c6231597e",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "1c977399-685a-4cb4-8d1a-d80ebe1a1cdf",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "a03d38d1-6dd3-4ce8-8740-1f90096874d3",
+                            TwoFactorEnabled = false,
+                            UserName = "Farzana"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

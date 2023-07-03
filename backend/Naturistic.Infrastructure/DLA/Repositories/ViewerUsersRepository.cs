@@ -16,10 +16,10 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             this.context = context;
         }
 
-        public void Add(ViewerUser channel)
+        public bool Add(ViewerUser channel)
         {
             context.ViewerUsers.Add(channel);
-            context.SaveChanges();
+            return context.SaveChanges() > 0;
         }
     }
 }

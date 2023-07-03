@@ -1,7 +1,7 @@
-﻿@page
+﻿@page "/account/login"
 @model IndexModel
 @{
-    ViewData["Title"] = "Registration";
+    ViewData["Title"] = "Sign In";
 }
 
 @section AdditionalScripts
@@ -31,21 +31,21 @@
         <div class="wrapper wrapper--w680">
             <div class="card card-4">
                 <div class="card-body">
-                    <h2 class="title">Registration Form</h2>
+                    <h2 class="title">Login Form</h2>
                     <form method="POST">
                         <div class="row row-space">
-                            <div class="col-2">
+                            <div class="col-8">
                                 <div class="input-group">
-                                    <label class="label">first name</label>
-                                    <input class="input--style-4" type="text" name="first_name">
+                                    <label class="label">Nickname</label>
+                                    <input class="input--style-4" type="text" name="nickname">
                                 </div>
                             </div>
                         </div>
                         <div class="row row-space">
-                            <div class="col-2">
+                            <div class="col-8">
                                 <div class="input-group">
-                                    <label class="label">Email</label>
-                                    <input class="input--style-4" type="email" name="email">
+                                    <label class="label">Password</label>
+                                    <input class="input--style-4" type="password" name="password">
                                 </div>
                             </div>
                         </div>

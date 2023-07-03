@@ -47,7 +47,6 @@ namespace Naturistic.Backend
 
             //services.AddTransient<CassandraDbIdentityContext>();
 
-
             //services.AddTransient<IUserRepository, UserRepository>();
             services.ConfigureRepositories();
         }

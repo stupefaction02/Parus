@@ -24,11 +24,25 @@ namespace Naturistic.WebUI.Services
 		
 		public async Task<object> RegisterAsync(string nickname, string firstname, string lastname, string email, string password)
 		{
-			Console.WriteLine("Register has begun...");
-
-            string requestUri = $"{ApiClient.BaseApiUri}/register?firstname={firstname}" +
+            string requestUri = $"{ApiClient.BaseApiUri}/account/register?firstname={firstname}" +
                 $"&lastname={lastname}&nickname={nickname}" +
                 $"&email={email}&password={password}";
+
+            Console.WriteLine("Registering API call uri: " + requestUri);
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(requestUri)
+            };
+
+            return await httpClient.SendAsync(request);
+        }
+
+        public async Task<object> LoginAsync(string nickname, string password)
+        {
+            string requestUri = $"{ApiClient.BaseApiUri}/account/login?nickname={nickname}&password={password}";
+            Console.WriteLine("Login API call uri: " + requestUri);
 
             var request = new HttpRequestMessage
             {

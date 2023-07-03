@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
-    public partial class InitUsers : Migration
+    public partial class InitWithTestUsers : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -152,6 +152,21 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ChatColor", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "8c19b273-1243-4d64-a820-da152dddc098", 0, null, "0ac15898-98e5-41ff-8d30-6450bf1e8b6b", null, false, false, null, null, null, null, null, false, "40af9b83-b34d-4664-8488-60da9fe163bc", false, "Guts" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ChatColor", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "9ab64d0d-e286-4c24-8c9a-af75f187249c", 0, null, "e87746b4-b49a-4de2-9d9f-5c5296ac899c", null, false, false, null, null, null, null, null, false, "1b72a38f-68c6-49aa-b0ae-1876ab2dc8f8", false, "Griffith" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ChatColor", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "52b19553-ae84-4daa-9ea7-ed3c6231597e", 0, null, "1c977399-685a-4cb4-8d1a-d80ebe1a1cdf", null, false, false, null, null, null, null, null, false, "a03d38d1-6dd3-4ce8-8740-1f90096874d3", false, "Farzana" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

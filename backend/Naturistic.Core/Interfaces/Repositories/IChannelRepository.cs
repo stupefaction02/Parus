@@ -7,6 +7,6 @@ namespace Naturistic.Core.Interfaces.Repositories
     {
         IEnumerable<ViewerUser> Channels { get; }
 
-        void Add(ViewerUser channel);
+        bool Add(ViewerUser channel);
     }
 }

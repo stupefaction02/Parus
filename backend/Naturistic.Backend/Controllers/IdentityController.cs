@@ -18,6 +18,8 @@ using Naturistic.Infrastructure.DLA;
 using Naturistic.Core;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Memory;
+using System.Net.Http;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -63,30 +65,31 @@ namespace Naturistic.Backend.Controllers
         }
 
         [HttpPost]
-        [Route("api/user/login")]
+        [Route("api/account/login")]
         public async Task<object> Login(string nickname, string password)
         {
             logger.LogInformation($"Attempt to login {nickname}");
             var user = await userManager.FindByNameAsync(nickname);
 
-            if (user != null)
+            var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
+
+            if (signInResult.Succeeded)
             {
-                var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
+                logger.LogInformation($"{nickname} login successfully!");
 
-                if (signInResult.Succeeded)
-                {
-                    logger.LogInformation($"{nickname} login successfully!");
-                    return StatusCode(200, new { Success = true, Message = "Login was successful" });
-                }
+                return StatusCode(200);
             }
-             
-            logger.LogInformation($"Failed to login {nickname}");
+            else
+            {
+                string errorMessage = $"Wrong password for user {user.UserName}";
+                logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
 
-            return StatusCode(500, new { Success = false, Message = "Server Error!" });
+                return Json(errorMessage);
+            }
         }
 
         [HttpPost]
-        [Route("api/user/register")]
+        [Route("api/account/register")]
 		public async Task<object> Register(string nickname, string email,
          string password, string passwordRepeat, RegisterType registerType)
 		{
@@ -136,7 +139,12 @@ namespace Naturistic.Backend.Controllers
                             IdentityUserId = user.Id
                         };
                         logger.LogInformation("Creating the channel binded to user...");
-                        viewerUsersRepository.Add(channel);
+
+                        bool channelCreated = viewerUsersRepository.Add(channel);
+                        if (!channelCreated)
+                        {
+                            logger.LogInformation($"Unable to create a bind channel to user: {user}");
+                        }
                     }
                     break;
                 }
@@ -147,6 +155,12 @@ namespace Naturistic.Backend.Controllers
             }
             else
             {
+                string errors = "\t" + Environment.NewLine;
+                foreach (var e in created.Errors)
+                {
+                    errors += e.Description + Environment.NewLine;
+                }
+                logger.LogError($"Unable to create user: {user}. Errors: {errors}");
                 return null;
             }
 		}

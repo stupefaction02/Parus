@@ -69,16 +69,21 @@ namespace Naturistic.Backend.Extensions
         public static void ConfigureIdentity(this IServiceCollection services)
         {
             services.AddScoped<ApplicationIdentityDbContext>();
-            
+
+            services.Configure<IdentityOptions>(options =>
+                { options.SignIn.RequireConfirmedEmail = false; }
+            );
+
             services.AddIdentity<ApplicationUser, IdentityRole>(config =>
                 {
-                    config.Password.RequiredLength = 6;
+                    //config.SignIn.RequireConfirmedAccount = true;
+                    config.Password.RequiredLength = 3;
                     config.Password.RequireDigit = false;
                     config.Password.RequireLowercase = false;
                     config.Password.RequireUppercase = false;
                     config.Password.RequireNonAlphanumeric = false;
 
-                    config.SignIn.RequireConfirmedEmail = true;
+                    config.SignIn.RequireConfirmedEmail = false;
                 })
                 .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
                 .AddDefaultTokenProviders();

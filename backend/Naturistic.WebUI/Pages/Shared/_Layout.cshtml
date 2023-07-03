@@ -11,6 +11,22 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            @if (String.IsNullOrEmpty(User.Identity.Name))
+            {
+                <p>Current User: Anonymous</p>
+            }
+            else
+            {
+                <div>Current user:</div> @User.Identity.Name <div>IsAuthenticated: </div> @User.Identity.IsAuthenticated
+            }
+
+            <p>Coockies:</p>
+            @foreach (var coockie in Context.Request.Cookies)
+            {
+                <p>@coockie.Key: @coockie.Value.Substring(0, 20)</p>
+            }
+        </nav>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">Naturistic.WebUI</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -26,6 +42,26 @@
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
                         </li>
                     </ul>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+                            <li class="nav-item">
+                                <a class="text-white  btn btn-primary nav-link" href="/">Sign Out</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                        <ul class="navbar-nav flex-grow-1  d-flex justify-content-end">
+                            <li class="nav-item">
+                                <a class="text-white margin-right-12 btn btn-primary nav-link" href="/account/register">Sign In</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="text-white  btn btn-primary nav-link" href="/account/login">Sign Up</a>
+                            </li>
+                        </ul>
+                    }
             </div>
         </nav>
     </header>

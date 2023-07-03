@@ -38,32 +38,6 @@ namespace Naturistic.WebUI
                 options.Conventions.AuthorizeFolder("/Account");
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
-            {
-                config.Password.RequiredLength = 6;
-                config.Password.RequireDigit = false;
-                config.Password.RequireLowercase = false;
-                config.Password.RequireUppercase = false;
-                config.Password.RequireNonAlphanumeric = false;
-            })
-            .AddEntityFrameworkStores<ApplicationIdentityDbContext>();
-
-            // string identityConenctionString = "";
-            // services.AddDbContext<ApplicationIdentityDbContext>(options =>
-            //  options.UseSqlServer(identityConenctionString));
-
-            // var mailKitOptions = Configuration.GetSection("Email").Get<MailKitOptions>();
-            // services.AddMailKit(config => {
-            //     config.UseMailKit(mailKitOptions);
-            // });
-
-            services.AddAuthorization(config => {
-        //        var defaultAuthBuilder = new AuthorizationPolicyBuilder();
-         //       var defaultPolicy = defaultAuthBuilder.Build();
-
-          //      config.DefaultPolicy = defaultPolicy;
-            });
-
             services.AddSingleton(new HttpClient
             {
                 BaseAddress = new Uri("https://localhost:5001/")

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Naturistic.WebUI.Services;
 using Naturistic.Infrastructure.Identity;
+using System.Net.Http;
 
 namespace Naturistic.WebUI.Pages.Identity.Login
 {
@@ -30,9 +31,37 @@ namespace Naturistic.WebUI.Pages.Identity.Login
 		
 		public async Task<IActionResult> OnPostAsync()
 		{
-			Console.WriteLine("Login...");
-			
-			return RedirectToPage("./Index");
-		}
+            Console.WriteLine("Log In...");
+
+            var response = await apiClient.LoginAsync(Request.Form["nickname"], Request.Form["password"]);
+            
+            if (response is HttpResponseMessage httpResponse)
+            {
+                IEnumerable<string> vals;
+                httpResponse.Headers.TryGetValues("Set-Cookie", out vals);
+
+                var identityCookie = vals.First();
+
+                Response.Headers.Add("Set-Cookie", identityCookie);
+                Request.Headers.Add("Set-Cookie", identityCookie);
+
+                foreach (var header in httpResponse.Content.Headers)
+                {
+                    Console.WriteLine(header.Key + " " + header.Value);
+                }
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Log In API Call succeded");
+
+                    return RedirectToPage("./Index");
+                }
+            }
+
+            Console.WriteLine($"Log In API Call failed");
+
+            // highlight error
+            return null;
+        }
     }
 }

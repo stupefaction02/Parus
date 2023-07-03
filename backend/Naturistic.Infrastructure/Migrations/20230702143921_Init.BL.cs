@@ -1,10 +1,14 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace Naturistic.Infrastructure.Migrations
 {
+    /// <inheritdoc />
     public partial class InitBL : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -54,8 +58,7 @@ namespace Naturistic.Infrastructure.Migrations
                         name: "FK_ViewerUsers_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
-                        principalColumn: "ChatId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ChatId");
                 });
 
             migrationBuilder.CreateTable(
@@ -78,8 +81,7 @@ namespace Naturistic.Infrastructure.Migrations
                         name: "FK_Messages_Chats_ChatId",
                         column: x => x.ChatId,
                         principalTable: "Chats",
-                        principalColumn: "ChatId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "ChatId");
                     table.ForeignKey(
                         name: "FK_Messages_ViewerUsers_SenderId",
                         column: x => x.SenderId,
@@ -104,6 +106,7 @@ namespace Naturistic.Infrastructure.Migrations
                 column: "ChatId");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

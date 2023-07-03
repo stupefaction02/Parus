@@ -1,6 +1,7 @@
 # build
 dotnet build Naturistic.Backend --no-dependencies
 dotnet build Naturistic.WebUI --no-dependencies
+dotnet build Naturistic.Infrastructure --no-dependencies
 
 # run
 dotnet run -p Naturistic.Backend --no-build
@@ -14,6 +15,12 @@ EntityFrameworkCore\Add-Migrations -Project Naturistic.Infrastructure -Context N
 dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
 dotnet ef migrations add --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
 
+dotnet ef migrations add Init.BL --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
+
+## users database update
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext --startup-project Naturistic.Backend
+
 #cmd
 
 1) dp cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\DummyPublisher\bin\Debug\net5.0
@@ -26,5 +33,8 @@ dotnet ef migrations add --project Naturistic.Infrastructure --context Naturisti
 Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend & title Backend & echo dotnet run --project Naturistic.Backend --launch-profile Naturistic.Backend`""
 Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend & title HSL Service & echo dotnet run --project Naturistic.Hsl --launch-profile Naturistic.Hsl`""
 Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\DummyPublisher\bin\Debug\net5.0 & title DummyPublisher & echo DummyPublisher.exe`""
+
+## get to the process
+Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend""
 
 // Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\Naturistic.Hsl\bin\Debug\netcoreapp3.1 & title HSL service & echo Naturistic.Hsl.exe`""

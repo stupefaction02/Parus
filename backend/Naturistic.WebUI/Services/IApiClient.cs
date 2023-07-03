@@ -10,6 +10,7 @@ namespace Naturistic.WebUI.Services
 { 
     public interface IApiClient
     {
-		Task<object> RegisterAsync(string nickname, string firstname, string lastname, string email, string password);
+        Task<object> LoginAsync(string nickname, string password);
+        Task<object> RegisterAsync(string nickname, string firstname, string lastname, string email, string password);
     }
 }

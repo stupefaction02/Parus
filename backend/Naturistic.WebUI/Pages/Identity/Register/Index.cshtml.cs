@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Naturistic.WebUI.Services;
 using Naturistic.Infrastructure.Identity;
+using Cassandra;
 
 namespace Naturistic.WebUI.Pages.Identity.Register
 {
@@ -33,9 +34,24 @@ namespace Naturistic.WebUI.Pages.Identity.Register
 			Console.WriteLine("Register...");
             
             var response = await apiClient.RegisterAsync(Request.Form["nickname"],
-                Request.Form["first_name"], Request.Form["last_name"], Request.Form["email"], "123456789");
+                Request.Form["first_name"], Request.Form["last_name"], Request.Form["email"], "zx1");
 
-			return RedirectToPage("./Index");
-		}
+            if (response is ObjectResult actionResultResponse)
+            {
+                if (actionResultResponse.StatusCode == 200)
+                {
+                    Console.WriteLine($"Register API Call Response: {actionResultResponse.Value}");
+
+                    return RedirectToPage("./Index");
+                }
+
+                Console.WriteLine($"Register API Call Response: {actionResultResponse.Value}");
+            }
+
+            Console.WriteLine($"Register API Call failed");
+
+            // highlight error
+            return null;
+        }
     }
 }
