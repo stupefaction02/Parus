@@ -65,6 +65,21 @@
     } catch (err) {
         console.log(err);
     }
-    
 
+    function PopUpShow() {
+        $("#popup1").show();
+    }
+    //Функция скрытия PopUp
+    function PopUpHide() {
+        $("#popup1").hide();
+    }
+
+    //debugger
+    //Скрыть PopUp при загрузке страницы    
+    PopUpHide();
 })(jQuery);
+
+$(document).ready(function () {
+    
+});
+//Функция отображения PopUp

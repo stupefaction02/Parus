@@ -1,0 +1,108 @@
+﻿@page "/account/registration"
+@model RegistrationModel
+@{
+    ViewData["Title"] = "Registration";
+}
+
+@section AdditionalScripts
+{
+	<script type="text/javascript" src="~/js/regform.js"></script>
+	 
+	<script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/select2/select2.min.js"></script>
+    <script src="~/lib/datepicker/moment.min.js"></script>
+    <script src="~/lib/datepicker/daterangepicker.js"></script>
+
+    <script src="~/js/regform.js"></script>
+}
+
+@section AdditionalStyles
+{
+	<link href="~/lib/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
+    <link href="~/lib/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <link href="~/lib/select2/select2.min.css" rel="stylesheet" media="all">
+    <link href="~/lib/datepicker/daterangepicker.css" rel="stylesheet" media="all">
+
+    <link href="~/css/regform.css" rel="stylesheet" media="all">
+}
+
+        <div class="wrapper wrapper--w680">
+            <div class="card card-4">
+                <div class="card-body">
+                    <h2 class="title">Registration Form</h2>
+                    <form method="POST">
+                        <div class="row row-space">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="label">First name</label>
+                                    <input class="input--style-4" type="text" name="first_name">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="label">Second name</label>
+                                    <input class="input--style-4" type="text" name="second_name">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="label">Nickname</label>
+                                    <input class="input--style-4" type="text" name="nickname">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="label">Email</label>
+                                    <input class="input--style-4" type="email" name="email">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-2">
+                                <div class="input-group">
+                                    <label class="label">Gender</label>
+                                    <div class="p-t-10">
+                                        <label class="radio-container m-r-45">
+                                            Male
+                                            <input type="radio" checked="checked" name="gender">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                        <label class="radio-container">
+                                            Female
+                                            <input type="radio" name="gender">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-t-15">
+                            <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+<div class="b-popup">
+    <div class="b-popup-content">
+        <partial name="/Pages/Identity/Confirmation.cshtml" />
+    </div>
+</div>
+
+@*<div class="b-container">
+    Sample Text
+    <a href="javascript:PopUpShow()">Show popup</a>
+</div>
+<div class="b-popup" id="popup1">
+    <div class="b-popup-content">
+        Text in Popup
+        <a href="javascript:PopUpHide()">Hide popup</a>
+    </div>
+</div>*@
