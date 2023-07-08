@@ -1,4 +1,5 @@
 import { sendGet } from "./network";
+import { PopUpShow } from "./regform";
 
 (function ($) {
     'use strict';
@@ -59,6 +60,7 @@ import { sendGet } from "./network";
 
     var reg_email_input_oninput = function (e) {
         email = e.originalTarget.value;
+
         console.log(email);
     }
 

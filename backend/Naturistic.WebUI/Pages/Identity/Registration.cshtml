@@ -6,15 +6,14 @@
 
 @section AdditionalScripts
 {
-	<script type="text/javascript" src="~/js/regform.js"></script>
-	 
+	<script type="module" src="~/js/regform.js"></script>
+    <script type="module" src="~/js/network.js"></script>
+
 	<script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/select2/select2.min.js"></script>
     <script src="~/lib/datepicker/moment.min.js"></script>
     <script src="~/lib/datepicker/daterangepicker.js"></script>
     <script type="text/javascript" src="~/js/confirmation.js"></script>
-
-    <script src="~/js/regform.js"></script>
 }
 
 @section AdditionalStyles
@@ -84,26 +83,15 @@
                             </div>
                         </div>
                         <div class="p-t-15">
-                            <button class="regform_submit btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                            <button id="regform_submit" class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
-<div class="b-popup">
+<div class="d-none b-popup">
     <div class="b-popup-content">
         <partial name="/Pages/Identity/Confirmation.cshtml" />
     </div>
 </div>
-
-@*<div class="b-container">
-    Sample Text
-    <a href="javascript:PopUpShow()">Show popup</a>
-</div>
-<div class="b-popup" id="popup1">
-    <div class="b-popup-content">
-        Text in Popup
-        <a href="javascript:PopUpHide()">Hide popup</a>
-    </div>
-</div>*@

@@ -42,7 +42,7 @@ namespace Naturistic.WebUI.Pages.Identity
                 {
                     Console.WriteLine($"Register API Call Response: {actionResultResponse.Value}");
 
-                    return RedirectToPage("./Index");
+                    return null;//RedirectToPage("./Index");
                 }
 
                 Console.WriteLine($"Register API Call Response: {actionResultResponse.Value}");
