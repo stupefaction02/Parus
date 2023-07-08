@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Naturistic.Core.Entities;
 
 namespace Naturistic.Infrastructure.Identity
 {
@@ -22,6 +23,8 @@ namespace Naturistic.Infrastructure.Identity
 
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<ConfirmDigitsEntry> ConfirmDigits { get; set; }
+
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
         {

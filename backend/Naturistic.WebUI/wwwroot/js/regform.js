@@ -77,6 +77,14 @@
     //debugger
     //Скрыть PopUp при загрузке страницы    
     PopUpHide();
+
+    var regform_submit = document.getElementById("regform_submit"); 
+
+    regform_submit.onsubmit = regform_submit_onsubmit;
+
+    var regform_submit_onsubmit = function (e) {
+
+    }
 })(jQuery);
 
 $(document).ready(function () {

@@ -12,6 +12,7 @@
     <script src="~/lib/select2/select2.min.js"></script>
     <script src="~/lib/datepicker/moment.min.js"></script>
     <script src="~/lib/datepicker/daterangepicker.js"></script>
+    <script type="text/javascript" src="~/js/confirmation.js"></script>
 
     <script src="~/js/regform.js"></script>
 }
@@ -59,7 +60,7 @@
                             <div class="col-6">
                                 <div class="input-group">
                                     <label class="label">Email</label>
-                                    <input class="input--style-4" type="email" name="email">
+                                    <input id="reg_email_input" class="input--style-4" type="email" name="email">
                                 </div>
                             </div>
                         </div>
@@ -83,7 +84,7 @@
                             </div>
                         </div>
                         <div class="p-t-15">
-                            <button class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                            <button class="regform_submit btn btn--radius-2 btn--blue" type="submit">Submit</button>
                         </div>
                     </form>
                 </div>

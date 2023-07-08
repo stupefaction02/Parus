@@ -151,6 +151,10 @@ namespace Naturistic.Backend.Controllers
 
                 logger.LogInformation("User registered successfully!");
 
+                // TODO: put on another thread
+                
+                CreateDigitConfirmation(user.Email);
+
                 return Ok($"{nickname} {email} registered successfully!");
             }
             else
@@ -165,6 +169,46 @@ namespace Naturistic.Backend.Controllers
             }
 		}
 
+        private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
+        private Random random = new Random();
+
+        private void CreateDigitConfirmation(string email)
+        {
+            string a = random.Next(0, 10).ToString();
+            string b = random.Next(0, 10).ToString();
+            string c = random.Next(0, 10).ToString();
+            string d = random.Next(0, 10).ToString();
+            string f = random.Next(0, 10).ToString();
+            int confirmNumber = Int32.Parse(a + b + c + d + f);
+            confirmatonsTable.Add(email, confirmNumber);
+            logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {email}");
+        }
+
+        private int GetDigitConfirmation(string id)
+        {
+            int number = 0;
+            if (confirmatonsTable.TryGetValue(id, out number))
+            {
+                return number;
+            }
+
+            return -1;
+        }
+
+        [HttpPost]
+        [Route("api/account/confirmdigits")]
+        public async Task<object> ConfirmDigits(string email, int confirmNumber)
+        {
+            int number = GetDigitConfirmation(email);
+
+            if (number == confirmNumber)
+            {
+                logger.LogInformation("Account has been confirmed!");
+            }
+
+            return Ok("");
+        }
+
         [HttpGet]
         [Route("api/users")]
         public object GetUsers()
@@ -178,6 +222,8 @@ namespace Naturistic.Backend.Controllers
         {
             return Ok(User);
         }
+
+
 
         public enum RegisterType : sbyte
         {
