@@ -1,0 +1,3 @@
+#CORS issues
+https://stackoverflow.com/questions/51323924/asp-net-core-self-signed-certificate-in-firefox-not-working
+dotnet dev-certs https --trust, then reload browser

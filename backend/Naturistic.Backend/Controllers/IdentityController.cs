@@ -20,6 +20,7 @@ using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http;
+using System.Linq.Expressions;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -37,6 +38,7 @@ namespace Naturistic.Backend.Controllers
         private IConfiguration configuration;
         private readonly IViewerUsersRepository viewerUsersRepository;
         private readonly IChatsRepository chatsRepository;
+        private readonly IUserRepository userRepository;
         private readonly IBroadcastRepository broadcastRepository;
 
         public IdentityController(IWebHostEnvironment hostEnviroment, 
@@ -45,12 +47,14 @@ namespace Naturistic.Backend.Controllers
                            IConfiguration configuration,
                            IViewerUsersRepository channelRepository,
                            IChatsRepository chatsRepository,
+                           IUserRepository userRepository,
                            ILogger<IdentityController> logger)
         {
             this.hostEnviroment = hostEnviroment;
             this.configuration = configuration;
             this.viewerUsersRepository = channelRepository;
             this.chatsRepository = chatsRepository;
+            this.userRepository = userRepository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
@@ -223,7 +227,33 @@ namespace Naturistic.Backend.Controllers
             return Ok(User);
         }
 
+        [HttpGet]
+        [Route("api/account/checkifemailexists")]
+        public async Task<object> CheckIfEmailExists(string email)
+        {
+            if (userRepository.CheckIfEmailExists(email))
+            {
+                return Ok("Y");
+            }
+            else
+            {
+                return Ok("N");
+            }
+        }
 
+        [HttpGet]
+        [Route("api/account/checkifnicknameexists")]
+        public async Task<object> CheckIfNicknameExists(string nickname)
+        {
+            if (userRepository.CheckIfNicknameExists(nickname))
+            {
+                return Ok("Y");
+            }
+            else
+            {
+                return Ok("N");
+            }
+        }
 
         public enum RegisterType : sbyte
         {

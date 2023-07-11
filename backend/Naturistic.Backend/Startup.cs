@@ -47,7 +47,6 @@ namespace Naturistic.Backend
 
             //services.AddTransient<CassandraDbIdentityContext>();
 
-            //services.AddTransient<IUserRepository, UserRepository>();
             services.ConfigureRepositories();
         }
 
@@ -63,12 +62,12 @@ namespace Naturistic.Backend
                 app.UseHsts();
             }
 
-            app.UseCors("CorsPolicy");
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors(options => options.AllowAnyOrigin());
 
             app.UseAuthorization();
             

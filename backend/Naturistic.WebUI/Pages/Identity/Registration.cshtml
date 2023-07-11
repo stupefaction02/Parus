@@ -7,7 +7,7 @@
 @section AdditionalScripts
 {
 	<script type="module" src="~/js/regform.js"></script>
-    <script type="module" src="~/js/network.js"></script>
+    @*<script type="text/javascript" src="~/js/network.js"></script>*@
 
 	<script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/select2/select2.min.js"></script>
@@ -32,18 +32,18 @@
             <div class="card card-4">
                 <div class="card-body">
                     <h2 class="title">Registration Form</h2>
-                    <form method="POST">
+                    <div>
                         <div class="row row-space">
                             <div class="col-6">
                                 <div class="input-group">
                                     <label class="label">First name</label>
-                                    <input class="input--style-4" type="text" name="first_name">
+                                    <input id="firstname"  class="input--style-4" value="Jeff" type="text" name="first_name">
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="input-group">
-                                    <label class="label">Second name</label>
-                                    <input class="input--style-4" type="text" name="second_name">
+                                    <label class="label">Last name</label>
+                                    <input id="lastname" class="input--style-4" value="Cavailere" type="text" name="lastname">
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,8 @@
                             <div class="col-6">
                                 <div class="input-group">
                                     <label class="label">Nickname</label>
-                                    <input class="input--style-4" type="text" name="nickname">
+                                    <input id="nickname_input" class="input--style-4" value="athleandotcommer" type="text" name="nickname">
+                                    <label id="nickname_input_error" class="label input-error">Nickname is already taken</label>
                                 </div>
                             </div>
                         </div>
@@ -59,7 +60,16 @@
                             <div class="col-6">
                                 <div class="input-group">
                                     <label class="label">Email</label>
-                                    <input id="reg_email_input" class="input--style-4" type="email" name="email">
+                                    <input id="reg_email_input" class="input--style-4" value="jeffyjeff@gmail.com" type="email" name="email">
+                                    <label id="email_input_error" class="label input-error">Email is already taken</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row row-space">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <label class="label">Password</label>
+                                    <input id="password_input" class="input--style-4" value="zx1" type="password" name="password">
                                 </div>
                             </div>
                         </div>
@@ -83,9 +93,9 @@
                             </div>
                         </div>
                         <div class="p-t-15">
-                            <button id="regform_submit" class="btn btn--radius-2 btn--blue" type="submit">Submit</button>
+                            <button id="regform_submit" class="btn btn--radius-2 btn--blue" type="button">Submit</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>

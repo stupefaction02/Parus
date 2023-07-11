@@ -54,16 +54,22 @@ namespace Naturistic.Backend.Extensions
 
         public static void ConfigureCors(this IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy", builder =>
-                {
-                    builder.WithOrigins("http://127.0.0.1:5500/")
-                        .AllowAnyHeader()
-                        .AllowCredentials()
-                        .AllowAnyMethod();
-                });
-            });
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("CorsPolicy", builder =>
+            //    {
+            //        builder//.WithOrigins("http://127.0.0.1:5500/")
+            //            .AllowAnyHeader()
+            //            //.AllowCredentials()
+            //            .AllowAnyMethod()
+            //            .AllowAnyOrigin()
+            //            .WithExposedHeaders("X-Transmission-Session-Id");
+
+
+            //    });
+            //});
+
+            services.AddCors();
         }
 
         public static void ConfigureIdentity(this IServiceCollection services)
@@ -91,6 +97,7 @@ namespace Naturistic.Backend.Extensions
 
         public static void ConfigureRepositories(this IServiceCollection services)
         {
+            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IMessagesRepository, MessagesRepository>();
             services.AddTransient<IChatsRepository, ChatsRepository>();
             services.AddTransient<IViewerUsersRepository, ViewerUsersRepository>();

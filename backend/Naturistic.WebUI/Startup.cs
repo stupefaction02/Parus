@@ -47,6 +47,8 @@ namespace Naturistic.WebUI
 
             services.AddHttpContextAccessor();
 
+            services.AddCors();
+
             services.ConfigureIdentity();
         }
 
@@ -60,6 +62,8 @@ namespace Naturistic.WebUI
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthentication();
 

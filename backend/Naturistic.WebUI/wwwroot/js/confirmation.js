@@ -1,5 +1,5 @@
-import { sendGet } from "./network";
-import { PopUpShow } from "./regform";
+/*import { sendGet } from "./network";*/
+import { showPopup } from "./regform";
 
 (function ($) {
     'use strict';
@@ -51,7 +51,15 @@ import { PopUpShow } from "./regform";
 
             console.log(url);
 
-            sendGet(url);
+            //sendGet(url);
+
+            $.ajax({
+                url: url,
+                method: 'post',
+                dataType: 'html',
+                //data: { text: 'Текст' },     
+                success: onsuccess
+            });
         }
     }
 

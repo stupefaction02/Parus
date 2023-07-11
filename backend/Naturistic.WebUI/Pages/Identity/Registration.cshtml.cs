@@ -31,6 +31,7 @@ namespace Naturistic.WebUI.Pages.Identity
 
         public async Task<IActionResult> OnPostAsync()
         {
+            return null;
             Console.WriteLine("Register...");
 
             var response = await apiClient.RegisterAsync(Request.Form["nickname"],

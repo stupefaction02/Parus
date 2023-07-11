@@ -33,7 +33,7 @@ namespace Naturistic.Infrastructure.Identity
 
         public ApplicationIdentityDbContext()
         {
-                
+            
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
