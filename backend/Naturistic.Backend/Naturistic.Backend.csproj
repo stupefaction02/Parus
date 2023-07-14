@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Naturistic.Core\Naturistic.Core.csproj" />
     <ProjectReference Include="..\Naturistic.Infrastructure\Naturistic.Infrastructure.csproj" />
   </ItemGroup>

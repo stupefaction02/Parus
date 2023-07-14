@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -23,5 +24,9 @@ namespace Naturistic.Backend
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+                //.ConfigureLogging((hostBuilderContext, logging) =>
+                //{
+                //    logging.Services.AddSingleton<ILoggerProvider, Common.Logging.NaturisticLoggerProvider>();
+                //});
     }
 }

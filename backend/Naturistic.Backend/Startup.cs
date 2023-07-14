@@ -19,6 +19,7 @@ using Naturistic.Infrastructure.Identity;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Naturistic.Backend
 {
@@ -44,6 +45,8 @@ namespace Naturistic.Backend
             services.ConfigureCors();
 
             services.ConfigureIdentity();
+
+            //services.AddLogging(builder => builder.ADdS<ILoggerProvider, Common.Logging.NaturisticLoggerProvider>());
 
             //services.AddTransient<CassandraDbIdentityContext>();
 
