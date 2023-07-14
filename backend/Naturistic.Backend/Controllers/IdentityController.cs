@@ -92,10 +92,11 @@ namespace Naturistic.Backend.Controllers
             }
         }
 
+        // TODO: reconsider gender enum type as something with less size
         [HttpPost]
         [Route("api/account/register")]
 		public async Task<object> Register(string nickname, string email,
-         string password, string passwordRepeat, RegisterType registerType)
+         string password, Gender gender, RegisterType registerType)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
@@ -157,7 +158,7 @@ namespace Naturistic.Backend.Controllers
 
                 // TODO: put on another thread
                 
-                CreateDigitConfirmation(user.Email);
+                //CreateVerificaionCode(user.Email);
 
                 return Ok($"{nickname} {email} registered successfully!");
             }
@@ -176,7 +177,7 @@ namespace Naturistic.Backend.Controllers
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
-        private void CreateDigitConfirmation(string email)
+        private void CreateVerificaionCode(string email)
         {
             string a = random.Next(0, 10).ToString();
             string b = random.Next(0, 10).ToString();
@@ -188,7 +189,7 @@ namespace Naturistic.Backend.Controllers
             logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {email}");
         }
 
-        private int GetDigitConfirmation(string id)
+        private int GetVerificationCode(string id)
         {
             int number = 0;
             if (confirmatonsTable.TryGetValue(id, out number))
@@ -200,14 +201,23 @@ namespace Naturistic.Backend.Controllers
         }
 
         [HttpPost]
-        [Route("api/account/confirmdigits")]
-        public async Task<object> ConfirmDigits(string email, int confirmNumber)
+        [Route("api/account/createverificationcode")]
+        public async Task<object> CreateVerificationCode(string email)
         {
-            int number = GetDigitConfirmation(email);
+            CreateVerificaionCode(email);
+
+            return Ok("");
+        }
+
+        [HttpPost]
+        [Route("api/account/verifyaccount")]
+        public async Task<object> VerifyAccount(string email, int confirmNumber)
+        {
+            int number = GetVerificationCode(email);
 
             if (number == confirmNumber)
             {
-                logger.LogInformation("Account has been confirmed!");
+                logger.LogInformation($"Account {email} has been confirmed!");
             }
 
             return Ok("");

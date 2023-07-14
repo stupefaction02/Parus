@@ -1,13 +1,5 @@
 /*import { sendPost } from "./network";*/
 
-export function showPopup() {
-    $("#popup1").show();
-}
-
-export function PopUpHide() {
-    $("#popup1").hide();
-}
-
 function sendPost (url, onsuccess) {
     $.ajax({
         url: url,
@@ -28,10 +20,17 @@ function sendGet (url, onsuccess) {
     });
 }
 
+async function sleep(msec) {
+    return new Promise(resolve => setTimeout(resolve, msec));
+}
+
 (function ($) {
     'use strict';
     
-    PopUpHide();
+    //hidePopup();
+
+    var nicknameFormHasError;
+    var emailFormHasError;
 
     var regform_submit = document.getElementById("regform_submit"); 
 
@@ -42,8 +41,10 @@ function sendGet (url, onsuccess) {
         //debugger
 
         if (e == "N") {
+            nicknameFormHasError = false;
             nickname_input_error.style.display = "none";
         } else {
+            nicknameFormHasError = true;
             nickname_input_error.style.display = "block";
         }
     }
@@ -68,8 +69,10 @@ function sendGet (url, onsuccess) {
 
     var send_check_if_email_exists_handler = function (e) { //debugger
         if (e == "N") {
+            emailFormHasError = false;
             email_input_error.style.display = "none";
         } else {
+            emailFormHasError = true;
             email_input_error.style.display = "block";
         }
     }
@@ -89,20 +92,57 @@ function sendGet (url, onsuccess) {
 
     send_check_if_email_exists(email_input.value);
 
-    var regform_submit_onsubmit = function (e) {
-        //debugger
-        var onsuccess = function (e) {
-            //debugger
+    var popup = document.getElementById("popup");
 
-            showPopup();
+    var showPopup = function () {
+        popup.style.display = "block";
+    }
+
+    var hidePopup = function () {
+        popup.style.display = "none";
+    }
+
+    var request_verificaion_code = function () {
+        var url = "https://localhost:5001/api/account/createverificationcode?email=" + email;//
+        /*console.log(url);*/
+        sendPost(url, null);
+    }
+
+    var regform_submit_onsubmit = function (e) {
+        debugger
+
+        if (nicknameFormHasError || emailFormHasError) {
+            return;
         }
+
+        reg_loading_gif.style.display = "display";
+
 
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
         var nickname = document.getElementById("nickname_input").value;
         var email = document.getElementById("reg_email_input").value;
         var password = document.getElementById("password_input").value;
-        var url = "https://localhost:5001/api/account/register?firstname=" + firstname + "&lastname=" + lastname + "&nickname=" + nickname + "&email=" + email + "&password=" + password;
+        //debugger
+        var genders = document.querySelectorAll('input[type=radio]:checked');
+
+        var onsuccess = function (e) {
+            /*debugger*/
+
+            reg_loading_gif.style.display = "none";
+
+            request_verificaion_code(email);
+
+            showPopup();
+        }
+
+        // for genders enum see documentation 
+        var gender = 3;
+        if (genders.length > 0) {
+            gender = genders[0].value;
+        }
+
+        var url = "https://localhost:5001/api/account/register?firstname=" + firstname + "&lastname=" + lastname + "&nickname=" + nickname + "&email=" + email + "&password=" + password + "&gender=" + gender;
         console.log(url);
         sendPost(url, onsuccess);
     }

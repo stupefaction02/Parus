@@ -661,6 +661,17 @@ input {
     color: red;
 }
 
+.reg_input {
+    border-style: solid;
+    border-width: 1px;
+    border-color: red;
+}
+
+.reg_input input {
+    width: 22px;
+    height: 32px;
+}
+
 @media (max-width: 767px) {
     .card-4 .card-body {
     padding: 50px 40px;

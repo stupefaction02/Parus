@@ -12,11 +12,4 @@ namespace Naturistic.Infrastructure.Identity
             return $"{this.UserName} {this.Email} {this.Id}";
         }
     }
-
-    public enum Gender
-    {
-        Male, 
-        Female,
-        Undefined
-    }
 }

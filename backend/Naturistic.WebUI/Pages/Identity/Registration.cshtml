@@ -80,12 +80,12 @@
                                     <div class="p-t-10">
                                         <label class="radio-container m-r-45">
                                             Male
-                                            <input type="radio" checked="checked" name="gender">
+                                            <input type="radio" value="1" checked="checked" name="gender">
                                             <span class="checkmark"></span>
                                         </label>
                                         <label class="radio-container">
                                             Female
-                                            <input type="radio" name="gender">
+                                            <input type="radio" value="2" name="gender">
                                             <span class="checkmark"></span>
                                         </label>
                                     </div>
@@ -94,13 +94,14 @@
                         </div>
                         <div class="p-t-15">
                             <button id="regform_submit" class="btn btn--radius-2 btn--blue" type="button">Submit</button>
+                            <img id="reg_loading_gif" src="~/gifs/loading-gif.gif" style="display: none" alt="this slowpoke moves" width="35" height="35" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-<div class="d-none b-popup">
+<div id="popup" class="b-popup" style="display: block">
     <div class="b-popup-content">
         <partial name="/Pages/Identity/Confirmation.cshtml" />
     </div>
