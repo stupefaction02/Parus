@@ -36,8 +36,6 @@ namespace Naturistic.Backend
         {
             services.AddRazorPages();
 
-            //services.AddControllers();
-
             services.AddSignalR();
 
             services.AddDbContext<ApplicationDbContext>();
@@ -45,10 +43,6 @@ namespace Naturistic.Backend
             services.ConfigureCors();
 
             services.ConfigureIdentity();
-
-            //services.AddLogging(builder => builder.ADdS<ILoggerProvider, Common.Logging.NaturisticLoggerProvider>());
-
-            //services.AddTransient<CassandraDbIdentityContext>();
 
             services.ConfigureRepositories();
         }

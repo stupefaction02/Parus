@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Naturistic.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Naturistic.Infrastructure.Identity;
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230714140916_RenamingConfirmation")]
+    partial class RenamingConfirmation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,7 +169,7 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Property<int>("Code")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("IdentityUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ConfirmCodeEntityId");
@@ -244,37 +247,37 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                     b.HasData(
                         new
                         {
-                            Id = "97666bf3-4d4d-41a6-a24b-505900799f7b",
+                            Id = "8fe196b2-c816-493e-9107-dd13d6cba28e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4be9c8bd-c8df-464f-9d42-71ec16b338b7",
+                            ConcurrencyStamp = "23f3c97a-83c3-4c02-9684-209c35e0fa50",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a682ac3f-cdf2-4efc-860f-06d7e4783409",
+                            SecurityStamp = "5b0733d8-4e96-4016-a99f-eb236f0f7a00",
                             TwoFactorEnabled = false,
                             UserName = "Guts"
                         },
                         new
                         {
-                            Id = "27b9b46f-83b8-4a4b-b9eb-79f689034b90",
+                            Id = "0fa781c7-c74e-41ae-ad4c-621cb510b428",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0e58b1a7-0214-492a-8d99-5f14e7438522",
+                            ConcurrencyStamp = "8adacfae-1521-4c23-8dab-f0960a054960",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "26f423e6-f226-4aa0-bf4b-371e3e40daeb",
+                            SecurityStamp = "97c14137-14a3-4050-8ea9-c4ecb2efeb1c",
                             TwoFactorEnabled = false,
                             UserName = "Griffith"
                         },
                         new
                         {
-                            Id = "445d65df-295a-47ec-bb2c-80c96ac2b33d",
+                            Id = "89eeade3-25d8-49cf-b3bc-ced203d4ac0a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5d9e7826-31a9-4914-9011-ec7e0db64573",
+                            ConcurrencyStamp = "cb4a7aa7-c81d-4fb6-9058-404f93595e10",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ed3cdc53-ace0-470e-9c5d-d64f7151406c",
+                            SecurityStamp = "539b24d9-936c-4f78-823b-192f35db6b22",
                             TwoFactorEnabled = false,
                             UserName = "Farzana"
                         });

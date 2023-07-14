@@ -102,14 +102,14 @@ async function sleep(msec) {
         popup.style.display = "none";
     }
 
-    var request_verificaion_code = function () {
+    var request_verificaion_code = function (email, onsuccess) {
         var url = "https://localhost:5001/api/account/createverificationcode?email=" + email;//
         /*console.log(url);*/
-        sendPost(url, null);
+        sendPost(url, onsuccess);
     }
 
     var regform_submit_onsubmit = function (e) {
-        debugger
+        /*debugger*/
 
         if (nicknameFormHasError || emailFormHasError) {
             return;
@@ -127,13 +127,14 @@ async function sleep(msec) {
         var genders = document.querySelectorAll('input[type=radio]:checked');
 
         var onsuccess = function (e) {
-            /*debugger*/
+            //debugger
 
             reg_loading_gif.style.display = "none";
 
-            request_verificaion_code(email);
-
-            showPopup();
+            request_verificaion_code(email, function (e) {
+                //debugger
+                showPopup();
+            });
         }
 
         // for genders enum see documentation 
@@ -151,7 +152,7 @@ async function sleep(msec) {
 
     var sendPost1 = function (url, onsuccess) {
         var httpRequest = false;
-        debugger
+        //debugger
         if (window.XMLHttpRequest) { // Mozilla, Safari, ...
             httpRequest = new XMLHttpRequest();
             if (httpRequest.overrideMimeType) {

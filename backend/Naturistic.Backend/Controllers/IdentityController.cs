@@ -21,6 +21,8 @@ using Naturistic.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http;
 using System.Linq.Expressions;
+using Naturistic.Infrastructure.DLA.Repositories;
+using Naturistic.Backend.Extensions;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -39,6 +41,7 @@ namespace Naturistic.Backend.Controllers
         private readonly IViewerUsersRepository viewerUsersRepository;
         private readonly IChatsRepository chatsRepository;
         private readonly IUserRepository userRepository;
+        private readonly IConfrimCodesRepository confrimCodesRepository;
         private readonly IBroadcastRepository broadcastRepository;
 
         public IdentityController(IWebHostEnvironment hostEnviroment, 
@@ -48,6 +51,7 @@ namespace Naturistic.Backend.Controllers
                            IViewerUsersRepository channelRepository,
                            IChatsRepository chatsRepository,
                            IUserRepository userRepository,
+                           IConfrimCodesRepository confrimCodesRepository,
                            ILogger<IdentityController> logger)
         {
             this.hostEnviroment = hostEnviroment;
@@ -55,6 +59,7 @@ namespace Naturistic.Backend.Controllers
             this.viewerUsersRepository = channelRepository;
             this.chatsRepository = chatsRepository;
             this.userRepository = userRepository;
+            this.confrimCodesRepository = confrimCodesRepository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
@@ -185,16 +190,19 @@ namespace Naturistic.Backend.Controllers
             string d = random.Next(0, 10).ToString();
             string f = random.Next(0, 10).ToString();
             int confirmNumber = Int32.Parse(a + b + c + d + f);
-            confirmatonsTable.Add(email, confirmNumber);
+
+            confrimCodesRepository.Add(new ConfirmCodeEntity { Code = confirmNumber, UserEmail = email });
+
             logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {email}");
         }
 
-        private int GetVerificationCode(string id)
+        private int GetVerificationCode(string email)
         {
-            int number = 0;
-            if (confirmatonsTable.TryGetValue(id, out number))
+            ConfirmCodeEntity number = confrimCodesRepository.Codes.SingleOrDefault(x => x.UserEmail == email);
+
+            if (number != null)
             {
-                return number;
+                return number.Code;
             }
 
             return -1;
@@ -211,16 +219,33 @@ namespace Naturistic.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/verifyaccount")]
-        public async Task<object> VerifyAccount(string email, int confirmNumber)
+        public async Task<object> VerifyAccount(string email, int code)
         {
-            int number = GetVerificationCode(email);
+            int exprectedCode = GetVerificationCode(email);
 
-            if (number == confirmNumber)
+            if (exprectedCode == code)
             {
-                logger.LogInformation($"Account {email} has been confirmed!");
-            }
+                var user = userManager.FindUserByEmail(email);
 
-            return Ok("");
+                if (user != null)
+                {
+                    user.EmailConfirmed = true;
+
+                    logger.LogInformation($"Account {email} has been confirmed!");
+                }
+                else
+                {
+                    return NotFound($"Something went wrong! Couldn't find user with email = {email}");
+                }
+
+                return Ok("Y");
+            }
+            else
+            {
+                logger.LogInformation($"Number required for {email} confirmation are wrong! Waiting for client to send right number.");
+
+                return Ok("N");
+            }
         }
 
         [HttpGet]

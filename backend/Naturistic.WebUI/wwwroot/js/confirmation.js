@@ -20,10 +20,10 @@
         sendPost(url, null);
     }
 
-    var send_code = function () {
+    var send_code = function (code, onsuccess) {
         //debugger
         var email = document.getElementById("reg_email_input").value;
-        var url = "https://localhost:5001/api/account/verifyaccount?number=" + number + "&email=" + email;
+        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&email=" + email;
 
         console.log(url);
 
@@ -38,7 +38,7 @@
         });
     }
 
-    var send_code_again_onclick = function (e) { debugger
+    var send_code_again_onclick = function (e) { //debugger
         var email = document.getElementById("reg_email_input").value;
         request_verificaion_code(email);
     }
@@ -63,6 +63,12 @@
         }
     }
 
+    var send_code_handler = function (e) {
+        debugger
+
+        
+    }
+
     function updateValue(e) {
         //debugger
 
@@ -82,15 +88,15 @@
         if (allAreFilled) {
             //debugger
 
-            var number = 0;
+            var code = "";
             for (var i = 0; i < inputs.length; ++i) {
                 var inputNode = inputs[i];
-                number += inputNode.value;    
+                code += inputNode.value;    
             }
 
-            console.log(number);
+            console.log(code);
 
-            send_code();
+            send_code(code, send_code_handler);
         }
     }
 

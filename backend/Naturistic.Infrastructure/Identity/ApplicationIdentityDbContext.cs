@@ -23,7 +23,7 @@ namespace Naturistic.Infrastructure.Identity
 
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<ConfirmDigitsEntry> ConfirmDigits { get; set; }
+        public DbSet<ConfirmCodeEntity> ConfirmCodes { get; set; }
 
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)

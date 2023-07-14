@@ -102,6 +102,7 @@ namespace Naturistic.Backend.Extensions
             services.AddTransient<IChatsRepository, ChatsRepository>();
             services.AddTransient<IViewerUsersRepository, ViewerUsersRepository>();
             services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
+            services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
         }
     }
 }

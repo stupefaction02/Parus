@@ -13,6 +13,8 @@ namespace Naturistic.Infrastructure.DLA.Repositories
     {
         private readonly ApplicationIdentityDbContext context;
 
+        public IEnumerable<ApplicationUser> Users => context.Users;
+
         public UserRepository(ApplicationIdentityDbContext context)
         {
             this.context = context;
