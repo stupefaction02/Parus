@@ -64,9 +64,12 @@
     }
 
     var send_code_handler = function (e) {
-        debugger
+        //debugger
 
-        
+        var popup = document.getElementById("popup");
+        popup.style.display = "none";
+        console.log(window.location.protocol + "://" + window.location.host);
+        window.location.href = window.location.protocol + "://" + window.location.host;
     }
 
     function updateValue(e) {

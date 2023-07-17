@@ -34,5 +34,12 @@ namespace Naturistic.Infrastructure.DLA.Repositories
         {
             return context.Users.Count(user => user.UserName == nickname) > 0;
         }
+
+        public void Update(Action action)
+        {
+            action.Invoke();
+
+            context.SaveChanges();
+        }
     }
 }

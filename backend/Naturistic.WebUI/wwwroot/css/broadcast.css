@@ -1,0 +1,12 @@
+.player_wrapper {
+    width: 963px;
+    height: 483px;
+    background: gray;
+	margin: 0 auto 0 auto;
+}
+
+.chat_content {
+	border-style: solid;
+	border-color: gray;
+	border: 1px 1px 1px 1px;
+}

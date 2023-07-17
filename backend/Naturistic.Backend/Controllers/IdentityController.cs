@@ -229,7 +229,7 @@ namespace Naturistic.Backend.Controllers
 
                 if (user != null)
                 {
-                    user.EmailConfirmed = true;
+                    userRepository.Update(() => user.EmailConfirmed = true);
 
                     logger.LogInformation($"Account {email} has been confirmed!");
                 }

@@ -1,4 +1,4 @@
-﻿@page "/broadcasts/{broadcastName}"
+﻿@page "/broadcast/{broadcastName}"
 @model IndexModel
 @{
     ViewData["Title"] = @Model.BroadcastName;
@@ -6,8 +6,10 @@
 
 @section AdditionalScripts
 {
-	<script type="text/javascript" src="~/js/chat.js"></script>
 	<script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+	<script type="text/javascript" src="~/js/chat.js"></script>
+
 }
 
 @section AdditionalStyles
@@ -15,6 +17,22 @@
     <link href="~/css/broadcast.css" rel="stylesheet" media="all">
 }
 
-<div>
-    Broadcast page of @RouteData.Values["broadcastName"] and @Model.BroadcastName
+<div class="container">
+	<div class="row">
+		<!--<div class="col-9">
+			<div class="player_wrapper"></div>
+		</div>-->
+
+		<div class="col-3">
+			<div class="chat_wrapper container">
+				<div class="chat_wrapper col">
+					<div class="chatroom" style="width: 250px; height: 360px"></div>
+					<div class="chat_input" style="display: block; width: 250px;">
+						<input id="message" style="float: left; width: 195px" />
+						<button id="sendBtn" class="btn btn-dark text-white" style="width: 50px; height: 30px; float: right">Send</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

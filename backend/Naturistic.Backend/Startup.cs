@@ -72,8 +72,6 @@ namespace Naturistic.Backend
 
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapRazorPages
-                
                 endpoints.MapControllers();
 
                 endpoints.MapHub<ChatHub>("/chat");

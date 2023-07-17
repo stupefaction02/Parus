@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Naturistic.Backend.Services.Chat.SignalR
@@ -7,7 +8,8 @@ namespace Naturistic.Backend.Services.Chat.SignalR
     {
         public async Task Send(string message)
         {
-            await this.Clients.All.SendAsync("ReceiveChatMessage", message);
+            Console.WriteLine("SignalR: " + message);
+            await this.Clients.All.SendAsync("Receive", message);
         }
 
         public override Task OnConnectedAsync()
