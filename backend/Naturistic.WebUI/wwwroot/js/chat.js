@@ -1,8 +1,15 @@
+//const hubConnection = new signalR.HubConnectionBuilder()
+//    .withUrl("/chat", {
+//        skipNegotiation: false,
+//        transport: signalR.HttpTransportType.WebSockets
+//    })
+//    .build();
+
 const hubConnection = new signalR.HubConnectionBuilder()
-    .withUrl("/chat")
+    .withUrl("https://localhost:5001/chat")
     .build();
 
-document.getElementById("sendBtn").addEventListener("click", function () { debugger
+document.getElementById("sendBtn").addEventListener("click", function () { //debugger
     let message = document.getElementById("message").value;
     hubConnection.invoke("Send", message)
         .catch(function (err) {

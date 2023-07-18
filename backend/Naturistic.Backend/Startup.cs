@@ -64,10 +64,17 @@ namespace Naturistic.Backend
 
             app.UseRouting();
 
-            app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors(options =>
+			{
+				options.WithOrigins("https://localhost:5002")
+                           .AllowAnyHeader()
+						   .AllowAnyMethod()
+						   .SetIsOriginAllowed((x) => true)
+						   .AllowCredentials();
+			});
 
             app.UseAuthorization();
-            
+
             //app.UseMiddleware<SignalRCorsMiddleware>();
 
             app.UseEndpoints(endpoints =>
