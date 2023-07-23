@@ -26,11 +26,27 @@
 		<div class="col-3">
 			<div class="chat_wrapper container">
 				<div class="chat_wrapper col">
-					<div class="chatroom" style="width: 250px; height: 360px"></div>
-					<div class="chat_input" style="display: block; width: 250px;">
-						<input id="message" style="float: left; width: 195px" />
-						<button id="sendBtn" class="btn btn-dark text-white" style="width: 50px; height: 30px; float: right">Send</button>
+					<div id="chatroom" style="width: 250px; height: 360px"></div>
+
+					<div id="chat_input" style="display: block; width: 250px;">
+						@if (User.Identity.IsAuthenticated)
+						{
+							@if (Model.IsUserEmailConfirmed)
+							{
+								<input id="message" style="float: left; width: 195px" />
+								<button id="sendBtn" class="btn btn-dark text-white" style="width: 50px; height: 30px; float: right">Send</button>
+							}
+							else
+							{
+								<p id="message" style="width: 195px; height: 30px; background: red"> Confirm your account first!</p>
+							}
+						}
+						else
+						{
+							<p id="message" style="width: 195px; height: 30px"> Authethicate to send messages! </p>
+						}
 					</div>
+					
 				</div>
 			</div>
 		</div>

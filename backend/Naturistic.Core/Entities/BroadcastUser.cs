@@ -13,4 +13,11 @@ namespace Naturistic.Core.Entities
 
         public string IdentityUserId { get; set; }
     }
+
+    public interface IUser
+    {
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public bool EmailConfirmed { get; set; }
+    }
 }

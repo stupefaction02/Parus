@@ -5,7 +5,7 @@
 	margin: 0 auto 0 auto;
 }
 
-.chat_content {
+#chatroom {
 	border-style: solid;
 	border-color: gray;
 	border: 1px 1px 1px 1px;

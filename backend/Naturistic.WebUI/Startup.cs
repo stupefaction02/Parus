@@ -69,6 +69,8 @@ namespace Naturistic.WebUI
 
             app.UseAuthorization();
 
+            //app.Use
+
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapDefaultControllerRoute();

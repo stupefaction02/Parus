@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.Identity;
 
@@ -35,10 +36,15 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             return context.Users.Count(user => user.UserName == nickname) > 0;
         }
 
+        public IUser FindUserByEmail(string email)
+        {
+            return context.Users.SingleOrDefault(user => user.Email == email);
+        }
+
         public void Update(Action action)
         {
             action.Invoke();
-
+            
             context.SaveChanges();
         }
     }

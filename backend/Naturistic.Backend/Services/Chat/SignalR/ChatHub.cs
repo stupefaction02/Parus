@@ -6,10 +6,9 @@ namespace Naturistic.Backend.Services.Chat.SignalR
 {
     public class ChatHub : Hub
     {
-        public async Task Send(string message)
+        public async Task Send(string message, string nickname)
         {
-            Console.WriteLine("SignalR: " + message);
-            await this.Clients.All.SendAsync("Receive", message);
+            await this.Clients.All.SendAsync("Receive", message, nickname);
         }
 
         public override Task OnConnectedAsync()

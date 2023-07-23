@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Naturistic.WebUI.Services;
 using Naturistic.Infrastructure.Identity;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 
 namespace Naturistic.WebUI.Pages.Broadcasts
 {
@@ -16,19 +17,36 @@ namespace Naturistic.WebUI.Pages.Broadcasts
     {
         private readonly ILogger<IndexModel> logger;
 
-		private readonly IApiClient apiClient;
+		private readonly UserManager<ApplicationUser> userManager;
 
-        [BindProperty(SupportsGet = true)]
+		[BindProperty(SupportsGet = true)]
         public string BroadcastName { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, IApiClient apiClient)
+        public bool IsUserEmailConfirmed { get; set; }
+
+        public IndexModel(ILogger<IndexModel> logger, UserManager<ApplicationUser> userManager)
         {
             this.logger = logger;
-			this.apiClient = apiClient;
-        }
+			this.userManager = userManager;
+		}
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGet()
         {
+			ApplicationUser usr = await userManager.GetUserAsync(User);
+
+            if (usr != null)
+            {
+				// here user is registered but can be not confirmed
+				IsUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
+				this.Response.Cookies.Append("email", usr.Email);
+			}
+
+            // if user is not anonymous
+			if (User.Identity.Name != null)
+            {
+				this.Response.Cookies.Append("nickname", User.Identity.Name);
+			}
+
 			return Page();
         }
 

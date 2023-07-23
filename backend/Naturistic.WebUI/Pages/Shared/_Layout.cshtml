@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Logging;
+@using Naturistic.Infrastructure.Identity;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -6,9 +9,14 @@
     <title>@ViewData["Title"] - Naturistic.WebUI</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	
+    <link href="~/css/confirmation.css" rel="stylesheet" media="all">
+
 	@RenderSection("AdditionalStyles", required: false)
 </head>
 <body>
+    @inject UserManager<ApplicationUser> userManager;
+    @inject ILogger<IdentityController> logger;
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             @if (String.IsNullOrEmpty(User.Identity.Name))
@@ -45,8 +53,18 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+                        ApplicationUser usr = await userManager.GetUserAsync(User);
+                        bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
+                       
+                    <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+                            @if (!isUserEmailConfirmed)
+                            {
+                                <li class="nav-item">
+                                    <a id="confirm_account_link" href="javascript:void(0)">Confirm account!</a>
+                                </li>
+                            }
                             <li class="nav-item">
+
                                 <form id="header-signout-form" method="get" asp-page-handler="SignOut">
                                     <button class="text-white  btn btn-primary nav-link">Sign Out</button>
                                 </form>
@@ -77,9 +95,17 @@
         </div>
     </footer>
 
+    <div id="site_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <partial name="/Pages/Identity/Confirmation.cshtml" />
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="~/js/EmailVerificationPopup.js" type="module"></script>
+    <script src="~/js/site.js" type="module" asp-append-version="true"></script>
 
 	@RenderSection("AdditionalScripts", required: false)
     @RenderSection("Scripts", required: false)

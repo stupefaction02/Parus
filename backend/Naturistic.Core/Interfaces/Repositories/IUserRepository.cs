@@ -8,7 +8,7 @@ namespace Naturistic.Core.Interfaces.Repositories
     {
         bool CheckIfEmailExists(string email);
         bool CheckIfNicknameExists(string nickname);
-
+        IUser FindUserByEmail(string email);
         void Update(Action value);
     }
 

@@ -1,7 +1,4 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your Javascript code.
+﻿import { VerificationPopup } from "./EmailVerificationPopup.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     var headerSignOutForm = document.getElementById("header-signout-form");
@@ -15,4 +12,27 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(headerSignOutForm);
         console.log(back_path);
     }
+
+    var confirm_account_link = document.getElementById("confirm_account_link");
+    var popup = new VerificationPopup("site_popup");
+
+    //debugger
+    var email = document.cookie["email"];
+    if (email !== undefined) {
+        popup.SetEmail(email);
+    }
+
+    if (confirm_account_link !== null) {
+        confirm_account_link.onclick = function (e) {
+            debugger
+            popup.ShowPopup();
+
+            document.body.onclick = function (e) {
+                debugger
+                popup.HidePopup();
+            }
+        }
+    }
+
+
 }, false);

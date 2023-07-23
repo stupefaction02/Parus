@@ -225,7 +225,7 @@ namespace Naturistic.Backend.Controllers
 
             if (exprectedCode == code)
             {
-                var user = userManager.FindUserByEmail(email);
+                IUser user = this.userRepository.FindUserByEmail(email);
 
                 if (user != null)
                 {
