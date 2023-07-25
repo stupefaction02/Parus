@@ -23,6 +23,12 @@ using System.Net.Http;
 using System.Linq.Expressions;
 using Naturistic.Infrastructure.DLA.Repositories;
 using Naturistic.Backend.Extensions;
+using Naturistic.Backend.Authentication;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -65,15 +71,78 @@ namespace Naturistic.Backend.Controllers
             this.logger = logger;
         }
 
+        //public async Task<object> 
+
+		#region Testing
+
+        // breaere
+		//[Authorize(JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [Route("api/test")]
         public object Test()
         {
-            
-            return "Test";
+            return "Secret!";
         }
 
-        [HttpPost]
+		[HttpGet]
+		[Route("api/test/users")]
+		public object Users()
+        {
+            return Json(userRepository.Users);
+        }
+
+		[HttpGet]
+		[Route("api/test/getuser")]
+		public object Users(string username)
+		{
+			return Json(userRepository.FindUserByUsername(username));
+		}
+
+		#endregion
+
+		[AllowAnonymous]
+		[HttpPost]
+		[Route("api/account/jwt/login")]
+		public async Task<object> LoginJwt(string username)
+        {
+			logger.LogInformation($"Tryig to create JWT token for user {username} ...");
+			IUser user = userRepository.FindUserByUsername(username);
+
+			if (user == null)
+			{
+				return BadRequest(new { errorText = "Invalid username or password." });
+			}
+
+			List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
+			};
+
+			ClaimsIdentity identity = new ClaimsIdentity(claims);
+
+			DateTime now = DateTime.UtcNow;
+
+			JwtSecurityToken jwt = new JwtSecurityToken(
+					issuer: JwtAuthOptions.ISSUER,
+					audience: JwtAuthOptions.AUDIENCE,
+					notBefore: now,
+					claims: identity.Claims,
+					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
+					signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+			var response = new
+			{
+				access_token = encodedJwt,
+				username = identity.Name
+			};
+
+            logger.LogInformation($"JWT token for user {username} has been created.");
+
+			return Json(response);
+		}
+
+		[HttpPost]
         [Route("api/account/login")]
         public async Task<object> Login(string nickname, string password)
         {
@@ -100,14 +169,14 @@ namespace Naturistic.Backend.Controllers
         // TODO: reconsider gender enum type as something with less size
         [HttpPost]
         [Route("api/account/register")]
-		public async Task<object> Register(string nickname, string email,
+		public async Task<object> Register(string username, string email,
          string password, Gender gender, RegisterType registerType)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
             var user = new ApplicationUser
             {
-                UserName = nickname,
+                UserName = username,
                 Email = email
             };
 
@@ -115,6 +184,8 @@ namespace Naturistic.Backend.Controllers
 
             if (created.Succeeded)
             {
+                var createdUsr = userRepository.FindUserByUsername(username);
+                logger.LogInformation(createdUsr.GetUsername());
                 switch (registerType)
                 {
                     case RegisterType.BroadcastUser:
@@ -161,12 +232,10 @@ namespace Naturistic.Backend.Controllers
 
                 logger.LogInformation("User registered successfully!");
 
-                // TODO: put on another thread
-                
-                //CreateVerificaionCode(user.Email);
+				// TODO: put on another thread
 
-                return Ok($"{nickname} {email} registered successfully!");
-            }
+				return Json(CreateJsonSuccess(String.Empty));
+			}
             else
             {
                 string errors = "\t" + Environment.NewLine;
@@ -174,12 +243,26 @@ namespace Naturistic.Backend.Controllers
                 {
                     errors += e.Description + Environment.NewLine;
                 }
-                logger.LogError($"Unable to create user: {user}. Errors: {errors}");
-                return null;
+
+                string err = $"Unable to create user: {user}. Errors: {errors}";
+
+				logger.LogError(err);
+
+                return Json(CreateJsonError(err));
             }
 		}
 
-        private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
+		private object CreateJsonError(string message)
+		{
+            return new { success = "N", message = message };
+		}
+
+		private object CreateJsonSuccess(string message)
+		{
+			return new { success = "Y", message = message };
+		}
+
+		private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
         private void CreateVerificaionCode(string email)

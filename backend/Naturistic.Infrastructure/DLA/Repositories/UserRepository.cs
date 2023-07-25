@@ -14,9 +14,9 @@ namespace Naturistic.Infrastructure.DLA.Repositories
     {
         private readonly ApplicationIdentityDbContext context;
 
-        public IEnumerable<ApplicationUser> Users => context.Users;
+		public IEnumerable<IUser> Users => context.Users;
 
-        public UserRepository(ApplicationIdentityDbContext context)
+		public UserRepository(ApplicationIdentityDbContext context)
         {
             this.context = context;
         }
@@ -47,5 +47,10 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             
             context.SaveChanges();
         }
-    }
+
+		public IUser FindUserByUsername(string nickname)
+		{
+			return context.Users.AsEnumerable().SingleOrDefault(user => user.GetUsername() == nickname);
+		}
+	}
 }

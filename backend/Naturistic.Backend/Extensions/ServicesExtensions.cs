@@ -9,6 +9,9 @@ using MaikeBing.EntityFrameworkCore;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
 using Cassandra;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Naturistic.Backend.Authentication;
 
 namespace Naturistic.Backend.Extensions
 {
@@ -104,5 +107,37 @@ namespace Naturistic.Backend.Extensions
             services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
             services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
         }
-    }
+
+		public static void AddJwtAuthentication(this IServiceCollection services)
+		{
+			// use this instead of simple services.AddAuthentication("Bearer")
+			services.AddAuthentication(options =>
+			{
+				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+					.AddJwtBearer(options =>
+					{
+
+						options.RequireHttpsMetadata = false;
+						options.TokenValidationParameters = new TokenValidationParameters
+						{
+							ValidateIssuer = false,
+							
+							ValidIssuer = JwtAuthOptions.ISSUER,
+							
+							ValidateAudience = false,
+							
+							ValidAudience = JwtAuthOptions.AUDIENCE,
+						
+							ValidateLifetime = true,
+							
+							IssuerSigningKey = JwtAuthOptions.GetSymmetricSecurityKey(),
+							
+							ValidateIssuerSigningKey = true,
+						};
+					});
+		}
+	}
 }

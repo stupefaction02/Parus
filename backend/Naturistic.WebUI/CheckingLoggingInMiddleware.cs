@@ -19,8 +19,6 @@ namespace Naturistic.WebUI.Middlewares
         
            public Task Invoke(HttpContext httpContext)
            {
-			
-
 				return _next(httpContext);
            }
     }

@@ -49,6 +49,8 @@ namespace Naturistic.WebUI
 
             services.AddCors();
 
+            services.AddSession();
+
             services.ConfigureIdentity();
         }
 
@@ -61,15 +63,15 @@ namespace Naturistic.WebUI
 
             app.UseStaticFiles();
 
-            app.UseRouting();
+			app.UseRouting();
 
             app.UseCors();
 
             app.UseAuthentication();
 
-            app.UseAuthorization();
+			app.UseSession();
 
-            //app.Use
+			app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

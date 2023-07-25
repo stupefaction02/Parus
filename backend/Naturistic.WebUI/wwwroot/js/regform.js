@@ -1,5 +1,7 @@
 /*import { sendPost } from "./network";*/
 
+import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
+
 function sendPost (url, onsuccess) {
     $.ajax({
         url: url,
@@ -51,7 +53,7 @@ async function sleep(msec) {
 
     var send_check_if_nickname_exists = function (nickname) {
         //debugger
-        var url = "https://localhost:5001/api/account/checkifnicknameexists?nickname=" + nickname;
+        var url = CURRENT_API_PATH + "/account/checkifnicknameexists?nickname=" + nickname;
 
         sendGet(url, send_check_if_nickname_exists_handler);
     }
@@ -78,7 +80,7 @@ async function sleep(msec) {
     }
 
     var send_check_if_email_exists = function (email) {
-        var url = "https://localhost:5001/api/account/checkifemailexists?email=" + email;
+        var url = CURRENT_API_PATH + "/account/checkifemailexists?email=" + email;
         //debugger
         sendGet(url, send_check_if_email_exists_handler);
     }
@@ -103,8 +105,19 @@ async function sleep(msec) {
     }
 
     var request_verificaion_code = function (email, onsuccess) {
-        var url = "https://localhost:5001/api/account/createverificationcode?email=" + email;//
+        var url = CURRENT_API_PATH + "/account/createverificationcode?email=" + email;//
         /*console.log(url);*/
+        sendPost(url, onsuccess);
+    }
+
+    var requestJwtToken = function (username) {
+        var url = CURRENT_API_PATH + "/account/jwt/login?username=" + username;
+
+        var onsuccess = function (data) { 
+            sessionStorage.setItem(JWT_ACCESS_TOKEN_NAME, data.access_token);
+            console.log(sessionStorage.getItem(JWT_ACCESS_TOKEN_NAME));
+        }
+
         sendPost(url, onsuccess);
     }
 
@@ -127,14 +140,19 @@ async function sleep(msec) {
         var genders = document.querySelectorAll('input[type=radio]:checked');
 
         var onsuccess = function (e) {
-            //debugger
-
             reg_loading_gif.style.display = "none";
 
-            request_verificaion_code(email, function (e) {
-                //debugger
-                showPopup();
-            });
+            requestJwtToken(nickname);
+
+            if (e.success == "Y") {
+                request_verificaion_code(email, function (e) {
+                    //debugger
+                    showPopup();
+                });
+            }
+            else {
+                // TODO: Display error
+            }
         }
 
         // for genders enum see documentation 
@@ -143,7 +161,7 @@ async function sleep(msec) {
             gender = genders[0].value;
         }
 
-        var url = "https://localhost:5001/api/account/register?firstname=" + firstname + "&lastname=" + lastname + "&nickname=" + nickname + "&email=" + email + "&password=" + password + "&gender=" + gender;
+        var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + nickname + "&email=" + email + "&password=" + password + "&gender=" + gender;
         console.log(url);
         sendPost(url, onsuccess);
     }

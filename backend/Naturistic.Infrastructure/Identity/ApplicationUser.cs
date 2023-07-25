@@ -8,11 +8,9 @@ namespace Naturistic.Infrastructure.Identity
     {
         public string ChatColor { get; set; }
 
-        [NotMapped]
-        public string Username { get => base.UserName; set => base.UserName = value; }
+        public string GetUsername() { return base.UserName; }
 
-		[NotMapped]
-		public new string Email { get => base.Email; set => base.Email = value; }
+        public string GetEmail() { return base.Email; }
 
 		public new bool EmailConfirmed { get => base.EmailConfirmed; set => base.EmailConfirmed = value; }
 

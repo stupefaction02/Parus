@@ -45,6 +45,8 @@ namespace Naturistic.Backend
             services.ConfigureIdentity();
 
             services.ConfigureRepositories();
+
+            services.AddJwtAuthentication();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -61,7 +63,7 @@ namespace Naturistic.Backend
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            
             app.UseRouting();
 
             app.UseCors(options =>
@@ -74,9 +76,8 @@ namespace Naturistic.Backend
 			});
 
             app.UseAuthorization();
-
-            //app.UseMiddleware<SignalRCorsMiddleware>();
-
+            app.UseAuthentication();
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

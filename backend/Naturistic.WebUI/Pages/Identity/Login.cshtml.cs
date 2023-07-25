@@ -11,6 +11,11 @@ using Naturistic.Infrastructure.Identity;
 using System.Net.Http;
 using Cassandra;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using Naturistic.Core;
+
+using System.Text.Json;
+using System.IO;
 
 namespace Naturistic.WebUI.Pages.Identity
 {
@@ -39,10 +44,35 @@ namespace Naturistic.WebUI.Pages.Identity
 		
 		public async Task<IActionResult> OnPostAsync()
 		{
-            string nickname = Request.Form["nickname"];
+			string nickname = Request.Form["nickname"];
             string password = Request.Form["password"];
             logger.LogInformation($"Attempt to login {nickname}");
-            var user = await userManager.FindByNameAsync(nickname);
+
+            var jwtSignInResult = await apiClient.LoginJwtAsync(nickname, password) as HttpResponseMessage;
+            //Console.WriteLine(jwtSignInResult.GetType().FullName);
+            if (jwtSignInResult == null)
+            {
+				logger.LogError($"Can't rerieve JWT Token. Contact the API server.");
+				// TODO: Redirect to page explaining the isssue
+			}
+
+			string jsonString;
+            using (var inputStream = new StreamReader(jwtSignInResult.Content.ReadAsStream()))
+            {
+                jsonString = inputStream.ReadToEnd();
+            }
+
+            if (String.IsNullOrEmpty(jsonString))
+            {
+				logger.LogError($"Can't rerieve JWT Token. Contact the API server.");
+				// TODO: Redirect to page explaining the isssue
+			}
+
+            var token = JsonSerializer.Deserialize<JwtToken>(jsonString);
+
+            Request.HttpContext.Session.SetString("jwt.accessToken", token.AccessToken);
+			
+			var user = await userManager.FindByNameAsync(nickname);
 
             var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
 

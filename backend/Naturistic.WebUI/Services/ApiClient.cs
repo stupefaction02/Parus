@@ -52,5 +52,19 @@ namespace Naturistic.WebUI.Services
 
             return await httpClient.SendAsync(request);
         }
-    }
+
+		public async Task<object> LoginJwtAsync(string nickname, string password)
+		{
+			string requestUri = $"{ApiClient.BaseApiUri}/account/jwt/login?nickname={nickname}&password={password}";
+			Console.WriteLine("Login API call uri: " + requestUri);
+
+			var request = new HttpRequestMessage
+			{
+				Method = HttpMethod.Post,
+				RequestUri = new Uri(requestUri)
+			};
+
+			return await httpClient.SendAsync(request);
+		}
+	}
 }

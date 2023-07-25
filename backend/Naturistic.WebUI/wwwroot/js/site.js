@@ -1,4 +1,6 @@
 ﻿import { VerificationPopup } from "./EmailVerificationPopup.js";
+import { sendGetAjax } from "./network.js";
+import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 
 document.addEventListener('DOMContentLoaded', function () {
     var headerSignOutForm = document.getElementById("header-signout-form");
@@ -34,5 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    sendGetAjax(CURRENT_API_PATH + "/test", function (e) { debugger }, {
+        "Accept": "application/json",
+        'Authorization': 'Bearer ' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYnJvYWRjYXN0ZXIyNSIsIm5iZiI6MTY5MDI3Mzc3NSwiZXhwIjoxNjkwNTMyOTc1LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo1MDAwIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMiJ9.OELfoBcMINvF-qCgS9nst26jYJbU7aOdqsdRAdw6W2A'//sessionStorage.getItem(JWT_ACCESS_TOKEN_NAME)
+    });
 
 }, false);

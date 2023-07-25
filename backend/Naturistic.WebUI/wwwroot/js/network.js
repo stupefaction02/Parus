@@ -55,3 +55,12 @@ export function sendPost(url, onsuccess) {
     httpRequest.open('POST', url, true);
     httpRequest.send(null);
 }
+
+export function sendGetAjax(url, onsuccess, headers) {
+    $.ajax({
+        url: url,
+        method: 'get',
+        headers: headers,
+        success: onsuccess
+    });
+}
