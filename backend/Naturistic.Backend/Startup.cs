@@ -20,6 +20,7 @@ using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Naturistic.Backend
 {
@@ -65,7 +66,7 @@ namespace Naturistic.Backend
             app.UseStaticFiles();
             
             app.UseRouting();
-
+            
             app.UseCors(options =>
 			{
 				options.WithOrigins("https://localhost:5002")
@@ -75,8 +76,8 @@ namespace Naturistic.Backend
 						   .AllowCredentials();
 			});
 
-            app.UseAuthorization();
-            app.UseAuthentication();
+			app.UseAuthentication();
+			app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
             {

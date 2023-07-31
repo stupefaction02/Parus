@@ -115,6 +115,7 @@ async function sleep(msec) {
 
         var onsuccess = function (data) { 
             sessionStorage.setItem(JWT_ACCESS_TOKEN_NAME, data.access_token);
+            document.cookie = "JWT=" + data.access_token + "; path=/";
             console.log(sessionStorage.getItem(JWT_ACCESS_TOKEN_NAME));
         }
 

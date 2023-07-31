@@ -119,7 +119,6 @@ namespace Naturistic.Backend.Extensions
 			})
 					.AddJwtBearer(options =>
 					{
-
 						options.RequireHttpsMetadata = false;
 						options.TokenValidationParameters = new TokenValidationParameters
 						{

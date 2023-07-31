@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Identity;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using Naturistic.WebUI.Extensions;
+using Naturistic.WebUI.Middlewares;
 
 namespace Naturistic.WebUI
 {
@@ -52,7 +53,9 @@ namespace Naturistic.WebUI
             services.AddSession();
 
             services.ConfigureIdentity();
-        }
+
+			services.AddJwtAuthentication(Configuration);
+		}
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -68,6 +71,8 @@ namespace Naturistic.WebUI
             app.UseCors();
 
             app.UseAuthentication();
+
+            app.UseMiddleware<CheckingLoggingInMiddleware>();
 
 			app.UseSession();
 

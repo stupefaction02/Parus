@@ -73,10 +73,10 @@ namespace Naturistic.Backend.Controllers
 
         //public async Task<object> 
 
-		#region Testing
+        #region Testing
 
         // breaere
-		//[Authorize(JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize]
         [HttpGet]
         [Route("api/test")]
         public object Test()
@@ -130,6 +130,8 @@ namespace Naturistic.Backend.Controllers
 					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
 					signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            logger.LogInformation(encodedJwt);
 
 			var response = new
 			{
