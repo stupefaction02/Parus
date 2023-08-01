@@ -53,7 +53,7 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        ApplicationUser usr = await userManager.GetUserAsync(User);
+                        ApplicationUser usr = await userManager.FindByNameAsync(User.Identity.Name);
                         bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
                        
                     <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">

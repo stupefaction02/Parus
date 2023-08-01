@@ -1,5 +1,5 @@
 export class VerificationPopup {
-    constructor(popupId) {
+    constructor(popupId) { debugger
         this.popup = document.getElementById(popupId);
         
         var send_code_again = document.getElementById("send_code_again");
@@ -24,12 +24,12 @@ export class VerificationPopup {
         }
     }
 
-    SetEmail (email) {
-        this.email = email;
+    SetUsername (username) {
+        this.username = username;
     } 
 
     send_code_again_onclick (e) { 
-        request_verificaion_code(this.email);
+        request_verificaion_code(this.username);
     }
 
     request_verificaion_code (email) {
@@ -66,7 +66,7 @@ export class VerificationPopup {
     }
 
     send_code (code, onsuccess) {
-        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&email=" + this.email;
+        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&username=" + this.username;
 
         this.sendPost(url, onsuccess);
     }
@@ -80,15 +80,19 @@ export class VerificationPopup {
     }
 
     reg_email_input_oninput (e) {
-        this.email = e.originalTarget.value;
+        this.username = e.originalTarget.value;
+    }
+
+    RequestCode() {
+        request_verificaion_code(this.username);
     }
 
     ShowPopup() {
-        popup.style.display = "block";
+        this.popup.style.display = "block";
     }
 
     HidePopup() {
-        popup.style.display = "none";
+        this.popup.style.display = "none";
     }
 
     sendPost (url, onsuccess) {

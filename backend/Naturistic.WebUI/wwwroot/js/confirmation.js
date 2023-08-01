@@ -22,8 +22,8 @@
 
     var send_code = function (code, onsuccess) {
         //debugger
-        var email = document.getElementById("reg_email_input").value;
-        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&email=" + email;
+        var username = document.getElementById("nickname_input").value;
+        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&username=" + username;
 
         console.log(url);
 

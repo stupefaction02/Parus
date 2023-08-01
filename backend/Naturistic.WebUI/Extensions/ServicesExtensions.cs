@@ -22,18 +22,15 @@ namespace Naturistic.WebUI.Extensions
     {
         public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
 		{
-            //var conf = services.SingleOrDefault(x => x.ServiceType == typeof(IConfiguration));
-
-            //var y = conf.ImplementationFactory.Invoke(services);
-
 			string key = configuration["Authentication:JWT:SecretKey"];
 			// use this instead of simple services.AddAuthentication("Bearer")
-			services.AddAuthentication(options =>
-			{
-				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
+			//services.AddAuthentication(options =>
+			//{
+			//	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+			//	options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+			//	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+			//})
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 					.AddJwtBearer(options =>
 					{
 						options.RequireHttpsMetadata = false;

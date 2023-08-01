@@ -304,30 +304,30 @@ namespace Naturistic.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/verifyaccount")]
-        public async Task<object> VerifyAccount(string email, int code)
+        public async Task<object> VerifyAccount(string username, int code)
         {
-            int exprectedCode = GetVerificationCode(email);
+            int exprectedCode = GetVerificationCode(username);
 
             if (exprectedCode == code)
             {
-                IUser user = this.userRepository.FindUserByEmail(email);
+                IUser user = this.userRepository.FindUserByUsername(username);
 
                 if (user != null)
                 {
                     userRepository.Update(() => user.EmailConfirmed = true);
 
-                    logger.LogInformation($"Account {email} has been confirmed!");
+                    logger.LogInformation($"Account {username} has been confirmed!");
                 }
                 else
                 {
-                    return NotFound($"Something went wrong! Couldn't find user with email = {email}");
+                    return NotFound($"Something went wrong! Couldn't find user with email = {username}");
                 }
 
                 return Ok("Y");
             }
             else
             {
-                logger.LogInformation($"Number required for {email} confirmation are wrong! Waiting for client to send right number.");
+                logger.LogInformation($"Number required for {username} confirmation are wrong! Waiting for client to send right number.");
 
                 return Ok("N");
             }

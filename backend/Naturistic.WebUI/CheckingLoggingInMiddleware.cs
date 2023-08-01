@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -13,7 +14,38 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace Naturistic.WebUI.Middlewares
 {
-    public class CheckingLoggingInMiddleware
+	public class NaturisticAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
+	{
+		private ClaimsPrincipal? _user;
+		private AuthenticateResult? _result;
+
+		public NaturisticAuthenticateFeatures(AuthenticateResult result)
+		{
+			AuthenticateResult = result;
+		}
+
+		public AuthenticateResult? AuthenticateResult
+		{
+			get => _result;
+			set
+			{
+				_result = value;
+				_user = _result?.Principal;
+			}
+		}
+
+		public ClaimsPrincipal? User
+		{
+			get => _user;
+			set
+			{
+				_user = value;
+				_result = null;
+			}
+		}
+	}
+
+	public class CheckingLoggingInMiddleware
     {
         private readonly RequestDelegate _next;
 		private readonly IServiceProvider serviceProvider;
@@ -26,6 +58,7 @@ namespace Naturistic.WebUI.Middlewares
 
 		public Task Invoke(HttpContext httpContext)
 		{
+			// If standart cookie authentcation has failed (generally due of abstance of login cookie)
 			if (!httpContext.User.Identity.IsAuthenticated)
 			{
 				string jwtCoockie = httpContext.Request.Cookies["JWT"];
@@ -34,28 +67,23 @@ namespace Naturistic.WebUI.Middlewares
 				{
 					httpContext.Request.Headers.Add("Authorization", "Bearer " + jwtCoockie);
 
-					//if (result?.Succeeded ?? false)
-					//{
-					//	var authFeatures = new AuthenticationFeatures(result);
-					//	httpContext.Features.Set<IHttpAuthenticationFeature>(authFeatures);
-					//	httpContext.Features.Set<IAuthenticateResultFeature>(authFeatures);
-					//}
+					AuthenticateResult result = (httpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)).Result;
 
-					using (IServiceScope scope = serviceProvider.CreateScope())
+					if (result.Succeeded)
 					{
-						IAuthenticationService authService = scope.ServiceProvider.GetRequiredService<IAuthenticationService>();
-						var um = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-						var result = (authService.AuthenticateAsync(httpContext, JwtBearerDefaults.AuthenticationScheme)).Result;
-
-						if (result?.Principal != null)
+						httpContext.Response.Cookies.Append("identity.username", result.Principal.Identity.Name);
+						// in any case
+						httpContext.Features.Set<IAuthenticationFeature>(new AuthenticationFeature
 						{
-							httpContext.User = result.Principal;
+							OriginalPath = httpContext.Request.Path,
+							OriginalPathBase = httpContext.Request.PathBase
+						});
 
-							var t = (um.GetUserAsync(result.Principal)).Result;
+						httpContext.User = result.Principal;
 
-
-						}
+						NaturisticAuthenticateFeatures authFeatures = new NaturisticAuthenticateFeatures(result);
+						httpContext.Features.Set<IHttpAuthenticationFeature>(authFeatures);
+						httpContext.Features.Set<IAuthenticateResultFeature>(authFeatures);
 					}
 				}
 			}

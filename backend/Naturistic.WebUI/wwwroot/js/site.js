@@ -19,19 +19,21 @@ document.addEventListener('DOMContentLoaded', function () {
     var popup = new VerificationPopup("site_popup");
 
     //debugger
-    var email = document.cookie["email"];
-    if (email !== undefined) {
-        popup.SetEmail(email);
+    var username = document.cookie["username"];
+    if (username !== undefined) {
+        popup.SetUsername(username);
     }
 
     if (confirm_account_link !== null) {
         confirm_account_link.onclick = function (e) {
-            debugger
+            //debugger
             popup.ShowPopup();
 
+            popup.RequestCode();
+
             document.body.onclick = function (e) {
-                debugger
-                popup.HidePopup();
+                //debugger
+                //popup.HidePopup();
             }
         }
     }
