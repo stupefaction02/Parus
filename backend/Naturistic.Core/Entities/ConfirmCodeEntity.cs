@@ -8,7 +8,7 @@ namespace Naturistic.Core.Entities
     {
         public int ConfirmCodeEntityId { get; set; }
 
-        public string UserEmail { get; set; }
+        public string Username { get; set; }
 
         public int Code { get; set; } 
     }

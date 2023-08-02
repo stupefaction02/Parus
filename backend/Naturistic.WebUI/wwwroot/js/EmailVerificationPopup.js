@@ -1,5 +1,5 @@
 export class VerificationPopup {
-    constructor(popupId) { debugger
+    constructor(popupId) { //debugger
         this.popup = document.getElementById(popupId);
         
         var send_code_again = document.getElementById("send_code_again");
@@ -29,13 +29,18 @@ export class VerificationPopup {
     } 
 
     send_code_again_onclick (e) { 
-        request_verificaion_code(this.username);
+        this.request_verificaion_code(this.username);
     }
 
-    request_verificaion_code (email) {
-        var url = "https://localhost:5001/api/account/createverificationcode?email=" + email;//
+    request_verificaion_code (username) { 
+        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username;
         console.log(url);
-        sendPost(url, null);
+        this.sendPost(url, function (e) {
+            if (e.success == "Y") {
+                debugger
+                ShowPopup();
+            }
+        });
     }
 
     updateValue(e) {
@@ -84,7 +89,7 @@ export class VerificationPopup {
     }
 
     RequestCode() {
-        request_verificaion_code(this.username);
+        this.request_verificaion_code(this.username);
     }
 
     ShowPopup() {

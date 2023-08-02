@@ -264,10 +264,15 @@ namespace Naturistic.Backend.Controllers
 			return new { success = "Y", message = message };
 		}
 
+		private object CreateJsonSuccess()
+		{
+			return new { success = "Y" };
+		}
+
 		private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
-        private void CreateVerificaionCode(string email)
+        private void CreateVerificaionCode(string username)
         {
             string a = random.Next(0, 10).ToString();
             string b = random.Next(0, 10).ToString();
@@ -276,14 +281,14 @@ namespace Naturistic.Backend.Controllers
             string f = random.Next(0, 10).ToString();
             int confirmNumber = Int32.Parse(a + b + c + d + f);
 
-            confrimCodesRepository.Add(new ConfirmCodeEntity { Code = confirmNumber, UserEmail = email });
+            confrimCodesRepository.Add(new ConfirmCodeEntity { Code = confirmNumber, Username = username });
 
-            logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {email}");
+            logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {username}");
         }
 
         private int GetVerificationCode(string email)
         {
-            ConfirmCodeEntity number = confrimCodesRepository.Codes.SingleOrDefault(x => x.UserEmail == email);
+            ConfirmCodeEntity number = confrimCodesRepository.Codes.SingleOrDefault(x => x.Username == email);
 
             if (number != null)
             {
@@ -294,12 +299,12 @@ namespace Naturistic.Backend.Controllers
         }
 
         [HttpPost]
-        [Route("api/account/createverificationcode")]
-        public async Task<object> CreateVerificationCode(string email)
+        [Route("api/account/requestverificationcode")]
+        public async Task<object> CreateVerificationCode(string username)
         {
-            CreateVerificaionCode(email);
+            CreateVerificaionCode(username);
 
-            return Ok("");
+            return CreateJsonSuccess();
         }
 
         [HttpPost]

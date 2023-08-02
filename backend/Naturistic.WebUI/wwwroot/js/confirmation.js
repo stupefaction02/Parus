@@ -14,8 +14,8 @@
         });
     }
 
-    var request_verificaion_code = function (email) {
-        var url = "https://localhost:5001/api/account/createverificationcode?email=" + email;//
+    var request_verificaion_code = function (username) {
+        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username;//
         console.log(url);
         sendPost(url, null);
     }
@@ -39,8 +39,8 @@
     }
 
     var send_code_again_onclick = function (e) { //debugger
-        var email = document.getElementById("reg_email_input").value;
-        request_verificaion_code(email);
+        var username = document.getElementById("nickname_input").value;
+        request_verificaion_code(username);
     }
 
     var send_code_again = document.getElementById("send_code_again");

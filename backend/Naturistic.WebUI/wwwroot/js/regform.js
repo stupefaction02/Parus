@@ -104,8 +104,8 @@ async function sleep(msec) {
         popup.style.display = "none";
     }
 
-    var request_verificaion_code = function (email, onsuccess) {
-        var url = CURRENT_API_PATH + "/account/createverificationcode?email=" + email;//
+    var request_verificaion_code = function (username, onsuccess) {
+        var url = CURRENT_API_PATH + "/account/requestverificationcode?username=" + username;//
         /*console.log(url);*/
         sendPost(url, onsuccess);
     }
@@ -146,7 +146,7 @@ async function sleep(msec) {
             requestJwtToken(nickname);
 
             if (e.success == "Y") {
-                request_verificaion_code(email, function (e) {
+                request_verificaion_code(nickname, function (e) {
                     //debugger
                     showPopup();
                 });
