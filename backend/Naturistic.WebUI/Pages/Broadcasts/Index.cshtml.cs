@@ -44,7 +44,7 @@ namespace Naturistic.WebUI.Pages.Broadcasts
             // if user is not anonymous
 			if (User.Identity.Name != null)
             {
-				this.Response.Cookies.Append("nickname", User.Identity.Name);
+				this.Response.Cookies.Append("username", User.Identity.Name);
 			}
 
 			return Page();

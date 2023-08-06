@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -8,27 +7,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Cassandra;
 using Microsoft.AspNetCore.Identity;
 
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-
 using Naturistic.Infrastructure.Identity;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Core;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
-using Microsoft.Extensions.Caching.Memory;
-using System.Net.Http;
-using System.Linq.Expressions;
-using Naturistic.Infrastructure.DLA.Repositories;
-using Naturistic.Backend.Extensions;
 using Naturistic.Backend.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -100,25 +87,10 @@ namespace Naturistic.Backend.Controllers
 
 		#endregion
 
-		[AllowAnonymous]
 		[HttpPost]
-		[Route("api/account/jwt/login")]
-		public async Task<object> LoginJwt(string username)
+		private JwtToken CreateJWT(ClaimsIdentity user)
         {
-			logger.LogInformation($"Tryig to create JWT token for user {username} ...");
-			IUser user = userRepository.FindUserByUsername(username);
-
-			if (user == null)
-			{
-				return BadRequest(new { errorText = "Invalid username or password." });
-			}
-
-			List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
-			};
-
-			ClaimsIdentity identity = new ClaimsIdentity(claims);
+			logger.LogInformation($"Tryig to create JWT token for user {user.Name} ...");
 
 			DateTime now = DateTime.UtcNow;
 
@@ -126,45 +98,69 @@ namespace Naturistic.Backend.Controllers
 					issuer: JwtAuthOptions.ISSUER,
 					audience: JwtAuthOptions.AUDIENCE,
 					notBefore: now,
-					claims: identity.Claims,
+					claims: user.Claims,
 					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
 					signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             logger.LogInformation(encodedJwt);
 
-			var response = new
-			{
-				access_token = encodedJwt,
-				username = identity.Name
+            logger.LogInformation($"JWT token for user {user.Name} has been created.");
+
+            return new JwtToken
+            {
+                Token = encodedJwt,
+                Username = user.Name
 			};
-
-            logger.LogInformation($"JWT token for user {username} has been created.");
-
-			return Json(response);
 		}
+
+        private struct JwtToken
+        {
+            public string Token { get; set; }
+            public string Username { get; set; }
+        }
+
+        private async Task<ClaimsIdentity> CreateIdentityAsync(ApplicationUser user)
+        {
+            if (await userManager.IsInRoleAsync(user, "admin"))
+            {
+                return null;
+            }
+            else
+            {
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
+                };
+
+                return new ClaimsIdentity(claims);
+            }
+        }
 
 		[HttpPost]
         [Route("api/account/login")]
         public async Task<object> Login(string nickname, string password)
         {
             logger.LogInformation($"Attempt to login {nickname}");
-            var user = await userManager.FindByNameAsync(nickname);
+            ApplicationUser user = await userManager.FindByNameAsync(nickname);
 
             var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
-
+            
             if (signInResult.Succeeded)
             {
                 logger.LogInformation($"{nickname} login successfully!");
 
-                return StatusCode(200);
+                var identity = await CreateIdentityAsync(user);
+
+                JwtToken newToken = CreateJWT(identity);
+                return CreateJsonSuccess(additionalParameter: newToken.Token);
             }
             else
             {
                 string errorMessage = $"Wrong password for user {user.UserName}";
                 logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
 
-                return Json(errorMessage);
+                return CreateJsonError(errorMessage);
             }
         }
 
@@ -191,52 +187,61 @@ namespace Naturistic.Backend.Controllers
                 switch (registerType)
                 {
                     case RegisterType.BroadcastUser:
-                    {
-                        // As an idea, add BroadcasterUserManager or smth
-
-                        logger.LogInformation("Create broadcast user...");
-
-                        /* creating a channel. each identity user has its own channel */
-                        var bcUser = new BroadcastUser
                         {
-                            IdentityUserId = user.Id
-                        };
+                            // As an idea, add BroadcasterUserManager or smth
 
-                        logger.LogInformation("Create cha and attach to broadcast user...");
+                            logger.LogInformation("Create broadcast user...");
 
-                        var bcChat = new Chat
-                        {
-                            BroadcastUser = bcUser
-                        };
+                            /* creating a channel. each identity user has its own channel */
+                            var bcUser = new BroadcastUser
+                            {
+                                IdentityUserId = user.Id
+                            };
 
-                        chatsRepository.Add(bcChat);
-                    }
-                    break;
+                            logger.LogInformation("Create cha and attach to broadcast user...");
+
+                            var bcChat = new Chat
+                            {
+                                BroadcastUser = bcUser
+                            };
+
+                            chatsRepository.Add(bcChat);
+                        }
+                        break;
 
                     default:
                     case RegisterType.ViewerUser:
-                    {
-                        /* creating a channel. each identity user has its own channel */
-                        var channel = new ViewerUser
                         {
-                            IdentityUserId = user.Id
-                        };
-                        logger.LogInformation("Creating the channel binded to user...");
+                            /* creating a channel. each identity user has its own channel */
+                            var channel = new ViewerUser
+                            {
+                                IdentityUserId = user.Id
+                            };
+                            logger.LogInformation("Creating the channel binded to user...");
 
-                        bool channelCreated = viewerUsersRepository.Add(channel);
-                        if (!channelCreated)
-                        {
-                            logger.LogInformation($"Unable to create a bind channel to user: {user}");
+                            bool channelCreated = viewerUsersRepository.Add(channel);
+                            if (!channelCreated)
+                            {
+                                logger.LogInformation($"Unable to create a bind channel to user: {user}");
+                            }
                         }
-                    }
-                    break;
+                        break;
                 }
+
+                List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
+                };
+
+                ClaimsIdentity identity = new ClaimsIdentity(claims);
+
+                JwtToken jwt = CreateJWT(identity);
 
                 logger.LogInformation("User registered successfully!");
 
-				// TODO: put on another thread
+                // TODO: put on another thread
 
-				return Json(CreateJsonSuccess(String.Empty));
+                return Json(CreateJsonSuccess(new { access_token = jwt.Token }));
 			}
             else
             {
@@ -269,12 +274,17 @@ namespace Naturistic.Backend.Controllers
 			return new { success = "Y" };
 		}
 
-		private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
+        private object CreateJsonSuccess(object additionalParameter)
+        {
+            return new { success = "Y", payload = additionalParameter };
+        }
+
+        private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
         private void CreateVerificaionCode(string username)
         {
-            string a = random.Next(0, 10).ToString();
+            string a = random.Next(1, 10).ToString();
             string b = random.Next(0, 10).ToString();
             string c = random.Next(0, 10).ToString();
             string d = random.Next(0, 10).ToString();

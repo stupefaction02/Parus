@@ -10,7 +10,7 @@ function getCookie(name) {
 }
 
 // specific to razor pages
-let nickname = getCookie("nickname");
+let nickname = getCookie("username");
 
 var sendBtn = document.getElementById("sendBtn");
 

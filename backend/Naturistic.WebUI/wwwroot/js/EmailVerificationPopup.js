@@ -4,8 +4,10 @@ export class VerificationPopup {
         
         var send_code_again = document.getElementById("send_code_again");
 
+        var self = this;
+
         send_code_again.onclick = function (e) {
-            this.send_code_again_onclick(e);
+            self.send_code_again_onclick(e);
         };
 
         var inputs = [];
@@ -18,10 +20,12 @@ export class VerificationPopup {
                 inputs.push(inputNode);
 
                 inputNode.oninput = function (e) {
-                    updateValue(e);
+                    self.updateValue(e);
                 };
             }
         }
+
+        this.inputs = inputs;
     }
 
     SetUsername (username) {
@@ -35,10 +39,12 @@ export class VerificationPopup {
     request_verificaion_code (username) { 
         var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username;
         console.log(url);
+
+        var self = this;
+
         this.sendPost(url, function (e) {
             if (e.success == "Y") {
-                debugger
-                ShowPopup();
+                self.ShowPopup();
             }
         });
     }
@@ -47,8 +53,8 @@ export class VerificationPopup {
         var target = e.originalTarget;
 
         var allAreFilled = true;
-        for (var i = 0; i < inputs.length; ++i) {
-            var inputNode = inputs[i];
+        for (var i = 0; i < this.inputs.length; ++i) {
+            var inputNode = this.inputs[i];
             /*console.log(inputNode.value);*/
             if (!Object.is(inputNode, target)) {
                 if (inputNode.value == "") {
@@ -57,16 +63,18 @@ export class VerificationPopup {
             }
         }
 
+        var self = this;
+
         if (allAreFilled) {
             //debugger
 
             var code = "";
-            for (var i = 0; i < inputs.length; ++i) {
-                var inputNode = inputs[i];
+            for (var i = 0; i < this.inputs.length; ++i) {
+                var inputNode = this.inputs[i];
                 code += inputNode.value;
             }
 
-            send_code(code, function (e) { send_code_handler(e); });
+            self.send_code(code, function (e) { self.send_code_handler(e); });
         }
     }
 
@@ -77,8 +85,6 @@ export class VerificationPopup {
     }
 
     send_code_handler(e) {
-
-
         this.popup.style.display = "none";
         console.log(window.location.protocol + "://" + window.location.host);
         window.location.href = window.location.protocol + "://" + window.location.host;

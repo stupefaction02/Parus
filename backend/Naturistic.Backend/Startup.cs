@@ -72,8 +72,8 @@ namespace Naturistic.Backend
 				options.WithOrigins("https://localhost:5002")
                            .AllowAnyHeader()
 						   .AllowAnyMethod()
-						   .SetIsOriginAllowed((x) => true)
-						   .AllowCredentials();
+                           .SetIsOriginAllowed((x) => true)
+                           .AllowCredentials();
 			});
 
 			app.UseAuthentication();

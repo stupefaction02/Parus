@@ -4,3 +4,26 @@ export function GetCookie(name) {
     ));
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
+function setCookie(key, value, expireDays, expireHours, expireMinutes, expireSeconds) {
+    var expireDate = new Date();
+    if (expireDays) {
+        expireDate.setDate(expireDate.getDate() + expireDays);
+    }
+    if (expireHours) {
+        expireDate.setHours(expireDate.getHours() + expireHours);
+    }
+    if (expireMinutes) {
+        expireDate.setMinutes(expireDate.getMinutes() + expireMinutes);
+    }
+    if (expireSeconds) {
+        expireDate.setSeconds(expireDate.getSeconds() + expireSeconds);
+    }
+    document.cookie = key + "=" + escape(value) +
+        ";domain=" + window.location.hostname +
+        ";path=/" +
+        ";expires=" + expireDate.toUTCString();
+}
+
+export function DeleteCookie(name) {
+    setCookie(name, "", null, null, null, 1);
+}

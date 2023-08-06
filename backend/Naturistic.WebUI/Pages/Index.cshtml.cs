@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -20,30 +24,6 @@ namespace Naturistic.WebUI.Pages
         {
             this.logger = logger;
             this.signInManager = signInManager;
-        }
-
-        public void OnGet()
-        {
-
-        }
-
-        public void OnGetSignOut(string backPath)
-        {
-            //Console.WriteLine("Bow wow wow");
-            //string backPath = Request.Form["back_url"];
-            signInManager.SignOutAsync();
-            // TODO: Back url
-
-            logger.LogInformation($"Redirectig to {backPath}");
-
-            if (backPath == "/")
-            {
-                RedirectToPage("Index");
-            }
-            else
-            {
-                Redirect("~" + backPath);
-            }
         }
     }
 }

@@ -49,7 +49,7 @@ namespace Naturistic.WebUI.Pages.Identity
             logger.LogInformation($"Attempt to login {nickname}");
 
             var jwtSignInResult = await apiClient.LoginJwtAsync(nickname, password) as HttpResponseMessage;
-            //Console.WriteLine(jwtSignInResult.GetType().FullName);
+
             if (jwtSignInResult == null)
             {
 				logger.LogError($"Can't rerieve JWT Token. Contact the API server.");
@@ -68,25 +68,17 @@ namespace Naturistic.WebUI.Pages.Identity
 				// TODO: Redirect to page explaining the isssue
 			}
 
-            var token = JsonSerializer.Deserialize<JwtToken>(jsonString);
+            ApiServerResponse response = JsonSerializer.Deserialize<ApiServerResponse>(jsonString);
 
-            Request.HttpContext.Session.SetString("jwt.accessToken", token.AccessToken);
-			
-			var user = await userManager.FindByNameAsync(nickname);
-
-            var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
-
-            if (signInResult.Succeeded)
+            if (response.Success == "Y")
             {
-                logger.LogInformation($"{nickname} login successfully!");
+                Response.Cookies.Append("JWT", response.Payload);
 
-                RedirectToPage("Index");
+                var user = await userManager.FindByNameAsync(nickname);
 
-                return null;
+                string errorMessage = $"Wrong password for user {user.UserName}";
+                logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
             }
-
-            string errorMessage = $"Wrong password for user {user.UserName}";
-            logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
 
             // highlight error
             return null;

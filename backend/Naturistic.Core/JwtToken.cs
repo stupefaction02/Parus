@@ -15,4 +15,14 @@ namespace Naturistic.Core
 		[JsonPropertyName("username")]
 		public string Username { get; set; }
 	}
+
+    [Serializable]
+    public class ApiServerResponse
+    {
+        [JsonPropertyName("success")]
+        public string Success { get; set; }
+
+        [JsonPropertyName("payload")]
+        public string Payload { get; set; }
+    }
 }

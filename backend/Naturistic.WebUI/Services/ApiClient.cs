@@ -55,7 +55,7 @@ namespace Naturistic.WebUI.Services
 
 		public async Task<object> LoginJwtAsync(string nickname, string password)
 		{
-			string requestUri = $"{ApiClient.BaseApiUri}/account/jwt/login?nickname={nickname}&password={password}";
+			string requestUri = $"{ApiClient.BaseApiUri}/account/login?nickname={nickname}&password={password}";
 			Console.WriteLine("Login API call uri: " + requestUri);
 
 			var request = new HttpRequestMessage

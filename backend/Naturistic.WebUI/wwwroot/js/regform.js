@@ -143,12 +143,16 @@ async function sleep(msec) {
         var onsuccess = function (e) {
             reg_loading_gif.style.display = "none";
 
-            requestJwtToken(nickname);
+            //requestJwtToken(nickname);
 
             if (e.success == "Y") {
+                debugger
+                document.cookie = "JWT=" + e.payload.access_token + "; path=/";
+
+                showPopup();
                 request_verificaion_code(nickname, function (e) {
                     //debugger
-                    showPopup();
+                    //showPopup();
                 });
             }
             else {

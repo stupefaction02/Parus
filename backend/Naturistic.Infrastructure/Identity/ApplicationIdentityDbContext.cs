@@ -40,6 +40,12 @@ namespace Naturistic.Infrastructure.Identity
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<IUser>()
+                    .HasOne(e => e.ConfirmCode)
+                    .WithOne(e => e.User)
+                    .HasForeignKey<ConfirmCodeEntity>(e => e.UserId)
+                    .IsRequired();
+
             var testUsers = new ApplicationUser[3] {
                 new ApplicationUser { UserName = "Guts" },
                 new ApplicationUser { UserName = "Griffith" },

@@ -21,5 +21,7 @@ namespace Naturistic.Core.Entities
         public string GetEmail();
 
         public bool EmailConfirmed { get; set; }
+
+        ConfirmCodeEntity ConfirmCode { get; set; }
     }
 }

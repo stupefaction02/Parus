@@ -1,22 +1,21 @@
 ﻿import { VerificationPopup } from "./EmailVerificationPopup.js";
-import { GetCookie } from "./common.js";
+import { DeleteCookie, GetCookie } from "./common.js";
 import { sendGetAjax } from "./network.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 
 document.addEventListener('DOMContentLoaded', function () {
-    var headerSignOutForm = document.getElementById("header-signout-form");
+    var confirm_account_link = document.getElementById("confirm_account_link");
+    var header_signout_button = document.getElementById("header_signout_button");
 
-    if (headerSignOutForm != null) {
-        var back_path = window.location.pathname;
-        headerSignOutForm.value = back_path;
-        //headerSignOutForm.setAttribute("name", "back_url");
-        headerSignOutForm.setAttribute("href", back_path);
-
-        console.log(headerSignOutForm);
-        console.log(back_path);
+    if (header_signout_button !== null) {
+        header_signout_button.onclick = function (e) {
+            DeleteCookie("JWT");
+            DeleteCookie("identity.username");
+            console.log(document.cookie);
+            window.location.reload();
+        }
     }
 
-    var confirm_account_link = document.getElementById("confirm_account_link");
     var popup = new VerificationPopup("site_popup");
     
     if (confirm_account_link !== null) {
