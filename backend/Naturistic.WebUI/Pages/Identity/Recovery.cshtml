@@ -5,13 +5,11 @@
 @section AdditionalScripts
 {
     <script type="module" src="~/js/common.js"></script>
-    <script type="text/javascript" src="~/js/recovery.js"></script>
+    <script type="module" src="~/js/recovery.js"></script>
 }
 
 @section AdditionalStyles
 {
-    <link href="~/lib/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-
     <link href="~/css/recovery.css" rel="stylesheet" media="all">
 }
 
@@ -23,18 +21,31 @@
 			<label class="label">Введите адрес электронной почты или номер телефона</label>
 			<input id="recovery_container_input" class="input--style-4" style="width: 100%" type="text" name="email">
 		</div>
-		<button id="recovery_continue_btn" type="button" disabled="true">Продолжить</button>
+		<button id="recovery_continue_btn" class="color1_btn" type="button" disabled="true">Продолжить</button>
 	</div>
 </div>
 
-<div id="recovery_container_phase2" style="display: none">
+<div id="recovery_container_phase2">
 	<div class="recovery_container">
 		<strong class="p1">Как снова войти в учетную запись Twitch</strong>
 
 		<div style="margin-bottom: 40px">
-			<label class="label">Введите адрес электронной почты или номер телефона</label>
-			<input class="input--style-4" style="width: 100%" type="text" name="email">
+			<label class="label">Теперь предоставьте нам имя пользователя Twitch, с которым у вас возникли проблемы.</label>
+			<input id="username_input" class="input--style-4" style="width: 100%" type="text" name="email">
 		</div>
-		<button id="recovery_continue_btn" type="button" disabled="true">Продолжить</button>
+		<button id="send_ref_btn" class="color1_btn" style="width: 98px" type="button" disabled="true">Отправьте мне ссылку для восстановления пароля</button>
+	</div>
+</div>
+
+<div id="recovery_container_phase3">
+	<div class="recovery_container">
+		<strong class="p1">Проверьте свою почту</strong>
+		<p class="p2">Проверьте почту <span id="check_email_span">flashdancer0b@gmail.com</span> и щелкните ссылку для сброса пароля, которую мы отправили для вашей учетной записи Twitch <span id="username_span">bowwowwow210</span>.</p>
+		<p class="p3">На ее доставку может потребоваться несколько минут. И на всякий случай проверьте папки спама и рекламы!</p>
+
+		<div class="buttons">
+			<button id="complete_btn" class="color1_btn" type="button">Готово</button>
+			<button id="repeat_btn" class="color2_btn" type="button">Начать заново</button>
+		</div>
 	</div>
 </div>

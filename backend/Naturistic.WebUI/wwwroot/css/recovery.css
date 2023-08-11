@@ -25,14 +25,32 @@
 	vertical-align: center;
 }
 
-#recovery_continue_btn:disabled {
+.color1_btn {
+	font-size: 13px;
+	color: white;
+	height: 28px;
+	border: none;
+}
+
+.color1_btn:disabled {
    background-color: gray;
 }
 
-#recovery_continue_btn:enabled {
+.color1_btn:enabled {
    background-color: #9147FF;
 }
 
-#recovery_continue_btn:enabled:hover {
+.color1_btn:enabled:hover {
    background-color: #9147AA;
 }
+
+.recovery_container .buttons {
+	display: flex;
+	flex-flow: row;
+}
+
+.color2_btn {
+	background-color: lightgray;
+	border: none;
+}
+
