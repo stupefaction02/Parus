@@ -14,6 +14,12 @@ namespace Naturistic.Core.Entities
         public string IdentityUserId { get; set; }
     }
 
+    public interface IConfirmCode
+    {
+        int Code { get; set; }
+        string UserId { get; set; }
+    }
+
     public interface IUser
     {
         public string GetUsername();
@@ -22,6 +28,6 @@ namespace Naturistic.Core.Entities
 
         public bool EmailConfirmed { get; set; }
 
-        ConfirmCodeEntity ConfirmCode { get; set; }
+        public IConfirmCode ConfirmCodeCore { get; }
     }
 }

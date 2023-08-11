@@ -10,16 +10,16 @@ namespace Naturistic.Infrastructure.DLA.Repositories
     {
         private readonly ApplicationIdentityDbContext context;
 
-        public IEnumerable<ConfirmCodeEntity> Codes => context.ConfirmCodes; 
+        public IEnumerable<IConfirmCode> Codes => context.ConfirmCodes; 
 
         public ConfrimCodesRepository(ApplicationIdentityDbContext context)
         {
             this.context = context;
         }
 
-        public void Add(ConfirmCodeEntity code)
+        public void Add(IConfirmCode code)
         {
-            context.ConfirmCodes.Add(code);
+            context.ConfirmCodes.Add((ConfirmCode)code);
             context.SaveChanges();
         }
     }

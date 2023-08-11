@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Naturistic.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Naturistic.Infrastructure.Identity;
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230807142807_RebuildConfirmCodeToUserRElation1")]
+    partial class RebuildConfirmCodeToUserRElation1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -221,6 +224,44 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "7e04b8aa-1024-4207-a0ad-bcb8b5a11888",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e1dbe1f4-da32-45a5-9452-20d4d7d26be7",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "663bcb73-90b7-44dc-9079-fe306eaef1be",
+                            TwoFactorEnabled = false,
+                            UserName = "Guts"
+                        },
+                        new
+                        {
+                            Id = "b925e4a4-8171-4355-aa76-804c58e601bc",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "399dbaec-2b54-4b46-acb1-1d1840b8804d",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "74894346-fe17-4caf-9846-f388dabbc3d2",
+                            TwoFactorEnabled = false,
+                            UserName = "Griffith"
+                        },
+                        new
+                        {
+                            Id = "8217b76d-e9e2-4fd1-a4b5-ca72f2eb16e1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e287c1ab-83d3-45f3-9fe4-e7e6e9fcd575",
+                            EmailConfirmed = false,
+                            LockoutEnabled = false,
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "06cc16c3-e021-4b03-848e-e91ccabb969d",
+                            TwoFactorEnabled = false,
+                            UserName = "Farzana"
+                        });
                 });
 
             modelBuilder.Entity("Naturistic.Infrastructure.Identity.ConfirmCode", b =>
@@ -235,13 +276,13 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("varchar(256)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("ConfirmCodeId");
 
                     b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("ConfirmCodes");
                 });

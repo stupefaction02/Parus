@@ -1,4 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity;
+﻿
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Routing;
+@using Microsoft.AspNetCore.Routing.Patterns;
 @using Microsoft.Extensions.Logging;
 @using Naturistic.Infrastructure.Identity;
 <!DOCTYPE html>
@@ -14,74 +18,35 @@
 	@RenderSection("AdditionalStyles", required: false)
 </head>
 <body>
-    @inject UserManager<ApplicationUser> userManager;
-    @inject ILogger<IdentityController> logger;
-
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            @if (String.IsNullOrEmpty(User.Identity.Name))
+        @{
+            RouteEndpoint endpoit = Context.Request.HttpContext.GetEndpoint() as RouteEndpoint;
+
+            if (endpoit.RoutePattern.PathSegments.Count > 1)
             {
-                <p>Current User: Anonymous</p>
+                var locationEndointPart = endpoit.RoutePattern.PathSegments[0].Parts[0] as RoutePatternLiteralPart;
+                var pageEndpointPart = endpoit.RoutePattern.PathSegments[1].Parts[0] as RoutePatternLiteralPart;
+
+                @if (endpoit != null
+                                  && locationEndointPart != null
+                                  && locationEndointPart.Content == "account"
+                                  && pageEndpointPart != null
+                                  && pageEndpointPart.Content == "recovery")
+                {
+                    <partial name="/Pages/Shared/Recovery_Header.cshtml" />
+                }
+                else
+                {
+                    <partial name="/Pages/Shared/Header.cshtml" />
+                }
             }
             else
             {
-                <div>Current user:</div> @User.Identity.Name <div>IsAuthenticated: </div> @User.Identity.IsAuthenticated
+                <partial name="/Pages/Shared/Header.cshtml" />
             }
-
-            @*<p>Coockies:</p>
-            @foreach (var coockie in Context.Request.Cookies)
-            {
-                <p>@coockie.Key: @coockie.Value.Substring(0, 20)</p>
-            }*@
-        </nav>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Naturistic.WebUI</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <!-- <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"> -->
-                    <ul class="navbar-nav flex-grow-1">
-                        @*<li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>*@
-                    </ul>
-
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        ApplicationUser usr = await userManager.FindByNameAsync(User.Identity.Name);
-                        bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
-                       
-                    <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
-                            @if (!isUserEmailConfirmed)
-                            {
-                                <li class="nav-item">
-                                    <a id="confirm_account_link" href="javascript:void(0)">Confirm account!</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <button id="header_signout_button" class="text-white  btn btn-primary nav-link">Sign Out</button>rm>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav flex-grow-1  d-flex justify-content-end">
-                            <li class="nav-item">
-                                <a class="text-white margin-right-12 btn btn-primary nav-link" style="margin-right: 20px" href="/account/registration">Sign In</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="text-white  btn btn-primary nav-link" href="/account/login">Sign Up</a>
-                            </li>
-                        </ul>
-                    }
-            </div>
-        </nav>
+        }
     </header>
+
     <main role="main" class="page-wrapper p-t-130 p-b-100 font-poppins">
 		@RenderBody()
     </main>

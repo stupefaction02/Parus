@@ -282,7 +282,7 @@ namespace Naturistic.Backend.Controllers
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
-        private void CreateVerificaionCode(string username)
+        private async Task CreateVerificaionCode(string username)
         {
             string a = random.Next(1, 10).ToString();
             string b = random.Next(0, 10).ToString();
@@ -291,14 +291,16 @@ namespace Naturistic.Backend.Controllers
             string f = random.Next(0, 10).ToString();
             int confirmNumber = Int32.Parse(a + b + c + d + f);
 
-            confrimCodesRepository.Add(new ConfirmCodeEntity { Code = confirmNumber, Username = username });
+            var user = await userManager.FindByNameAsync(username);
+
+            confrimCodesRepository.Add(new ConfirmCode { Code = confirmNumber, User = user, UserId = username });
 
             logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {username}");
         }
 
-        private int GetVerificationCode(string email)
+        private int GetVerificationCode(string username)
         {
-            ConfirmCodeEntity number = confrimCodesRepository.Codes.SingleOrDefault(x => x.Username == email);
+            IConfirmCode number = confrimCodesRepository.Codes.SingleOrDefault(x => x.UserId == username);
 
             if (number != null)
             {
@@ -312,7 +314,7 @@ namespace Naturistic.Backend.Controllers
         [Route("api/account/requestverificationcode")]
         public async Task<object> CreateVerificationCode(string username)
         {
-            CreateVerificaionCode(username);
+            await CreateVerificaionCode(username);
 
             return CreateJsonSuccess();
         }

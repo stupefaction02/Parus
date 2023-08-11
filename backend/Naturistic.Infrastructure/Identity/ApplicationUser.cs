@@ -14,7 +14,10 @@ namespace Naturistic.Infrastructure.Identity
 
 		public new bool EmailConfirmed { get => base.EmailConfirmed; set => base.EmailConfirmed = value; }
 
-        public ConfirmCodeEntity ConfirmCode { get; set; }
+        public ConfirmCode ConfirmCode { get; set; }
+
+        [NotMapped]
+        public IConfirmCode ConfirmCodeCore { get => ConfirmCode; }
 
         public override string ToString()
         {

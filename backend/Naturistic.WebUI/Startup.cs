@@ -78,11 +78,22 @@ namespace Naturistic.WebUI
 
 			app.UseAuthorization();
 
+            app.UseDebug();
+
             app.UseEndpoints(endpoints =>
             {
                 //endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
+        }
+    }
+
+    public static class AppExtensions
+    {
+        public static IApplicationBuilder UseDebug(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<DebugMiddleware>();
+            return app;
         }
     }
 

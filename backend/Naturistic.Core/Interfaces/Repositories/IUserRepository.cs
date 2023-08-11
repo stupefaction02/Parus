@@ -16,8 +16,8 @@ namespace Naturistic.Core.Interfaces.Repositories
 
     public interface IConfrimCodesRepository
     {
-        IEnumerable<ConfirmCodeEntity> Codes { get; }
+        IEnumerable<IConfirmCode> Codes { get; }
 
-        void Add(ConfirmCodeEntity email);
+        void Add(IConfirmCode email);
     }
 }

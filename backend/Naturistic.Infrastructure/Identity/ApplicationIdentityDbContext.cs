@@ -23,7 +23,7 @@ namespace Naturistic.Infrastructure.Identity
 
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<ConfirmCodeEntity> ConfirmCodes { get; set; }
+        public DbSet<ConfirmCode> ConfirmCodes { get; set; }
 
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
@@ -40,18 +40,23 @@ namespace Naturistic.Infrastructure.Identity
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<IUser>()
+            builder.Entity<ApplicationUser>()
                     .HasOne(e => e.ConfirmCode)
                     .WithOne(e => e.User)
-                    .HasForeignKey<ConfirmCodeEntity>(e => e.UserId)
+                    .HasForeignKey<ConfirmCode>(e => e.UserId)
                     .IsRequired();
 
-            var testUsers = new ApplicationUser[3] {
-                new ApplicationUser { UserName = "Guts" },
-                new ApplicationUser { UserName = "Griffith" },
-                new ApplicationUser { UserName = "Farzana" }
-            };
-            builder.Entity<ApplicationUser>().HasData(testUsers);
+            builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(false);
+            builder.Entity<ConfirmCode>().Property(x => x.UserId).IsRequired(false);
+
+            //builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired();
+
+            //var testUsers = new ApplicationUser[3] {
+            //    new ApplicationUser { UserName = "Guts" },
+            //    new ApplicationUser { UserName = "Griffith" },
+            //    new ApplicationUser { UserName = "Farzana" }
+            //};
+            //builder.Entity<ApplicationUser>().HasData(testUsers);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
