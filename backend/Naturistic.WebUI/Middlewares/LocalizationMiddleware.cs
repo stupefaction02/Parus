@@ -31,22 +31,6 @@ namespace Naturistic.WebUI.Middlewares
 				httpContext.Response.Cookies.Append("locale", locale = "ru");
 			}
 
-			string dictFn = default;
-			switch (locale)
-			{
-				case "ru":
-					dictFn = "ru.txt";
-					break;
-				case "en":
-				default:
-					dictFn = "en.txt";
-					break;
-			}
-
-			ILocalizationService ls = serviceProvider.GetRequiredService<ILocalizationService>();
-
-			ls.DictionaryFileName = dictFn;
-
 			return _next(httpContext);
 		}
 	}

@@ -6,8 +6,7 @@ namespace Naturistic.Core.Interfaces
 {
 	public interface ILocalizationService
 	{
-		string DictionaryFileName { get; set; }
-
 		string RetrievePhrase(string key);
+		void SetLocale(string localeFn);
 	}
 }

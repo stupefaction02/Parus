@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Naturistic.Core.Interfaces;
+using Newtonsoft.Json.Linq;
 
 namespace Naturistic.Core.Services.Localization
 {
@@ -10,28 +11,32 @@ namespace Naturistic.Core.Services.Localization
 	{
         private StreamReader stream;
 
-        private string dictionaryFileName;
-        public string DictionaryFileName 
+		public void SetLocale(string locale)
         {
-            get => dictionaryFileName;
-            set
-            {
-                if (dictionaryFileName == value) return;
-
-                dictionaryFileName = value;
-
-				string filePath = Path.Combine("localization", value);
-
-				stream = new StreamReader(filePath);
+			string localeFn = default;
+			switch (locale)
+			{
+				default:
+				case "ru":
+					localeFn = "ru.txt";
+					break;
+				case "en":
+					localeFn = "en.txt";
+					break;
 			}
-        }
 
-        public string RetrievePhrase(string key)
+			string filePath = Path.Combine("localization", localeFn);
+
+			stream = new StreamReader(filePath);
+		}
+
+		public string RetrievePhrase(string key)
         {
             string value = "";
 			string? line;
 			while ((line = stream.ReadLine()) != null)
 			{
+				Console.WriteLine(line);
                 int separatorIndex;
 				string key1 = getKey(line, out separatorIndex);
 				
@@ -39,11 +44,13 @@ namespace Naturistic.Core.Services.Localization
                 {
                     value = line.Substring(separatorIndex);
 
-                    break;
+					break;
                 }
 			}
+			var t = stream.ReadLine();
+			stream.BaseStream.Position = 0;
 
-            return value;
+			return value;
 		}
 
 		private string getKey(string line, out int separatorIndex)

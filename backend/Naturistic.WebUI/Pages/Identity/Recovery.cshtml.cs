@@ -18,7 +18,7 @@ namespace Naturistic.WebUI.Pages.Identity
     public class RecoveryPageLocalizationGlossary
     {
         public static string RECOVERY_P1P1 => "RECOVERY_P1P1";
-        public static string RECOVERY_P1P2 => "RECOVERY_P1P1";
+        public static string RECOVERY_P1P2 => "RECOVERY_P1P2";
         public static string BTN_CONT => "BTN_CONT";
     }
 
@@ -40,8 +40,11 @@ namespace Naturistic.WebUI.Pages.Identity
 			this.localizationService = localizationService;
 		}
 
-        public IActionResult OnGet()
+        public IActionResult OnGet([FromServices] ILocalizationService localizationService)
         {
+            string locale = HttpContext.Request.Cookies["locale"];
+			localizationService.SetLocale(locale);
+
 			RECOVERY_P1P1 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_P1P1);
 			RECOVERY_P1P2 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_P1P2);
 			BTN_CONT = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.BTN_CONT);
