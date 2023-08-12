@@ -20,6 +20,8 @@ using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
 using Naturistic.WebUI.Extensions;
 using Naturistic.WebUI.Middlewares;
+using Naturistic.Core.Interfaces;
+using Naturistic.Core.Services.Localization;
 
 namespace Naturistic.WebUI
 {
@@ -55,6 +57,8 @@ namespace Naturistic.WebUI
             services.ConfigureIdentity();
 
 			services.AddJwtAuthentication(Configuration);
+
+            services.AddSingleton<ILocalizationService, LocalizationService>();
 		}
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -80,34 +84,12 @@ namespace Naturistic.WebUI
 
             app.UseDebug();
 
+            app.UseMiddleware<LocalizationMiddleware>();
+
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
         }
-    }
-
-    public static class AppExtensions
-    {
-        public static IApplicationBuilder UseDebug(this IApplicationBuilder app)
-        {
-            app.UseMiddleware<DebugMiddleware>();
-            return app;
-        }
-    }
-
-    public static class ServicesCollectionExtensions
-    {
-        public static void AddCookieAuthentication(this IServiceCollection services)
-        {
-            // After this any woulnd able to access any page or method with AuthoeizeAttribute if 
-            // it has not cookies configured below
-            services.AddAuthentication("CookieAuth").AddCookie("CookieAuth", config => {
-                config.Cookie.Name = "AdminCookie";
-                config.LoginPath = "/Identity/Authenticate";
-            });
-        }
-
     }
 }

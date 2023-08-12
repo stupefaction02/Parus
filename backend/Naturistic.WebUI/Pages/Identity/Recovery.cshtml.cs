@@ -11,32 +11,47 @@ using Naturistic.Infrastructure.Identity;
 using Cassandra;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Naturistic.Core.Interfaces;
 
 namespace Naturistic.WebUI.Pages.Identity
 {
+    public class RecoveryPageLocalizationGlossary
+    {
+        public static string RECOVERY_P1P1 => "RECOVERY_P1P1";
+        public static string RECOVERY_P1P2 => "RECOVERY_P1P1";
+        public static string BTN_CONT => "BTN_CONT";
+    }
+
     public class RecoveryModel : PageModel
     {
+        public string RECOVERY_P1P1 { get; set; }
+        public string RECOVERY_P1P2 { get; set; }
+        public string BTN_CONT { get; set; }
+
         private readonly ILogger<RegistrationModel> _logger;
 
         private readonly IApiClient apiClient;
+		private readonly ILocalizationService localizationService;
 
-        public RecoveryModel(ILogger<RegistrationModel> logger, IApiClient apiClient)
+		public RecoveryModel(ILogger<RegistrationModel> logger, IApiClient apiClient, ILocalizationService localizationService)
         {
             _logger = logger;
             this.apiClient = apiClient;
-        }
+			this.localizationService = localizationService;
+		}
 
         public IActionResult OnGet()
         {
-            return Page();
+			RECOVERY_P1P1 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_P1P1);
+			RECOVERY_P1P2 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_P1P2);
+			BTN_CONT = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.BTN_CONT);
+
+			return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            
-
-            // highlight error
-            return null;
+			return null;
         }
     }
 }
