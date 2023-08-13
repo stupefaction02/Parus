@@ -5,7 +5,7 @@
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     /// <inheritdoc />
-    public partial class RebuildConfirmCodeToUserRelation9 : Migration
+    public partial class PasswordRecoveryTokens010 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

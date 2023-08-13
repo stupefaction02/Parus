@@ -12,8 +12,8 @@ using Naturistic.Infrastructure.Identity;
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    [Migration("20230807180815_RebuildConfirmCodeToUserRelation9")]
-    partial class RebuildConfirmCodeToUserRelation9
+    [Migration("20230813133407_PasswordRecoveryTokens01")]
+    partial class PasswordRecoveryTokens01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -196,6 +196,13 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordRecoveryToken")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<long>("PasswordRecoveryTokenTimestamp")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");

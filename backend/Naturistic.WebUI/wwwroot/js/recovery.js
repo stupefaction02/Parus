@@ -1,15 +1,29 @@
-import { ValidateEmail } from "./common.js";
+import { ValidateEmail, RedirectToIndex } from "./common.js";
+import { CURRENT_API_PATH } from "./config.js";
 
 document.addEventListener('DOMContentLoaded', function () {
 	var phase1 = document.getElementById("recovery_container_phase1");
 	var phase2 = document.getElementById("recovery_container_phase2");
 	var phase3 = document.getElementById("recovery_container_phase3");
 
-	var input = document.getElementById("recovery_container_input");
+	var email_input = document.getElementById("recovery_container_input");
 	var recovery_continue_btn = document.getElementById("recovery_continue_btn");
 
 	var username_input = document.getElementById("username_input");
 	var send_ref_btn = document.getElementById("send_ref_btn");
+
+	var repeat_btn = document.getElementById("repeat_btn");
+	var complete_btn = document.getElementById("complete_btn");
+
+	var sendPost = function (url, onsuccess) {
+		$.ajax({
+			url: url,
+			method: 'post',
+			//dataType: 'html',
+			//data: { text: 'Текст' },     
+			success: onsuccess
+		});
+	}
 
 	function switchToPhase1() {
 		phase1.style.display = "block";
@@ -31,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 	switchToPhase1();
 
-	input.oninput = function (e) {
+	email_input.oninput = function (e) {
 		var text = e.target.value;
 		
 		if (text === "") {
@@ -57,6 +71,24 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	send_ref_btn.onclick = function (e) {
+		debugger
+		var username = username_input.value;
+		var email = email_input.value;
 
+		var url = CURRENT_API_PATH + "/account/sendrecoveryemail?nickname=" + nickname + "&email=" + email;
+
+		sendPost(url, function (e) { debugger });
+
+		switchToPhase3();
+	}
+
+	repeat_btn.onclick = function (e) {
+		username_input.value = "";
+		email_input.value = "";
+		switchToPhase1();
+	}
+
+	complete_btn.onclick = function (e) {
+		RedirectToIndex();
 	}
 });

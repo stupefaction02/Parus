@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Naturistic.Core.Entities;
 
@@ -18,6 +19,11 @@ namespace Naturistic.Infrastructure.Identity
 
         [NotMapped]
         public IConfirmCode ConfirmCodeCore { get => ConfirmCode; }
+
+        [MaxLength(128)]
+        public string PasswordRecoveryToken { get; set; }
+
+        public long PasswordRecoveryTokenTimestamp { get; set; }
 
         public override string ToString()
         {

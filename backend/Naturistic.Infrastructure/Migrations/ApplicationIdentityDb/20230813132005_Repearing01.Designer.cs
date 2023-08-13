@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Naturistic.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Naturistic.Infrastructure.Identity;
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230813132005_Repearing01")]
+    partial class Repearing01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,13 +246,13 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasColumnType("varchar(256)");
 
                     b.HasKey("ConfirmCodeId");
 
                     b.HasIndex("UserId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("ConfirmCodes");
                 });
@@ -309,9 +312,7 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                 {
                     b.HasOne("Naturistic.Infrastructure.Identity.ApplicationUser", "User")
                         .WithOne("ConfirmCode")
-                        .HasForeignKey("Naturistic.Infrastructure.Identity.ConfirmCode", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Naturistic.Infrastructure.Identity.ConfirmCode", "UserId");
 
                     b.Navigation("User");
                 });

@@ -36,7 +36,6 @@ namespace Naturistic.Core.Services.Localization
 			string? line;
 			while ((line = stream.ReadLine()) != null)
 			{
-				Console.WriteLine(line);
                 int separatorIndex;
 				string key1 = getKey(line, out separatorIndex);
 				

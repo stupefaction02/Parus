@@ -46,8 +46,8 @@ namespace Naturistic.Infrastructure.Identity
                     .HasForeignKey<ConfirmCode>(e => e.UserId)
                     .IsRequired();
 
-            builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(false);
-            builder.Entity<ConfirmCode>().Property(x => x.UserId).IsRequired(false);
+            builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(true);
+            builder.Entity<ConfirmCode>().Property(x => x.UserId).IsRequired(true);
 
             //builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired();
 

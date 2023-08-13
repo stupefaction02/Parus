@@ -21,6 +21,8 @@
 <body>
     <header>
         @{
+            bool renderConfirmationPopup = true;
+
             RouteEndpoint endpoit = Context.Request.HttpContext.GetEndpoint() as RouteEndpoint;
 
             if (endpoit.RoutePattern.PathSegments.Count > 1)
@@ -34,6 +36,7 @@
                                   && pageEndpointPart != null
                                   && pageEndpointPart.Content == "recovery")
                 {
+                    renderConfirmationPopup = false;
                     <partial name="/Pages/Shared/Recovery_Header.cshtml" />
                 }
                 else
@@ -58,11 +61,14 @@
         </div>
     </footer>
 
-    <div id="site_popup" class="b-popup" style="display: none">
-        <div class="b-popup-content">
-            <partial name="/Pages/Identity/Confirmation.cshtml" />
+    @if (renderConfirmationPopup)
+    {
+        <div id="site_popup" class="b-popup" style="display: none">
+            <div class="b-popup-content">
+                <partial name="/Pages/Identity/Confirmation.cshtml" />
+            </div>
         </div>
-    </div>
+    }
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

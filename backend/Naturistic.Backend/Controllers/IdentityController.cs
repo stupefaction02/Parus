@@ -16,6 +16,7 @@ using Naturistic.Backend.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Naturistic.Core.Interfaces.Services;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -35,6 +36,8 @@ namespace Naturistic.Backend.Controllers
         private readonly IChatsRepository chatsRepository;
         private readonly IUserRepository userRepository;
         private readonly IConfrimCodesRepository confrimCodesRepository;
+		private readonly IEmailService emailService;
+        private readonly IPasswordHasher<ApplicationUser> passwordHasher;
         private readonly IBroadcastRepository broadcastRepository;
 
         public IdentityController(IWebHostEnvironment hostEnviroment, 
@@ -45,7 +48,9 @@ namespace Naturistic.Backend.Controllers
                            IChatsRepository chatsRepository,
                            IUserRepository userRepository,
                            IConfrimCodesRepository confrimCodesRepository,
-                           ILogger<IdentityController> logger)
+						   IEmailService emailService,
+                           IPasswordHasher<ApplicationUser> passwordHasher,
+						   ILogger<IdentityController> logger)
         {
             this.hostEnviroment = hostEnviroment;
             this.configuration = configuration;
@@ -53,6 +58,8 @@ namespace Naturistic.Backend.Controllers
             this.chatsRepository = chatsRepository;
             this.userRepository = userRepository;
             this.confrimCodesRepository = confrimCodesRepository;
+			this.emailService = emailService;
+            this.passwordHasher = passwordHasher;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
@@ -391,6 +398,16 @@ namespace Naturistic.Backend.Controllers
                 return Ok("N");
             }
         }
+
+		[HttpGet]
+		[Route("api/account/sendrecoveryemail")]
+		public async Task SendRecoveryEmail(string username, string email)
+        {
+
+
+            //Task sendTask = emailService.SendEmailAsync(username, email, content);
+
+		}
 
         public enum RegisterType : sbyte
         {
