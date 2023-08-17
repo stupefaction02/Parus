@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="localization\ru.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="localization\ru.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\Naturistic.Core\Naturistic.Core.csproj" />
     <ProjectReference Include="..\Naturistic.Infrastructure\Naturistic.Infrastructure.csproj" />

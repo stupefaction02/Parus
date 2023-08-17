@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naturistic.Core", "Naturistic.Core\Naturistic.Core.csproj", "{54A35E62-D7B8-470E-8625-1BF71F16F963}"
 EndProject
@@ -13,9 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naturistic.Backend", "Natur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naturistic.Hsl", "Naturistic.Hsl\Naturistic.Hsl.csproj", "{FAD307D8-E834-4ABC-9C23-6F8FB154C5B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyPublisher", "DummyPublisher\DummyPublisher.csproj", "{C594498C-78A6-4049-9FDA-701DA6B1445B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyPublisher", "DummyPublisher\DummyPublisher.csproj", "{C594498C-78A6-4049-9FDA-701DA6B1445B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{28049071-93B1-4C77-9F8E-948388D0BCC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityTest", "IdentityTest\IdentityTest.csproj", "{0F199DC7-FE3D-4068-925B-7448DF38F7C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,9 +55,16 @@ Global
 		{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0F199DC7-FE3D-4068-925B-7448DF38F7C4} = {28049071-93B1-4C77-9F8E-948388D0BCC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD49B428-22A9-4B04-91A7-C84C58B54C78}

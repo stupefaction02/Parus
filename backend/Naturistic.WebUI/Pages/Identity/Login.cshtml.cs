@@ -16,6 +16,7 @@ using Naturistic.Core;
 
 using System.Text.Json;
 using System.IO;
+using Naturistic.Common;
 
 namespace Naturistic.WebUI.Pages.Identity
 {
@@ -56,21 +57,14 @@ namespace Naturistic.WebUI.Pages.Identity
 				// TODO: Redirect to page explaining the isssue
 			}
 
-			string jsonString;
-            using (var inputStream = new StreamReader(jwtSignInResult.Content.ReadAsStream()))
-            {
-                jsonString = inputStream.ReadToEnd();
-            }
+			ApiServerResponse response = await ServerUtils.ConvertResponseStream<ApiServerResponse>(jwtSignInResult);
 
-            if (String.IsNullOrEmpty(jsonString))
+            if (response != null)
             {
 				logger.LogError($"Can't rerieve JWT Token. Contact the API server.");
-				// TODO: Redirect to page explaining the isssue
 			}
 
-            ApiServerResponse response = JsonSerializer.Deserialize<ApiServerResponse>(jsonString);
-
-            if (response.Success == "Y")
+			if (response.Success == "Y")
             {
                 Response.Cookies.Append("JWT", response.Payload);
 

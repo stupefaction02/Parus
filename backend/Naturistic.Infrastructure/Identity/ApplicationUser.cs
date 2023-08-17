@@ -1,7 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Naturistic.Core.Entities;
+using Naturistic.Core.Interfaces.Repositories;
 
 namespace Naturistic.Infrastructure.Identity
 {
@@ -17,17 +19,34 @@ namespace Naturistic.Infrastructure.Identity
 
         public ConfirmCode ConfirmCode { get; set; }
 
+        public PasswordRecoveryToken PasswordRecoveryToken { get; set; }
+
         [NotMapped]
         public IConfirmCode ConfirmCodeCore { get => ConfirmCode; }
-
-        [MaxLength(128)]
-        public string PasswordRecoveryToken { get; set; }
-
-        public long PasswordRecoveryTokenTimestamp { get; set; }
 
         public override string ToString()
         {
             return $"{this.UserName} {this.Email} {this.Id}";
         }
+    }
+
+    public class PasswordRecoveryToken : IPasswordRecoveryToken
+    {
+        [NotMapped]
+        public static int LifetimeHours => 6;
+
+        [Required]
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        [MaxLength(128)]
+        public string Token { get; set; }
+
+        [Required]
+        public long ExpireAt { get; set; }
     }
 }

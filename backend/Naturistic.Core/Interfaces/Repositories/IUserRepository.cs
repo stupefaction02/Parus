@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Naturistic.Core.Entities;
 
 namespace Naturistic.Core.Interfaces.Repositories
@@ -9,7 +10,8 @@ namespace Naturistic.Core.Interfaces.Repositories
 		IEnumerable<IUser> Users { get; }
 		bool CheckIfEmailExists(string email);
         bool CheckIfNicknameExists(string nickname);
-        IUser FindUserByEmail(string email);
+		Task<bool> DeleteAsync(string username);
+		IUser FindUserByEmail(string email);
         IUser FindUserByUsername(string nickname);
         void Update(Action value);
     }

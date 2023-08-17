@@ -12,6 +12,8 @@ using Cassandra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Naturistic.Backend.Authentication;
+using Naturistic.Core.Interfaces.Services;
+using Naturistic.Core.Services;
 
 namespace Naturistic.Backend.Extensions
 {
@@ -98,6 +100,12 @@ namespace Naturistic.Backend.Extensions
                 .AddDefaultTokenProviders();
         }
 
+        public static void AddMail(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddTransient<IEmailService, MailKitEmailService>();
+            services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+        }
+
         public static void ConfigureRepositories(this IServiceCollection services)
         {
             services.AddTransient<IUserRepository, UserRepository>();
@@ -106,6 +114,7 @@ namespace Naturistic.Backend.Extensions
             services.AddTransient<IViewerUsersRepository, ViewerUsersRepository>();
             services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
             services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
+            services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
         }
 
 		public static void AddJwtAuthentication(this IServiceCollection services)

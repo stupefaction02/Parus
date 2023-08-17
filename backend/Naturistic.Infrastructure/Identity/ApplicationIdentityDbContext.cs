@@ -24,6 +24,7 @@ namespace Naturistic.Infrastructure.Identity
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
+        public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
 
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
@@ -44,6 +45,12 @@ namespace Naturistic.Infrastructure.Identity
                     .HasOne(e => e.ConfirmCode)
                     .WithOne(e => e.User)
                     .HasForeignKey<ConfirmCode>(e => e.UserId)
+                    .IsRequired();
+
+            builder.Entity<ApplicationUser>()
+                    .HasOne(e => e.PasswordRecoveryToken)
+                    .WithOne(e => e.User)
+                    .HasForeignKey<PasswordRecoveryToken>(e => e.UserId)
                     .IsRequired();
 
             builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(true);

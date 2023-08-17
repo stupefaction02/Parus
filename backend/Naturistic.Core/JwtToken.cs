@@ -25,4 +25,6 @@ namespace Naturistic.Core
         [JsonPropertyName("payload")]
         public string Payload { get; set; }
     }
+
+
 }

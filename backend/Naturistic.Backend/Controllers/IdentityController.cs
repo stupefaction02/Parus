@@ -17,6 +17,12 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Naturistic.Core.Interfaces.Services;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server;
+using Naturistic.Core.Interfaces;
+using Naturistic.Core.Services.Localization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Common.Utils;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -26,8 +32,7 @@ namespace Naturistic.Backend.Controllers
         private readonly IWebHostEnvironment hostEnviroment;
 
         private readonly ILogger<IdentityController> logger;
-
-		private readonly UserManager<ApplicationUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
 
         private readonly SignInManager<ApplicationUser> signInManager;
 
@@ -36,7 +41,8 @@ namespace Naturistic.Backend.Controllers
         private readonly IChatsRepository chatsRepository;
         private readonly IUserRepository userRepository;
         private readonly IConfrimCodesRepository confrimCodesRepository;
-		private readonly IEmailService emailService;
+        private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository;
+        private readonly IEmailService emailService;
         private readonly IPasswordHasher<ApplicationUser> passwordHasher;
         private readonly IBroadcastRepository broadcastRepository;
 
@@ -48,6 +54,7 @@ namespace Naturistic.Backend.Controllers
                            IChatsRepository chatsRepository,
                            IUserRepository userRepository,
                            IConfrimCodesRepository confrimCodesRepository,
+                           IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
 						   IEmailService emailService,
                            IPasswordHasher<ApplicationUser> passwordHasher,
 						   ILogger<IdentityController> logger)
@@ -58,14 +65,13 @@ namespace Naturistic.Backend.Controllers
             this.chatsRepository = chatsRepository;
             this.userRepository = userRepository;
             this.confrimCodesRepository = confrimCodesRepository;
-			this.emailService = emailService;
+            this.passwordRecoveryTokensRepository = passwordRecoveryTokensRepository;
+            this.emailService = emailService;
             this.passwordHasher = passwordHasher;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.logger = logger;
         }
-
-        //public async Task<object> 
 
         #region Testing
 
@@ -399,16 +405,65 @@ namespace Naturistic.Backend.Controllers
             }
         }
 
-		[HttpGet]
-		[Route("api/account/sendrecoveryemail")]
-		public async Task SendRecoveryEmail(string username, string email)
-        {
+        private string RECOVERY_MAIL1 => "RECOVERY_MAIL1";
 
+        [HttpGet]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Route("api/account/sendrecoveryemail")]
+		public async Task<object> SendRecoveryEmail(string username, string email, string locale,
+            [FromServices] IServer server, [FromServices] ILocalizationService localization)
+        {
+            ApplicationUser user = await userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                logger.LogInformation($"Could't find user with name {username}");
+                return BadRequest($"Could't find user with name {username}");
+            }
+
+            var addresses = server.Features.Get<IServerAddressesFeature>().Addresses;
+
+            string https = addresses.First();
+
+            string randomString = Guid.NewGuid().ToString();
+            string token = passwordHasher.HashPassword(null, randomString);
+
+            string url = https + $"/api/account/sendrecoveryemail?token={token}";
+
+            if (String.IsNullOrEmpty(locale))
+            {
+                localization.SetLocale("ru");
+            }
+            else
+            {
+                localization.SetLocale(locale);
+            }
+
+            string content = localization.RetrievePhrase(RECOVERY_MAIL1) + ": " + url;
+
+            DateTime expireDate = DateTime.Now.AddHours(PasswordRecoveryToken.LifetimeHours);
+            PasswordRecoveryToken recoveryToken = new PasswordRecoveryToken
+            {
+                Token = token,
+                User = user,
+                UserId = user.Id,
+                ExpireAt = TimeUtils.ToUnixTimeSeconds(expireDate)
+            };
+
+            if (passwordRecoveryTokensRepository.Contains(user.UserName))
+            {
+                passwordRecoveryTokensRepository.DeleteAll(x => x.GetUsername() == user.UserName);
+			}
+
+            passwordRecoveryTokensRepository.Add(recoveryToken);
+
+            logger.LogInformation($"Created password recovery token: user {user.UserName}, token {token}");
 
             //Task sendTask = emailService.SendEmailAsync(username, email, content);
 
-		}
-
+            return Ok();
+        }
+        
         public enum RegisterType : sbyte
         {
             ViewerUser = 2,

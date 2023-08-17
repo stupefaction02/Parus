@@ -14,8 +14,8 @@ namespace Naturistic.Core.Services
 		{
 			using var emailMessage = new MimeMessage();
 
-			emailMessage.From.Add(new MailboxAddress("Администрация сайта", "login@yandex.ru"));
-			emailMessage.To.Add(new MailboxAddress("", email));
+			emailMessage.From.Add(new MailboxAddress("Администрация сайта", "ivan.safonow2012@yandex.ru"));
+			emailMessage.To.Add(new MailboxAddress("flashdancer", email));
 			emailMessage.Subject = subject;
 			emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
 			{

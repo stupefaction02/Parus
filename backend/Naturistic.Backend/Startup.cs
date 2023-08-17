@@ -23,6 +23,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Naturistic.Core.Interfaces.Services;
 using Naturistic.Core.Services;
+using Naturistic.Core.Interfaces;
+using Naturistic.Core.Services.Localization;
 
 namespace Naturistic.Backend
 {
@@ -51,7 +53,9 @@ namespace Naturistic.Backend
 
             services.AddJwtAuthentication();
 
-            services.AddTransient<IEmailService, MailKitEmailService>();
+            services.AddMail(Configuration);
+
+            services.AddTransient<ILocalizationService, LocalizationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

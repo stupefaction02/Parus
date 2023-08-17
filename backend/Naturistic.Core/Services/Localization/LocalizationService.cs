@@ -46,6 +46,7 @@ namespace Naturistic.Core.Services.Localization
 					break;
                 }
 			}
+			
 			var t = stream.ReadLine();
 			stream.BaseStream.Position = 0;
 

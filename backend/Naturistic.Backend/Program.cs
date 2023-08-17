@@ -24,9 +24,5 @@ namespace Naturistic.Backend
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-                //.ConfigureLogging((hostBuilderContext, logging) =>
-                //{
-                //    logging.Services.AddSingleton<ILoggerProvider, Common.Logging.NaturisticLoggerProvider>();
-                //});
     }
 }

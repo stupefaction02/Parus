@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Naturistic.Core.Entities;
@@ -51,6 +52,20 @@ namespace Naturistic.Infrastructure.DLA.Repositories
 		public IUser FindUserByUsername(string nickname)
 		{
 			return context.Users.AsEnumerable().SingleOrDefault(user => user.GetUsername() == nickname);
+		}
+
+        public async Task<bool> DeleteAsync(string username)
+        {
+            int deleted = await context.Users.Where(x => x.GetUsername() == username).ExecuteDeleteAsync();
+
+            return deleted > 0;
+        }
+
+		public Task<bool> ContainsAsync(Func<IUser, bool> predicate)
+		{
+			Expression<Func<IUser, bool>> expression = x => predicate(x);
+
+			return context.Users.AnyAsync(expression);
 		}
 	}
 }
