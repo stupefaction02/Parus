@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.Identity;
@@ -22,5 +23,20 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             context.ConfirmCodes.Add((ConfirmCode)code);
             context.SaveChanges();
         }
-    }
+
+		public void ClearTracking()
+		{
+			context.ChangeTracker.Clear();
+		}
+
+		public bool Contains(string userId)
+		{
+			return context.ConfirmCodes.Any(t => t.UserId == userId);
+		}
+
+		public IConfirmCode OneByUser(string id)
+		{
+			return context.ConfirmCodes.SingleOrDefault(t => t.UserId == id);
+		}
+	}
 }

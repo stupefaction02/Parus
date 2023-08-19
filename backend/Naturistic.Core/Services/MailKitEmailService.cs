@@ -10,7 +10,7 @@ namespace Naturistic.Core.Services
 {
 	public class MailKitEmailService : IEmailService
 	{
-		public async Task SendEmailAsync(string email, string subject, string body)
+		public async Task<EmailResponse> SendEmailAsync(string email, string subject, string body)
 		{
 			using var emailMessage = new MimeMessage();
 
@@ -22,14 +22,17 @@ namespace Naturistic.Core.Services
 				Text = body
 			};
 
+			string reponse;
 			using (var client = new SmtpClient())
 			{
 				await client.ConnectAsync("smtp.yandex.ru", 25, false);
 				await client.AuthenticateAsync("login@yandex.ru", "password");
-				await client.SendAsync(emailMessage);
+				reponse = await client.SendAsync(emailMessage);
 
 				await client.DisconnectAsync(true);
 			}
+
+			return new EmailResponse { Success = true };
 		}
 	}
 }

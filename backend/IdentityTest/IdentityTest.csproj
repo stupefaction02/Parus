@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Naturistic.Backend\Naturistic.Backend.csproj" />
+    <ProjectReference Include="..\Naturistic.WebUI\Naturistic.WebUI.csproj" />
   </ItemGroup>
 
 </Project>

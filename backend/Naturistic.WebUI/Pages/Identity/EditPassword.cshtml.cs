@@ -18,6 +18,12 @@ using Naturistic.Infrastructure;
 using Naturistic.Infrastructure.DLA.Repositories;
 using Naturistic.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Web.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Naturistic.WebUI.Pages.Identity
 {
@@ -37,24 +43,35 @@ namespace Naturistic.WebUI.Pages.Identity
         public string COMPLETE_BTN { get; set; }
 
         private readonly ILogger<EditPasswordModel> _logger;
-
+		private readonly IUserRepository users;
 		private readonly ILocalizationService localizationService;
+		private readonly IPasswordRecoveryTokensRepository tokens;
+		private readonly UserManager<ApplicationUser> userManager;
+		private readonly IPasswordHasher<ApplicationUser> passwordHasher;
 
-		public EditPasswordModel(ILogger<EditPasswordModel> logger)
+		public EditPasswordModel(IUserRepository users,
+            ILocalizationService localizationService,
+			IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
+			UserManager<ApplicationUser> userManager,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+			ILogger<EditPasswordModel> logger)
         {
-            _logger = logger;
+			this.users = users;
+			this.localizationService = localizationService;
+			this.tokens = passwordRecoveryTokensRepository;
+			this.userManager = userManager;
+			this.passwordHasher = passwordHasher;
+			_logger = logger;
 		}
 
-        public IActionResult OnGet([FromServices] ILocalizationService localizationService,
-            [FromServices] IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
-            string token)
+        public IActionResult OnGet(string token)
         {
             if (String.IsNullOrEmpty(token))
             {
                 return Unauthorized();
             }
 
-            IUser user = passwordRecoveryTokensRepository.GetUser(token);
+            IUser user = tokens.GetUser(token);
 
             if (user == null)
             {
@@ -72,9 +89,39 @@ namespace Naturistic.WebUI.Pages.Identity
 			return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+		public async Task<IActionResult> OnPostAsync(string newpassword)
         {
-			return null;
+            string username = HttpContext.User.Identity.Name;
+
+            // TODO: Find the way to make sigh out here for multiple schemes
+			Response.Cookies.Delete("JWT");
+			Response.Cookies.Delete("identity.username");
+
+			ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == username);
+
+            if (user == null)
+            {
+				return BadRequest("");
+			}
+
+			string newpasswordHash = passwordHasher.HashPassword(user, newpassword);
+
+            user.PasswordHash = newpasswordHash;
+
+            users.Update(user);
+			//var updateResult = await userManager.UpdateAsync(user);
+
+			//if (updateResult.Succeeded)
+   //         {
+   //             tokens.Delete(user.PasswordRecoveryToken);
+
+   //             return RedirectToPage("index");
+			//}
+
+            await tokens.DeleteAsync(user.PasswordRecoveryToken);
+
+            return RedirectToPage("index");
         }
+
     }
 }

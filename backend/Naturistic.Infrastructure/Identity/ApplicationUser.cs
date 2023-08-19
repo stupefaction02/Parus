@@ -15,6 +15,8 @@ namespace Naturistic.Infrastructure.Identity
 
         public string GetEmail() { return base.Email; }
 
+        public string GetId() { return base.Id; }
+
 		public new bool EmailConfirmed { get => base.EmailConfirmed; set => base.EmailConfirmed = value; }
 
         public ConfirmCode ConfirmCode { get; set; }

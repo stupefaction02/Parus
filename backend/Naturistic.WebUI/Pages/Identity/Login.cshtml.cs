@@ -66,7 +66,7 @@ namespace Naturistic.WebUI.Pages.Identity
 
 			if (response.Success == "Y")
             {
-                Response.Cookies.Append("JWT", response.Payload);
+                Response.Cookies.Append("JWT", response.Payload.ToString());
 
                 var user = await userManager.FindByNameAsync(nickname);
 

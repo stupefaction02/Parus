@@ -7,6 +7,13 @@ namespace Naturistic.Core.Interfaces.Services
 {
     public interface IEmailService
     {
-        public Task SendEmailAsync(string email, string subject, string body);
+        public Task<EmailResponse> SendEmailAsync(string email, string subject, string body);
+    }
+
+    public class EmailResponse
+    {
+        public bool Success { get; set; }
+
+        public string Mssage { get; set; }
     }
 }

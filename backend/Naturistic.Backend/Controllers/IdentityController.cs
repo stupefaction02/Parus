@@ -295,7 +295,7 @@ namespace Naturistic.Backend.Controllers
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
-        private async Task CreateVerificaionCode(string username)
+        private async Task<int> CreateVerificaionCodeAsync(string username)
         {
             string a = random.Next(1, 10).ToString();
             string b = random.Next(0, 10).ToString();
@@ -309,6 +309,8 @@ namespace Naturistic.Backend.Controllers
             confrimCodesRepository.Add(new ConfirmCode { Code = confirmNumber, User = user, UserId = username });
 
             logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {username}");
+
+            return confirmNumber;
         }
 
         private int GetVerificationCode(string username)
@@ -325,16 +327,41 @@ namespace Naturistic.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/requestverificationcode")]
-        public async Task<object> CreateVerificationCode(string username)
+        public async Task<object> CreateVerificationCodeAsync(string username)
         {
-            await CreateVerificaionCode(username);
+			string a = random.Next(1, 10).ToString();
+			string b = random.Next(0, 10).ToString();
+			string c = random.Next(0, 10).ToString();
+			string d = random.Next(0, 10).ToString();
+			string f = random.Next(0, 10).ToString();
+			int confirmNumber = Int32.Parse(a + b + c + d + f);
 
-            return CreateJsonSuccess();
-        }
+			var user = await userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                return CreateJsonError($"Can't find user {username}.");
+            }
+
+			confrimCodesRepository.Add(new ConfirmCode { Code = confirmNumber, User = user, UserId = user.Id });
+
+			logger.LogInformation($"Creating confirmation code with numbers {confirmNumber} for user: {username}");
+
+            string emailBody = "";
+
+			var emailResponse = await emailService.SendEmailAsync(user.Email, "Email Verification", emailBody);
+
+            if (emailResponse.Success)
+            {
+				return CreateJsonSuccess();
+			}
+
+			return CreateJsonError(emailResponse.Mssage);
+		}
 
         [HttpPost]
         [Route("api/account/verifyaccount")]
-        public async Task<object> VerifyAccount(string username, int code)
+        public async Task<object> VerifyAccountAsync(string username, int code)
         {
             int exprectedCode = GetVerificationCode(username);
 
@@ -344,23 +371,33 @@ namespace Naturistic.Backend.Controllers
 
                 if (user != null)
                 {
-                    userRepository.Update(() => user.EmailConfirmed = true);
+                    var appUser = (ApplicationUser)user;
+
+                    appUser.EmailConfirmed = true;
+
+					userRepository.Update(user);
 
                     logger.LogInformation($"Account {username} has been confirmed!");
                 }
                 else
                 {
-                    return NotFound($"Something went wrong! Couldn't find user with email = {username}");
-                }
+					string errorInfo = $"Something went wrong! Couldn't find user with email = {username}";
 
-                return Ok("Y");
+					logger.LogInformation(errorInfo);
+
+					return CreateJsonError(errorInfo);
+				}
+
+                return CreateJsonSuccess();
             }
             else
             {
-                logger.LogInformation($"Number required for {username} confirmation are wrong! Waiting for client to send right number.");
+                string errorInfo = $"Number required for {username} confirmation are wrong! Waiting for client to send right number.";
 
-                return Ok("N");
-            }
+				logger.LogInformation(errorInfo);
+
+                return CreateJsonError(errorInfo);
+			}
         }
 
         [HttpGet]
@@ -450,9 +487,9 @@ namespace Naturistic.Backend.Controllers
                 ExpireAt = TimeUtils.ToUnixTimeSeconds(expireDate)
             };
 
-            if (passwordRecoveryTokensRepository.Contains(user.UserName))
+            if (passwordRecoveryTokensRepository.Contains(user.Id))
             {
-                passwordRecoveryTokensRepository.DeleteAll(x => x.GetUsername() == user.UserName);
+                passwordRecoveryTokensRepository.DeleteAll(x => x.GetUsername() == user.Id);
 			}
 
             passwordRecoveryTokensRepository.Add(recoveryToken);

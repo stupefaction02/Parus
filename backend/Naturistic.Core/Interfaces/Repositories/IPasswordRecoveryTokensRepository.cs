@@ -14,8 +14,10 @@ namespace Naturistic.Core.Interfaces.Repositories
         void DeleteAll(Func<IUser, bool> token);
         IUser GetUser(string token);
         bool Contains(string userId);
-		IPasswordRecoveryToken GetTokenByUsername(string userId);
-    }
+		IPasswordRecoveryToken OneByUser(string userId);
+		void ClearTracking();
+		Task DeleteAsync(IPasswordRecoveryToken token);
+	}
 
     public interface IPasswordRecoveryToken { }
 }

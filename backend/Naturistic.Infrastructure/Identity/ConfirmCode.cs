@@ -17,7 +17,7 @@ namespace Naturistic.Infrastructure.Identity
 
         public ApplicationUser User { get; set; }
 
-        [Column(TypeName = "varchar(256)")]
+        [Column(TypeName = "nvarchar(450)")]
         public string UserId { get; set; }
 
         public int Code { get; set; } 

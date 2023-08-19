@@ -25,13 +25,25 @@ namespace Naturistic.Infrastructure.DLA.Repositories
         public void Add(IPasswordRecoveryToken token)
         {
             context.Add(token);
+
+            context.SaveChanges();
         }
 
-        public void Delete(IPasswordRecoveryToken message)
+        public void Delete(IPasswordRecoveryToken token)
         {
+            context.PasswordRecoveryTokens.Remove((PasswordRecoveryToken)token);
+
+            context.SaveChanges();
         }
 
-        public IUser GetUser(string token)
+		public async Task DeleteAsync(IPasswordRecoveryToken token)
+		{
+			context.PasswordRecoveryTokens.Remove((PasswordRecoveryToken)token);
+
+			await context.SaveChangesAsync();
+		}
+
+		public IUser GetUser(string token)
         {
             var tokenEntry = context.PasswordRecoveryTokens.Include(e => e.User)
                 .SingleOrDefault(e => e.Token == token);
@@ -56,9 +68,14 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             return context.PasswordRecoveryTokens.Any(t => t.UserId == userId);
 		}
 
-        public IPasswordRecoveryToken GetTokenByUsername(string username)
+        public IPasswordRecoveryToken OneByUser(string id)
         {
-			return context.PasswordRecoveryTokens.SingleOrDefault(t => t.UserId == username);
+			return context.PasswordRecoveryTokens.SingleOrDefault(t => t.UserId == id);
+		}
+
+		public void ClearTracking()
+		{
+			context.ChangeTracker.Clear();
 		}
 	}
 }

@@ -10,16 +10,23 @@ namespace Naturistic.Core.Interfaces.Repositories
 		IEnumerable<IUser> Users { get; }
 		bool CheckIfEmailExists(string email);
         bool CheckIfNicknameExists(string nickname);
-		Task<bool> DeleteAsync(string username);
+		bool Contains(Func<IUser, bool> predicate);
+		void RemoveOne(string username);
 		IUser FindUserByEmail(string email);
         IUser FindUserByUsername(string nickname);
-        void Update(Action value);
-    }
+		IUser One(Func<IUser, bool> predicate);
+		void Update(Action value);
+		void Update(IUser user);
+		void ClearTracking();
+	}
 
     public interface IConfrimCodesRepository
     {
         IEnumerable<IConfirmCode> Codes { get; }
 
         void Add(IConfirmCode email);
-    }
+		void ClearTracking();
+		bool Contains(string userId);
+		IConfirmCode OneByUser(string id);
+	}
 }

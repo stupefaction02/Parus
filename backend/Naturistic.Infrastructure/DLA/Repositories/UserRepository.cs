@@ -54,18 +54,39 @@ namespace Naturistic.Infrastructure.DLA.Repositories
 			return context.Users.AsEnumerable().SingleOrDefault(user => user.GetUsername() == nickname);
 		}
 
-        public async Task<bool> DeleteAsync(string username)
+        public void RemoveOne(string username)
         {
-            int deleted = await context.Users.Where(x => x.GetUsername() == username).ExecuteDeleteAsync();
+            IUser target = One(x => x.GetUsername() == username);
 
-            return deleted > 0;
-        }
+            context.Users.Remove((ApplicationUser)target);
 
-		public Task<bool> ContainsAsync(Func<IUser, bool> predicate)
+			context.SaveChanges();
+		}
+
+		public bool Contains(Func<IUser, bool> predicate)
 		{
-			Expression<Func<IUser, bool>> expression = x => predicate(x);
+			//Expression<Func<IUser, bool>> expression = x => predicate(x);
 
-			return context.Users.AnyAsync(expression);
+            // client-side
+			return context.Users.AsEnumerable().Any(x => predicate(x));
+		}
+
+        public IUser One(Func<IUser, bool> predicate)
+        {
+			return context.Users.Include(x => x.PasswordRecoveryToken)
+                .AsEnumerable().SingleOrDefault(predicate);
+		}
+
+        public void Update(IUser user)
+        {
+            context.Users.Update((ApplicationUser)user);
+
+            context.SaveChanges();
+		}
+
+        public void ClearTracking()
+        {
+			context.ChangeTracker.Clear();
 		}
 	}
 }
