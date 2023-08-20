@@ -59,20 +59,26 @@ namespace Naturistic.WebUI.Pages.Identity
 
 			ApiServerResponse response = await ServerUtils.ConvertResponseStream<ApiServerResponse>(jwtSignInResult);
 
-            if (response != null)
+            if (response == null)
             {
 				logger.LogError($"Can't rerieve JWT Token. Contact the API server.");
+
+                return Page();
 			}
 
 			if (response.Success == "Y")
             {
                 Response.Cookies.Append("JWT", response.Payload.ToString());
 
-                var user = await userManager.FindByNameAsync(nickname);
-
-                string errorMessage = $"Wrong password for user {user.UserName}";
-                logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
+                return RedirectToPage("Index");
             }
+            else
+            {
+				var user = await userManager.FindByNameAsync(nickname);
+
+				string errorMessage = $"Wrong password for user {user.UserName}";
+				logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
+			}
 
             // highlight error
             return null;
