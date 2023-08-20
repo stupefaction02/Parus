@@ -16,7 +16,7 @@ namespace Naturistic.Core.Interfaces.Repositories
         IUser FindUserByUsername(string nickname);
 		IUser One(Func<IUser, bool> predicate);
 		void Update(Action value);
-		void Update(IUser user);
+		bool Update(IUser user);
 		void ClearTracking();
 	}
 
@@ -28,5 +28,6 @@ namespace Naturistic.Core.Interfaces.Repositories
 		void ClearTracking();
 		bool Contains(string userId);
 		IConfirmCode OneByUser(string id);
+		int Remove(IConfirmCode token);
 	}
 }

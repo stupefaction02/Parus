@@ -24,6 +24,13 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             context.SaveChanges();
         }
 
+		public int Remove(IConfirmCode token)
+		{
+			context.ConfirmCodes.Remove((ConfirmCode)token);
+
+			return context.SaveChanges();
+		}
+
 		public void ClearTracking()
 		{
 			context.ChangeTracker.Clear();

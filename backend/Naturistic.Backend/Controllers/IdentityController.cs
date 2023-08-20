@@ -313,9 +313,9 @@ namespace Naturistic.Backend.Controllers
             return confirmNumber;
         }
 
-        private int GetVerificationCode(string username)
+        private int GetVerificationCode(string userId)
         {
-            IConfirmCode number = confrimCodesRepository.Codes.SingleOrDefault(x => x.UserId == username);
+            IConfirmCode number = confrimCodesRepository.OneByUser(userId);
 
             if (number != null)
             {
@@ -353,50 +353,58 @@ namespace Naturistic.Backend.Controllers
 
             if (emailResponse.Success)
             {
-				return CreateJsonSuccess();
+				return Json(CreateJsonSuccess());
 			}
 
-			return CreateJsonError(emailResponse.Mssage);
+			return Json(CreateJsonError(emailResponse.Mssage));
 		}
 
         [HttpPost]
         [Route("api/account/verifyaccount")]
         public async Task<object> VerifyAccountAsync(string username, int code)
         {
-            int exprectedCode = GetVerificationCode(username);
+			IUser user = this.userRepository.One(x => x.GetUsername() == username);
+
+			if (user == null)
+			{
+				string errorInfo = $"Something went wrong! Couldn't find user with email = {username}";
+
+				logger.LogInformation(errorInfo);
+
+				return Json(CreateJsonError(errorInfo));
+			}
+
+			int exprectedCode = GetVerificationCode(user.GetId());
 
             if (exprectedCode == code)
             {
-                IUser user = this.userRepository.FindUserByUsername(username);
+				ApplicationUser appUser = (ApplicationUser)user;
 
-                if (user != null)
+				appUser.EmailConfirmed = true;
+
+				if (userRepository.Update(user))
                 {
-                    var appUser = (ApplicationUser)user;
+					logger.LogInformation($"Account {username} has been confirmed!");
 
-                    appUser.EmailConfirmed = true;
+                    confrimCodesRepository.Remove(appUser.ConfirmCode);
 
-					userRepository.Update(user);
-
-                    logger.LogInformation($"Account {username} has been confirmed!");
-                }
-                else
-                {
-					string errorInfo = $"Something went wrong! Couldn't find user with email = {username}";
-
-					logger.LogInformation(errorInfo);
-
-					return CreateJsonError(errorInfo);
+					return Json(CreateJsonSuccess());
 				}
 
-                return CreateJsonSuccess();
-            }
+                // if database has fucked up
+				string errorInfo = $"Server Error.";
+
+				logger.LogInformation(errorInfo);
+
+				return Json(CreateJsonError(errorInfo));
+			}
             else
             {
                 string errorInfo = $"Number required for {username} confirmation are wrong! Waiting for client to send right number.";
 
 				logger.LogInformation(errorInfo);
 
-                return CreateJsonError(errorInfo);
+                return Json(CreateJsonError(errorInfo));
 			}
         }
 

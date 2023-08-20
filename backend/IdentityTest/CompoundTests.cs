@@ -259,8 +259,8 @@ namespace IdentityTest
 			#region Register
 			IUserRepository users = GetBackendService<IUserRepository>();
 
-			string username = "test_ivan109";
-			string email = "testivan109@gcom";
+			string username = "test_ivan124";
+			string email = "testivan124@gcom";
 			string password = "zx1";
 
 			var controller = GetIdentityController();
@@ -331,11 +331,11 @@ namespace IdentityTest
 
 			Assert.True(sameUser.EmailConfirmed);
 
-			bool codeAdded1 = confirmCodes.Contains(a.GetId());
-			Assert.False(codeAdded);
+			bool codeStillExists = confirmCodes.Contains(a.GetId());
+			Assert.False(codeStillExists);
 
-			ConfirmCode addedCode1 = (ConfirmCode)confirmCodes.OneByUser(a.GetId());
-			Assert.Null(addedCode);
+			ConfirmCode stillAddedCode = (ConfirmCode)confirmCodes.OneByUser(a.GetId());
+			Assert.Null(stillAddedCode);
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace Naturistic.Core.Services
 	{
 		public async Task<EmailResponse> SendEmailAsync(string email, string subject, string body)
 		{
+			return new EmailResponse { Success = true };
 			using var emailMessage = new MimeMessage();
 
 			emailMessage.From.Add(new MailboxAddress("Администрация сайта", "ivan.safonow2012@yandex.ru"));

@@ -74,14 +74,15 @@ namespace Naturistic.Infrastructure.DLA.Repositories
         public IUser One(Func<IUser, bool> predicate)
         {
 			return context.Users.Include(x => x.PasswordRecoveryToken)
+                .Include(x => x.ConfirmCode)
                 .AsEnumerable().SingleOrDefault(predicate);
 		}
 
-        public void Update(IUser user)
+        public bool Update(IUser user)
         {
             context.Users.Update((ApplicationUser)user);
 
-            context.SaveChanges();
+            return context.SaveChanges() > 0;
 		}
 
         public void ClearTracking()
