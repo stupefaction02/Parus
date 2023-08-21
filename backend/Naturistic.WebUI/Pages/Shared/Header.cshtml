@@ -30,23 +30,23 @@
             <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
                 @if (!isUserEmailConfirmed)
                 {
-                    <li class="nav-item">
+                    <li class="nav-item" style="margin-right: 20px">
                         <a id="confirm_account_link" href="javascript:void(0)">Confirm account!</a>
                     </li>
                 }
                 <li class="nav-item">
-                    <button id="header_signout_button" class="text-white  btn btn-primary nav-link">Sign Out</button>rm>
+                    <button id="header_signout_button" class="text-white  btn btn-primary nav-link">Sign Out</button>
                 </li>
             </ul>
         }
         else
         {
             <ul class="navbar-nav flex-grow-1  d-flex justify-content-end">
-                <li class="nav-item">
-                    <a class="text-white margin-right-12 btn btn-primary nav-link" style="margin-right: 20px" href="/account/registration">Sign In</a>
+                <li id="header_login_btn" style="margin-right: 20px" class="nav-item">
+                    <a class="text-white  btn btn-primary nav-link">Sign In</a>
                 </li>
                 <li class="nav-item">
-                    <a class="text-white  btn btn-primary nav-link" href="/account/login">Sign Up</a>
+                    <a class="text-white margin-right-12 btn btn-primary nav-link" style="margin-right: 20px" href="/account/registration">Sign Up</a>
                 </li>
             </ul>
         }

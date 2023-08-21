@@ -152,18 +152,18 @@ namespace Naturistic.Backend.Controllers
 
 		[HttpPost]
         [Route("api/account/login")]
-        public async Task<object> Login(string nickname, string password)
+        public async Task<object> Login(string username, string password)
         {
-            logger.LogInformation($"Attempt to login {nickname}");
-            ApplicationUser user = await userManager.FindByNameAsync(nickname);
+            logger.LogInformation($"Attempt to login {username}");
+            ApplicationUser user = await userManager.FindByNameAsync(username);
 
-            var signInResult = await signInManager.PasswordSignInAsync(user.UserName, password, false, false);
+            PasswordVerificationResult signInResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             
-            if (signInResult.Succeeded)
+            if (signInResult == PasswordVerificationResult.Success)
             {
-                logger.LogInformation($"{nickname} login successfully!");
+                logger.LogInformation($"{username} login successfully!");
 
-                var identity = await CreateIdentityAsync(user);
+                ClaimsIdentity identity = await CreateIdentityAsync(user);
 
                 JwtToken newToken = CreateJWT(identity);
                 return CreateJsonSuccess(additionalParameter: newToken.Token);
@@ -171,7 +171,7 @@ namespace Naturistic.Backend.Controllers
             else
             {
                 string errorMessage = $"Wrong password for user {user.UserName}";
-                logger.LogInformation($"Failed to login {nickname}. Error: {errorMessage}");
+                logger.LogInformation($"Failed to login {username}. Error: {errorMessage}");
 
                 return CreateJsonError(errorMessage);
             }

@@ -14,7 +14,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	
     <link href="~/lib/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <link href="~/css/confirmation.css" rel="stylesheet" media="all">
+    <link href="~/css/popup.css" rel="stylesheet" media="all">
+
+    <link href="~/css/login.css" rel="stylesheet" media="all">
 
 	@RenderSection("AdditionalStyles", required: false)
 </head>
@@ -69,6 +71,13 @@
             </div>
         </div>
     }
+
+    <div id="login_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <a href="#" class="box-close">×</a>
+            <partial name="/Pages/Identity/Login.cshtml" />
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

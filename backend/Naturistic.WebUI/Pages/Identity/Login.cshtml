@@ -1,8 +1,7 @@
-﻿@page "/account/login"
-@model LoginModel
-@{
-    ViewData["Title"] = "Sign In";
-}
+﻿@using Naturistic.Core.Interfaces;
+@using Naturistic.WebUI.HtmlHelpers
+
+@inject ILocalizationService localizationService
 
 @section AdditionalScripts
 {
@@ -20,31 +19,39 @@
     <link href="~/css/regform.css" rel="stylesheet" media="all">
 }
 
-        <div class="wrapper wrapper--w680">
-            <div class="card card-4">
-                <div class="card-body">
-                    <h2 class="title">Login Form</h2>
-                    <form method="POST">
-                        <div class="row row-space">
-                            <div class="col-8">
-                                <div class="input-group">
-                                    <label class="label">Username</label>
-                                    <input class="input--style-4" type="text" name="nickname">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-space">
-                            <div class="col-8">
-                                <div class="input-group">
-                                    <label class="label">Password</label>
-                                    <input class="input--style-4" type="password" name="password">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-t-15">
-                            <button class="btn btn--radius-2 btn--blue" type="submit">Login</button>
-                        </div>
-                    </form>
+@{
+    string locale = this.Context.Request.Cookies["locale"];
+    localizationService.SetLocale(locale);
+}
+
+<div class="wrapper wrapper--w680">
+    <div class="card card-4">
+        <div class="card-body">
+            <h2 class="title">Войти в Naturistic</h2>
+            <div class="row row-space">
+                <div class="col-8">
+                    <div class="input-group">
+                        <label class="label">Username</label>
+                        <input id="login_usernameInput" class="input--style-4" type="text" name="nickname">
+                    </div>
                 </div>
             </div>
+            <div class="row row-space">
+                <div class="col-8">
+                    <div class="input-group">
+                        <label class="label">Password</label>
+                        <input id="password_Input" class="input--style-4" type="password" name="password">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label id="login_error_label" style="display: none; margin-bottom: 10px" class="label">
+                    @LocalizationHelper.RetreiveErrorParagraph(Html, key: "LOGIN_PSWD_ERROR", localization: localizationService)
+                </label> 
+            </div>
+            <div class="p-t-15" style="margin-top: 10px">
+                <button id="login_sendbutton" class="nav-item btn btn--radius-2 btn--blue" type="submit">Login</button>
+            </div>
         </div>
+    </div>
+</div>
