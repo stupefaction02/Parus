@@ -1,46 +1,39 @@
-﻿
-@section AdditionalScripts
-{
-    @*<script type="text/javascript" src="~/js/network.js"></script>*@
-	<script type="text/javascript" src="~/js/confirmation.js"></script>
-}
+﻿@using Naturistic.Core.Interfaces;
+@using Naturistic.WebUI.HtmlHelpers;
 
-@section AdditionalStyles
-{
-    @*<link href="~/css/confirmation.css" rel="stylesheet" media="all">*@
-}
+@inject ILocalizationService localization
 
-        <div class="wrapper wrapper--w680">
-            <div class="card card-4">
-                <div class="card-body">
-                    <div id="verification_numbers" class="row justify-content-center align-items-center">
-                        <div style="width: 40px">
-                            <div class="reg_input">
-                                <input style="width: 40px" maxlength="1" type="text" name="first"/>
-                            </div>
-                        </div>
-                        <div style="width: 40px">
-                            <div class="reg_input">
-                                <input style="width: 40px" maxlength="1" type="text" name="second"/>
-                            </div>
-                        </div>
-                        <div style="width: 40px">
-                            <div class="reg_input">
-                                <input style="width: 40px" maxlength="1" type="text" name="trith"/>
-                            </div>
-                        </div>
-                        <div style="width: 40px">
-                            <div class="reg_input">
-                                <input style="width: 40px" maxlength="1" type="text" name="fourth"/>
-                            </div>
-                        </div>
-                        <div style="width: 40px">
-                            <div class="reg_input">
-                                <input style="width: 40px" maxlength="1" type="text" name="fifth"/>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a id="send_code_again" href="javascript:void(0)">Send code again</a>
+<div class="verification_container">
+
+    <h4>@LocalizationHelper.RetreiveRawText(Html, "VERIF_INFO", localization)</h4>
+
+    <div id="verification_numbers" class="row justify-content-center align-items-center">
+        <div class="verify_number_input_container" style="width: 40px">
+            <div class="reg_input">
+                <input class="verify_number_input" style="width: 40px" maxlength="1" type="text" name="first" />
             </div>
         </div>
+        <div class="verify_number_input_container"  style="width: 40px">
+            <div class="reg_input">
+                <input class="verify_number_input" style="width: 40px" maxlength="1" type="text" name="second" />
+            </div>
+        </div>
+        <div class="verify_number_input_container" style="width: 40px">
+            <div class="reg_input">
+                <input class="verify_number_input"  style="width: 40px" maxlength="1" type="text" name="trith" />
+            </div>
+        </div>
+        <div class="verify_number_input_container" style="width: 40px">
+            <div class="reg_input">
+                <input class="verify_number_input" style="width: 40px" maxlength="1" type="text" name="fourth" />
+            </div>
+        </div>
+        <div class="verify_number_input_container" style="width: 40px">
+            <div class="reg_input">
+                <input class="verify_number_input" style="width: 40px" maxlength="1" type="text" name="fifth" />
+            </div>
+        </div>
+    </div>
+    <a id="send_code_again" href="javascript:void(0)">@LocalizationHelper.RetreiveRawText(Html, "VERIF_SENDCODE", localization)</a>
+</div>
+      

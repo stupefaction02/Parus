@@ -37,14 +37,30 @@
 }
 
 .box-close {
-    /*float: right;*/
-    position: relative;
-    left: 25px;
-    top: 25px;
-    /*position: absolute;
-    top: 0;
-    right: 15px;
-    color: #fe0606;
+    color: #9147FF;
     text-decoration: none;
-    font-size: 30px;*/
+    font-size: 38px;
+    margin-right: 15px;
 }
+
+    .box-close:hover {
+        color: #a36ef1;
+        text-decoration: none;
+        font-size: 38px;
+        margin-right: 15px;
+    }
+
+.custom_card-body {
+    align-self: center;
+    padding: 0 0 20px 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup_content_header {
+    display: flex;
+    justify-content: end;
+}
+
+
+

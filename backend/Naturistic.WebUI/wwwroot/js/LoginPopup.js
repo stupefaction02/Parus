@@ -1,6 +1,8 @@
 export class LoginPopup {
     constructor(popupId) { //debugger
-        this.popup = document.getElementById(popupId);
+        var popup = document.getElementById(popupId);
+
+        this.popup = popup;
 
         var self = this;
 
@@ -10,6 +12,11 @@ export class LoginPopup {
         var passwordInput = document.getElementById("password_Input");
         var sendbuton = document.getElementById("login_sendbutton");
         var login_error_label = document.getElementById("login_error_label");
+        var close_popup_bn = document.getElementById("close_popup");
+
+        close_popup_bn.onclick = function (e) {
+            popup.style.display = "none";
+        }
 
         sendbuton.onclick = function (e) {
             //debugger
@@ -33,6 +40,9 @@ export class LoginPopup {
                         else {
                             login_error_label.style.display = "block";
                         }
+                    },
+                    error: (e) => { debugger
+                        //login_error_label.style.display = "block";
                     }
                 });
             }

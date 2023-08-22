@@ -4,7 +4,11 @@
 @using Microsoft.AspNetCore.Routing;
 @using Microsoft.AspNetCore.Routing.Patterns;
 @using Microsoft.Extensions.Logging;
+@using Naturistic.Core.Interfaces;
 @using Naturistic.Infrastructure.Identity;
+
+@inject ILocalizationService localization
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,12 +21,18 @@
     <link href="~/css/popup.css" rel="stylesheet" media="all">
 
     <link href="~/css/login.css" rel="stylesheet" media="all">
+    <link href="~/css/inputs.css" rel="stylesheet" media="all">
+    <link href="~/css/buttons.css" rel="stylesheet" media="all">
+    <link href="~/css/verification.css" rel="stylesheet" media="all">
 
 	@RenderSection("AdditionalStyles", required: false)
 </head>
 <body>
     <header>
         @{
+            string locale = this.Context.Request.Cookies["locale"];
+            localization.SetLocale(locale);
+
             bool renderConfirmationPopup = true;
 
             RouteEndpoint endpoit = Context.Request.HttpContext.GetEndpoint() as RouteEndpoint;
@@ -38,7 +48,7 @@
                                   && pageEndpointPart != null
                                   && pageEndpointPart.Content == "recovery")
                 {
-                    renderConfirmationPopup = false;
+                    renderConfirmationPopup = true;
                     <partial name="/Pages/Shared/Recovery_Header.cshtml" />
                 }
                 else
@@ -65,17 +75,31 @@
 
     @if (renderConfirmationPopup)
     {
-        <div id="site_popup" class="b-popup" style="display: none">
+        <div id="site_popup" class="b-popup" style="display: block">
             <div class="b-popup-content">
-                <partial name="/Pages/Identity/Confirmation.cshtml" />
+                <div class="wrapper wrapper--w680">
+                    <div class="card card-4">
+                        <div class="card-body">
+                            <partial name="/Pages/Identity/Confirmation.cshtml" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     }
 
     <div id="login_popup" class="b-popup" style="display: none">
         <div class="b-popup-content">
-            <a href="#" class="box-close">×</a>
-            <partial name="/Pages/Identity/Login.cshtml" />
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card-body">
+                        <partial name="/Pages/Identity/Login.cshtml" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
