@@ -4,6 +4,9 @@
 (function ($) {
     'use strict';
 
+    var emailPlaceholder = "";
+    var spanPlaceholder = document.getElementById("verfication_info").childNodes[0];
+
     var sendPost = function (url, onsuccess) {
         $.ajax({
             url: url,

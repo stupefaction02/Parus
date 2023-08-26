@@ -62,5 +62,6 @@
     justify-content: end;
 }
 
-
-
+#registration_popup .card-4 {
+    height: 780px;
+}

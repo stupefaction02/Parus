@@ -28,14 +28,11 @@ namespace Naturistic.WebUI.Pages.Identity
         public string RECOVERY_P1P2 { get; set; }
         public string BTN_CONT { get; set; }
 
-        private readonly ILogger<RegistrationModel> _logger;
-
         private readonly IApiClient apiClient;
 		private readonly ILocalizationService localizationService;
 
-		public RecoveryModel(ILogger<RegistrationModel> logger, IApiClient apiClient, ILocalizationService localizationService)
+		public RecoveryModel(IApiClient apiClient, ILocalizationService localizationService)
         {
-            _logger = logger;
             this.apiClient = apiClient;
 			this.localizationService = localizationService;
 		}

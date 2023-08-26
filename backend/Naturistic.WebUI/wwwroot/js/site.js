@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var confirm_account_link = document.getElementById("confirm_account_link");
     var header_signout_button = document.getElementById("header_signout_button");
     var header_login_btn = document.getElementById("header_login_btn");
+    var header_register_btn = document.getElementById("header_register_btn");
+
+    //header_login_btn.onmouseover = e => { debugger }
 
     if (header_signout_button !== null) {
         header_signout_button.onclick = function (e) {
@@ -17,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.reload();
         }
     }
-
+   
     var popup = new VerificationPopup("site_popup");
     
     if (confirm_account_link !== null) {

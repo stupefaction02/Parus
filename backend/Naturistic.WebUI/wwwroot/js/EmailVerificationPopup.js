@@ -1,8 +1,14 @@
+import { GetCookie } from "./common.js";
+
 export class VerificationPopup {
     constructor(popupId) { //debugger
         this.popup = document.getElementById(popupId);
         
         var send_code_again = document.getElementById("send_code_again");
+    
+        var spanPlaceholder = document.querySelector("#verification_info .placeholder");
+
+        spanPlaceholder.textContent = GetCookie("identity.username");
 
         var self = this;
 

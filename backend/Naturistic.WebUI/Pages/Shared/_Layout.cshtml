@@ -75,7 +75,7 @@
 
     @if (renderConfirmationPopup)
     {
-        <div id="site_popup" class="b-popup" style="display: block">
+        <div id="site_popup" class="b-popup" style="display: none">
             <div class="b-popup-content">
                 <div class="wrapper wrapper--w680">
                     <div class="card card-4">
@@ -103,12 +103,28 @@
         </div>
     </div>
 
+    <div id="registration_popup" class="b-popup" style="display: block">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="registration_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card-body">
+                        <partial name="/Pages/Identity/Registration.cshtml" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="~/js/common.js" type="module"></script>
     <script src="~/js/EmailVerificationPopup.js" type="module"></script>
     <script src="~/js/site.js" type="module" asp-append-version="true"></script>
+    <script src="~/js/regform.js" type="module" asp-append-version="true"></script>
 
 	@RenderSection("AdditionalScripts", required: false)
     @RenderSection("Scripts", required: false)

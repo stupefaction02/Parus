@@ -1,109 +1,79 @@
-﻿@page "/account/registration"
-@model RegistrationModel
-@{
-    ViewData["Title"] = "Registration";
-}
-
-@section AdditionalScripts
-{
-    <script type="module" src="~/js/config.js"></script>
-	<script type="module" src="~/js/regform.js"></script>
-    @*<script type="text/javascript" src="~/js/network.js"></script>*@
-
-	<script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/select2/select2.min.js"></script>
-    <script src="~/lib/datepicker/moment.min.js"></script>
-    <script src="~/lib/datepicker/daterangepicker.js"></script>
-    <script type="text/javascript" src="~/js/confirmation.js"></script>
-}
-
-@section AdditionalStyles
-{
-	<link href="~/lib/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="~/lib/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
-    <link href="~/lib/select2/select2.min.css" rel="stylesheet" media="all">
-    <link href="~/lib/datepicker/daterangepicker.css" rel="stylesheet" media="all">
-
-    <link href="~/css/regform.css" rel="stylesheet" media="all">
-}
-
-        <div class="wrapper wrapper--w680">
-            <div class="card card-4">
-                <div class="card-body">
-                    <h2 class="title">Registration Form</h2>
-                    <div>
-                        <div class="row row-space">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <label class="label">First name</label>
-                                    <input id="firstname"  class="input--style-4" value="Jeff" type="text" name="first_name">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <label class="label">Last name</label>
-                                    <input id="lastname" class="input--style-4" value="Cavailere" type="text" name="lastname">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-space">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <label class="label">Username</label>
-                                    <input id="nickname_input" class="input--style-4" value="athleandotcommer" type="text" name="nickname">
-                                    <label id="nickname_input_error" class="label input-error">Username is already taken</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-space">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <label class="label">Email</label>
-                                    <input id="reg_email_input" class="input--style-4" value="jeffyjeff@gmail.com" type="email" name="email">
-                                    <label id="email_input_error" class="label input-error">Email is already taken</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-space">
-                            <div class="col-6">
-                                <div class="input-group">
-                                    <label class="label">Password</label>
-                                    <input id="password_input" class="input--style-4" value="zx1" type="password" name="password">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row row-space">
-                            <div class="col-2">
-                                <div class="input-group">
-                                    <label class="label">Gender</label>
-                                    <div class="p-t-10">
-                                        <label class="radio-container m-r-45">
-                                            Male
-                                            <input type="radio" value="1" checked="checked" name="gender">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <label class="radio-container">
-                                            Female
-                                            <input type="radio" value="2" name="gender">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-t-15">
-                            <button id="regform_submit" class="btn btn--radius-2 btn--blue" type="button">Submit</button>
-                            <img id="reg_loading_gif" src="~/gifs/loading-gif.gif" style="display: none" alt="this slowpoke moves" width="35" height="35" />
-                        </div>
-                    </div>
+﻿<h2 class="title">Registration Form</h2>
+<div>
+    <div class="row row-space">
+        <div class="col-6">
+            <div class="group">
+                <input id="firstname" required type="text" name="first_name">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>First name</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-space">
+        <div class="col-6">
+            <div class="group">
+                <input id="lastname" required value="Cavailere" type="text" name="lastname">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>Last name</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-space">
+        <div class="col-6">
+            <div class="group">
+                <input id="nickname_input" required value="athleandotcommer" type="text" name="nickname">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+               @* <label id="nickname_input_error" class="label input-error">Username is already taken</label>*@
+                <label>Username</label>
+            </div>
+        </div>
+    </div>
+    <div class="row row-space">
+        <div class="col-6">
+            <div class="group">
+                <input id="reg_email_input" required value="jeffyjeff@gmail.com" type="email" name="email">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>Email</label>
+               @* <label id="email_input_error" class="label input-error">Email is already taken</label>*@
+            </div>
+        </div>
+    </div>
+    <div class="row row-space">
+        <div class="col-6">
+            <div class="group">
+                <input id="password_input" required value="zx1" type="password" name="password">
+                <span class="highlight"></span>
+                <span class="bar"></span>
+                <label>Password</label>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div>
+            <div>
+                <label>Gender</label>
+                <div>
+                    <label class="radio-container m-r-45">
+                        Male
+                        <input type="radio" value="1" checked="checked" name="gender">
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="radio-container">
+                        Female
+                        <input type="radio" value="2" name="gender">
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
             </div>
         </div>
-
-<div id="popup" class="b-popup" style="display: none">
-    <div class="b-popup-content">
-        <partial name="/Pages/Identity/Confirmation.cshtml" />
+    </div>
+    <div class="p-t-15">
+        <button id="regform_submit" class="color1_btn" type="button">Submit</button>
+        <img id="reg_loading_gif" src="~/gifs/loading-gif.gif" style="display: none" alt="this slowpoke moves" width="35" height="35" />
     </div>
 </div>
+

@@ -38,6 +38,8 @@ async function sleep(msec) {
 
     var nickname_input_error = document.getElementById("nickname_input_error");
     var email_input_error = document.getElementById("email_input_error"); 
+    var header_register_btn = document.getElementById("header_register_btn"); 
+    var close_popup_bn = document.getElementById("registration_close_popup");
 
     var send_check_if_nickname_exists_handler = function (e) {
         //debugger
@@ -94,7 +96,7 @@ async function sleep(msec) {
 
     send_check_if_email_exists(email_input.value);
 
-    var popup = document.getElementById("popup");
+    var popup = document.getElementById("registration_popup");
 
     var showPopup = function () {
         popup.style.display = "block";
@@ -102,6 +104,14 @@ async function sleep(msec) {
 
     var hidePopup = function () {
         popup.style.display = "none";
+    }
+
+    close_popup_bn.onclick = function (e) {
+        popup.style.display = "none";
+    }
+
+    header_register_btn.onclick = function (e) {
+        showPopup();
     }
 
     var request_verificaion_code = function (username, onsuccess) {
