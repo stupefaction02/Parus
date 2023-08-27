@@ -182,6 +182,37 @@ async function sleep(msec) {
     }
 
     regform_submit.onclick = regform_submit_onsubmit;
+    
+    var show_hide_btn = document.getElementById("registration_show_hide_password");
+
+    var passwordShown = false;
+
+    var passwordInput = document.getElementById("password_input");
+
+    var switchPasswordIcon = function () {
+        if (passwordShown) {
+            passwordShown = false;
+
+            show_hide_btn.setAttribute("src", "images/show_password.png");
+
+            passwordInput.setAttribute("type", "password");
+        }
+        else {
+            passwordShown = true;
+
+            show_hide_btn.setAttribute("src", "images/hide_password.png");
+
+            passwordInput.setAttribute("type", "text");
+        }
+    }
+
+    show_hide_btn.setAttribute("src", "images/show_password.png");
+
+    passwordInput.setAttribute("type", "password");
+
+    show_hide_btn.onclick = function (e) {
+        switchPasswordIcon();
+    }
 
     var sendPost1 = function (url, onsuccess) {
         var httpRequest = false;

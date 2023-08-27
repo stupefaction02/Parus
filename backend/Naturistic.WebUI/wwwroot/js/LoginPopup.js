@@ -13,6 +13,34 @@ export class LoginPopup {
         var sendbuton = document.getElementById("login_sendbutton");
         var login_error_label = document.getElementById("login_error_label");
         var close_popup_bn = document.getElementById("close_popup");
+        var show_hide_btn = document.getElementById("login_show_hide_password");
+
+        var passwordShown = false;
+
+        var switchPasswordIcon = function () {
+            if (passwordShown) {
+                passwordShown = false;
+
+                show_hide_btn.setAttribute("src", "images/show_password.png");
+
+                passwordInput.setAttribute("type", "password");
+            }
+            else {
+                passwordShown = true;
+
+                show_hide_btn.setAttribute("src", "images/hide_password.png");
+
+                passwordInput.setAttribute("type", "text");
+            }
+        }
+
+        show_hide_btn.setAttribute("src", "images/show_password.png");
+
+        passwordInput.setAttribute("type", "password");
+
+        show_hide_btn.onclick = function (e) {
+            switchPasswordIcon();
+        }
 
         close_popup_bn.onclick = function (e) {
             popup.style.display = "none";

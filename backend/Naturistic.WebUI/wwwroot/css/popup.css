@@ -33,7 +33,6 @@
 .b-popup .b-popup-content {
     margin: 10% auto;
     width: 30%;
-    font-weight: bolder;
 }
 
 .box-close {
@@ -63,5 +62,5 @@
 }
 
 #registration_popup .card-4 {
-    height: 780px;
+    height: 680px;
 }

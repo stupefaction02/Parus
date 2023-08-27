@@ -277,6 +277,14 @@
     height: 32px;
 }
 
+#regsitration_show_hide_password {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: -35px;
+    left: 275px;
+}
+
 @media (max-width: 767px) {
     .card-4 .card-body {
     padding: 50px 40px;

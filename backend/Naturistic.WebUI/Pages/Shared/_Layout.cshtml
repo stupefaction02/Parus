@@ -24,6 +24,7 @@
     <link href="~/css/inputs.css" rel="stylesheet" media="all">
     <link href="~/css/buttons.css" rel="stylesheet" media="all">
     <link href="~/css/verification.css" rel="stylesheet" media="all">
+    <link href="~/css/choosebuttons.css" rel="stylesheet" media="all">
 
 	@RenderSection("AdditionalStyles", required: false)
 </head>
@@ -110,7 +111,7 @@
                     <diV class="popup_content_header">
                         <a id="registration_close_popup" href="#" class="box-close">×</a>
                     </div>
-                    <div class="custom_card-body">
+                    <div class="custom_card-body" style="width: 320px">
                         <partial name="/Pages/Identity/Registration.cshtml" />
                     </div>
                 </div>

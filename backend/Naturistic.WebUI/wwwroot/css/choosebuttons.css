@@ -1,0 +1,14 @@
+.rb_group {
+    display: flex;
+}
+.rb_group label {
+    float: left;
+}
+
+.rb_group input {
+    float: right;
+}
+
+.rb_group label {
+    margin-bottom: 0 !important;
+}
