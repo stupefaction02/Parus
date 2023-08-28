@@ -38,8 +38,10 @@ async function sleep(msec) {
 
     var nickname_input_error = document.getElementById("nickname_input_error");
     var email_input_error = document.getElementById("email_input_error"); 
+
     var header_register_btn = document.getElementById("header_register_btn"); 
     var close_popup_bn = document.getElementById("registration_close_popup");
+
 
     var send_check_if_nickname_exists_handler = function (e) {
         //debugger
@@ -193,20 +195,20 @@ async function sleep(msec) {
         if (passwordShown) {
             passwordShown = false;
 
-            show_hide_btn.setAttribute("src", "images/show_password.png");
+            show_hide_btn.setAttribute("src", location.origin + "/images/show_password.png");
 
             passwordInput.setAttribute("type", "password");
         }
         else {
             passwordShown = true;
 
-            show_hide_btn.setAttribute("src", "images/hide_password.png");
+            show_hide_btn.setAttribute("src", location.origin + "/images/hide_password.png");
 
             passwordInput.setAttribute("type", "text");
         }
     }
 
-    show_hide_btn.setAttribute("src", "images/show_password.png");
+    show_hide_btn.setAttribute("src", location.origin + "/images/show_password.png");
 
     passwordInput.setAttribute("type", "password");
 

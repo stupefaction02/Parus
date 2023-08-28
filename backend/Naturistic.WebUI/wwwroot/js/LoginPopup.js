@@ -21,20 +21,20 @@ export class LoginPopup {
             if (passwordShown) {
                 passwordShown = false;
 
-                show_hide_btn.setAttribute("src", "images/show_password.png");
+                show_hide_btn.setAttribute("src", location.origin +  + "/images/show_password.png");
 
                 passwordInput.setAttribute("type", "password");
             }
             else {
                 passwordShown = true;
 
-                show_hide_btn.setAttribute("src", "images/hide_password.png");
+                show_hide_btn.setAttribute("src", location.origin +  + "/images/hide_password.png");
 
                 passwordInput.setAttribute("type", "text");
             }
         }
 
-        show_hide_btn.setAttribute("src", "images/show_password.png");
+        show_hide_btn.setAttribute("src", location.origin +  + "/images/show_password.png");
 
         passwordInput.setAttribute("type", "password");
 

@@ -6,49 +6,55 @@
 
 @section AdditionalScripts
 {
-	<script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
-	<script type="text/javascript" src="~/js/chat.js"></script>
-
+	<script type="module" src="~/js/chat.js"></script>
 }
 
 @section AdditionalStyles
 {
     <link href="~/css/broadcast.css" rel="stylesheet" media="all">
+    <link href="~/css/scrollbars.cssrel="stylesheet" media="all">
+    <link href="~/css/buttons.css" rel="stylesheet" media="all">
 }
 
-<div class="container">
-	<div class="row">
-		<!--<div class="col-9">
-			<div class="player_wrapper"></div>
-		</div>-->
+<div class="player_column">
 
-		<div class="col-3">
-			<div class="chat_wrapper container">
-				<div class="chat_wrapper col">
-					<div id="chatroom" style="width: 250px; height: 360px"></div>
+    <div class="player"></div>
 
-					<div id="chat_input" style="display: block; width: 250px;">
-						@if (User.Identity.IsAuthenticated)
-						{
-							@if (Model.IsUserEmailConfirmed)
-							{
-								<input id="message" style="float: left; width: 195px" />
-								<button id="sendBtn" class="btn btn-dark text-white" style="width: 50px; height: 30px; float: right">Send</button>
-							}
-							else
-							{
-								<p id="message" style="width: 195px; height: 30px; background: red"> Confirm your account first!</p>
-							}
-						}
-						else
-						{
-							<p id="message" style="width: 195px; height: 30px"> Authethicate to send messages! </p>
-						}
-					</div>
-					
-				</div>
-			</div>
-		</div>
-	</div>
+</div>
+<div class="chat">
+    <div class="chat_messages">
+        <div class="chat_message">
+            <span style="color: red" class="message_sender">Flash_Dancer</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 EUR , на улице стоит моя Bugatti Veyron Grand Sport за 1.7 млн $, ах забыл, нахожусь я в городе Палермо , Италия в вилле за 30 000 000 евро, Скоро мой шеф повар приготовит Florentiniс pizza c золотой стружкой за 1400 EUR и порцию элитных мандаришек с финиками за 300 EUR, но на сабку не хватило, подарите</p>
+        </div>
+
+        <div class="chat_message">
+            <span style="color: purple" class="message_sender">Arsenixc</span><p class="message_body">: Сижу сейчас, попиваю чай принцесса Нури за 100 рублей, на улице стоит моя девятка за 60к рублей, ах забыл, нахожусь я в Перми, в коммуналке за 2к рублей в месяц. Скоро моя женщина приготовит пельмешки за 150 рублей и наварит компот из яблок 200 рублей, но на сабку не хватило, подарите Starege</p>
+        </div>
+
+        <div class="chat_message">
+            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
+        </div>
+
+        <div class="chat_message">
+            <span style="color: green" class="message_sender">mommy_enjouyer</span><p class="message_body">: BONKERS</p>
+        </div>
+        <div class="chat_message">
+            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
+        </div>
+        <div class="chat_message">
+            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
+        </div>
+    </div>
+    <div class="chat_controls">
+        <div class="input_box">
+            <input placeholder="Отправить сообщение" />
+        </div>
+        <div class="chat_buttons">
+            <button id="sendBtn"
+                    style="height: 30px"
+                    class="color1_btn" type="submit">
+                Чат
+            </button>
+        </div>
+    </div>
 </div>

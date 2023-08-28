@@ -20,19 +20,26 @@ h2 {
 /* form starting stylings ------------------------------- */
 .group {
     position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-input {
+.last_group {
+    margin-bottom: 5px !important;
+}
+
+.form_input {
     font-size: 18px;
     padding: 10px 10px 10px 5px;
     display: block;
-    width: 300px;
+    width: 100%;
     border: none;
     border-bottom: 1px solid #757575;
 }
 
-    input:focus {
+    .form_input:focus {
         outline: none;
     }
 
@@ -43,15 +50,19 @@ input {
     font-weight: normal;
     position: absolute;
     pointer-events: none;
-    left: 5px;
     top: 10px;
     transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;
 }
 
+.input_error {
+    color: red;
+    width: 100%;
+}
+
 /* active state */
-input:focus ~ .input_label, input:valid ~ .input_label {
+.form_input:focus ~ .input_label, .form_input:valid ~ .input_label {
     top: -20px;
     font-size: 14px;
     color: #5264AE;
@@ -61,7 +72,7 @@ input:focus ~ .input_label, input:valid ~ .input_label {
 .bar {
     position: relative;
     display: block;
-    width: 300px;
+    width: 100%;
 }
 
     .bar:before, .bar:after {
@@ -85,7 +96,7 @@ input:focus ~ .input_label, input:valid ~ .input_label {
     }
 
 /* active state */
-input:focus ~ .bar:before, input:focus ~ .bar:after {
+.form_input:focus ~ .bar:before, .form_input:focus ~ .bar:after {
     width: 50%;
 }
 
@@ -101,7 +112,7 @@ input:focus ~ .bar:before, input:focus ~ .bar:after {
 }
 
 /* active state */
-input:focus ~ .highlight {
+.form_input:focus ~ .highlight {
     -webkit-animation: inputHighlighter 0.3s ease;
     -moz-animation: inputHighlighter 0.3s ease;
     animation: inputHighlighter 0.3s ease;
