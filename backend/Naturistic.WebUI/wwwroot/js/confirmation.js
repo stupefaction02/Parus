@@ -7,6 +7,8 @@
     var emailPlaceholder = "";
     var spanPlaceholder = document.getElementById("verfication_info").childNodes[0];
 
+    //verification_close_popup
+
     var sendPost = function (url, onsuccess) {
         $.ajax({
             url: url,

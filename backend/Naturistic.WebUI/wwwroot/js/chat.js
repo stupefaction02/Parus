@@ -1,4 +1,4 @@
-import GetCookie from "./common.js"
+import { GetCookie } from "./common.js";
 
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:5001/chat")
@@ -9,26 +9,33 @@ let nickname = GetCookie("username");
 
 var sendBtn = document.getElementById("sendBtn");
 
+var messages = document.getElementById("messages");
+var chat_input = document.getElementById("chat_input");
+
+var sys_con_txt = document.getElementById("sys_con_txt").innerText;
+var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
+
 if (sendBtn != null) {
     sendBtn.addEventListener("click", function () { //debugger
-        let message = document.getElementById("message").value;
+        let message = chat_input.value;
 
-        hubConnection.invoke("Send", message, nickname)
+        hubConnection.invoke("Send", message, nickname, "black")
             .catch(function (err) {
                 return console.error(err.toString());
             });
+
+        chat_input.value = "";
     });
 
     hubConnection.on("Receive", function (message, nickname, color) {
-
         var messageElement = CreateMessage(message, nickname, color);
-        console.log(messageElement);
-        document.getElementById("chat_messages").appendChild(messageElement);
+        
+        messages.appendChild(messageElement);
     });
-    debugger
+   
     hubConnection.start()
         .then(function () {
-            
+            messages.appendChild(CreateSystemMessage(sys_con_txt));
         })
         .catch(function (err) {
             return console.error(err.toString());
@@ -47,4 +54,23 @@ function CreateMessage(message, nickname, color) {
     var message_body = document.createElement("p");
     message_body.classList.add("message_body");
     message_body.innerText = ": " + message;
+
+    chat_message.appendChild(message_sender);
+    chat_message.appendChild(message_body);
+
+    return chat_message;
+}
+
+function CreateSystemMessage(message) {
+    var chat_message = document.createElement("div");
+    chat_message.classList.add("chat_message");
+    chat_message.classList.add("chat_system_message");
+
+    var message_body = document.createElement("p");
+    message_body.classList.add("message_body");
+    message_body.innerText = message;
+
+    chat_message.appendChild(message_body);
+
+    return chat_message;
 }

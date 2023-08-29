@@ -3,14 +3,23 @@ import { GetCookie } from "./common.js";
 export class VerificationPopup {
     constructor(popupId) { //debugger
         this.popup = document.getElementById(popupId);
-        
+
+        var close_popup_bn = document.getElementById("verification_close_popup");
+
+        var self = this;
+
+        close_popup_bn.onclick = function (e) {
+            self.popup.style.display = "none";
+        }
+
+        // TODO: do ifs
+        var emailVerificated;
+
         var send_code_again = document.getElementById("send_code_again");
     
         var spanPlaceholder = document.querySelector("#verification_info .placeholder");
-
+        
         spanPlaceholder.textContent = GetCookie("identity.username");
-
-        var self = this;
 
         send_code_again.onclick = function (e) {
             self.send_code_again_onclick(e);
@@ -51,6 +60,10 @@ export class VerificationPopup {
         this.sendPost(url, function (e) {
             if (e.success == "Y") {
                 self.ShowPopup();
+                //debugger
+                var spanPlaceholder = document.querySelector("#verification_info .placeholder");
+
+                spanPlaceholder.textContent = self.username;
             }
         });
     }
@@ -91,9 +104,11 @@ export class VerificationPopup {
     }
 
     send_code_handler(e) {
-        this.popup.style.display = "none";
-        console.log(window.location.protocol + "://" + window.location.host);
-        window.location.href = window.location.protocol + "://" + window.location.host;
+        //this.popup.style.display = "none";
+        //console.log(window.location.protocol + "://" + window.location.host);
+        //window.location.href = window.location.protocol + "://" + window.location.host;
+
+        window.location.reload();
     }
 
     reg_email_input_oninput (e) {

@@ -21,20 +21,20 @@ export class LoginPopup {
             if (passwordShown) {
                 passwordShown = false;
 
-                show_hide_btn.setAttribute("src", location.origin +  + "/images/show_password.png");
+                show_hide_btn.setAttribute("src", location.origin + "/images/show_password.png");
 
                 passwordInput.setAttribute("type", "password");
             }
             else {
                 passwordShown = true;
 
-                show_hide_btn.setAttribute("src", location.origin +  + "/images/hide_password.png");
+                show_hide_btn.setAttribute("src", location.origin + "/images/hide_password.png");
 
                 passwordInput.setAttribute("type", "text");
             }
         }
 
-        show_hide_btn.setAttribute("src", location.origin +  + "/images/show_password.png");
+        show_hide_btn.setAttribute("src", location.origin + "/images/show_password.png");
 
         passwordInput.setAttribute("type", "password");
 
@@ -61,7 +61,7 @@ export class LoginPopup {
                         //debugger
 
                         if (e.success == "Y") {
-                            document.cookie = "JWT=" + e.payload;
+                            document.cookie = "JWT=" + e.payload + "; path=/";
 
                             document.location.reload();
                         }

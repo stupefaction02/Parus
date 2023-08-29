@@ -24,7 +24,7 @@ function setCookie(key, value, expireDays, expireHours, expireMinutes, expireSec
         ";expires=" + expireDate.toUTCString();
 }
 
-export function DeleteCookie(name) {
+export function DeleteCookie1(name) {
     setCookie(name, "", null, null, null, 1);
 }
 
@@ -38,4 +38,14 @@ export function ValidateEmail(email) {
 
 export function RedirectToIndex() {
     document.location.href = "/";
+}
+
+export function DeleteCookie(name) {
+    document.cookie = name + "=" + ";path=/;max-age=-1";
+    console.log(name + "=" + ";path=/;expires = Thu, 01 Jan 1970 00: 00: 00 GMT");
+}
+
+export function DeleteCookie2(name, path) {
+    document.cookie = name + "=" + " ; path=" + path + "; expires = Thu, 01 Jan 1970 00: 00: 00 GMT";
+    console.log(name + "=" + " ; path=" + path + "; expires = Thu, 01 Jan 1970 00: 00: 00 GMT");
 }

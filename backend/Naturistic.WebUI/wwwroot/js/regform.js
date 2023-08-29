@@ -1,7 +1,8 @@
 /*import { sendPost } from "./network";*/
 
+import { GetCookie } from "./common.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
-
+import { VerificationPopup } from "./EmailVerificationPopup.js";
 function sendPost (url, onsuccess) {
     $.ajax({
         url: url,
@@ -22,14 +23,13 @@ function sendGet (url, onsuccess) {
     });
 }
 
-async function sleep(msec) {
-    return new Promise(resolve => setTimeout(resolve, msec));
-}
 
 (function ($) {
     'use strict';
-    
-    //hidePopup();
+  
+    var authCookie = GetCookie("JWT");
+    var authenticated = authCookie !== undefined;
+    if (authenticated) { return; }
 
     var nicknameFormHasError;
     var emailFormHasError;
@@ -134,6 +134,8 @@ async function sleep(msec) {
         sendPost(url, onsuccess);
     }
 
+    
+
     var regform_submit_onsubmit = function (e) {
         /*debugger*/
 
@@ -146,7 +148,7 @@ async function sleep(msec) {
 
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
-        var nickname = document.getElementById("nickname_input").value;
+        var username = document.getElementById("nickname_input").value;
         var email = document.getElementById("reg_email_input").value;
         var password = document.getElementById("password_input").value;
         //debugger
@@ -158,14 +160,18 @@ async function sleep(msec) {
             //requestJwtToken(nickname);
 
             if (e.success == "Y") {
-                debugger
+
+                hidePopup();
+
                 document.cookie = "JWT=" + e.payload.access_token + "; path=/";
 
-                showPopup();
-                request_verificaion_code(nickname, function (e) {
-                    //debugger
-                    //showPopup();
-                });
+                var popup = new VerificationPopup("site_popup");
+               
+                if (username !== undefined && popup.username === undefined) {
+                    popup.SetUsername(username);
+                }
+
+                popup.RequestCode();
             }
             else {
                 // TODO: Display error
@@ -178,7 +184,7 @@ async function sleep(msec) {
             gender = genders[0].value;
         }
 
-        var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + nickname + "&email=" + email + "&password=" + password + "&gender=" + gender;
+        var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + username + "&email=" + email + "&password=" + password + "&gender=" + gender;
         console.log(url);
         sendPost(url, onsuccess);
     }

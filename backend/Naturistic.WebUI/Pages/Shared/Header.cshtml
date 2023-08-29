@@ -27,7 +27,7 @@
             ApplicationUser usr = await userManager.FindByNameAsync(User.Identity.Name);
             bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
 
-            <ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+            <ul style="align-items: center;" class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
                 @if (!isUserEmailConfirmed)
                 {
                     <li class="nav-item" style="margin-right: 20px">
@@ -35,13 +35,13 @@
                     </li>
                 }
                 <li class="nav-item">
-                    <button id="color1_btn color1_btn_header" class="color1_btn">Sign Out</button>
+                    <button class="color1_btn color1_btn_header" id="header_signout_button">Sign Out</button>
                 </li>
             </ul>
         }
         else
         {
-            <ul class="navbar-nav flex-grow-1  d-flex justify-content-end">
+            <ul style="align-items: center;" class="navbar-nav flex-grow-1  d-flex justify-content-end">
                 <li id="header_login_btn" style="margin-right: 20px" class="nav-item">
                     <button class="color1_btn color1_btn_header">Sign In</button>
                 </li>

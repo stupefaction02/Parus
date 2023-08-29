@@ -329,14 +329,37 @@ namespace Naturistic.Backend.Controllers
         [Route("api/account/requestverificationcode")]
         public async Task<object> CreateVerificationCodeAsync(string username)
         {
-			string a = random.Next(1, 10).ToString();
+            var user = await userManager.FindByNameAsync(username);
+
+            ConfirmCode addedCode = (ConfirmCode)confrimCodesRepository.OneByUser(user.GetId());
+
+            bool alreadExists = addedCode != null;
+
+            if (alreadExists)
+            {
+                bool expired = false;
+
+                // exceptional case, expired code must've been already deleted
+                if (expired)
+                {
+                    // here we must lock thread 
+                    confrimCodesRepository.Remove(user.ConfirmCode);
+
+                    // go to create new one
+                    goto L1;
+                }
+                // otherwise user will user old code
+                return CreateJsonError($"{username} already has token.");
+            }
+
+            L1:
+            // Too overheading but more random
+            string a = random.Next(1, 10).ToString();
 			string b = random.Next(0, 10).ToString();
 			string c = random.Next(0, 10).ToString();
 			string d = random.Next(0, 10).ToString();
 			string f = random.Next(0, 10).ToString();
 			int confirmNumber = Int32.Parse(a + b + c + d + f);
-
-			var user = await userManager.FindByNameAsync(username);
 
             if (user == null)
             {

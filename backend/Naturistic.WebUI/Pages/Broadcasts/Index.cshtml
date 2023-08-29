@@ -4,8 +4,15 @@
     ViewData["Title"] = @Model.BroadcastName;
 }
 
+@using Naturistic.Core.Interfaces;
+@using Naturistic.WebUI.HtmlHelpers;
+
+@inject ILocalizationService localization
+
 @section AdditionalScripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+
 	<script type="module" src="~/js/chat.js"></script>
 }
 
@@ -16,45 +23,80 @@
     <link href="~/css/buttons.css" rel="stylesheet" media="all">
 }
 
+@{
+    bool authenticated = User.Identity.IsAuthenticated;
+
+    string locale = this.HttpContext.Request.Cookies["locale"];
+    localization.SetLocale(locale);
+}
+
 <div class="player_column">
 
     <div class="player"></div>
 
 </div>
 <div class="chat">
-    <div class="chat_messages">
-        <div class="chat_message">
+    <div id="messages" class="chat_messages">
+        @*<div class="chat_message">
             <span style="color: red" class="message_sender">Flash_Dancer</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 EUR , на улице стоит моя Bugatti Veyron Grand Sport за 1.7 млн $, ах забыл, нахожусь я в городе Палермо , Италия в вилле за 30 000 000 евро, Скоро мой шеф повар приготовит Florentiniс pizza c золотой стружкой за 1400 EUR и порцию элитных мандаришек с финиками за 300 EUR, но на сабку не хватило, подарите</p>
-        </div>
-
-        <div class="chat_message">
-            <span style="color: purple" class="message_sender">Arsenixc</span><p class="message_body">: Сижу сейчас, попиваю чай принцесса Нури за 100 рублей, на улице стоит моя девятка за 60к рублей, ах забыл, нахожусь я в Перми, в коммуналке за 2к рублей в месяц. Скоро моя женщина приготовит пельмешки за 150 рублей и наварит компот из яблок 200 рублей, но на сабку не хватило, подарите Starege</p>
-        </div>
-
-        <div class="chat_message">
-            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
-        </div>
-
-        <div class="chat_message">
-            <span style="color: green" class="message_sender">mommy_enjouyer</span><p class="message_body">: BONKERS</p>
-        </div>
-        <div class="chat_message">
-            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
-        </div>
-        <div class="chat_message">
-            <span style="color: blue" class="message_sender">opramen</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 KZT, на улице стоит моя Lada Granta за 300 тысяч ах забыл, нахожусь я в городе Норильск,Россия в домике за 100 тысяч рублей, Скоро мой шеф повар приготовит Doshirak c золотой стружкой за 40 рублей, но на сабку не хватило, подарите ❤</p>
-        </div>
+        </div>*@
     </div>
     <div class="chat_controls">
         <div class="input_box">
-            <input placeholder="Отправить сообщение" />
+            <input id="chat_input" placeholder="Отправить сообщение" />
         </div>
         <div class="chat_buttons">
-            <button id="sendBtn"
-                    style="height: 30px"
-                    class="color1_btn" type="submit">
-                Чат
-            </button>
+            
+            @if (authenticated)
+            {
+                if (Model.IsUserEmailConfirmed)
+                {
+                    <button id="sendBtn"
+                            style="height: 30px"
+                            class="chat_btn color1_btn" type="submit">
+                        Чат
+                    </button>
+                }
+                else
+                {
+                    <div style="display: flex;justify-content: flex-end; align-items: center;">
+                        <div class="tooltip2" style="margin-right: 12px; width: 25px; height: 25px">
+                            <span class="tooltiptext">
+                                @LocalizationHelper.RetreiveRawText(Html, key: "CHAT_VERIF_TOOLTIP", localization: localization)
+                            </span>
+                            <img class="dangerous_sign" src="~/images/red_triangle.jpg" />
+                        </div>
+
+                        <button id="sendBtn"
+                                disabled
+                                style="height: 30px"
+                                class="chat_btn color1_btn" type="submit">
+                            Чат
+                        </button>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="display: flex;justify-content: flex-end; align-items: center;">
+                    <div class="tooltip2" style="margin-right: 12px; width: 25px; height: 25px">
+                        <span class="tooltiptext">
+                            @LocalizationHelper.RetreiveRawText(Html, key: "CHAT_AUTH_TOOLTIP", localization: localization)
+                        </span>
+                        <img class="dangerous_sign" src="~/images/red_triangle.jpg" />
+                    </div>
+
+                    <button id="sendBtn"
+                        disabled
+                            style="height: 30px"
+                            class="chat_btn color1_btn" type="submit">
+                        Чат
+                    </button>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+<div id="sys_con_txt" style="display: none" disabled>@LocalizationHelper.RetreiveRawText(Html, "CHAT_SYSTEM_CONNECT", localization)</div>
+<div id="sys_discon_txt" style="display: none" disabled>@LocalizationHelper.RetreiveRawText(Html, "CHAT_SYSTEM_DISCONNECT", localization)</div>

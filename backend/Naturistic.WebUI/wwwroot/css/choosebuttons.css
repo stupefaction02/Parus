@@ -1,4 +1,5 @@
 .rb_group {
+    justify-content: space-between;
     display: flex;
 }
 .rb_group label {

@@ -84,6 +84,16 @@ body {
 	line-height: normal;
 }
 
+.chat_btn {
+	padding-right: 12px !important;
+	padding-left: 12px !important;
+}
+
+.chat_system_message {
+	font-style: italic;
+	color: dimgray;
+}
+
 @font-face {
 	font-family: "Helvetica Neue";
 	src: url("../fonts/HelveticaNeueCyr-Roman.ttf") format("truetype");

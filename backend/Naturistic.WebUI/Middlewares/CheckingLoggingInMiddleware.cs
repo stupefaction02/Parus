@@ -71,7 +71,9 @@ namespace Naturistic.WebUI.Middlewares
 
 					if (result.Succeeded)
 					{
-						httpContext.Response.Cookies.Append("identity.username", result.Principal.Identity.Name);
+						CookieOptions cookieOptions = new CookieOptions() { Path = "/" };
+
+                        httpContext.Response.Cookies.Append("identity.username", result.Principal.Identity.Name, cookieOptions);
 						// in any case
 						httpContext.Features.Set<IAuthenticationFeature>(new AuthenticationFeature
 						{

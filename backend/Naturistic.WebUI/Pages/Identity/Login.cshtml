@@ -1,31 +1,28 @@
 ﻿@using Naturistic.Core.Interfaces;
-@using Naturistic.WebUI.HtmlHelpers
+@using Naturistic.WebUI.HtmlHelpers;
 
 @inject ILocalizationService localizationService
 
 <h2 class="title">Войти в Naturistic</h2>
 <div class="row row-space">
-    <div class="col-8">
-        <div class="group">
-            <input id="login_usernameInput" class="form_input" required type="text" name="nickname">
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <label class="input_label">Username</label>
-        </div>
+    <div class="group">
+        <input id="login_usernameInput" class="form_input" required type="text" name="nickname">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Username</label>
     </div>
 </div>
 <div class="row row-space">
-    <div class="col-8">
-        <div class="group">
-            <input id="password_Input" class="form_input" style="padding-right: 25px" required type="password" name="password">
+    <div class="group last_group">
+        <input id="password_Input" class="form_input" style="padding-right: 25px" required type="password" name="password">
 
-            <span class="highlight"></span>
-            <span class="bar"></span>
-            <label class="input_label">Password</label>
-            <img class="show_hide_password_btn" id="login_show_hide_password" style="width: 25px; height: 25px" ; />
-        </div>
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Password</label>
+        <img class="show_hide_password_btn" id="login_show_hide_password" style="width: 25px; height: 25px" ; />
     </div>
 </div>
+
 <div>
     <label id="login_error_label" style="display: none; margin-bottom: 10px" class="label">
         @LocalizationHelper.RetreiveErrorParagraph(Html, key: "LOGIN_PSWD_ERROR", localization: localizationService)

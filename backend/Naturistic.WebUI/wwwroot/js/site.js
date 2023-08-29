@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', function () {
     //header_login_btn.onmouseover = e => { debugger }
 
     if (header_signout_button !== null) {
-        header_signout_button.onclick = function (e) {
+        header_signout_button.onclick = function (e) {  
             DeleteCookie("JWT");
             DeleteCookie("identity.username");
+            DeleteCookie("username");
+            
             console.log(document.cookie);
             window.location.reload();
         }
