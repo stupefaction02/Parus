@@ -20,6 +20,15 @@ namespace Naturistic.WebUI.Pages.Identity
         public static string RECOVERY_P1P1 => "RECOVERY_P1P1";
         public static string RECOVERY_P1P2 => "RECOVERY_P1P2";
         public static string BTN_CONT => "BTN_CONT";
+
+        public static string RECOVERY_PHASE2_P1 => "RECOVERY_PHASE2_P1";
+        public static string RECOVERY_PHASE2_P2 => "RECOVERY_PHASE2_P2";
+        public static string RECOVERY_PHASE2_BTN => "RECOVERY_PHASE2_BTN";
+
+
+        public static string RECOVERY_PHASE3_P1 => "RECOVERY_PHASE3_P1";
+        public static string RECOVERY_PHASE3_BTN2 => "RECOVERY_PHASE3_BTN2";
+        public static string RECOVERY_PHASE3_BTN1 => "RECOVERY_PHASE3_BTN1";
     }
 
     public class RecoveryModel : PageModel
@@ -27,6 +36,14 @@ namespace Naturistic.WebUI.Pages.Identity
         public string RECOVERY_P1P1 { get; set; }
         public string RECOVERY_P1P2 { get; set; }
         public string BTN_CONT { get; set; }
+
+        public string RECOVERY_PHASE2_P1 { get; set; }
+        public string RECOVERY_PHASE2_P2 { get; set; }
+        public string RECOVERY_PHASE2_BTN { get; set; }
+
+        public string RECOVERY_PHASE3_P1 { get; set; }
+        public string RECOVERY_PHASE3_BTN2 { get; set; }
+        public string RECOVERY_PHASE3_BTN1 { get; set; }
 
         private readonly IApiClient apiClient;
 		private readonly ILocalizationService localizationService;
@@ -46,7 +63,15 @@ namespace Naturistic.WebUI.Pages.Identity
 			RECOVERY_P1P2 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_P1P2);
 			BTN_CONT = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.BTN_CONT);
 
-			return Page();
+            RECOVERY_PHASE2_P1 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE2_P1);
+            RECOVERY_PHASE2_P2 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE2_P2);
+            RECOVERY_PHASE2_BTN = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE2_BTN);
+
+            RECOVERY_PHASE3_P1 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE3_P1);
+            RECOVERY_PHASE3_BTN2 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE3_BTN1);
+            RECOVERY_PHASE3_BTN1 = localizationService.RetrievePhrase(RecoveryPageLocalizationGlossary.RECOVERY_PHASE3_BTN2);
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()

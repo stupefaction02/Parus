@@ -5,6 +5,7 @@ export class VerificationPopup {
         this.popup = document.getElementById(popupId);
 
         var close_popup_bn = document.getElementById("verification_close_popup");
+        this.send_code_again_timer = document.getElementById("send_code_again_timer");
 
         var self = this;
 
@@ -16,7 +17,9 @@ export class VerificationPopup {
         var emailVerificated;
 
         var send_code_again = document.getElementById("send_code_again");
-    
+
+        this.send_code_again = send_code_again;
+
         var spanPlaceholder = document.querySelector("#verification_info .placeholder");
         
         spanPlaceholder.textContent = GetCookie("identity.username");
@@ -47,12 +50,32 @@ export class VerificationPopup {
         this.username = username;
     } 
 
-    send_code_again_onclick (e) { 
-        this.request_verificaion_code(this.username);
+    send_code_again_onclick(e) { 
+        debugger
+        if (this.canSend) {
+            this.request_verificaion_code(this.username, true);
+        }
     }
 
-    request_verificaion_code (username) { 
-        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username;
+    updateTimer(self) {
+        //debugger
+
+        if (self.timeSeconds == 0) {
+            self.canSend = true;
+
+            this.send_code_again.classList.remove("disabled_text");
+
+            // two minutes
+            self.timeSeconds = 120;
+        }
+
+        self.timeSeconds--;
+
+        self.send_code_again_timer.innerText = self.timeSeconds;
+    }
+
+    request_verificaion_code (username, forceCreate) { 
+        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
         console.log(url);
 
         var self = this;
@@ -117,6 +140,14 @@ export class VerificationPopup {
 
     RequestCode() {
         this.request_verificaion_code(this.username);
+        
+        this.canSend = false;
+        
+        this.send_code_again.classList.add("disabled_text");
+
+        this.timeSeconds = 120;
+
+        setInterval(() => this.updateTimer(this), 900);
     }
 
     ShowPopup() {

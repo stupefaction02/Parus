@@ -41,7 +41,7 @@ namespace Naturistic.Backend.Controllers
         private readonly IChatsRepository chatsRepository;
         private readonly IUserRepository userRepository;
         private readonly IConfrimCodesRepository confrimCodesRepository;
-        private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository;
+        private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokens;
         private readonly IEmailService emailService;
         private readonly IPasswordHasher<ApplicationUser> passwordHasher;
         private readonly IBroadcastRepository broadcastRepository;
@@ -65,7 +65,7 @@ namespace Naturistic.Backend.Controllers
             this.chatsRepository = chatsRepository;
             this.userRepository = userRepository;
             this.confrimCodesRepository = confrimCodesRepository;
-            this.passwordRecoveryTokensRepository = passwordRecoveryTokensRepository;
+            this.passwordRecoveryTokens = passwordRecoveryTokensRepository;
             this.emailService = emailService;
             this.passwordHasher = passwordHasher;
             this.userManager = userManager;
@@ -327,9 +327,11 @@ namespace Naturistic.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/requestverificationcode")]
-        public async Task<object> CreateVerificationCodeAsync(string username)
+        public async Task<object> CreateVerificationCodeAsync(string username, bool force)
         {
             var user = await userManager.FindByNameAsync(username);
+
+            if (force) goto L1;
 
             ConfirmCode addedCode = (ConfirmCode)confrimCodesRepository.OneByUser(user.GetId());
 
@@ -475,8 +477,8 @@ namespace Naturistic.Backend.Controllers
 
         private string RECOVERY_MAIL1 => "RECOVERY_MAIL1";
 
-        [HttpGet]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("api/account/sendrecoveryemail")]
 		public async Task<object> SendRecoveryEmail(string username, string email, string locale,
             [FromServices] IServer server, [FromServices] ILocalizationService localization)
@@ -489,6 +491,13 @@ namespace Naturistic.Backend.Controllers
                 return BadRequest($"Could't find user with name {username}");
             }
 
+            PasswordRecoveryToken existedToken = 
+                (PasswordRecoveryToken)passwordRecoveryTokens.OneByUser(user.GetId());
+            if (existedToken != null)
+            {
+                passwordRecoveryTokens.Delete(user.PasswordRecoveryToken);
+            }
+
             var addresses = server.Features.Get<IServerAddressesFeature>().Addresses;
 
             string https = addresses.First();
@@ -496,7 +505,7 @@ namespace Naturistic.Backend.Controllers
             string randomString = Guid.NewGuid().ToString();
             string token = passwordHasher.HashPassword(null, randomString);
 
-            string url = https + $"/api/account/sendrecoveryemail?token={token}";
+            string url = https + $"/account/editpassword?token={token}";
 
             if (String.IsNullOrEmpty(locale))
             {
@@ -518,20 +527,17 @@ namespace Naturistic.Backend.Controllers
                 ExpireAt = TimeUtils.ToUnixTimeSeconds(expireDate)
             };
 
-            if (passwordRecoveryTokensRepository.Contains(user.Id))
-            {
-                passwordRecoveryTokensRepository.DeleteAll(x => x.GetUsername() == user.Id);
-			}
-
-            passwordRecoveryTokensRepository.Add(recoveryToken);
+            passwordRecoveryTokens.Add(recoveryToken);
 
             logger.LogInformation($"Created password recovery token: user {user.UserName}, token {token}");
+            logger.LogInformation($"Recovery URL: {url}");
 
             //Task sendTask = emailService.SendEmailAsync(username, email, content);
 
             return Ok();
         }
-        
+
+
         public enum RegisterType : sbyte
         {
             ViewerUser = 2,

@@ -71,15 +71,19 @@ document.addEventListener('DOMContentLoaded', function () {
 	}
 
 	send_ref_btn.onclick = function (e) {
-		debugger
+		
 		var username = username_input.value;
 		var email = email_input.value;
+		var locale = "ru";
 
-		var url = CURRENT_API_PATH + "/account/sendrecoveryemail?nickname=" + nickname + "&email=" + email;
+		var url = CURRENT_API_PATH + "/account/sendrecoveryemail?username=" + username + "&email=" + email + "&locale=" + locale;
 
-		sendPost(url, function (e) { debugger });
+		sendPost(url, function (e)
+		{
+			debugger
 
-		switchToPhase3();
+			switchToPhase3();
+		});
 	}
 
 	repeat_btn.onclick = function (e) {

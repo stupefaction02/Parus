@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Logging;
+@using Naturistic.Infrastructure.Identity;
+
+@inject UserManager<ApplicationUser> userManager;
+@inject ILogger<IdentityController> logger;
+
+<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+    <div class="header_container">
+        <a class="navbar-brand" asp-area="" asp-page="/Index">Naturistic.WebUI</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"> -->
+        <ul class="navbar-nav flex-grow-1">
+            @*<li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+            </li>*@
+        </ul>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            ApplicationUser usr = await userManager.FindByNameAsync(User.Identity.Name);
+            bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
+
+            <ul style="align-items: center;" class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+                @if (!isUserEmailConfirmed)
+                {
+                    <li class="nav-item" style="margin-right: 20px">
+                        <a id="confirm_account_link" href="javascript:void(0)">Confirm account!</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <button class="color1_btn color1_btn_header" id="header_signout_button">Sign Out</button>
+                </li>
+            </ul>
+        }
+        else
+        {
+            <ul style="align-items: center;" class="navbar-nav flex-grow-1  d-flex justify-content-end">
+                <li id="header_login_btn" style="margin-right: 20px" class="nav-item">
+                    <button class="color1_btn color1_btn_header">Sign In</button>
+                </li>
+                <li class="nav-item">
+                    <button id="header_register_btn" class="color1_btn color1_btn_header" style="margin-right: 20px" href="/account/registration">Sign Up</button>
+                </li>
+            </ul>
+        }
+    </div>
+</nav>

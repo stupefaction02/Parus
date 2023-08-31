@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             popup.RequestCode();
 
+            popup.ShowPopup();
+
             document.body.onclick = function (e) {
                 //debugger
                 //popup.HidePopup();

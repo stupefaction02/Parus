@@ -26,3 +26,20 @@
     .color1_btn_header:enabled:hover {
         background-color: #4a277c;
     }
+
+.color2_btn {
+    font-size: 15px;
+    color: white;
+    height: 28px;
+    border: none;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: black;
+}
+.color2_btn:enabled {
+    background-color: white;
+}
+    .color2_btn:enabled:hover {
+        color: white;
+        background-color: #9f81ca;
+    }

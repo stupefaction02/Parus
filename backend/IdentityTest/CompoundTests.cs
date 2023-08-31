@@ -291,7 +291,7 @@ namespace IdentityTest
 			#endregion
 
 			JsonResult createCodeResult = 
-				(JsonResult)(await controller.CreateVerificationCodeAsync(username));
+				(JsonResult)(await controller.CreateVerificationCodeAsync(username, true));
 
 			ApiServerResponse createCodeResultJsonResult;
 			using (MemoryStream ms = new MemoryStream())

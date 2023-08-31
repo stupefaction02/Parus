@@ -41,3 +41,12 @@
     .tooltip2 .tooltiptext {
         top: -5px;
     }
+
+.disabled_text {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.send_code_text {
+    text-decoration: none;
+}
