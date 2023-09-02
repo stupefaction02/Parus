@@ -22,12 +22,12 @@ namespace Naturistic.Core.Interfaces.Repositories
 
     public interface IConfrimCodesRepository
     {
-        IEnumerable<IConfirmCode> Codes { get; }
+        IEnumerable<IVerificationCode> Codes { get; }
 
-        void Add(IConfirmCode email);
+        void Add(IVerificationCode email);
 		void ClearTracking();
 		bool Contains(string userId);
-		IConfirmCode OneByUser(string id);
-		int Remove(IConfirmCode token);
+		IVerificationCode OneByUser(string id);
+		int Remove(IVerificationCode token);
 	}
 }

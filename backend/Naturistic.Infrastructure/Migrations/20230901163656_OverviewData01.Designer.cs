@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Naturistic.Infrastructure.DLA;
 
@@ -11,9 +12,11 @@ using Naturistic.Infrastructure.DLA;
 namespace Naturistic.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230901163656_OverviewData01")]
+    partial class OverviewData01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Naturistic.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BroadcastInfoTag", b =>
-                {
-                    b.Property<int>("BroadcastsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BroadcastsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BroadcastInfoTag");
-                });
 
             modelBuilder.Entity("Naturistic.Core.Entities.BroadcastCategory", b =>
                 {
@@ -83,6 +71,36 @@ namespace Naturistic.Infrastructure.Migrations
                     b.ToTable("Broadcasts");
                 });
 
+            modelBuilder.Entity("Naturistic.Core.Entities.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Body")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("SenderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SenderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderNameColor")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("Naturistic.Core.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -91,41 +109,65 @@ namespace Naturistic.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BroadcastInfoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BroadcastInfoId");
+
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("BroadcastInfoTag", b =>
+            modelBuilder.Entity("Naturistic.Core.Entities.ViewerUser", b =>
                 {
-                    b.HasOne("Naturistic.Core.Entities.BroadcastInfo", null)
-                        .WithMany()
-                        .HasForeignKey("BroadcastsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                    b.HasOne("Naturistic.Core.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("IdentityUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ViewerUser");
                 });
 
             modelBuilder.Entity("Naturistic.Core.Entities.BroadcastInfo", b =>
                 {
                     b.HasOne("Naturistic.Core.Entities.BroadcastCategory", "Category")
-                        .WithMany("Broadcasts")
+                        .WithMany()
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastCategory", b =>
+            modelBuilder.Entity("Naturistic.Core.Entities.Message", b =>
                 {
-                    b.Navigation("Broadcasts");
+                    b.HasOne("Naturistic.Core.Entities.ViewerUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
+                });
+
+            modelBuilder.Entity("Naturistic.Core.Entities.Tag", b =>
+                {
+                    b.HasOne("Naturistic.Core.Entities.BroadcastInfo", null)
+                        .WithMany("Tags")
+                        .HasForeignKey("BroadcastInfoId");
+                });
+
+            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastInfo", b =>
+                {
+                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

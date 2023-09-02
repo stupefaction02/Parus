@@ -10,7 +10,7 @@ using Naturistic.Infrastructure;
 
 namespace Naturistic.Infrastructure.Identity
 {
-    public class ConfirmCode : IConfirmCode
+    public class ConfirmCode : IVerificationCode
     {
         [Key]
         public int ConfirmCodeId { get; set; }

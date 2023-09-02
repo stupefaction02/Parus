@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{28049071-93B1-4C77-9F8E-948388D0BCC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IdentityTest", "IdentityTest\IdentityTest.csproj", "{0F199DC7-FE3D-4068-925B-7448DF38F7C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityTest", "IdentityTest\IdentityTest.csproj", "{0F199DC7-FE3D-4068-925B-7448DF38F7C4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageServer", "ImageServer\ImageServer.csproj", "{40604DDD-F78C-42FA-A47B-05F9E6EE094F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F199DC7-FE3D-4068-925B-7448DF38F7C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

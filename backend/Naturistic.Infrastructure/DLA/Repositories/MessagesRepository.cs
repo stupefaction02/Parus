@@ -5,21 +5,8 @@ using Naturistic.Core.Interfaces.Repositories;
 
 namespace Naturistic.Infrastructure.DLA.Repositories
 {
-    public class MessagesRepository : IMessagesRepository
+    public class MessagesRepository
     {
-        private readonly ApplicationDbContext context;
-
-        public IEnumerable<Message> Messages => context.Messages; 
-
-        public MessagesRepository(ApplicationDbContext context)
-        {
-            this.context = context;
-        }
-
-        public void Add(Message channel)
-        {
-            context.Messages.Add(channel);
-            context.SaveChanges();
-        }
+        
     }
 }

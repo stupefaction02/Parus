@@ -37,8 +37,6 @@ namespace Naturistic.Backend.Controllers
         private readonly SignInManager<ApplicationUser> signInManager;
 
         private IConfiguration configuration;
-        private readonly IViewerUsersRepository viewerUsersRepository;
-        private readonly IChatsRepository chatsRepository;
         private readonly IUserRepository userRepository;
         private readonly IConfrimCodesRepository confrimCodesRepository;
         private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokens;
@@ -50,8 +48,6 @@ namespace Naturistic.Backend.Controllers
                            UserManager<ApplicationUser> userManager,
                            SignInManager<ApplicationUser> signInManager, 
                            IConfiguration configuration,
-                           IViewerUsersRepository channelRepository,
-                           IChatsRepository chatsRepository,
                            IUserRepository userRepository,
                            IConfrimCodesRepository confrimCodesRepository,
                            IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
@@ -61,8 +57,6 @@ namespace Naturistic.Backend.Controllers
         {
             this.hostEnviroment = hostEnviroment;
             this.configuration = configuration;
-            this.viewerUsersRepository = channelRepository;
-            this.chatsRepository = chatsRepository;
             this.userRepository = userRepository;
             this.confrimCodesRepository = confrimCodesRepository;
             this.passwordRecoveryTokens = passwordRecoveryTokensRepository;
@@ -197,49 +191,6 @@ namespace Naturistic.Backend.Controllers
             {
                 var createdUsr = userRepository.FindUserByUsername(username);
                 logger.LogInformation(createdUsr.GetUsername());
-                switch (registerType)
-                {
-                    case RegisterType.BroadcastUser:
-                        {
-                            // As an idea, add BroadcasterUserManager or smth
-
-                            logger.LogInformation("Create broadcast user...");
-
-                            /* creating a channel. each identity user has its own channel */
-                            var bcUser = new BroadcastUser
-                            {
-                                IdentityUserId = user.Id
-                            };
-
-                            logger.LogInformation("Create cha and attach to broadcast user...");
-
-                            var bcChat = new Chat
-                            {
-                                BroadcastUser = bcUser
-                            };
-
-                            chatsRepository.Add(bcChat);
-                        }
-                        break;
-
-                    default:
-                    case RegisterType.ViewerUser:
-                        {
-                            /* creating a channel. each identity user has its own channel */
-                            var channel = new ViewerUser
-                            {
-                                IdentityUserId = user.Id
-                            };
-                            logger.LogInformation("Creating the channel binded to user...");
-
-                            bool channelCreated = viewerUsersRepository.Add(channel);
-                            if (!channelCreated)
-                            {
-                                logger.LogInformation($"Unable to create a bind channel to user: {user}");
-                            }
-                        }
-                        break;
-                }
 
                 List<Claim> claims = new List<Claim>
                 {
@@ -315,7 +266,7 @@ namespace Naturistic.Backend.Controllers
 
         private int GetVerificationCode(string userId)
         {
-            IConfirmCode number = confrimCodesRepository.OneByUser(userId);
+            IVerificationCode number = confrimCodesRepository.OneByUser(userId);
 
             if (number != null)
             {

@@ -50,8 +50,6 @@ namespace IdentityTest
 			var a1 = GetBackendService<UserManager<ApplicationUser>>();
 			var a2 = GetBackendService<SignInManager<ApplicationUser>>();
 			var a3 = GetBackendService<IConfiguration>();
-			var a4 = GetBackendService<IViewerUsersRepository>();
-			var a5 = GetBackendService<IChatsRepository>();
 			var a6 = GetBackendService<IUserRepository>();
 			var a7 = GetBackendService<IConfrimCodesRepository>();
 			var a9 = GetBackendService<IPasswordRecoveryTokensRepository>();
@@ -59,7 +57,7 @@ namespace IdentityTest
 			var a11 = GetBackendService<IPasswordHasher<ApplicationUser>>();
 			var a12 = GetBackendService<ILogger<Naturistic.Backend.Controllers.IdentityController>>();
 
-			return new Naturistic.Backend.Controllers.IdentityController(a, a1, a2, a3, a4, a5, a6, a7, a9, a10, a11, a12);
+			return new Naturistic.Backend.Controllers.IdentityController(a, a1, a2, a3, a6, a7, a9, a10, a11, a12);
 		}
 
 		public class MyServerAddressesFeature : IServerAddressesFeature

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Microsoft.EntityFrameworkCore; 
 using Naturistic.Core.Entities;
 
@@ -6,9 +8,8 @@ namespace Naturistic.Infrastructure.DLA
 {
     public class ApplicationDbContext : DbContext
     {
-		public DbSet<BroadcastInfo> Broadcasts;
-
-        public ApplicationDbContext()
+		#region System
+		public ApplicationDbContext()
         {
             
         }
@@ -16,29 +17,36 @@ namespace Naturistic.Infrastructure.DLA
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         {
         }
+		#endregion
 
-        public DbSet<ViewerUser> ViewerUsers { get; set; }
+		#region Tables
 
-        public DbSet<Chat> Chats { get; set; }
+		public DbSet<BroadcastInfo> Broadcasts { get; set; }
 
-        public DbSet<Message> Messages { get; set; }
+		public DbSet<Tag> Tags { get; set; }
 
-        public DbSet<BroadcastUser> BroadcastUsers { get; set; }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		public DbSet<BroadcastCategory> Categories { get; set; }
+
+
+		#endregion
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BroadcastUser>()
-                        .HasOne(x => x.Chat)
-                        .WithOne(x => x.BroadcastUser)
-                        .HasForeignKey<Chat>(x => x.ChatId);
+            //// move to config
+            //int titeLength = 250;
+            //modelBuilder.Entity<BroadcastInfo>().Property(x => x.Title).IsRequired().HasMaxLength(titeLength);
 
-            // modelBuilder.Entity<Message>()
-            //             .HasOne(x => x.Sender)
-            //             .WithOne(x => x.)
-            //             .HasForeignKey<ViewerUser>(x => x.);
+            ConfigureRelations(modelBuilder);
+
+            //Seed(modelBuilder);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		private void ConfigureRelations(ModelBuilder modelBuilder)
+		{
+
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (true)//!optionsBuilder.IsConfigured)
             {

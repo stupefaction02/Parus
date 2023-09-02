@@ -11,20 +11,20 @@ namespace Naturistic.Infrastructure.DLA.Repositories
     {
         private readonly ApplicationIdentityDbContext context;
 
-        public IEnumerable<IConfirmCode> Codes => context.ConfirmCodes; 
+        public IEnumerable<IVerificationCode> Codes => context.ConfirmCodes; 
 
         public ConfrimCodesRepository(ApplicationIdentityDbContext context)
         {
             this.context = context;
         }
 
-        public void Add(IConfirmCode code)
+        public void Add(IVerificationCode code)
         {
             context.ConfirmCodes.Add((ConfirmCode)code);
             context.SaveChanges();
         }
 
-		public int Remove(IConfirmCode token)
+		public int Remove(IVerificationCode token)
 		{
 			context.ConfirmCodes.Remove((ConfirmCode)token);
 
@@ -41,7 +41,7 @@ namespace Naturistic.Infrastructure.DLA.Repositories
 			return context.ConfirmCodes.Any(t => t.UserId == userId);
 		}
 
-		public IConfirmCode OneByUser(string id)
+		public IVerificationCode OneByUser(string id)
 		{
 			return context.ConfirmCodes.SingleOrDefault(t => t.UserId == id);
 		}
