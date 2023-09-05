@@ -42,7 +42,6 @@ namespace Naturistic.Backend.Controllers
         private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokens;
         private readonly IEmailService emailService;
         private readonly IPasswordHasher<ApplicationUser> passwordHasher;
-        private readonly IBroadcastRepository broadcastRepository;
 
         public IdentityController(IWebHostEnvironment hostEnviroment, 
                            UserManager<ApplicationUser> userManager,

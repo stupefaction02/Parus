@@ -63,6 +63,7 @@ namespace Naturistic.WebUI
             services.AddSingleton<ILocalizationService, LocalizationService>();
 
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
+            services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
         }
 

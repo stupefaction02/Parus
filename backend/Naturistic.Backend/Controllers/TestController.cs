@@ -1,5 +1,7 @@
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Naturistic.Core.Entities;
 using Naturistic.Infrastructure.DLA;
@@ -80,6 +82,87 @@ namespace Naturistic.Backend.Controllers
 			return Ok("Seeding is done!");
 		}
 
-		#endregion
-	}
+        [HttpGet]
+        [Route("api/test/seed1")]
+        public IActionResult Seed1([FromServices] ApplicationDbContext context)
+        {
+			foreach (var item in context.Broadcasts)
+			{
+				context.Remove(item);
+
+				Console.WriteLine(item.Username + " deleted!");
+			}
+
+			context.SaveChanges();
+
+            string[] names = new string[6]
+			{
+				"athleanx_com",
+				"SuperIvan",
+				"TwickyEwe",
+				"Milky",
+				"Fredrick_Hudsen",
+				"ADC_Vr"
+			};
+
+            string[] titles = new string[6]
+            {
+                "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
+                "🦐FIRST TIME INSCRYPTION!!! LEGGOOO! ❤️BLOWHOLE BLAST RESTOCKED -> !GG / !Merch 《VTuber》!socials",
+                "Weekly Dev Stream! | !merch",
+                "SPOOKTEMBER DAY 4: I'M BACK! DRAMA + SPOOKS + GAMING | !TTS !advgg | !figure |",
+                "Yay a new update in Genshin!!",
+                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad"
+            };
+
+			string[] previews = new string[6]
+			{
+				"preview1.jpg",
+				"preview2.jpg",
+				"preview3.jpg",
+				"preview4.jpg",
+				"preview5.jpg",
+				"preview6.jpg"
+			};
+
+			var broadcasts = new List<BroadcastInfo>();
+
+            for (int i = 1; i < 100; i++)
+			{
+                int cat = (new Random()).Next(1, 5);
+                int tag = (new Random()).Next(1, 4);
+
+                int nam = (new Random()).Next(0, 5);
+                int tit = (new Random()).Next(0, 5);
+                int pre = (new Random()).Next(0, 5);
+
+				string name = names[nam] + Guid.NewGuid().ToString().Substring(0, 2);
+				string title = titles[tit];
+				string preview = previews[pre];
+
+                var broadcast1 = new BroadcastInfo
+                {
+					Preview = "previews/" + preview,
+                    Username = name,
+                    Title = title,
+                    AvatarPic = "/athleanxdotcommer14.png",
+                    Category = context.Categories.SingleOrDefault(x => x.Id == cat),
+                    Ref = "/athleanxdotcommer14",
+                    Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == tag) }
+                };
+
+				broadcasts.Add(broadcast1);
+
+                Console.WriteLine($"Broadcast info {name} created!");
+            }
+
+			context.Broadcasts.AddRange(broadcasts);
+
+			context.SaveChanges();
+
+			return Ok("Seeding is done!");
+        }
+
+        #endregion
+    }
 }

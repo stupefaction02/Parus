@@ -24,8 +24,6 @@ namespace Naturistic.Backend.Controllers
 	[ApiController] 
 	public class BroadcastController : Controller
 	{
-		private readonly IBroadcastRepository broadcasts;
-	
 		private struct BroadcastSessionInfo
         {
 			public string SessionKey;
@@ -40,14 +38,9 @@ namespace Naturistic.Backend.Controllers
 		private static Dictionary<int, BroadcastSessionInfo> broadcastsSessionStore 
 			= new Dictionary<int, BroadcastSessionInfo>();
 
-		public BroadcastController(IBroadcastRepository broadcasts)
+		public BroadcastController()
 		{
-			this.broadcasts = broadcasts;
 		}
-
-        [HttpGet]
-        [Route("api/broadcasts")]
-        public async Task<object> GetBroadcastsInfo(int limit) => await broadcasts.GetAllAsync();
 
         [HttpGet]
 		[Route("api/broadcasts/startSession")]

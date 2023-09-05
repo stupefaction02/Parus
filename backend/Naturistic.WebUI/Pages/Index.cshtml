@@ -1,10 +1,82 @@
-﻿@page "{handler?}"
+﻿@page "/"
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@using Naturistic.WebUI.HtmlHelpers
+
+@section AdditionalScripts
+{
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/editpassword.js"></script>
+}
+
+@section AdditionalStyles
+{
+    <link href="~/css/overview.css" rel="stylesheet" media="all">
+}
+
+<div class="broadcast_block_container">
+    <div class="broadcast_block">
+        <img class="broadcast_block_img" src="https://localhost:5004/previews/preview1.jpg" />
+        <div class="broadcast_block_info">
+            <div style="display: flex; align-items: center;">
+                <img class="broadcast_block_info_avatar" src="https://localhost:5004/avas/ava1.jpg" />
+
+                <div style="margin-top: 12px">
+                    <h3 class="broadcast_block_info_title">Watching Birds!</h3>
+                    <label class="broadcast_block_info_username">Trickywe</label>
+                </div>
+            </div>
+
+            <div style="padding-left: 50px; margin-top: -8px; ">
+                <label class="broadcast_block_info_category">Общение</label>
+
+                <div class="broadcast_block_info_tags">
+                    <a class="broadcast_block_info_tag">
+                        <span>Russia</span>
+                    </a>
+                    <a class="broadcast_block_info_tag">
+                        <span>Chilling</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+<div class="overview_pagination">
+    @{
+        string hrefPar = "?page=";
+        int page = Model.Page;
+
+        bool prevHrefDisabled = page <= 1;
+        bool nextHrefDisabled = page >= Model.PageCount;
+
+        int previousPageHref = prevHrefDisabled ? 1 : (page - 1);
+        int nextPageHref = nextHrefDisabled ? 1 : (page + 1);
+    }
+
+    @if (prevHrefDisabled)
+    {
+        <a class="pagination_arrow" disabled>&laquo;</a>
+    }
+    else
+    {
+        <a class="pagination_arrow" href="?page=@previousPageHref">&laquo;</a>
+    }
+
+    @PaginatorHelper.RegularPagination(page, Model.PageCount, hrefPar)
+
+    @if (nextHrefDisabled)
+    {
+        <a class="pagination_arrow" disabled>&raquo;</a>
+    }
+    else
+    {
+        <a class="pagination_arrow" href="?page=@nextPageHref">&raquo;</a>
+    }
+
 </div>

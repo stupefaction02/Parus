@@ -15,8 +15,10 @@ namespace Naturistic.Core.Entities
 		public string Username { get; set; }
 
 		public string AvatarPic { get; set; }
-		
-		public string Title { get; set; }
+
+        public string Preview { get; set; }
+
+        public string Title { get; set; }
 
         public List<Tag> Tags { get; set; }
 

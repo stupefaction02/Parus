@@ -8,7 +8,7 @@ using Naturistic.Core.Interfaces.Repositories;
 
 namespace Naturistic.Infrastructure.DLA
 {
-	public class DummyBroadcastRepository : IBroadcastRepository
+	public class DummyBroadcastRepository// : IBroadcastRepository
 	{
 		private readonly ApplicationDbContext context;
 	

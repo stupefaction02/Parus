@@ -1,12 +1,12 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Naturistic.Core.Entities;
 
 namespace Naturistic.Core.Interfaces.Repositories
 {
-	public interface IBroadcastRepository
-	{
-		Task<IEnumerable<BroadcastInfo>> GetAllAsync();
+    public interface IBroadcastInfoRepository
+    {
+		int Count();
+
+        IEnumerable<BroadcastInfo> GetInterval(int start, int count);
 	}
 }
