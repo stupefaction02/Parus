@@ -22,11 +22,11 @@
 }
 
 .overview_pagination {
-    width: 40%;
+    width: 55%;
     height: 40px;
     display: inline-block;
     position: absolute;
-    left: 35%;
+    left: 28%;
     margin-bottom: 25px;
 }
 
@@ -67,6 +67,9 @@
     font-weight: 600;
     font-size: 14px;
     margin-bottom: 2px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .broadcast_block_info_username {

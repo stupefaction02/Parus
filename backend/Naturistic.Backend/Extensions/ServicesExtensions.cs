@@ -109,7 +109,6 @@ namespace Naturistic.Backend.Extensions
         public static void ConfigureRepositories(this IServiceCollection services)
         {
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IBroadcastRepository, DummyBroadcastRepository>();
             services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
         }

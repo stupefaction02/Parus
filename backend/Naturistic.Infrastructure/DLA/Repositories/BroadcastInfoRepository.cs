@@ -25,7 +25,10 @@ namespace Naturistic.Infrastructure.DLA.Repositories
 
         public IEnumerable<BroadcastInfo> GetInterval(int start, int count)
         {
-            return this.context.Broadcasts.Skip(start).Take(count);
+            return this.context.Broadcasts
+                .Include(x => x.Category)
+                .Include(x => x.Tags)
+                .Skip(start).Take(count);
         }
     }
 }

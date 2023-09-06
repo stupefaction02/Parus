@@ -11,7 +11,6 @@ namespace Naturistic.WebUI.HtmlHelpers
 {
     public static class PaginatorHelper
     {
-        private const int pageWindow = 9;
         private const int pagesMax = 11;
 
         public static HtmlString RegularPagination(int page, int pageCount, string href)
@@ -37,26 +36,25 @@ namespace Naturistic.WebUI.HtmlHelpers
             }
             else
             {
-                int leftVerge = page - (pageWindow / 2);
-                int rightVerge = page + (pageWindow / 2);
+                int leftVerge = page - (pagesMax / 2);
+                int rightVerge = page + (pagesMax / 2);
 
                 int start;
+                int end;
+
                 if (leftVerge > 1)
                 {
                     start = leftVerge;
+                    end = start + pagesMax - 1;
+
+                    if (end > pageCount)
+                    {
+                        end = pageCount;
+                    }
                 }
                 else
                 {
                     start = 1;
-                }
-
-                int end;
-                if (rightVerge < pageCount)
-                {
-                    end = rightVerge;
-                }
-                else
-                {
                     end = rightVerge + (pagesMax - rightVerge);
                 }
 

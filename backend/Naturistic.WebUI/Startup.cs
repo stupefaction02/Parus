@@ -24,6 +24,7 @@ using Naturistic.Core.Interfaces;
 using Naturistic.Core.Services.Localization;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
+using Naturistic.Infrastructure.DLA;
 
 namespace Naturistic.WebUI
 {
@@ -61,6 +62,8 @@ namespace Naturistic.WebUI
 			services.AddJwtAuthentication(Configuration);
 
             services.AddSingleton<ILocalizationService, LocalizationService>();
+
+            services.AddDbContext<ApplicationDbContext>();
 
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();

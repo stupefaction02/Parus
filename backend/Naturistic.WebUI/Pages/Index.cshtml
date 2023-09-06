@@ -4,7 +4,10 @@
     ViewData["Title"] = "Home page";
 }
 
+@using Microsoft.Extensions.Configuration;
 @using Naturistic.WebUI.HtmlHelpers
+
+@inject IConfiguration configuration
 
 @section AdditionalScripts
 {
@@ -18,33 +21,44 @@
 }
 
 <div class="broadcast_block_container">
-    <div class="broadcast_block">
-        <img class="broadcast_block_img" src="https://localhost:5004/previews/preview1.jpg" />
-        <div class="broadcast_block_info">
-            <div style="display: flex; align-items: center;">
-                <img class="broadcast_block_info_avatar" src="https://localhost:5004/avas/ava1.jpg" />
+    @{
+        string imageServer = configuration["ImageServer:Url"];
 
-                <div style="margin-top: 12px">
-                    <h3 class="broadcast_block_info_title">Watching Birds!</h3>
-                    <label class="broadcast_block_info_username">Trickywe</label>
+        foreach (var broadcast in Model.Broadcasts)
+        {
+            <div class="broadcast_block">
+                <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                <div class="broadcast_block_info">
+                    <div style="display: flex; align-items: center;">
+                        <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
+
+                        <div style="margin-top: 12px; width: 85%">
+                            <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
+                            <label class="broadcast_block_info_username">@broadcast.Username</label>
+                        </div>
+                    </div>
+
+                    <div style="padding-left: 50px; margin-top: -8px; ">
+                        <label class="broadcast_block_info_category">@broadcast.Category.Name</label>
+
+                        <div class="broadcast_block_info_tags">
+
+                            @foreach (var tag in broadcast.Tags)
+                            {
+                                <a class="broadcast_block_info_tag">
+                                    <span>@tag.Name</span>
+                                </a>
+                            }
+                            
+                            <a class="broadcast_block_info_tag">
+                                <span>Chilling</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div style="padding-left: 50px; margin-top: -8px; ">
-                <label class="broadcast_block_info_category">Общение</label>
-
-                <div class="broadcast_block_info_tags">
-                    <a class="broadcast_block_info_tag">
-                        <span>Russia</span>
-                    </a>
-                    <a class="broadcast_block_info_tag">
-                        <span>Chilling</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+        }
+    }
     
 </div>
 <div class="overview_pagination">

@@ -127,7 +127,7 @@ namespace Naturistic.Backend.Controllers
 
 			var broadcasts = new List<BroadcastInfo>();
 
-            for (int i = 1; i < 100; i++)
+            for (int i = 1; i < 1000; i++)
 			{
                 int cat = (new Random()).Next(1, 5);
                 int tag = (new Random()).Next(1, 4);
@@ -142,12 +142,12 @@ namespace Naturistic.Backend.Controllers
 
                 var broadcast1 = new BroadcastInfo
                 {
-					Preview = "previews/" + preview,
+					Preview = preview,
                     Username = name,
                     Title = title,
-                    AvatarPic = "/athleanxdotcommer14.png",
+                    AvatarPic = "ava1.jpg",
                     Category = context.Categories.SingleOrDefault(x => x.Id == cat),
-                    Ref = "/athleanxdotcommer14",
+                    Ref = "athleanxdotcommer14",
                     Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == tag) }
                 };
 
