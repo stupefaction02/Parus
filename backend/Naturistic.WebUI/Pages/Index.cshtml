@@ -27,16 +27,18 @@
         foreach (var broadcast in Model.Broadcasts)
         {
             <div class="broadcast_block">
-                <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                <a href="@(broadcast.Ref)">
+                    <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                </a>
                 <div class="broadcast_block_info">
-                    <div style="display: flex; align-items: center;">
+                    <a href="@(broadcast.Ref)" style="display: flex; align-items: center;">
                         <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
 
                         <div style="margin-top: 12px; width: 85%">
                             <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
                             <label class="broadcast_block_info_username">@broadcast.Username</label>
                         </div>
-                    </div>
+                    </a>
 
                     <div style="padding-left: 50px; margin-top: -8px; ">
                         <label class="broadcast_block_info_category">@broadcast.Category.Name</label>

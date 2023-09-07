@@ -48,6 +48,14 @@ namespace Naturistic.Infrastructure.Identity
                     .IsRequired();
 
             builder.Entity<ApplicationUser>()
+                    .Property(x => x.AvatarPath)
+                    .HasDefaultValue("defaults/ava1.jpg");
+
+            builder.Entity<BroadcastInfo>()
+                    .Property(x => x.Preview)
+                    .HasDefaultValue("defaults/preview_bright.jpg");
+
+            builder.Entity<ApplicationUser>()
                     .HasOne(e => e.PasswordRecoveryToken)
                     .WithOne(e => e.User)
                     .HasForeignKey<PasswordRecoveryToken>(e => e.UserId)

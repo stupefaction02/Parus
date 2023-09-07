@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Naturistic.Backend.Services;
 using Naturistic.Core.Entities;
+using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA;
+using Naturistic.Infrastructure.Identity;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -86,12 +90,7 @@ namespace Naturistic.Backend.Controllers
         [Route("api/test/seed1")]
         public IActionResult Seed1([FromServices] ApplicationDbContext context)
         {
-			foreach (var item in context.Broadcasts)
-			{
-				context.Remove(item);
-
-				Console.WriteLine(item.Username + " deleted!");
-			}
+			DeleteAllBroadcasts(context);
 
 			context.SaveChanges();
 
@@ -161,6 +160,66 @@ namespace Naturistic.Backend.Controllers
 			context.SaveChanges();
 
 			return Ok("Seeding is done!");
+        }
+
+        private void DeleteAllBroadcasts(ApplicationDbContext context)
+        {
+            foreach (var item in context.Broadcasts)
+            {
+                context.Remove(item);
+
+                Console.WriteLine(item.Username + " deleted!");
+            }
+
+			context.SaveChanges();
+        }
+
+        [HttpGet]
+        [Route("api/test/createbroadcastes")]
+        public IActionResult Seed2([FromServices] ApplicationDbContext dbContext, 
+			[FromServices] ApplicationIdentityDbContext identityDbContext,
+			[FromServices] BroadcastControl broadcastControl)
+		{
+			DeleteAllBroadcasts(dbContext);
+			
+            string[] titles = new string[6]
+            {
+                "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
+                "🦐FIRST TIME INSCRYPTION!!! LEGGOOO! ❤️BLOWHOLE BLAST RESTOCKED -> !GG / !Merch 《VTuber》!socials",
+                "Weekly Dev Stream! | !merch",
+                "SPOOKTEMBER DAY 4: I'M BACK! DRAMA + SPOOKS + GAMING | !TTS !advgg | !figure |",
+                "Yay a new update in Genshin!!",
+                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad"
+            };
+
+            string[] previews = new string[6]
+            {
+                "preview1.jpg",
+                "preview2.jpg",
+                "preview3.jpg",
+                "preview4.jpg",
+                "preview5.jpg",
+                "preview6.jpg"
+            };
+
+			foreach (ApplicationUser user in identityDbContext.Users)
+			{
+				int cat = (new Random()).Next(1, 5);
+				int tag = (new Random()).Next(2, 4);
+
+				int tit = (new Random()).Next(0, 5);
+				int pre = (new Random()).Next(0, 5);
+
+				string title = titles[tit];
+
+				broadcastControl.StartBroadcastAsync(cat, new int[] { 1, tag }, title, user, HttpContext, dbContext);
+
+                Console.WriteLine($"{user.UserName} has started a new broadcast!");
+            }
+
+			dbContext.SaveChanges();
+
+            return Ok();
         }
 
         #endregion

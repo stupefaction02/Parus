@@ -1,0 +1,7 @@
+# updating
+
+Update AspNetUsers
+
+Set AvatarPath = 'defaults/ava1.jpg'
+
+Select * from AspNetUsers

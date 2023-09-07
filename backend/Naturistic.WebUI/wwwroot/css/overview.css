@@ -1,3 +1,7 @@
+a {
+    text-decoration: none;
+}
+
 .broadcast_block {
     width: 306.5px;
     height: 292px;
@@ -70,18 +74,32 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+    text-decoration: none;
 }
 
+    .broadcast_block_info_title:hover {
+        color: #4a277c;
+    }
+
 .broadcast_block_info_username {
+    text-decoration: none;
+    cursor: pointer;
     font-size: 13px;
     color: rgb(83, 83, 95);
     line-height: 1.5;
 }
 
 .broadcast_block_info_category {
+    text-decoration: none;
+    cursor: pointer;
     color: rgb(83, 83, 95);
     margin-bottom: 4px !important;
 }
+
+    .broadcast_block_info_category:hover {
+        color: #4a277c;
+    }
 
 .broadcast_block_info_tag {
     cursor: pointer;

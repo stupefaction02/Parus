@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Naturistic.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Naturistic.Infrastructure.Identity;
 namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230906184228_AddAvatarPath")]
+    partial class AddAvatarPath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("BroadcastInfoTag", b =>
-                {
-                    b.Property<int>("BroadcastsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("BroadcastsId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("BroadcastInfoTag");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -170,73 +158,6 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BroadcastCategory");
-                });
-
-            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AvatarPic")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Preview")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("defaults/preview_bright.jpg");
-
-                    b.Property<string>("Ref")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("BroadcastInfo");
-                });
-
-            modelBuilder.Entity("Naturistic.Core.Entities.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tag");
-                });
-
             modelBuilder.Entity("Naturistic.Infrastructure.Identity.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -246,10 +167,8 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasColumnType("int");
 
                     b.Property<string>("AvatarPath")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)")
-                        .HasDefaultValue("defaults/ava1.jpg");
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ChatColor")
                         .HasColumnType("nvarchar(max)");
@@ -363,21 +282,6 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                     b.ToTable("PasswordRecoveryTokens");
                 });
 
-            modelBuilder.Entity("BroadcastInfoTag", b =>
-                {
-                    b.HasOne("Naturistic.Core.Entities.BroadcastInfo", null)
-                        .WithMany()
-                        .HasForeignKey("BroadcastsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Naturistic.Core.Entities.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -429,15 +333,6 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastInfo", b =>
-                {
-                    b.HasOne("Naturistic.Core.Entities.BroadcastCategory", "Category")
-                        .WithMany("Broadcasts")
-                        .HasForeignKey("CategoryId");
-
-                    b.Navigation("Category");
-                });
-
             modelBuilder.Entity("Naturistic.Infrastructure.Identity.ConfirmCode", b =>
                 {
                     b.HasOne("Naturistic.Infrastructure.Identity.ApplicationUser", "User")
@@ -458,11 +353,6 @@ namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Naturistic.Core.Entities.BroadcastCategory", b =>
-                {
-                    b.Navigation("Broadcasts");
                 });
 
             modelBuilder.Entity("Naturistic.Infrastructure.Identity.ApplicationUser", b =>

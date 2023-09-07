@@ -25,6 +25,11 @@ using Naturistic.Core.Interfaces.Services;
 using Naturistic.Core.Services;
 using Naturistic.Core.Interfaces;
 using Naturistic.Core.Services.Localization;
+using Naturistic.Backend.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using System.Net.Http;
 
 namespace Naturistic.Backend
 {
@@ -56,6 +61,7 @@ namespace Naturistic.Backend
             services.AddMail(Configuration);
 
             services.AddTransient<ILocalizationService, LocalizationService>();
+            services.AddSingleton<BroadcastControl>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -86,13 +92,30 @@ namespace Naturistic.Backend
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
 
+                MapCustomRoutes(endpoints);
+
                 endpoints.MapHub<ChatHub>("/chat");
             });
+        }
+
+        private void MapCustomRoutes(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapGet("/account/broadcastcontrol/start", BroadcastStartControllerHandler);
+        }
+
+        private async void BroadcastStartControllerHandler(
+            int category, int[] tags, string title,
+            HttpContext context, 
+            [FromServices] BroadcastControl broadcastControl,
+            [FromServices] ApplicationDbContext dbContext,
+            [FromServices] ApplicationIdentityDbContext identityDbContext)
+        {
+            await broadcastControl.StartBroadcast(category, tags, title, context, dbContext, identityDbContext);
         }
     }
 }
