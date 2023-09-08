@@ -10,6 +10,7 @@ using Naturistic.WebUI.Services;
 using Naturistic.Infrastructure.Identity;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
+using Naturistic.Core.Interfaces.Repositories;
 
 namespace Naturistic.WebUI.Pages.Broadcasts
 {
@@ -17,42 +18,42 @@ namespace Naturistic.WebUI.Pages.Broadcasts
     {
         private readonly ILogger<IndexModel> logger;
 
-		private readonly UserManager<ApplicationUser> userManager;
+		private readonly IUserRepository userRepository;
 
 		[BindProperty(SupportsGet = true)]
         public string BroadcastName { get; set; }
 
+        public string UserColor { get; set; }
+
         public bool IsUserEmailConfirmed { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, UserManager<ApplicationUser> userManager)
+        public IndexModel(ILogger<IndexModel> logger, IUserRepository userRepository)
         {
             this.logger = logger;
-			this.userManager = userManager;
+			this.userRepository = userRepository;
 		}
 
-        public async Task<IActionResult> OnGet()
+        public PageResult OnGet()
         {
-			ApplicationUser usr = await userManager.GetUserAsync(User);
+            string usernmae = User.Identity.Name;
+			ApplicationUser usr = userRepository.One(x => x.GetUsername() == usernmae) as ApplicationUser;
 
             if (usr != null)
             {
 				// here user is registered but can be not confirmed
-				IsUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
+				IsUserEmailConfirmed = usr.EmailConfirmed;
 				this.Response.Cookies.Append("email", usr.Email);
-			}
+
+                UserColor = usr.ChatColor;
+            }
 
             // if user is not anonymous
-			if (User.Identity.Name != null)
+			if (!String.IsNullOrEmpty(usernmae))
             {
 				this.Response.Cookies.Append("username", User.Identity.Name);
 			}
 
 			return Page();
-        }
-
-        public void OnGetCurrentUser()
-        {
-            Debug.WriteLine("Getting current user...");
         }
     }
 }

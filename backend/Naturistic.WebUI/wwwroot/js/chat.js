@@ -1,5 +1,15 @@
 import { GetCookie } from "./common.js";
 
+/*var jwtToken = GetCookie("JWT");*/
+
+//$.ajax({
+//    url: "https://localhost:5001/api/test/auth",
+//    method: 'get',
+//    beforeSend: function (request) {
+//        request.setRequestHeader("Authorization", "Bearer " + GetCookie("JWT"));
+//    },
+//});
+
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:5001/chat")
     .build();
@@ -14,12 +24,13 @@ var chat_input = document.getElementById("chat_input");
 
 var sys_con_txt = document.getElementById("sys_con_txt").innerText;
 var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
+var color = document.getElementById("user_color").innerText;
 
 if (sendBtn != null) {
     sendBtn.addEventListener("click", function () { //debugger
         let message = chat_input.value;
 
-        hubConnection.invoke("Send", message, nickname, "black")
+        hubConnection.invoke("Send", message, color)
             .catch(function (err) {
                 return console.error(err.toString());
             });

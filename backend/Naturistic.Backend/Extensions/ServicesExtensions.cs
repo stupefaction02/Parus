@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Tokens;
 using Naturistic.Backend.Authentication;
 using Naturistic.Core.Interfaces.Services;
 using Naturistic.Core.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text;
 
 namespace Naturistic.Backend.Extensions
 {
@@ -113,35 +115,30 @@ namespace Naturistic.Backend.Extensions
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
         }
 
-		public static void AddJwtAuthentication(this IServiceCollection services)
+		public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
 		{
-			// use this instead of simple services.AddAuthentication("Bearer")
-			services.AddAuthentication(options =>
-			{
-				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-			})
-					.AddJwtBearer(options =>
-					{
-						options.RequireHttpsMetadata = false;
-						options.TokenValidationParameters = new TokenValidationParameters
-						{
-							ValidateIssuer = false,
-							
-							ValidIssuer = JwtAuthOptions.ISSUER,
-							
-							ValidateAudience = false,
-							
-							ValidAudience = JwtAuthOptions.AUDIENCE,
-						
-							ValidateLifetime = true,
-							
-							IssuerSigningKey = JwtAuthOptions.GetSymmetricSecurityKey(),
-							
-							ValidateIssuerSigningKey = true,
-						};
-					});
-		}
+            string key = configuration["Authentication:JWT:SecretKey"];
+            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.RequireHttpsMetadata = false;
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = false,
+
+                            ValidIssuer = configuration["Authentication:JWT:ValidIssuer"],
+
+                            ValidateAudience = false,
+
+                            ValidAudience = configuration["Authentication:JWT:ValidAudience"],
+                            ValidateLifetime = true,
+
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(key)),
+
+                            ValidateIssuerSigningKey = true,
+                        };
+                    });
+        }
 	}
 }

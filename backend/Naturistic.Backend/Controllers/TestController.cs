@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Naturistic.Backend.Services;
 using Naturistic.Core.Entities;
@@ -15,9 +17,17 @@ namespace Naturistic.Backend.Controllers
 	[ApiController]
 	public class TestController : Controller
 	{
-		#region Testing
+        #region Testing
 
-		[HttpGet]
+        [HttpGet]
+		[Authorize]
+        [Route("api/test/auth")]
+        public string Test()
+		{
+			return "Authorized!";
+		}
+
+        [HttpGet]
 		[Route("api/test/seed")]
 		public IActionResult Seed([FromServices] ApplicationDbContext context)
 		{
