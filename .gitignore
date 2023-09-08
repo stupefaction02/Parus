@@ -365,3 +365,5 @@ lib/
 backend/Naturistic.Hsl/bin/netcvideo_temp/
 backend/Naturistic.Hsl/bin/Debug/netcoreapp3.1/video_temp
 data/
+resources/
+backup/
