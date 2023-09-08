@@ -5,8 +5,8 @@ namespace Naturistic.Core.Interfaces.Repositories
 {
     public interface IMessagesRepository
     {
-        IEnumerable<Message> Messages { get; }
+        IEnumerable<ChatMessage> Messages { get; }
 
-        void Add(Message message);
+        void Add(ChatMessage message);
     }
 }

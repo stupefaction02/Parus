@@ -9,7 +9,7 @@ namespace Naturistic.Core.Entities
         public Chat()
         {
             Channels = new HashSet<ViewerUser>();
-            Messages = new HashSet<Message>();
+            Messages = new HashSet<ChatMessage>();
         }
 
         //[ForeignKey("BroadcastUser")]
@@ -21,6 +21,6 @@ namespace Naturistic.Core.Entities
 
         public ICollection<ViewerUser> Channels { get; set; }
 
-        public ICollection<Message> Messages { get; set; }
+        public ICollection<ChatMessage> Messages { get; set; }
     }
 }

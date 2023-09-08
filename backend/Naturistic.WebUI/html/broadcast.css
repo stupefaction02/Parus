@@ -6,9 +6,13 @@
 
 .player {
 	width: 976px;
-	background: #eee;
+	background: black;
 	height: 482px;
 	margin: 0 auto;
+}
+
+.player_controls_right_volume_track input {
+	margin-top: 6px;
 }
 
 .chat {

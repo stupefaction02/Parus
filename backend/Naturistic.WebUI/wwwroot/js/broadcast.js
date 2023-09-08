@@ -1,3 +1,4 @@
+import { Player } from "./broadcast/Player.js";
 import { GetCookie } from "./common.js";
 
 /*var jwtToken = GetCookie("JWT");*/
@@ -13,9 +14,6 @@ import { GetCookie } from "./common.js";
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:5001/chat")
     .build();
-
-// specific to razor pages
-let nickname = GetCookie("username");
 
 var sendBtn = document.getElementById("sendBtn");
 

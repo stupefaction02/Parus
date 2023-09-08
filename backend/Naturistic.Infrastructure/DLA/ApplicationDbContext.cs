@@ -27,10 +27,12 @@ namespace Naturistic.Infrastructure.DLA
 
 		public DbSet<BroadcastCategory> Categories { get; set; }
 
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
-		#endregion
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        #endregion
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //// move to config
             //int titeLength = 250;

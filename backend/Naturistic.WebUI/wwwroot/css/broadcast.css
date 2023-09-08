@@ -6,7 +6,7 @@
 
 .player {
 	width: 976px;
-	background: #eee;
+	background: black;
 	height: 482px;
 	margin: 0 auto;
 }
@@ -93,6 +93,44 @@ body {
 	font-style: italic;
 	color: dimgray;
 }
+
+.player_controls_right svg {
+	pointer-events: none;
+	width: 2rem;
+	height: 2rem;
+	cursor: pointer;
+	fill: white;
+}
+
+
+
+.player_controls_right_div {
+	width: 2em;
+	height: 2em;
+}
+
+.player_controls_right_div {
+	margin-right: 5px;
+}
+
+	.player_controls_right_div:hover {
+		fill: #524b4b;
+	}
+
+.player_controls {
+	position: relative;
+	top: 445px;
+	width: 100%;
+	height: 2em;
+}
+
+.plays_control_right_play_button {
+}
+
+.player_controls_right {
+	display: flex;
+}
+
 
 @font-face {
 	font-family: "Helvetica Neue";
