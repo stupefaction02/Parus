@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
 
 namespace Naturistic.Hsl
 {
@@ -13,14 +6,17 @@ namespace Naturistic.Hsl
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+            { WebRootPath = "Data" });
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            WebApplication application = builder.Build();
+
+            application.UseHttpsRedirection();
+            application.UseStaticFiles();
+
+            //application.MapPost("/upload", UploadHandler);
+
+            application.Run();
+        }
     }
 }

@@ -25,8 +25,6 @@ namespace Naturistic.Hsl
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
 			services.AddCors();
 
             services.AddSingleton<VideoService>();
@@ -35,23 +33,13 @@ namespace Naturistic.Hsl
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-			app.UseCors(builder => builder.AllowAnyOrigin());
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
+            app.UseCors(builder => builder.AllowAnyOrigin());
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseHttpsRedirection();
+
+            app.UseStaticFiles();
         }
     }
 }

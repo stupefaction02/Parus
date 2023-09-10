@@ -61,7 +61,6 @@ namespace Naturistic.Backend
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             
             app.UseRouting();
             
