@@ -1,0 +1,32 @@
+1) Load Manifest -> OnManifestLoaded -> ParseManifest -> trigger OnMnifestParsed event -> startLoad on hsl -> startLoad on every controller
+2) Loading levels -> playlist-loader loads playlists -> handleTrackOrLevelPlaylist, parse loaded playlist, triggers OnLoadedLevel, leve-controller handles..., stream-controler triggers Events.LEVEL_UPDATED
+3) On Events.LEVEL_UPDATED, buffer-controoler handles it calling updateMediaElementDuration() where media duration is manipulated
+
+1) Every controller every second call doTick method. stream-controller load fragments and also call checkBuffer method
+1.1) _handleFragmentLoadProgress(data); in base-stream-controller handles framgent loadeding progress callback, triggering FRAG_LOADING event
+1.2) for every fragment chunk we create new TransmuxerInterface(, stream-controller 755, transmuxer.push
+1.3) fragment load is comleted in   this._handleFragmentLoadComplete(data); method in stream-controller 391, FRAG_LOADED is triggere
+1.4) in _handleFragmentLoadComplete(data) we flush fragment on base-stream controller 626
+2) in checkBuffer method bug occures when video give two different buffer tracks, reasons is still unknown
+
+1) OnLevelUpdate call updateTime method where currentTime is set
+
+1) adding new frags to this.fragments at frag-tracker 391
+
+1) transmuxer-interface create workers, with my case it call injectWorker() method in construtor
+2) injectWorker creates blob and its url with  type: 'text/javascript',  
+3) after loading the frag it firstly push() then flus() then worker onmessage callback is fired
+4) in message handler it either log events or complete transmuxing or flush.
+5) completing transmuxing in  _handleTransmuxComplete() method on stream-controller 1079
+6) this method triggers FRAG_PARSING_INIT_SEGMENT (0 refs in API) event and BUFFER_APPENDING event Events.FRAG_PARSED
+
+
+
+
+# Transmuxing = Transmuxing, also referred to as repackaging or packetizing, is a process in which audio and video files are repackaged into different delivery formats without changing the files’ contents.
+
+#  M3U8Parser.parseLevelPlaylist - parse playlist
+#  it will set infinity duration on media if playllist details have live = true or liveDurationInfinity = true on hls configs, buffer-controller 843
+#  fragments are loading in chunks
+
+https://localhost:2020/live/123456/master_playlist.m3u8

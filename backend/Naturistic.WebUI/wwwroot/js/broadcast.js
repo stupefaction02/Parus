@@ -1,4 +1,3 @@
-import { Player } from "./broadcast/Player.js";
 import { GetCookie } from "./common.js";
 
 /*var jwtToken = GetCookie("JWT");*/
@@ -10,7 +9,7 @@ import { GetCookie } from "./common.js";
 //        request.setRequestHeader("Authorization", "Bearer " + GetCookie("JWT"));
 //    },
 //});
-
+/*debugger*/
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:5001/chat")
     .build();

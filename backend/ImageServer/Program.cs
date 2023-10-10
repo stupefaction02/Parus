@@ -18,10 +18,13 @@ namespace ImageServer
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-            { WebRootPath = "Data" });
+            var builder = WebApplication.CreateBuilder(new WebApplicationOptions { WebRootPath = "Data" });
+
+            builder.Services.AddCors();
 
             WebApplication application = builder.Build();
+
+            application.UseCors(options => options.AllowAnyOrigin());
 
             application.UseHttpsRedirection();
             application.UseStaticFiles();
