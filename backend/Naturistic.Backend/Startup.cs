@@ -60,6 +60,8 @@ namespace Naturistic.Backend
                 app.UseHsts();
             }
 
+            app.UseWebSockets();
+
             app.UseHttpsRedirection();
             
             app.UseRouting();

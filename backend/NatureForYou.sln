@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityTest", "IdentityTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageServer", "ImageServer\ImageServer.csproj", "{40604DDD-F78C-42FA-A47B-05F9E6EE094F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dummies", "Dummies", "{D3E031A3-A59C-417E-8848-15D18E71E9AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DummyUser", "DummyUser\DummyUser.csproj", "{39F01041-4AEC-4092-913C-E004C666AA9F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,12 +69,18 @@ Global
 		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40604DDD-F78C-42FA-A47B-05F9E6EE094F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39F01041-4AEC-4092-913C-E004C666AA9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39F01041-4AEC-4092-913C-E004C666AA9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39F01041-4AEC-4092-913C-E004C666AA9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39F01041-4AEC-4092-913C-E004C666AA9F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{C594498C-78A6-4049-9FDA-701DA6B1445B} = {D3E031A3-A59C-417E-8848-15D18E71E9AF}
 		{0F199DC7-FE3D-4068-925B-7448DF38F7C4} = {28049071-93B1-4C77-9F8E-948388D0BCC3}
+		{39F01041-4AEC-4092-913C-E004C666AA9F} = {D3E031A3-A59C-417E-8848-15D18E71E9AF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD49B428-22A9-4B04-91A7-C84C58B54C78}

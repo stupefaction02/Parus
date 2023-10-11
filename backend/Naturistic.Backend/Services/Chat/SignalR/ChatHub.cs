@@ -17,15 +17,14 @@ namespace Naturistic.Backend.Services.Chat.SignalR
             if (Context.User.Identity.IsAuthenticated)
             { 
                 string username = Context.User.Identity.Name;
-                Console.WriteLine(username);
+                Console.WriteLine("ChatHub. " + username + ": " + message);
                 await this.Clients.All.SendAsync("Receive", message, username, color);
-
-
             }
         }
 
 		public override Task OnConnectedAsync()
         {
+            Console.WriteLine("New user!");
             return base.OnConnectedAsync();
         } 
     }
