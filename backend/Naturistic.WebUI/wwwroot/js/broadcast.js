@@ -10,6 +10,11 @@ import { GetCookie } from "./common.js";
 //    },
 //});
 /*debugger*/
+
+var maxMessages = 50;
+var messageCount = 0;
+var isScrolling = false;
+
 const hubConnection = new signalR.HubConnectionBuilder()
     .withUrl("https://localhost:5001/chat")
     .build();
@@ -23,6 +28,9 @@ var sys_con_txt = document.getElementById("sys_con_txt").innerText;
 var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
 var color = document.getElementById("user_color").innerText;
 
+messages.addEventListener("mousedown", function () { isScrolling = true; });
+messages.addEventListener("mouseup", function () { isScrolling = false; });
+
 if (sendBtn != null) {
     sendBtn.addEventListener("click", function () { //debugger
         let message = chat_input.value;
@@ -35,19 +43,39 @@ if (sendBtn != null) {
         chat_input.value = "";
     });
 
+    var messagesList = [];
+
     hubConnection.on("Receive", function (message, nickname, color) {
-        var messageElement = CreateMessage(message, nickname, color);
-        
-        messages.appendChild(messageElement);
+        if (messageCount <= maxMessages) {
+            var messageElement = CreateMessage(message, nickname, color);
+
+            messages.prepend(messageElement);
+
+            messagesList.push(messageElement);
+
+            for (var i = 1; i < messages.childNodes.length; i++) {
+                messages.insertBefore(messages.childNodes[i], messages.firstChild);
+            }
+        }
+
+        messageCount++;  
     });
    
     hubConnection.start()
         .then(function () {
-            messages.appendChild(CreateSystemMessage(sys_con_txt));
+            //messages.appendChild(CreateSystemMessage(sys_con_txt));
         })
         .catch(function (err) {
             return console.error(err.toString());
         });
+}
+
+function handleScrollbarChange() {
+    
+    //for (var i in messagesList) {
+    //    var element = 
+    //}
+
 }
 
 function CreateMessage(message, nickname, color) {

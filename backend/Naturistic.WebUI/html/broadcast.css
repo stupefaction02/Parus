@@ -45,6 +45,9 @@ body {
 }
 
 .chat .chat_messages {
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
 	overflow-y: scroll;
 	overflow-x: hidden;
 	height: 86%;

@@ -1,20 +1,36 @@
-﻿using System.Net.WebSockets;
+﻿using System.Linq.Expressions;
+using System.Net;
+using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http.Connections.Client;
+using Microsoft.AspNetCore.SignalR.Client;
 
 string userEntity = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidGVzdF9pdmFuMTIyIiwibmJmIjoxNjk2OTU5MTM1LCJleHAiOjE2OTcyMTgzMzUsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDIiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo1MDAyIn0.V4Bja7XIzImd2EhF1cHiGf5cb_Pyr_UuoJLhjfdajdY";
 string username = "test_ivan122";
 string email = "testivan122@gcom";
 
+int timeout = 5000;
+
 Console.WriteLine($"Booting up Dummy user...");
 Console.WriteLine($"User info. Username: {username}, Email: {email}");
 
-string wsUri = "wss://localhost:5001/chat?id=";
+Console.WriteLine($"Connecting...");
+HubConnection connection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:5001/chat", ConfigureConnection)
+                .Build();
 
-var negotianteUri = @"https://localhost:5001/chat/negotiate?negotiateVersion=1";
-
-Console.WriteLine($"Negotiating with server...");
-string uid = Negotiate();
+void ConfigureConnection(HttpConnectionOptions options)
+{
+    Cookie cookie1 = new Cookie("JWT", userEntity, "/", "localhost");
+    Cookie cookie2 = new Cookie("email", email, "/", "localhost");
+    Cookie cookie3 = new Cookie("username", username, "/", "localhost");
+    Cookie cookie4 = new Cookie("identity.username", username, "/", "localhost");
+    options.Cookies.Add(cookie1);
+    options.Cookies.Add(cookie2);
+    options.Cookies.Add(cookie3);
+    options.Cookies.Add(cookie4);
+}
 
 string[] phrases = new string[3]
 {
@@ -23,101 +39,77 @@ string[] phrases = new string[3]
     "Nice view!"
 };
 
+string[] colors = new string[3]
+{
+    "#333333",
+    "#999999",
+    "#000000"
+};
+
+string color = PickRandomColor();
+
 int phraseIndex = 0;
 
-if (!String.IsNullOrEmpty(uid))
-{
-    Console.WriteLine($"Negotiation is succesufull!");
-    
-    ClientWebSocket ws = await InitWebSocket(uid);
+L2:
+try
+{ 
+    await connection.StartAsync();
 
-    if (ws.State == WebSocketState.Open)
+    if (connection.State == HubConnectionState.Connected)
     {
-        Console.WriteLine($"Websocket was created");
+        Console.WriteLine($"Connected!");
+
         Console.WriteLine($"Starting loop...");
-        await StartLoopAsync(ws, new CancellationToken());
+
+        await StartLoopAsync(connection, new CancellationToken());
     }
 }
-else
+catch (HttpRequestException e)
 {
-    Console.WriteLine($"Server Error!");
+    Console.WriteLine($"Can't establishe connection. Trying to reconnect...");
+    e = null;
+    Thread.Sleep(5000);
+    goto L2;
 }
 
-async Task StartLoopAsync(ClientWebSocket ws, CancellationToken ct)
+async Task StartLoopAsync(HubConnection ws, CancellationToken ct)
 {
-    while (true)
+    L1:
+    try
     {
-        Thread.Sleep(5000);
-
-        if (ws.State == WebSocketState.Closed || ws.State == WebSocketState.Aborted)
+        while (true)
         {
-            Console.WriteLine($"Connection was closed or aborted! Shutting down...");
-            break;
+            if (ws.State == HubConnectionState.Disconnected)
+            {
+                Console.WriteLine($"Connection was closed or aborted! Shutting down...");
+                break;
+            }
+
+            if (phraseIndex == 3)
+            {
+                phraseIndex = 0;
+            }
+
+            string phrase = phrases[phraseIndex];
+            phraseIndex++;
+
+            await ws.InvokeAsync("Send", phrase, color);
+
+            Thread.Sleep(500);
         }
-
-        if (phraseIndex == 3)
-        {
-            phraseIndex = 0;
-        }
-
-        string phrase = phrases[phraseIndex]; 
-        phraseIndex++;
-        ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(phrase));
-
-        await ws.SendAsync(buffer, WebSocketMessageType.Text, true, ct);
+    }
+    catch (Exception e)
+    {
+        Thread.Sleep(timeout);
+        Console.WriteLine($"Trying to reconect...");
+        e = null;
+        goto L1;
     }
 }
 
-async Task<ClientWebSocket> InitWebSocket(string id)
+string PickRandomColor()
 {
-    var ws = new ClientWebSocket();
+    var rng = new Random();
 
-    Console.WriteLine($"Creating websocket with uri=" + wsUri + id);
-    await ws.ConnectAsync(new Uri(wsUri + id), new CancellationToken());
-
-    //await Task.Run(ReceivingTaskHandler);
-
-    return ws;
-}
-
-void ReceivingTaskHandler()
-{
-    // If you need to get chat responses
-}
-
-string Negotiate()
-{
-    using HttpClient httpClient = new HttpClient();
-
-    HttpRequestMessage negotianteUriRequest = new HttpRequestMessage
-    {
-        Method = HttpMethod.Post,
-        RequestUri = new Uri(negotianteUri)
-    };
-
-    //negotianteUriRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("text/plain;charset=UTF-8");
-    negotianteUriRequest.Headers.Add("Cookie", $"locale=ru; JWT={userEntity}; identity.username={username}; email={email}; username={username}");
-    negotianteUriRequest.Headers.Add("X-Requested-With", "XMLHttpRequest");
-
-    var negotianteResponse = httpClient.Send(negotianteUriRequest);
-
-    if (negotianteResponse.IsSuccessStatusCode)
-    {
-        string jsonString;
-        using (var inputStream = new StreamReader(negotianteResponse.Content.ReadAsStream()))
-        {
-            jsonString = inputStream.ReadToEnd();
-        }
-
-        var result = JsonSerializer.Deserialize<NegotiationResponse>(jsonString);
-
-        return result.connectionToken;
-    }
-
-    return null;
-}
-
-public class NegotiationResponse
-{
-    public string connectionToken { get; set; }
+    return colors[(int)rng.Next(0, colors.Length)];
 }

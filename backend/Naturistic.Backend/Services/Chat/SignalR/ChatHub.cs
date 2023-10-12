@@ -22,7 +22,17 @@ namespace Naturistic.Backend.Services.Chat.SignalR
             }
         }
 
-		public override Task OnConnectedAsync()
+        public async Task SendWithChatRecord(string message, string color)
+        {
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                string username = Context.User.Identity.Name;
+                Console.WriteLine("ChatHub. " + username + ": " + message);
+                await this.Clients.All.SendAsync("Receive", message, username, color);
+            }
+        }
+
+        public override Task OnConnectedAsync()
         {
             Console.WriteLine("New user!");
             return base.OnConnectedAsync();
