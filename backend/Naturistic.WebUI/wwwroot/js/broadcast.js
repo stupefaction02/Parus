@@ -31,11 +31,14 @@ var color = document.getElementById("user_color").innerText;
 messages.addEventListener("mousedown", function () { isScrolling = true; });
 messages.addEventListener("mouseup", function () { isScrolling = false; });
 
+var chatName = location.pathname.replace('/', '');
+document.cookie = "chatName=" + chatName + "; path=/";
+
 if (sendBtn != null) {
     sendBtn.addEventListener("click", function () { //debugger
         let message = chat_input.value;
 
-        hubConnection.invoke("Send", message, color)
+        hubConnection.invoke("Send", message, color, chatName)
             .catch(function (err) {
                 return console.error(err.toString());
             });
@@ -60,7 +63,7 @@ if (sendBtn != null) {
 
         messageCount++;  
     });
-   
+
     hubConnection.start()
         .then(function () {
             //messages.appendChild(CreateSystemMessage(sys_con_txt));

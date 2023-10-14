@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -12,13 +13,13 @@ namespace Naturistic.Backend.Services.Chat.SignalR
             
         }
 
-        public async Task Send(string message, string color)
+        public async Task Send(string message, string color, string chatName)
         {
             if (Context.User.Identity.IsAuthenticated)
             { 
                 string username = Context.User.Identity.Name;
                 Console.WriteLine("ChatHub. " + username + ": " + message);
-                await this.Clients.All.SendAsync("Receive", message, username, color);
+                await Clients.Group(chatName).SendAsync("Receive", message, username, color);
             }
         }
 
@@ -34,7 +35,10 @@ namespace Naturistic.Backend.Services.Chat.SignalR
 
         public override Task OnConnectedAsync()
         {
-            Console.WriteLine("New user!");
+            string chatName = Context.GetHttpContext().Request.Cookies["chatName"];
+            Console.WriteLine(Context.ConnectionId);
+            Groups.AddToGroupAsync(Context.ConnectionId, chatName);
+
             return base.OnConnectedAsync();
         } 
     }
