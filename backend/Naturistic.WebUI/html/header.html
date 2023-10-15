@@ -1,10 +1,14 @@
-﻿@using Microsoft.AspNetCore.Identity;
-@using Microsoft.Extensions.Logging;
-@using Naturistic.Infrastructure.Identity;
-
-@inject UserManager<ApplicationUser> userManager;
-@inject ILogger<IdentityController> logger;
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home page - Naturistic.WebUI</title>
+    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+	<header>
+        
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
     <div class="header_container">
         <a class="navbar-brand" asp-area="" asp-page="/Index">Naturistic.WebUI</a>
@@ -12,9 +16,6 @@
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        
-
         <!-- <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"> -->
         <ul class="navbar-nav flex-grow-1">
             @*<li class="nav-item">
@@ -31,15 +32,6 @@
             bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
 
             <ul style="align-items: center;" class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
-
-                <div class="header_search">
-                    <input class="header_search_input" />
-
-                    <div class="header_search_icon">
-                        <svg width="100%" height="100%" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" data-a-selector="tw-core-button-icon" class="ScIconSVG-sc-1q25cff-1 ifhFgG"><g><path fill-rule="evenodd" d="M13.192 14.606a7 7 0 111.414-1.414l3.101 3.1-1.414 1.415-3.1-3.1zM14 9A5 5 0 114 9a5 5 0 0110 0z" clip-rule="evenodd"></path></g></svg>
-                    </div>
-                </div>
-
                 @if (!isUserEmailConfirmed)
                 {
                     <li class="nav-item" style="margin-right: 20px">
@@ -54,14 +46,6 @@
         else
         {
             <ul style="align-items: center;" class="navbar-nav flex-grow-1  d-flex justify-content-end">
-                <div class="header_search">
-                    <input class="header_search_input" />
-
-                    <div class="header_search_icon">
-                        <svg width="100%" height="100%" version="1.1" viewBox="0 0 20 20" x="0px" y="0px" data-a-selector="tw-core-button-icon" class="ScIconSVG-sc-1q25cff-1 ifhFgG"><g><path fill-rule="evenodd" d="M13.192 14.606a7 7 0 111.414-1.414l3.101 3.1-1.414 1.415-3.1-3.1zM14 9A5 5 0 114 9a5 5 0 0110 0z" clip-rule="evenodd"></path></g></svg>
-                    </div>
-                </div>
-
                 <li id="header_login_btn" style="margin-right: 20px" class="nav-item">
                     <button class="color1_btn color1_btn_header">Sign In</button>
                 </li>
@@ -72,3 +56,37 @@
         }
     </div>
 </nav>
+            <div class="container">
+                <a class="navbar-brand" href="/">Naturistic.WebUI</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"> -->
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="/Privacy">Privacy</a>
+                        </li>
+                    </ul>
+					
+					<ul class="navbar-nav flex-grow-1  d-flex justify-content-end">
+                        <li class="nav-item">
+                            <a class="text-white btn btn-primary nav-link" href="/">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="text-white  btn btn-primary nav-link" href="/Privacy">Sign Up</a>
+                        </li>
+                    </ul>
+					<ul class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">
+                        <li class="nav-item">
+                            <a class="text-white  btn btn-primary nav-link" href="/">Sign Out</a>
+                        </li>
+                    </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>
