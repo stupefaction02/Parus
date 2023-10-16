@@ -7,6 +7,8 @@ namespace Naturistic.Core.Entities
 {
     public class BroadcastInfo
     {
+        public string HostUserId { get; set; }
+
         public string Ref { get; set; }
 
         [Key]

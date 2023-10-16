@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Naturistic.Core.Entities;
 
@@ -8,5 +9,8 @@ namespace Naturistic.Core.Interfaces.Repositories
 		int Count();
 
         IEnumerable<BroadcastInfo> GetInterval(int start, int count);
-	}
+        BroadcastInfo One(Func<BroadcastInfo, bool> predicate);
+        BroadcastInfo OneLazy(Func<BroadcastInfo, bool> predicate);
+        void RemoveOne(string userId);
+    }
 }

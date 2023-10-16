@@ -113,6 +113,7 @@ namespace Naturistic.Backend.Extensions
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
+            services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
         }
 
 		public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)

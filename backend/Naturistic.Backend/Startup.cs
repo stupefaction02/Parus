@@ -95,17 +95,6 @@ namespace Naturistic.Backend
 
         private void MapCustomRoutes(IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/account/broadcastcontrol/start", BroadcastStartControllerHandler);
-        }
-
-        private async void BroadcastStartControllerHandler(
-            int category, int[] tags, string title,
-            HttpContext context, 
-            [FromServices] BroadcastControl broadcastControl,
-            [FromServices] ApplicationDbContext dbContext,
-            [FromServices] ApplicationIdentityDbContext identityDbContext)
-        {
-            await broadcastControl.StartBroadcast(category, tags, title, context, dbContext, identityDbContext);
         }
     }
 

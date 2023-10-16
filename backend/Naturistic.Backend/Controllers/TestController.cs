@@ -222,7 +222,7 @@ namespace Naturistic.Backend.Controllers
 
 				string title = titles[tit];
 
-				broadcastControl.StartBroadcastAsync(cat, new int[] { 1, tag }, title, user, HttpContext, dbContext);
+				broadcastControl.StartBroadcastAsync(cat, new int[] { 1, tag }, title, user, dbContext);
 
                 Console.WriteLine($"{user.UserName} has started a new broadcast!");
             }

@@ -18,13 +18,30 @@ using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces;
 using Naturistic.Core.Interfaces.Repositories;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Naturistic.Backend.Services;
 
 namespace Naturistic.Backend.Controllers
 {
 	[ApiController] 
 	public class BroadcastController : Controller
 	{
-		private struct BroadcastSessionInfo
+		private ClaimsPrincipal user;
+
+        public new ClaimsPrincipal User 
+		{ 
+			get 
+			{ 
+				return HttpContext != null ? HttpContext.User : user; 
+			} 
+			set 
+			{ 
+				user = value; 
+			} 
+		}
+
+        private struct BroadcastSessionInfo
         {
 			public string SessionKey;
 
@@ -112,5 +129,59 @@ namespace Naturistic.Backend.Controllers
 
 			return BitConverter.ToString(bytes).Replace("-", "").ToLower();
 		}
-	}
+
+		[HttpPost]
+		public async Task<IActionResult> StartBroadcast(string preview, string title, int catId, int[] tagsIds, 
+			[FromServices] ApplicationDbContext context, 
+			[FromServices] ApplicationIdentityDbContext identityDbContext, 
+			[FromServices] BroadcastControl broadcastControl)
+		{
+            System.Security.Principal.IIdentity identity = User.Identity;
+
+			if (!identity.IsAuthenticated)
+			{
+				return Unauthorized();
+			}
+
+            ApplicationUser user = identityDbContext.Users
+                .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Name);
+
+            if (user == null || !user.EmailConfirmed)
+			{
+                return Unauthorized();
+            }
+
+            await broadcastControl.StartBroadcastAsync(catId, tagsIds, title, user, context);
+
+            return Ok();
+        }
+
+		[HttpDelete]
+        public async Task<IActionResult> StopBroadcast(
+			[FromServices] IBroadcastInfoRepository context,
+            [FromServices] ApplicationIdentityDbContext identityDbContext,
+            [FromServices] BroadcastControl broadcastControl)
+		{
+            System.Security.Principal.IIdentity identity = User.Identity;
+
+            if (!identity.IsAuthenticated)
+            {
+                return Unauthorized();
+            }
+
+            ApplicationUser user = identityDbContext.Users
+                .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Name);
+
+            if (user == null || !user.EmailConfirmed)
+            {
+                return Unauthorized();
+            }
+
+            await broadcastControl.StopBroadcastAsync(user, context);
+
+            // user must to have only one broadcast at the time
+
+			return Ok();
+        }
+    }
 }

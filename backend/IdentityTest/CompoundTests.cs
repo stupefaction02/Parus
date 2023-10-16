@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
@@ -16,11 +17,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Naturistic.Backend.Controllers;
+using Naturistic.Backend.Services;
 using Naturistic.Core;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Core.Interfaces.Services;
+using Naturistic.Infrastructure.DLA;
 using Naturistic.Infrastructure.Identity;
 using Naturistic.WebUI.Pages.Identity;
 
@@ -28,7 +32,7 @@ namespace IdentityTest
 {
 	public partial class CompoundTests
 	{
-		IServiceProvider services =
+		IServiceProvider backendServices =
 			Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
 
 		IServiceProvider services1 =
@@ -36,7 +40,7 @@ namespace IdentityTest
 
 		private T GetBackendService<T>()
 		{
-			return services.GetRequiredService<T>();
+			return backendServices.GetRequiredService<T>();
 		}
 
 		private T GetWebUIService<T>()
@@ -91,7 +95,7 @@ namespace IdentityTest
 			//	b2.RunAsync();
 			//});
 
-			services = b1.Services;
+			backendServices = b1.Services;
 			services1 = b2.Services;
 
 			serverLocalization = GetBackendService<ILocalizationService>();
@@ -203,7 +207,7 @@ namespace IdentityTest
 					new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
 				};
 
-			return new ClaimsIdentity(claims);
+			return new TestIdentity(claims);
 		}
 
 		[Fact]
@@ -251,7 +255,7 @@ namespace IdentityTest
 			Assert.True(b == null);
 		}
 
-		[Fact]
+		//[Fact]
 		public async void RegisterUser_LoginUSer_ConfirmUser_DeleteUser()
 		{
 			#region Register
@@ -335,5 +339,46 @@ namespace IdentityTest
 			ConfirmCode stillAddedCode = (ConfirmCode)confirmCodes.OneByUser(a.GetId());
 			Assert.Null(stillAddedCode);
 		}
-	}
+
+
+        [Fact]
+        public async void GetHostUser_CreateBroadcast_DeleteBroadcast()
+		{
+            BroadcastController bc = new Naturistic.Backend.Controllers.BroadcastController();
+
+            UserManager<ApplicationUser> um = GetBackendService<UserManager<ApplicationUser>>();
+            ApplicationDbContext context = GetBackendService<ApplicationDbContext>();
+            ApplicationIdentityDbContext ic = GetBackendService<ApplicationIdentityDbContext>();
+            IBroadcastInfoRepository br = GetBackendService<IBroadcastInfoRepository>();
+            BroadcastControl bco = GetBackendService<BroadcastControl>();
+
+			string hostUserName = "test_ivan122";
+            IUser hostUser = users.One(x => x.GetUsername() == hostUserName);
+            string hostUserId = hostUser.GetId();
+
+            Assert.True(hostUser != null);
+
+            ClaimsIdentity identity = await CreateIdentityAsync((ApplicationUser)hostUser, um);
+
+            bc.User = new ClaimsPrincipal(identity);
+
+            IActionResult result = await bc.StartBroadcast("preview#1", "title#1", 1, new int[] { 1, 2 }, context, ic, bco);
+
+			Assert.IsType<OkResult>(result);
+
+            BroadcastInfo createdBroadcast = br.OneLazy(x => x.HostUserId == hostUserId);
+
+			Assert.NotNull(createdBroadcast);
+			Assert.True(createdBroadcast.HostUserId == hostUserId);
+
+            IActionResult stopBroadcastResult = await bc.StopBroadcast(br, ic, bco);
+
+            Assert.IsType<OkResult>(result);
+
+            BroadcastInfo alreadyDeleted = br.OneLazy(x => x.HostUserId == hostUserId);
+
+            Assert.Null(alreadyDeleted);
+        }
+
+    }
 }

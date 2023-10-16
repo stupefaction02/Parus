@@ -16,24 +16,9 @@ namespace Naturistic.Backend.Services
 {
     public class BroadcastControl
     {
-        public async Task StartBroadcast(
-            int category, int[] tags, string title,
-            HttpContext httpContext,
-            ApplicationDbContext dbContext,
-            ApplicationIdentityDbContext identityDbContext)
-        {
-            ClaimsPrincipal identity = httpContext.User;
-
-            ApplicationUser user = identityDbContext.Users
-                .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Identity.Name);
-
-            await StartBroadcastAsync(category, tags, title, user, httpContext, dbContext);
-        }
-
         public async Task StartBroadcastAsync(
             int category, int[] tags, string title,
             ApplicationUser user,
-            HttpContext httpContext, 
             ApplicationDbContext dbContext)
         {
             List<Tag> userTags = new List<Tag>();
@@ -45,6 +30,7 @@ namespace Naturistic.Backend.Services
 
             var broadcastInfo = new BroadcastInfo
             {
+                HostUserId = user.GetId(),
                 AvatarPic = user.AvatarPath,
                 Category = dbContext.Categories.SingleOrDefault(x => x.Id == category),
                 Tags = userTags,
@@ -59,6 +45,13 @@ namespace Naturistic.Backend.Services
             // Updating players
 
             dbContext.Broadcasts.Add(broadcastInfo);
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        public async Task StopBroadcastAsync(ApplicationUser hostUser, Core.Interfaces.Repositories.IBroadcastInfoRepository context)
+        {
+            context.RemoveOne(hostUser.Id);
         }
 
         public void ChangePreviewImageAsync(string userName, string newImageFn, HttpClient httpClient)

@@ -65,4 +65,15 @@ namespace IdentityTest
 			return pageCtx;
 		}
 	}
+
+	public class TestIdentity : ClaimsIdentity
+	{
+        public TestIdentity(IEnumerable<Claim>? claims) : base(claims)
+        {
+        }
+
+        public override bool IsAuthenticated => true;
+
+		
+    }
 }
