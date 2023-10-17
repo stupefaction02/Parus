@@ -158,19 +158,22 @@ internal partial class Program
 
         if (await CleanUp())
         {
+            List<Task> tasks = new List<Task>();
             foreach (User confirmedUser in ConfirmedUsers)
             {
-                InitOBSAsync(confirmedUser);
+                tasks.Add( RunOBSAsync(confirmedUser) );
             }
+
+            await Task.WhenAll(tasks);
         }
     }
 
-    private async static void InitOBSAsync(User user)
+    private static Task RunOBSAsync(User user)
     {
         OBS obs = new OBS(user);
 
         // fall a settings of broadcast
-        await obs.RunAsync();
+        return obs.RunAsync();
     }
 
     private async static Task<List<User>> GetUser()
@@ -195,6 +198,11 @@ internal partial class Program
 
     private static async Task<bool> CleanUp()
     {
+        foreach (string file in Directory.GetFiles("manifest"))
+        {
+            File.Delete(file);
+        }
+
         string uri = "https://localhost:5001/api/test/purgeallbroadcasts";
         
         return (await Request(uri, AdminJWT, HttpMethod.Delete)).IsSuccessStatusCode;
