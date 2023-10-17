@@ -131,7 +131,8 @@ namespace Naturistic.Backend.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> StartBroadcast(string preview, string title, int catId, int[] tagsIds, 
+        [Route("api/broadcasts/start")]
+        public async Task<IActionResult> StartBroadcast(string preview, string title, int catId, int[] tagsIds, 
 			[FromServices] ApplicationDbContext context, 
 			[FromServices] ApplicationIdentityDbContext identityDbContext, 
 			[FromServices] BroadcastControl broadcastControl)
@@ -156,7 +157,8 @@ namespace Naturistic.Backend.Controllers
             return Ok();
         }
 
-		[HttpDelete]
+        [Route("api/broadcasts/stop")]
+        [HttpDelete]
         public async Task<IActionResult> StopBroadcast(
 			[FromServices] IBroadcastInfoRepository context,
             [FromServices] ApplicationIdentityDbContext identityDbContext,

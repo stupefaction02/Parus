@@ -84,7 +84,19 @@ namespace Naturistic.Backend.Controllers
             return Json(userRepository.Users);
         }
 
-		[HttpGet]
+        [HttpGet]
+        [Route("api/test/userslimited")]
+        public object UsersLimited()
+        {
+            return Json(userRepository.Users.Where(x => x.EmailConfirmed).Select(x =>
+            {
+                ApplicationUser usr = (ApplicationUser)x;
+
+                return new { id = usr.Id, username = usr.UserName, email = usr.Email, emailConfirmed = usr.EmailConfirmed };
+            }));
+        }
+
+        [HttpGet]
 		[Route("api/test/getuser")]
 		public object Users(string username)
 		{

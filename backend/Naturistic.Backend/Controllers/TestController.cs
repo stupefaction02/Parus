@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Naturistic.Backend.Services;
 using Naturistic.Core.Entities;
@@ -182,6 +183,37 @@ namespace Naturistic.Backend.Controllers
             }
 
 			context.SaveChanges();
+        }
+
+		[AllowAnonymous]
+        [HttpDelete]
+        [Route("api/test/purgeallbroadcasts")]
+        public async Task<IActionResult> PurgeBroadcasts([FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um, [FromServices] ApplicationDbContext dbContext)
+		{
+            ApplicationUser usr = users.One(x => x.GetUsername() == User.Identity.Name) as ApplicationUser;
+
+            if (await um.IsInRoleAsync(usr, "admin"))
+			{
+				DeleteAllBroadcasts(dbContext);
+
+				return Ok();
+			}
+
+			return Unauthorized();
+		}
+
+        [HttpGet]
+        [Route("api/test/grantrole")]
+        public IActionResult GrantAdminRoles(string username, string role, [FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um)
+        {
+			ApplicationUser usr = users.One(x => x.GetUsername() == username) as ApplicationUser;
+
+			if (usr != null)
+			{
+				um.AddToRoleAsync(usr, role);
+			}
+
+            return null;    
         }
 
         [HttpGet]

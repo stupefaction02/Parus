@@ -3,29 +3,34 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 
-internal class Program
+internal partial class Program
 {
     private static async Task Main(string[] args)
     {
+        await StartBroadcast(args);
         if (args.Length > 0)
         {
             string command = args[0];
             Console.WriteLine(command);
             switch (command)
             {
-                default:
                 case "flood":
                     await FloodChat(args);
                     break;
-
+                default:
                 case "start_broadcast":
-
+                    StartBroadcast(args);
                     break;
             }
         }
+
+        
     }
 
     private static async Task FloodChat(string[] args)
@@ -143,8 +148,79 @@ internal class Program
         }
     }
 
-    private static async Task StartBroadcas(string[] args)
-    {
+    private static List<User> ConfirmedUsers;
 
+    static string AdminJWT => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJuYmYiOjE2OTc1MzMxNDQsImV4cCI6MTY5Nzc5MjM0NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDIifQ.ZeoVMVFS8_HYoKCw3YkqSWOeu1z7n7IWY3o6NJqGpNM";
+
+    private static async Task StartBroadcast(string[] args)
+    {
+        ConfirmedUsers = await GetUser();
+
+        if (await CleanUp())
+        {
+            foreach (User confirmedUser in ConfirmedUsers)
+            {
+                InitOBSAsync(confirmedUser);
+            }
+        }
+    }
+
+    private async static void InitOBSAsync(User user)
+    {
+        OBS obs = new OBS(user);
+
+        // fall a settings of broadcast
+        await obs.RunAsync();
+    }
+
+    private async static Task<List<User>> GetUser()
+    {
+        string uri = "https://localhost:5001/api/test/userslimited";
+
+        List<User> lst = new List<User>();
+        foreach (User user in await GetJSON<List<User>>(uri, AdminJWT, HttpMethod.Get))
+        {
+            lst.Add(user);
+        }
+
+        return lst;
+    }
+
+    private static async Task<T> GetJSON<T>(string uri, string jwt, HttpMethod method)
+    {
+        HttpResponseMessage response = await Request(uri, jwt, method);
+
+        return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+    }
+
+    private static async Task<bool> CleanUp()
+    {
+        string uri = "https://localhost:5001/api/test/purgeallbroadcasts";
+        
+        return (await Request(uri, AdminJWT, HttpMethod.Delete)).IsSuccessStatusCode;
+    }
+
+    private async static Task<HttpResponseMessage> Request(string uri, string jwt, HttpMethod method)
+    {
+        using HttpClient httpClient = new HttpClient();
+
+        HttpRequestMessage request = new HttpRequestMessage
+        {
+            Method = method,
+            RequestUri = new Uri(uri)
+        };
+
+        request.Headers.Add("Cookie", $"locale=ru; JWT={jwt};");
+        request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+
+        return await httpClient.SendAsync(request);
+    }
+
+    public class User
+    {
+        public string username;
+        public string email;
+        public string id;
+        public string emailConfirmed;
     }
 }

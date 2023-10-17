@@ -26,21 +26,27 @@ a {
 }
 
 .overview_pagination {
-    width: 55%;
     height: 40px;
-    display: inline-block;
-    position: absolute;
-    left: 28%;
-    margin-bottom: 25px;
+    display: flex;
+    margin: auto 0;
+    justify-content: center;
 }
 
-    .overview_pagination a {
-        color: black;
-        float: left;
-        padding: 8px 16px;
-        text-decoration: none;
-        cursor: pointer;
+    .overview_pagination div {
+        width: 40px;
     }
+
+        .overview_pagination .pagination_arrow {
+            width: 40px;
+        }
+
+        .overview_pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
         .overview_pagination a.active {
             background-color: #9147FF;

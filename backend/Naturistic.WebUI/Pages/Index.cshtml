@@ -63,7 +63,10 @@
     }
     
 </div>
-<div class="overview_pagination">
+
+@if (Model.PageCount > 1) {
+
+    <div class="overview_pagination">
     @{
         string hrefPar = "?page=";
         int page = Model.Page;
@@ -95,4 +98,5 @@
         <a class="pagination_arrow" href="?page=@nextPageHref">&raquo;</a>
     }
 
-</div>
+    </div>
+}
