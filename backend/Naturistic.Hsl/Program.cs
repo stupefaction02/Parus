@@ -1,8 +1,14 @@
+using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders.Physical;
+using Microsoft.Extensions.Hosting;
 
 namespace Naturistic.Hsl
 {
@@ -22,6 +28,25 @@ namespace Naturistic.Hsl
             application.UseHttpsRedirection();
 
             application.UseHslStaticFiles();
+
+            application.MapPost("/uploadManifest", async (IFormFile file, string usrDirectory, IWebHostEnvironment env) => { 
+                bool directoryExists = false;
+
+                string contentRoot = env.WebRootPath;
+                string directoryPath = Path.Combine(contentRoot, "live", usrDirectory);
+                // TODO: replace Path.COmbine with your own
+                Directory.CreateDirectory(directoryPath);
+
+                string fn = Path.Combine(directoryPath, "master_playlist.m3u8");
+                using (FileStream destFs = File.Create(fn))
+                {
+                    Stream inputFs = file.OpenReadStream();
+                    inputFs.Seek(0, SeekOrigin.Begin);
+
+                    Console.WriteLine($"Uploading {file.FileName} file to {fn}");
+                    await inputFs.CopyToAsync(destFs);
+                }
+            });
 
             application.Run();
         }

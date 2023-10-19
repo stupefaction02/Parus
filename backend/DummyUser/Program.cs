@@ -11,24 +11,25 @@ using Newtonsoft.Json;
 
 internal partial class Program
 {
-    private static async Task Main(string[] args)
+    private static void Main(string[] args)
     {
-        await StartBroadcast(args);
-        if (args.Length > 0)
-        {
-            string command = args[0];
-            Console.WriteLine(command);
-            switch (command)
-            {
-                case "flood":
-                    await FloodChat(args);
-                    break;
-                default:
-                case "start_broadcast":
-                    StartBroadcast(args);
-                    break;
-            }
-        }
+        StartBroadcast(args).GetAwaiter().GetResult();
+        return;
+        //if (args.Length > 0)
+        //{
+        //    string command = args[0];
+        //    Console.WriteLine(command);
+        //    switch (command)
+        //    {
+        //        case "flood":
+        //            Task.Run(async () => { await FloodChat(args); });
+        //            break;
+        //        default:
+        //        case "start_broadcast":
+        //            Task.Run(async () => { await StartBroadcast(args); });
+        //            break;
+        //    }
+        //}
 
         
     }
@@ -159,12 +160,12 @@ internal partial class Program
         if (await CleanUp())
         {
             List<Task> tasks = new List<Task>();
-            foreach (User confirmedUser in ConfirmedUsers)
+            foreach (User confirmedUser in ConfirmedUsers.Take(1))
             {
-                tasks.Add( RunOBSAsync(confirmedUser) );
+                tasks.Add(RunOBSAsync(confirmedUser) );
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks.ToArray());
         }
     }
 
@@ -173,7 +174,7 @@ internal partial class Program
         OBS obs = new OBS(user);
 
         // fall a settings of broadcast
-        return obs.RunAsync();
+        return Task.Run(async () => await obs.RunAsync());
     }
 
     private async static Task<List<User>> GetUser()
