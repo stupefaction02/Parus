@@ -140,19 +140,12 @@ namespace Naturistic.Backend.Controllers
 
         private async Task<ClaimsIdentity> CreateIdentityAsync(ApplicationUser user)
         {
-            if (await userManager.IsInRoleAsync(user, "admin"))
-            {
-                return null;
-            }
-            else
-            {
-                List<Claim> claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
                 };
 
-                return new ClaimsIdentity(claims);
-            }
+            return new ClaimsIdentity(claims);
         }
 
 		[HttpPost]

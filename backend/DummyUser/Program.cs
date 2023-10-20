@@ -151,7 +151,7 @@ internal partial class Program
 
     private static List<User> ConfirmedUsers;
 
-    static string AdminJWT => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJuYmYiOjE2OTc1MzMxNDQsImV4cCI6MTY5Nzc5MjM0NCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDIifQ.ZeoVMVFS8_HYoKCw3YkqSWOeu1z7n7IWY3o6NJqGpNM";
+    static string AdminJWT => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJuYmYiOjE2OTc4MDQ2MTEsImV4cCI6MTc1NDA1MTAxMSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDIifQ.wOOfJlyvSCf6VqPsOxx8HsONDbRu5TqKEOrzyAZibkU";
 
     private static async Task StartBroadcast(string[] args)
     {

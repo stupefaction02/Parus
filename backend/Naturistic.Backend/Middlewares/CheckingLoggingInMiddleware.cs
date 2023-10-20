@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Naturistic.Infrastructure.Identity;
 using static System.Formats.Asn1.AsnWriter;
@@ -51,12 +52,14 @@ namespace Naturistic.Backend.Middlewares
     {
         private readonly RequestDelegate _next;
 		private readonly IServiceProvider serviceProvider;
+        private readonly ILogger<CheckingLoggingInMiddleware> logger;
 
-		public CheckingLoggingInMiddleware(RequestDelegate next, IServiceProvider servicePRovider)
+        public CheckingLoggingInMiddleware(RequestDelegate next, IServiceProvider servicePRovider, ILogger<CheckingLoggingInMiddleware> logger)
         {
             _next = next;
 			this.serviceProvider = servicePRovider;
-		}
+            this.logger = logger;
+        }
 
 		public Task Invoke(HttpContext httpContext)
 		{
@@ -119,6 +122,11 @@ namespace Naturistic.Backend.Middlewares
                 NaturisticAuthenticateFeatures authFeatures = new NaturisticAuthenticateFeatures(result);
                 httpContext.Features.Set<IHttpAuthenticationFeature>(authFeatures);
                 httpContext.Features.Set<IAuthenticateResultFeature>(authFeatures);
+            }
+            else
+            {
+                string error = result.Failure.Message;
+                logger.LogError(error);
             }
         }
     }

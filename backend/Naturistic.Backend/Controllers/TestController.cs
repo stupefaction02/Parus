@@ -192,6 +192,12 @@ namespace Naturistic.Backend.Controllers
 		{
             ApplicationUser usr = users.One(x => x.GetUsername() == User.Identity.Name) as ApplicationUser;
 
+			if (usr == null)
+			{
+				Console.WriteLine("Authtoken is not valid!");
+				return Unauthorized();
+			}
+
             if (await um.IsInRoleAsync(usr, "admin"))
 			{
 				DeleteAllBroadcasts(dbContext);

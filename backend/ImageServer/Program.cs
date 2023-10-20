@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -34,9 +35,19 @@ namespace ImageServer
 			application.Run();
         }
 
-		private static Task UploadHandler(HttpContext context, IFormFile uploadedFile, [FromServices] IWebHostEnvironment env)
+		private static async Task UploadHandler(HttpContext context, IFormFile file, [FromServices] IWebHostEnvironment env)
 		{
-            return Task.CompletedTask;
-		}
+            string contentRoot = env.WebRootPath;
+
+            string fn = Path.Combine(contentRoot, "previews", file.FileName);
+            using (FileStream destFs = File.Create(fn))
+            {
+                Stream inputFs = file.OpenReadStream();
+                inputFs.Seek(0, SeekOrigin.Begin);
+
+                Console.WriteLine($"Uploading {file.FileName} file to {fn}");
+                await inputFs.CopyToAsync(destFs);
+            }
+        }
 	}
 }

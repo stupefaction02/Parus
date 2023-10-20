@@ -8,9 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="video\1.mp4" />
+    <None Remove="video\2.mp4" />
+    <None Remove="video\3.mov" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="video\2.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="video\3.mov">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="xFFmpeg.NET" Version="7.1.3" />
+    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="video\1.mp4">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
