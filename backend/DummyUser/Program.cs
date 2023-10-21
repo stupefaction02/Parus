@@ -204,6 +204,11 @@ internal partial class Program
             File.Delete(file);
         }
 
+        foreach (string dir in Directory.GetDirectories("segments"))
+        {
+            Directory.Delete(dir, true);
+        }
+
         string uri = "https://localhost:5001/api/test/purgeallbroadcasts";
         
         return (await Request(uri, AdminJWT, HttpMethod.Delete)).IsSuccessStatusCode;
