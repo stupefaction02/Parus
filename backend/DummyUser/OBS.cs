@@ -29,7 +29,7 @@ internal partial class Program
             "3.mov"
         };
 
-        private BroadcastClient hslClient = new BroadcastClient();
+        private BroadcastClient broadcastClient = new BroadcastClient();
 
         private Queue<Segment> segmentsBank = new Queue<Segment>();
 
@@ -37,7 +37,7 @@ internal partial class Program
         {
             this.host = host;
 
-            hslClient.HslBasePath = OBS.ApiPath;
+            broadcastClient.HslBasePath = OBS.ApiPath;
 
             videoFileName = Path.Combine(videoDir, videos[ (new Random()).Next(0, videos.Length) ]);
 
@@ -53,7 +53,7 @@ internal partial class Program
         public async Task RunAsync()
         {
             Log($"user={host.username}. Sending the master manifest...");
-            await hslClient.PostMasterPlaylist(host.id);
+            await broadcastClient.PostMasterPlaylist(host.id);
 
             Task updatingThumbnailTask = Task.Run(StartUpdatingThumbnail);
 
@@ -82,7 +82,19 @@ internal partial class Program
         {
             while (true)
             {
-                Thread.Sleep(15000);
+                Log($"user={host.username}. Sending segments to HSL server...");
+
+                if (segmentsBank.Any())
+                {
+                    foreach (Segment segment in segmentsBank)
+                    {
+                        broadcastClient.PostSegmentAsync(segment, host.id);
+                    }
+                }
+                else
+                {
+                    Thread.Sleep(500);
+                }
             }
         }
 
@@ -181,7 +193,7 @@ internal partial class Program
 
             if (result != null) 
             {
-                await hslClient.PostThumbnail(thumbnailPath: output);
+                await broadcastClient.PostThumbnail(thumbnailPath: output);
             }
         }
 
@@ -212,7 +224,7 @@ internal partial class Program
 
         public void Dispose()
         {
-            hslClient.Dispose();
+            broadcastClient.Dispose();
         }
     }
 }

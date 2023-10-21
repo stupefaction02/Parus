@@ -65,5 +65,26 @@
                 }
             }
         }
+
+        public async Task PostSegmentAsync(OBS.Segment segment, string hostid)
+        {
+            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            {
+                string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostid}";
+
+                FileStream fs = File.OpenRead(segment.FileName);
+
+                content.Add(new StreamContent(fs), "file", segment.FileName);
+
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
+
+                request.Headers.Add("Cache-Control", "no-cache");
+                request.Headers.Add("Accept", "*/*");
+                request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+                request.Content = content;
+
+                await webClient.SendAsync(request);
+            }
+        }
     }
 }
