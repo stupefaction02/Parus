@@ -1,0 +1,1 @@
+select * from [Naturistic.BL].[dbo].[BroadcastsKeywords] where Keyword like '%Collab?%';

@@ -1,0 +1,95 @@
+.separator {
+    display: flex !important;
+    text-align: center !important;
+    padding-top: 1rem !important;
+    margin-bottom: 10px;
+}
+
+    .separator .sidepart {
+        -moz-box-flex: 1 !important;
+        position: relative !important;
+        flex-grow: 1 !important;
+        border: 0px;
+        padding: 0px;
+        margin: 0px;
+    }
+
+        .separator .sidepart div {
+            top: 50%;
+            border-top: 1px solid rgb(239, 239, 241) !important;
+            width: 100% !important;
+            position: absolute !important;
+            z-index: -1 !important;
+        }
+
+    .separator .text {
+        -moz-box-flex: 0 !important;
+        flex-grow: 0 !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+        .separator .text button {
+            display: inline-flex;
+            position: relative;
+            -moz-box-align: center;
+            align-items: center;
+            -moz-box-pack: center;
+            justify-content: center;
+            vertical-align: middle;
+            overflow: hidden;
+            text-decoration: none;
+            white-space: nowrap;
+            user-select: none;
+            font-weight: 600;
+            border-radius: 0.4rem;
+            font-size: 1.3rem;
+            height: 3rem;
+            background-color: transparent;
+            color: rgb(191, 148, 255);
+        }
+
+        .separator .text button div {
+            display: flex;
+            -moz-box-align: center;
+            align-items: center;
+            -moz-box-flex: 0;
+            flex-grow: 0;
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+            .separator .text button div div {
+                -moz-box-flex: 0 !important;
+                flex-grow: 0 !important;
+                display: flex !important;
+                -moz-box-align: center !important;
+                align-items: center !important;
+                -moz-box-pack: start !important;
+                justify-content: flex-start !important;
+            }
+
+            .separator .text button div div div {
+                display: flex !important;
+            }
+
+                .separator .text button div div div .text_c {
+                    align-self: center !important;
+                    margin-right: 0.5rem !important;
+                }
+
+                .separator .text button div div div .text_c p {
+                    font-size: var(--font-size-6);
+                    line-height: 1.5;
+                }
+
+                .separator .text button div div div .arrow {
+                    display: inline-flex;
+                    -moz-box-align: center;
+                    align-items: center;
+                    width: 2rem;
+                    height: 2rem;
+                    fill: currentColor;
+                }

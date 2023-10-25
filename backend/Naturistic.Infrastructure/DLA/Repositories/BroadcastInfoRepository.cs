@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ using Naturistic.Infrastructure.Identity;
 
 namespace Naturistic.Infrastructure.DLA.Repositories
 {
-    public class BroadcastInfoRepository : IBroadcastInfoRepository, ISearchingService
+    public class BroadcastInfoRepository : IBroadcastInfoRepository
     {
         private readonly ApplicationDbContext context;
 
@@ -68,9 +69,12 @@ namespace Naturistic.Infrastructure.DLA.Repositories
         //[Benchmark(Description = "BroadcastInfoRepository.Search")]
         public IEnumerable<BroadcastInfo> Search(string query)
         {
-            string s =
-                $"select * from [Naturistic.BL].[dbo].[BroadcastsKeywords] where {titleProp} like '%{query}%'";
-            return context.BroadcastsKeywords.FromSqlRaw(s).Include(x => x.BroadcastInfo)
+            return context.BroadcastsKeywords
+                .Include(x => x.BroadcastInfo)
+                .ThenInclude(x => x.Category)
+                .Include(x => x.BroadcastInfo)
+                .ThenInclude(x => x.Tags)
+                .Where(x => EF.Functions.Like(x.Keyword, $"%{query}%"))
                 .Select(x => x.BroadcastInfo);
         }
     }

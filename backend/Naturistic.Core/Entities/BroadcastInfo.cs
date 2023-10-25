@@ -36,6 +36,11 @@ namespace Naturistic.Core.Entities
         public List<Tag> Tags { get; set; }
 
         public BroadcastCategory Category { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Username}";
+        }
     }
 
     public class Tag

@@ -25,6 +25,7 @@ using Naturistic.Core.Services.Localization;
 using Naturistic.Core.Interfaces.Repositories;
 using Naturistic.Infrastructure.DLA.Repositories;
 using Naturistic.Infrastructure.DLA;
+using Naturistic.Core.Interfaces.Services;
 
 namespace Naturistic.WebUI
 {
@@ -68,6 +69,7 @@ namespace Naturistic.WebUI
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ISearchingService, MSSQLSearchingService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -15,6 +15,7 @@ using MimeKit.Cryptography;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces;
 using Naturistic.Core.Interfaces.Repositories;
+using Naturistic.Core.Interfaces.Services;
 using Naturistic.Infrastructure.Identity;
 
 namespace Naturistic.WebUI.Pages
@@ -29,7 +30,7 @@ namespace Naturistic.WebUI.Pages
 
         public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
 
-        public IActionResult OnGet([FromQuery] string page,
+        public IActionResult OnGet([FromQuery] string page, string search,
             [FromServices] IBroadcastInfoRepository broadcastInfoRepository)
         {
             PageCount = (broadcastInfoRepository.Count() / PAGE_SIZE) + 1;
