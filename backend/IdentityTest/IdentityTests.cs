@@ -30,7 +30,7 @@ using Naturistic.WebUI.Pages.Identity;
 
 namespace IdentityTest
 {
-	public partial class CompoundTests
+	public partial class IdentityTests
 	{
 		IServiceProvider backendServices =
 			Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
@@ -84,7 +84,7 @@ namespace IdentityTest
 		IPasswordHasher<ApplicationUser> passwordHasher;
 		EditPasswordModel editPasswordPage;
 		IConfrimCodesRepository confirmCodes;
-		public CompoundTests()
+		public IdentityTests()
         {
 			var b1 = Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build();
 			var b2 = Naturistic.WebUI.Program.CreateHostBuilder(new string[] { }).Build();

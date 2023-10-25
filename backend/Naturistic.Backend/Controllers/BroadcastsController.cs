@@ -21,6 +21,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Naturistic.Backend.Services;
+using BenchmarkDotNet.Attributes;
 
 namespace Naturistic.Backend.Controllers
 {
@@ -185,5 +186,14 @@ namespace Naturistic.Backend.Controllers
 
 			return Ok();
         }
+
+        [Benchmark(Description = "BroadcastController.SearchBroadcasts")]
+        [Route("api/broadcasts/search")]
+		[HttpGet]
+		public async Task<IActionResult> SearchBroadcasts(string q,
+		   [FromServices] IBroadcastInfoRepository context)
+		{
+			return Json( context.Search(query: q) );
+		}
     }
 }

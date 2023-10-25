@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.EntityFrameworkCore;
 using Naturistic.Core.Entities;
 using Naturistic.Core.Interfaces.Repositories;
+using Naturistic.Core.Interfaces.Services;
 using Naturistic.Infrastructure.Identity;
 
 namespace Naturistic.Infrastructure.DLA.Repositories
 {
-    public class BroadcastInfoRepository : IBroadcastInfoRepository
+    public class BroadcastInfoRepository : IBroadcastInfoRepository, ISearchingService
     {
         private readonly ApplicationDbContext context;
 
@@ -59,6 +61,17 @@ namespace Naturistic.Infrastructure.DLA.Repositories
             context.Add(broadcast);
 
             context.SaveChanges();
+        }
+
+        const string titleProp = nameof(BroadcastInfoKeyword.Keyword);
+
+        //[Benchmark(Description = "BroadcastInfoRepository.Search")]
+        public IEnumerable<BroadcastInfo> Search(string query)
+        {
+            string s =
+                $"select * from [Naturistic.BL].[dbo].[BroadcastsKeywords] where {titleProp} like '%{query}%'";
+            return context.BroadcastsKeywords.FromSqlRaw(s).Include(x => x.BroadcastInfo)
+                .Select(x => x.BroadcastInfo);
         }
     }
 }

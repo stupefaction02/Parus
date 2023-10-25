@@ -97,6 +97,15 @@ namespace Naturistic.Backend.Controllers
 			return Ok("Seeding is done!");
 		}
 
+        [HttpDelete]
+        [Route("api/test/purgebroadcasts")]
+        public IActionResult Purge([FromServices] ApplicationDbContext context)
+		{
+            DeleteAllBroadcasts(context);
+
+			return Ok();
+        }
+
         [HttpGet]
         [Route("api/test/seed1")]
         public IActionResult Seed1([FromServices] ApplicationDbContext context)
@@ -136,37 +145,52 @@ namespace Naturistic.Backend.Controllers
 			};
 
 			var broadcasts = new List<BroadcastInfo>();
+			var keywords = new List<BroadcastInfoKeyword>();
 
-            for (int i = 1; i < 1000; i++)
+			for (int i = 1; i < 1000; i++)
 			{
-                int cat = (new Random()).Next(1, 5);
-                int tag = (new Random()).Next(1, 4);
+				int cat = (new Random()).Next(1, 5);
+				int tag = (new Random()).Next(2, 4);
 
-                int nam = (new Random()).Next(0, 5);
-                int tit = (new Random()).Next(0, 5);
-                int pre = (new Random()).Next(0, 5);
+				int nam = (new Random()).Next(0, 5);
+				int tit = (new Random()).Next(0, 5);
+				int pre = (new Random()).Next(0, 5);
 
 				string name = names[nam] + Guid.NewGuid().ToString().Substring(0, 2);
 				string title = titles[tit];
 				string preview = previews[pre];
 
+				var tag1 = context.Tags.SingleOrDefault(x => x.Id == 1);
+				var tag2 = context.Tags.SingleOrDefault(x => x.Id == tag);
+				var cat1 = context.Categories.SingleOrDefault(x => x.Id == cat);
+
                 var broadcast1 = new BroadcastInfo
-                {
+				{
 					Preview = preview,
-                    Username = name,
-                    Title = title,
-                    AvatarPic = "ava1.jpg",
-                    Category = context.Categories.SingleOrDefault(x => x.Id == cat),
-                    Ref = "athleanxdotcommer14",
-                    Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == tag) }
-                };
+					Username = name,
+					Title = title,
+					AvatarPic = "ava1.jpg",
+					Category = cat1,
+					Ref = "athleanxdotcommer14",
+					Tags = new List<Tag> { tag1, tag2 }
+				};
 
 				broadcasts.Add(broadcast1);
+
+				keywords.Add(
+					new BroadcastInfoKeyword
+					{
+						BroadcastInfo = broadcast1,
+						Keyword = $"{title} {preview} {tag1.Name} {tag2.Name} {cat1.Name}"
+					}
+                );
 
                 Console.WriteLine($"Broadcast info {name} created!");
             }
 
-			context.Broadcasts.AddRange(broadcasts);
+            context.BroadcastsKeywords.AddRange(keywords);
+
+            context.Broadcasts.AddRange(broadcasts);
 
 			context.SaveChanges();
 

@@ -5,6 +5,17 @@ using System.Text;
 
 namespace Naturistic.Core.Entities
 {
+    public class BroadcastInfoKeyword
+    {
+        public string Keyword { get; set; }
+
+        public BroadcastInfo BroadcastInfo { get; set; }
+        public int BroadcastInfoId { get; set; }
+
+        [Key]
+        public int Id { get; set; }
+    }
+
     public class BroadcastInfo
     {
         public string HostUserId { get; set; }

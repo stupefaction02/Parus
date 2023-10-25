@@ -12,5 +12,6 @@ namespace Naturistic.Core.Interfaces.Repositories
         BroadcastInfo One(Func<BroadcastInfo, bool> predicate);
         BroadcastInfo OneLazy(Func<BroadcastInfo, bool> predicate);
         void RemoveOne(string userId);
+        IEnumerable<BroadcastInfo> Search(string query);
     }
 }

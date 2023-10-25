@@ -23,7 +23,9 @@ namespace Naturistic.Infrastructure.DLA
 
 		public DbSet<BroadcastInfo> Broadcasts { get; set; }
 
-		public DbSet<Tag> Tags { get; set; }
+        public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
+
+        public DbSet<Tag> Tags { get; set; }
 
 		public DbSet<BroadcastCategory> Categories { get; set; }
 
