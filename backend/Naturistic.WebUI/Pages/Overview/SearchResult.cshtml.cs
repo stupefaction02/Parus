@@ -23,11 +23,14 @@ namespace Naturistic.WebUI.Pages
     public class SearchResultModel : PageModel
     {
         public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
+        public IEnumerable<BroadcastCategory> Categories { get; set; }
 
         public IActionResult OnGet([FromQuery] string q,
             [FromServices] ISearchingService searchingService)
         {
-            Broadcasts = searchingService.SearchBroadcastsByTitleTags(q, 5);
+            Broadcasts = searchingService.SearchBroadcastsByTitleTags(q, 8);
+
+            Categories = searchingService.SearchCategoryByName(q, 5);
 
             return Page();
         }

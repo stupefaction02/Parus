@@ -20,69 +20,136 @@
     <link href="~/css/searching.css" rel="stylesheet" media="all">
 }
 
-<div class="broadcast_block_container">
-    @{
-        string imageServer = configuration["ImageServer:Url"];
+<div class="results">
 
-        foreach (var broadcast in Model.Broadcasts)
-        {
-            <div class="broadcast_block">
-                <a href="@(broadcast.Ref)">
-                    <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
-                </a>
-                <div class="broadcast_block_info">
-                    <a href="@(broadcast.Ref)" style="display: flex; align-items: center;">
-                        <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
+    <article class="results_block">
+        @{
+            string imageServer = configuration["ImageServer:Url"];
 
-                        <div style="margin-top: 12px; width: 85%">
-                            <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
-                            <label class="broadcast_block_info_username">@broadcast.Username</label>
-                        </div>
-                    </a>
+            <div class="article_h">
+                <span class="article_h_span">Трансляции</span>
+            </div>
 
-                    <div style="padding-left: 50px; margin-top: -8px; ">
-                        <label class="broadcast_block_info_category">@broadcast.Category.Name</label>
+            <div class="results_elems">
 
-                        <div class="broadcast_block_info_tags">
+                @foreach (var broadcast in Model.Broadcasts)
+                {
+                    <div class="broadcast_block">
+                        <a href="@(broadcast.Ref)">
+                            <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                        </a>
+                        <div class="broadcast_block_info">
+                            <a href="@(broadcast.Ref)" style="display: flex; align-items: center;">
+                                <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
 
-                            @foreach (var tag in broadcast.Tags)
-                            {
-                                <a class="broadcast_block_info_tag">
-                                    <span>@tag.Name</span>
-                                </a>
-                            }
+                                <div style="margin-top: 12px; width: 85%">
+                                    <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
+                                    <label class="broadcast_block_info_username">@broadcast.Username</label>
+                                </div>
+                            </a>
+
+                            <div style="padding-left: 50px; margin-top: -8px; ">
+                                <label class="broadcast_block_info_category">@broadcast.Category.Name</label>
+
+                                <div class="broadcast_block_info_tags">
+
+                                    @foreach (var tag in broadcast.Tags)
+                                    {
+                                        <a class="broadcast_block_info_tag">
+                                            <span>@tag.Name</span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
                         </div>
                     </div>
+                }
+
+            </div>
+
+            <div class="separator">
+                <div class="sidepart">
+                    <div></div>
+                </div>
+                <div class="text">
+                    <button>
+                        <div>
+                            <div>
+                                <div>
+                                    <div class="text_c">
+                                        <p aria-label="Показать все">Показать все</p>
+                                    </div>
+
+                                    <div class="arrow">
+                                        <svg width="2rem" height="2rem" viewBox="0 0 20 20"><path d="M14.5 6.5 10 11 5.5 6.5 4 8l6 6 6-6-1.5-1.5z"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="sidepart">
+                    <div></div>
                 </div>
             </div>
         }
-    }
-</div>
+    </article>
 
-<div class="separator">
-    <div class="sidepart">
-        <div></div>
-    </div>
-    <div class="text">
-        <button>
-            <div>
-                <div>
-                    <div>
-                        <div class="text_c">
-                            <p aria-label="Показать все">Показать все</p>
+    @if (Model.Categories.Count() > 0)
+    {
+        <article class="results_block">
+            @{
+                <div class="article_h">
+                    <span class="article_h_span">Категории</span>
+                </div>
+
+                <div class="results_elems_categories">
+                    @foreach (var cat in Model.Categories)
+                    {
+                        <div class="results_elems_category">
+                            <div class="results_elems_category_img">
+                                <a href="#@(cat.Name)">
+                                    <img class="broadcast_block_img" src="@(imageServer)/categories/@(cat.Name).jpg" />
+                                </a>
+                            </div>
+
+                            <div class="results_elems_category_info">
+                            
+                            </div>
                         </div>
-                        
-                        <div class="arrow">
-                            <svg width="2rem" height="2rem" viewBox="0 0 20 20"><path d="M14.5 6.5 10 11 5.5 6.5 4 8l6 6 6-6-1.5-1.5z"></path></svg>
-                        </div>
+                    }
+                </div>
+
+                <div class="separator">
+                    <div class="sidepart">
+                        <div></div>
+                    </div>
+                    <div class="text">
+                        <button>
+                            <div>
+                                <div>
+                                    <div>
+                                        <div class="text_c">
+                                            <p aria-label="Показать все">Показать все</p>
+                                        </div>
+
+                                        <div class="arrow">
+                                            <svg width="2rem" height="2rem" viewBox="0 0 20 20"><path d="M14.5 6.5 10 11 5.5 6.5 4 8l6 6 6-6-1.5-1.5z"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="sidepart">
+                        <div></div>
                     </div>
                 </div>
-            </div>
-        </button>
-    </div>
-    <div class="sidepart">
-        <div></div>
-    </div>
+            }
+        </article>
+    }
+
 </div>
+
 
 

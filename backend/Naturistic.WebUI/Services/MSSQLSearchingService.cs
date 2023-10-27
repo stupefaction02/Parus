@@ -38,7 +38,7 @@ namespace Naturistic.WebUI.Services
 
         public IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int count)
         {
-            return data.Categories.Where(x => x.Name == q);
+            return data.Categories;
         }
     }
 }
