@@ -24,6 +24,7 @@ namespace Naturistic.WebUI.Pages
     {
         public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
         public IEnumerable<BroadcastCategory> Categories { get; set; }
+        public IEnumerable<IUser> Users { get; set; }
 
         public IActionResult OnGet([FromQuery] string q,
             [FromServices] ISearchingService searchingService)
@@ -31,6 +32,8 @@ namespace Naturistic.WebUI.Pages
             Broadcasts = searchingService.SearchBroadcastsByTitleTags(q, 8);
 
             Categories = searchingService.SearchCategoryByName(q, 5);
+
+            Users = searchingService.SearchUsersByName(q, 5);
 
             return Page();
         }

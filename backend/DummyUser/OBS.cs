@@ -1,7 +1,9 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using Newtonsoft.Json.Linq;
 using Xabe.FFmpeg;
+using static Program.OBS;
 
 internal partial class Program
 {
@@ -17,8 +19,18 @@ internal partial class Program
 
         private int second = 1;
 
+        private string _hosiId;
+
+        public string HostId
+        {
+            get { return _hosiId; }
+            set { _hosiId = value; }
+        }
+
+
         private string videoDir => "video";
         private string thumbnailsDir => "preview";
+        private string playlistsDir => "playlists";
 
         private readonly string videoFileName;
 
@@ -39,7 +51,10 @@ internal partial class Program
 
             broadcastClient.HslBasePath = OBS.ApiPath;
 
-            videoFileName = Path.Combine(videoDir, videos[ (new Random()).Next(0, videos.Length) ]);
+//            videoFileName = Path.Combine(videoDir, videos[ (new Random()).Next(0, videos.Length) ]);
+            videoFileName = Path.Combine(videoDir, videos[ 1 ]);
+
+            Log($"Booting OBS with video = {videoFileName} ...");
 
             string hostid = hostId.Replace("-", "");
 
@@ -64,37 +79,67 @@ internal partial class Program
             await Task.WhenAny(updatingThumbnailTask, retrieveSegmentsTask, updatingPlaylistTask);
         }
 
-        TimeSpan startTime = new TimeSpan(0, 0, 0);
+        bool repeat = true;
 
         private async Task StartRetreivingSegments()
         {
+            TimeSpan startTime = new TimeSpan(0, 0, 0);
+
+            //var result = await ProccesNextSegments(start: startTime);
+            //return;
             while (true)
             {
                 Log($"user={host.username}. Filling up the segments bank...");
 
-                await ProccesNextSegments(start: startTime);
+                FragmentsProccedResult result = await ProccesNextSegments(start: startTime);
 
-                Thread.Sleep(15000);
+                if (result.EndOfFile)
+                {
+                    if (repeat)
+                    {
+                        startTime = new TimeSpan(0, 0, 0);
+                    }
+                    else
+                    {
+                        // halt
+                    }
+                }
+                else
+                {
+                    startTime = result.TakenTime;
+                }
+
+                //Log("Current segments bank: + \n");
+                //foreach (var item in segmentsBank)
+                //{
+                //    Log("\t" + item.ToString());
+                //}
+
+                Thread.Sleep(2000);
             }
         }
 
         private async Task StartUpdatingPlaylist()
         {
+            string hostid = hostId.Replace("-", "");
+            
             while (true)
             {
-                Log($"user={host.username}. Sending segments to HSL server...");
+                Log($"user={host.username}. Start sending pending segments to HSL server...");
 
-                if (segmentsBank.Any())
+                while (segmentsBank.Any())
                 {
-                    foreach (Segment segment in segmentsBank)
-                    {
-                        broadcastClient.PostSegmentAsync(segment, host.id);
-                    }
+                    Segment segment = segmentsBank.Dequeue();
+
+                    Log($"Sending {segment.FileName} ...");
+                    await broadcastClient.PostSegmentAsync(segment, hostid);
                 }
-                else
-                {
-                    Thread.Sleep(500);
-                }
+
+                //// send the new playlist with 5 fragments
+                //string output = Path.Combine(playlistsDir, hostid + ".m3u8");
+                //broadcastClient.PostPlaylist(output);
+
+                Thread.Sleep(500);
             }
         }
 
@@ -104,14 +149,29 @@ internal partial class Program
 
         private int segmentDuration = 5;
 
+        private struct FragmentsProccedResult
+        {
+            public bool EndOfFile { get; set; }
+
+            public TimeSpan TakenTime { get; set; }
+
+            public FragmentsProccedResult(TimeSpan takenTime, bool endOfFile)
+            {
+                TakenTime = takenTime;
+                EndOfFile = endOfFile;
+            }
+        }
+
+        UInt64 segmentIndex = 1;
+
         /// <summary>
         /// Retrieve the next 5 segments and adds it to the bank
         /// </summary>
         /// <param name="start"></param>
         /// <returns></returns>
-        private async Task ProccesNextSegments(TimeSpan start)
+        private async Task<FragmentsProccedResult> ProccesNextSegments(TimeSpan start)
         {
-            int segmentIndex = 0;
+            bool endOfFile = false;
 
             IMediaInfo mediaInfo = await FFmpeg.GetMediaInfo(videoFileName);
 
@@ -120,6 +180,9 @@ internal partial class Program
 
             int duration = mediaInfo.Duration.Seconds;
 
+            Log($"Start procceding video={videoFileName}, duration={duration}");
+
+            // seconds
             int position = start.Seconds;
 
             int segmentDuration;
@@ -128,10 +191,10 @@ internal partial class Program
             {
                 if (duration < 0) break;
 
-                string sfn = "segment" + (segmentIndex + 1) + ".ts";
+                string sfn = $"segment{(segmentIndex)}.ts";
                 string output = Path.Combine(segmentsDir, sfn);
 
-                position += this.segmentDuration;
+                Log($"Procceding {sfn}. offset={position} sec.");
 
                 IConversionResult result = FFmpeg.Conversions.New()
                     .AddStream<IStream>(videoStream)
@@ -139,10 +202,12 @@ internal partial class Program
                     .SetOutput(output)
                     .Start().GetAwaiter().GetResult();
 
+                position += this.segmentDuration;
                 duration -= this.segmentDuration;
 
                 if (duration <= 0)
                 {
+                    endOfFile = true;
                     segmentDuration = mediaInfo.Duration.Seconds - (position - this.segmentDuration);
                 }
                 else
@@ -151,11 +216,13 @@ internal partial class Program
                 }
 
                 segmentsBank.Enqueue(
-                    new Segment { Duration = segmentDuration, FileName = sfn }
+                    new Segment { Duration = segmentDuration, FileName = sfn, _debugInfo = $"duration={segmentDuration} sec, offset={position} sec" }
                 );
 
                 segmentIndex++;
             }
+
+            return new FragmentsProccedResult { TakenTime = new TimeSpan(0, 0, position), EndOfFile = endOfFile };
         }
 
         private async Task StartUpdatingThumbnail()
@@ -220,6 +287,13 @@ internal partial class Program
         {
             public double Duration { get; set; }
             public string FileName { get; set; }
+
+            public string _debugInfo;
+
+            public override string ToString()
+            {
+                return $"{FileName} {_debugInfo}";
+            }
         }
 
         public void Dispose()

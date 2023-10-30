@@ -14,6 +14,7 @@ internal partial class Program
     private static void Main(string[] args)
     {
         StartBroadcast(args).GetAwaiter().GetResult();
+        Console.ReadKey();
         return;
         //if (args.Length > 0)
         //{
@@ -157,15 +158,26 @@ internal partial class Program
     {
         ConfirmedUsers = await GetUser();
 
-        if (await CleanUp())
+        try
         {
-            List<Task> tasks = new List<Task>();
-            foreach (User confirmedUser in ConfirmedUsers.Take(1))
+            if (await CleanUp())
             {
-                tasks.Add(RunOBSAsync(confirmedUser) );
-            }
+                List<Task> tasks = new List<Task>();
+                foreach (User confirmedUser in ConfirmedUsers.Take(1))
+                {
+                    tasks.Add(RunOBSAsync(confirmedUser));
+                }
 
-            await Task.WhenAll(tasks.ToArray());
+                await Task.WhenAll(tasks.ToArray());
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        finally
+        {
+            Console.Out.Flush();
         }
     }
 

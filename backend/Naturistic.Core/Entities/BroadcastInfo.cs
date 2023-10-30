@@ -61,5 +61,9 @@ namespace Naturistic.Core.Entities
 		public string Name { get; set; }
 
 		public List<BroadcastInfo> Broadcasts { get; set; }
-	}
+        
+        public string GetRef() { return Name.ToLower(); }
+
+        public int ViewsCount { get; set; } = 0;
+    }
 }

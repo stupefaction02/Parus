@@ -86,5 +86,9 @@
                 await webClient.SendAsync(request);
             }
         }
+
+        internal void PostPlaylist(string playlistFileName)
+        {
+        }
     }
 }
