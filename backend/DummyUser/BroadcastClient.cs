@@ -68,27 +68,45 @@
 
         public async Task PostSegmentAsync(OBS.Segment segment, string hostid)
         {
-            using (MultipartFormDataContent content = new MultipartFormDataContent())
-            {
-                string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostid}";
+            using FileStream fs = File.OpenRead(segment.Path);
 
-                FileStream fs = File.OpenRead(segment.FileName);
+            string uri = HslBasePath + $"/uploadSegment?usrDirectory={hostid}";
 
-                content.Add(new StreamContent(fs), "file", segment.FileName);
-
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri);
-
-                request.Headers.Add("Cache-Control", "no-cache");
-                request.Headers.Add("Accept", "*/*");
-                request.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-                request.Content = content;
-
-                await webClient.SendAsync(request);
-            }
+            await PostFile(fs, uri);
         }
 
-        internal void PostPlaylist(string playlistFileName)
+        public async Task PostPlaylists((string, Stream)[] streams, string hostid)
         {
+            string uri = HslBasePath + $"/uploadPlaylists?usrDirectory={hostid}";
+
+            await PostFiles(streams, uri);
+        }
+
+        private async Task PostFiles((string, Stream)[] streams, string uri)
+        {
+            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            {
+                int index = 0;
+                foreach (var tuple in streams)
+                {
+                    string name = tuple.Item1;
+                    Stream stream = tuple.Item2;
+
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    StreamContent fileContent = new StreamContent(stream);
+
+                    index++;
+                    content.Add(fileContent, "file" + index, name);
+                }
+
+                HttpResponseMessage response = await webClient.PostAsync(uri, content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return;
+                }
+            }
         }
     }
 }

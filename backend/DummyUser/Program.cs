@@ -173,7 +173,9 @@ internal partial class Program
         }
         catch (Exception ex)
         {
-
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(ex.Message);
+            Console.ForegroundColor = ConsoleColor.White;
         }
         finally
         {

@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Xml.Serialization;
 using Newtonsoft.Json.Linq;
 using Xabe.FFmpeg;
+using static Program;
 using static Program.OBS;
 
 internal partial class Program
@@ -45,6 +47,8 @@ internal partial class Program
 
         private Queue<Segment> segmentsBank = new Queue<Segment>();
 
+        private PlaylistBuilder playlistBuilder = new PlaylistBuilder();
+
         public OBS(User host)
         {
             this.host = host;
@@ -67,16 +71,19 @@ internal partial class Program
 
         public async Task RunAsync()
         {
-            Log($"user={host.username}. Sending the master manifest...");
-            await broadcastClient.PostMasterPlaylist(host.id);
-
             Task updatingThumbnailTask = Task.Run(StartUpdatingThumbnail);
 
             Task retrieveSegmentsTask = Task.Run(StartRetreivingSegments);
 
-            Task updatingPlaylistTask = Task.Run(StartUpdatingPlaylist);
+            Task updatingPlaylistTask = Task.Run(StartSendingSegments);
 
             await Task.WhenAny(updatingThumbnailTask, retrieveSegmentsTask, updatingPlaylistTask);
+        }
+
+        private async Task SendManifest()
+        {
+            Log($"user={host.username}. Sending the master manifest...");
+            await broadcastClient.PostMasterPlaylist(hostId);
         }
 
         bool repeat = true;
@@ -85,8 +92,6 @@ internal partial class Program
         {
             TimeSpan startTime = new TimeSpan(0, 0, 0);
 
-            //var result = await ProccesNextSegments(start: startTime);
-            //return;
             while (true)
             {
                 Log($"user={host.username}. Filling up the segments bank...");
@@ -119,27 +124,50 @@ internal partial class Program
             }
         }
 
-        private async Task StartUpdatingPlaylist()
+        private async Task StartSendingSegments()
         {
+            int segmentsSent = 0;
+
             string hostid = hostId.Replace("-", "");
-            
+
+            Log($"user={host.username}. Start sending pending segments to HSL server...");
+
             while (true)
             {
-                Log($"user={host.username}. Start sending pending segments to HSL server...");
-
                 while (segmentsBank.Any())
                 {
                     Segment segment = segmentsBank.Dequeue();
 
-                    Log($"Sending {segment.FileName} ...");
+                    Log($"user={host.username}. Sending {segment.FileName} ...");
                     await broadcastClient.PostSegmentAsync(segment, hostid);
+
+                    playlistBuilder.AddSegment( segment );
+
+                    segmentsSent++;
+
+                    if (segmentsSent % 5 == 0)
+                    {
+                        await SendPlaylist();
+                    }
                 }
 
-                //// send the new playlist with 5 fragments
-                //string output = Path.Combine(playlistsDir, hostid + ".m3u8");
-                //broadcastClient.PostPlaylist(output);
-
                 Thread.Sleep(500);
+            }
+        }
+
+        private async Task SendPlaylist()
+        {
+            Log($"user={host.username}. Sending playlists...");
+            using (Stream stream720 = playlistBuilder.Build())
+            {
+                (string, Stream)[] data = new (string, Stream)[3]
+                {
+                    ("playlist.m3u8", stream720),
+                    ("playlist.m3u8", stream720),
+                    ("playlist.m3u8", stream720)
+                };
+
+                await broadcastClient.PostPlaylists(data, hostIdFormatted);
             }
         }
 
@@ -163,6 +191,8 @@ internal partial class Program
         }
 
         UInt64 segmentIndex = 1;
+
+        string b;
 
         /// <summary>
         /// Retrieve the next 5 segments and adds it to the bank
@@ -216,7 +246,12 @@ internal partial class Program
                 }
 
                 segmentsBank.Enqueue(
-                    new Segment { Duration = segmentDuration, FileName = sfn, _debugInfo = $"duration={segmentDuration} sec, offset={position} sec" }
+                    new Segment { 
+                        Duration = segmentDuration,
+                        FileName = sfn, 
+                        Path = output,
+                        _debugInfo = $"duration={segmentDuration} sec, offset={position} sec"
+                    }
                 );
 
                 segmentIndex++;
@@ -232,7 +267,7 @@ internal partial class Program
                 Log($"user={host.username}. Updating the thumbnail broadcast...");
                 await UpdateThumbnail();
 
-                Thread.Sleep(60000);
+                Thread.Sleep(120000);
             }
         }
 
@@ -264,29 +299,12 @@ internal partial class Program
             }
         }
 
-        private string CreatePlaylist()
-        {
-            StringBuilder sb = new StringBuilder();
-
-            string hostid = host.id.Replace("-", "");
-
-            sb.Append("#EXTM3U");
-            sb.Append("#EXT-X-TARGETDURATION:11");
-            sb.Append("#EXT-X-VERSION:3");
-            sb.Append("#EXT-X-PLAYLIST-TYPE:VOD");
-            
-
-
-            Console.WriteLine(host.username + ". Created manifest:");
-            Console.WriteLine(sb.ToString());
-
-            return sb.ToString();
-        }
-
         public class Segment
         {
             public double Duration { get; set; }
             public string FileName { get; set; }
+
+            public string Path { get; set; }
 
             public string _debugInfo;
 
@@ -299,6 +317,42 @@ internal partial class Program
         public void Dispose()
         {
             broadcastClient.Dispose();
+        }
+    }
+
+    public class PlaylistBuilder
+    {
+        private List<string> lines = new List<string>();
+
+        private readonly int segmentsStartOffset;
+        private int segmentsIndex;
+
+        public PlaylistBuilder()
+        {
+            lines.Append("#EXTM3U");
+            lines.Append("#EXT-X-TARGETDURATION:11");
+            lines.Append("#EXT-X-VERSION:3");
+            lines.Append("#EXT-X-PLAYLIST-TYPE:VOD");
+
+            segmentsStartOffset = 4;
+        }
+
+        public void AddSegment(Segment segment)
+        {
+            double dur = segment.Duration;
+            lines.Append($"#EXTINF:{dur},");
+            lines.Append(segment.FileName);
+
+            segmentsIndex += 2;
+        }
+
+        public Stream Build()
+        {
+            lines.Append("#EXT-X-ENDLIST");
+
+            string s = String.Join(Environment.NewLine, lines);
+
+            return new MemoryStream(Encoding.UTF8.GetBytes(s));
         }
     }
 }
