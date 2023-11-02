@@ -329,10 +329,10 @@ internal partial class Program
 
         public PlaylistBuilder()
         {
-            lines.Append("#EXTM3U");
-            lines.Append("#EXT-X-TARGETDURATION:11");
-            lines.Append("#EXT-X-VERSION:3");
-            lines.Append("#EXT-X-PLAYLIST-TYPE:VOD");
+            lines.Add("#EXTM3U");
+            lines.Add("#EXT-X-TARGETDURATION:11");
+            lines.Add("#EXT-X-VERSION:3");
+            lines.Add("#EXT-X-PLAYLIST-TYPE:VOD");
 
             segmentsStartOffset = 4;
         }
@@ -340,8 +340,8 @@ internal partial class Program
         public void AddSegment(Segment segment)
         {
             double dur = segment.Duration;
-            lines.Append($"#EXTINF:{dur},");
-            lines.Append(segment.FileName);
+            lines.Add($"#EXTINF:{dur},");
+            lines.Add(segment.FileName);
 
             segmentsIndex += 2;
         }
@@ -352,7 +352,12 @@ internal partial class Program
 
             string s = String.Join(Environment.NewLine, lines);
 
-            return new MemoryStream(Encoding.UTF8.GetBytes(s));
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(s));
+
+            stream.Position = 0;
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return stream;
         }
     }
 }

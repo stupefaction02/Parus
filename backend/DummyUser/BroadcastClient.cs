@@ -87,7 +87,7 @@
             using (MultipartFormDataContent content = new MultipartFormDataContent())
             {
                 int index = 0;
-                foreach (var tuple in streams)
+                foreach ((string, Stream) tuple in streams)
                 {
                     string name = tuple.Item1;
                     Stream stream = tuple.Item2;
