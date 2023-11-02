@@ -92,10 +92,10 @@ internal partial class Program
         {
             TimeSpan startTime = new TimeSpan(0, 0, 0);
 
+            Log($"user={host.username}. Filling up the segments bank...");
+
             while (true)
             {
-                Log($"user={host.username}. Filling up the segments bank...");
-
                 FragmentsProccedResult result = await ProccesNextSegments(start: startTime);
 
                 if (result.EndOfFile)
@@ -113,12 +113,6 @@ internal partial class Program
                 {
                     startTime = result.TakenTime;
                 }
-
-                //Log("Current segments bank: + \n");
-                //foreach (var item in segmentsBank)
-                //{
-                //    Log("\t" + item.ToString());
-                //}
 
                 Thread.Sleep(2000);
             }
@@ -144,7 +138,7 @@ internal partial class Program
                     playlistBuilder.AddSegment( segment );
 
                     segmentsSent++;
-
+                    //Console.Write(" Segment №" + segmentsSent);
                     if (segmentsSent % 5 == 0)
                     {
                         await SendPlaylist();
@@ -348,16 +342,19 @@ internal partial class Program
 
         public Stream Build()
         {
-            lines.Append("#EXT-X-ENDLIST");
+            lines.Add("#EXT-X-ENDLIST");
 
-            string s = String.Join(Environment.NewLine, lines);
+            string s = string.Join(Environment.NewLine, lines);
 
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(s));
+            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(s));
+            FileStream fs = File.Create("playlists/playlist" + Guid.NewGuid().ToString() + ".m3u8");
 
             stream.Position = 0;
             stream.Seek(0, SeekOrigin.Begin);
 
-            return stream;
+            stream.CopyTo(fs);
+
+            return fs;
         }
     }
 }

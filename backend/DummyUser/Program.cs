@@ -179,7 +179,10 @@ internal partial class Program
         }
         finally
         {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("It is happening again.");
             Console.Out.Flush();
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 

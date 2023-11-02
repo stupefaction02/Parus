@@ -28,11 +28,14 @@ namespace Naturistic.Hsl
                 new WebApplicationOptions { WebRootPath = "Data" });
 
             builder.Services.AddCors();
-
+            
             WebApplication application = builder.Build();
+
+            builder.ConfigureKestrel();
 
             application.UseCors(builder => builder.AllowAnyOrigin()
                 .WithOrigins("https://localhost:5002").WithOrigins("http://127.0.0.1:8080"));
+
             application.UseHttpsRedirection();
 
             application.UseHslStaticFiles();
@@ -46,8 +49,6 @@ namespace Naturistic.Hsl
             string liveDir = Path.Combine(contentRoot, liveDirName);
 
             application.MapPost("/uploadManifest", async (IFormFile file, string usrDirectory) => { 
-                bool directoryExists = false;
-
                 string directoryPath = Path.Combine(liveDir, usrDirectory);
                 // TODO: replace Path.COmbine with your own
                 Directory.CreateDirectory(directoryPath);
@@ -119,6 +120,11 @@ namespace Naturistic.Hsl
                 Console.Write($". Total size: {kbs} kbs" + Environment.NewLine);
             });
 
+            application.MapPost("/uploadPlaylists1", async (HttpContext ctx, string usrDirectory) => {
+                long l = ctx.Request.Body.Length;
+                Console.WriteLine($"Length: " + l);
+            });
+
             application.Run();
         }
 
@@ -144,6 +150,13 @@ namespace Naturistic.Hsl
 
     public static class WebApplicationExtensions
     {
+        public static void ConfigureKestrel(this WebApplicationBuilder builder)
+        {
+            //builder.WebHost.ConfigureKestrel(x => { 
+                
+            //});
+        }
+
         public static void UseHslStaticFiles(this WebApplication webApplication)
         {
             // defauls settings doon't have m3u8 as known file extension

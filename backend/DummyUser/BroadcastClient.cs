@@ -92,6 +92,7 @@
                     string name = tuple.Item1;
                     Stream stream = tuple.Item2;
 
+                    stream.Position = 0;
                     stream.Seek(0, SeekOrigin.Begin);
 
                     StreamContent fileContent = new StreamContent(stream);
@@ -101,7 +102,7 @@
                 }
 
                 HttpResponseMessage response = await webClient.PostAsync(uri, content);
-
+                Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
                 if (response.IsSuccessStatusCode)
                 {
                     return;
