@@ -66,7 +66,12 @@ namespace Naturistic.Hsl
 
             // server itself set its own quality options (1080, 720, 420)
 
-            application.MapPost("/uploadSegment", async (IFormFile file, string usrDirectory) => {
+            application.MapPost("/uploadSegment", async (HttpContext ctx, IFormFile file, string usrDirectory) => {
+
+                //if (file == null)
+                //{
+                //    return new BadRequestResult();
+                //}
 
                 string directoryPath = Path.Combine(liveDir, usrDirectory);
                 // TODO: replace Path.COmbine with your own
@@ -84,6 +89,13 @@ namespace Naturistic.Hsl
                     Console.Write($". Total size: {kbs} kbs" + Environment.NewLine);
                     await inputFs.CopyToAsync(destFs);
                 }
+
+                foreach (var h in ctx.Request.Headers)
+                {
+                    Console.WriteLine($"{h.Key}:{h.Value}");
+                }
+
+                //return new OkResult();
             });
 
             application.MapPost("/uploadPlaylists", async (IFormFileCollection files, string usrDirectory) => {
@@ -107,12 +119,13 @@ namespace Naturistic.Hsl
                     using (FileStream destFs = File.Create(fn))
                     {
                         Stream inputFs = file.OpenReadStream();
+                        inputFs.Position = 0;
                         inputFs.Seek(0, SeekOrigin.Begin);
 
                         Console.Write($"Uploading playlist {file.FileName} file as ~/{liveDirName}/{usrDirectory}/{masterPlaylistCommonName}");
                         await inputFs.CopyToAsync(destFs);
 
-                        totalLength += file.Length;
+                        totalLength += inputFs.Length;
                     }
                 }
 

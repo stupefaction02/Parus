@@ -8,6 +8,13 @@
 
         public string ImagesBasePath { get; set; }
 
+        public BroadcastClient()
+        {
+            //webClient.DefaultRequestHeaders.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue("gzip, deflate, br"));
+
+            webClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
+        }
+
         public void Dispose()
         {
             webClient.Dispose();

@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Xml.Serialization;
 using Newtonsoft.Json.Linq;
@@ -92,7 +93,7 @@ internal partial class Program
         {
             TimeSpan startTime = new TimeSpan(0, 0, 0);
 
-            Log($"user={host.username}. Filling up the segments bank...");
+            Log($"user={host.username}. Filling up the segments bank... Thread id={Thread.CurrentThread.ManagedThreadId}");
 
             while (true)
             {
@@ -118,34 +119,38 @@ internal partial class Program
             }
         }
 
+        private object locker = new object();
+
         private async Task StartSendingSegments()
         {
             int segmentsSent = 0;
 
             string hostid = hostId.Replace("-", "");
 
-            Log($"user={host.username}. Start sending pending segments to HSL server...");
+            Log($"user={host.username}. Start sending pending segments to HSL server... Thread id={Thread.CurrentThread.ManagedThreadId}");
 
             while (true)
             {
-                while (segmentsBank.Any())
+                lock (locker)
                 {
-                    Segment segment = segmentsBank.Dequeue();
-
-                    Log($"user={host.username}. Sending {segment.FileName} ...");
-                    await broadcastClient.PostSegmentAsync(segment, hostid);
-
-                    playlistBuilder.AddSegment( segment );
-
-                    segmentsSent++;
-                    //Console.Write(" Segment №" + segmentsSent);
-                    if (segmentsSent % 5 == 0)
+                    while (segmentsBank.Any())
                     {
-                        await SendPlaylist();
-                    }
-                }
+                        Segment segment = segmentsBank.Dequeue();
 
-                Thread.Sleep(500);
+                        segmentsSent++;
+                        Log($"user={host.username}. Sending {segment.FileName}. Already sent={segmentsSent} ...");
+                        broadcastClient.PostSegmentAsync(segment, hostid).GetAwaiter().GetResult();
+
+                        playlistBuilder.AddSegment(segment);
+
+                        if (segmentsSent % 5 == 0)
+                        {
+                            SendPlaylist().GetAwaiter().GetResult();
+                        }
+                    }
+
+                    Thread.Sleep(500);
+                }
             }
         }
 
@@ -239,14 +244,18 @@ internal partial class Program
                     segmentDuration = this.segmentDuration;
                 }
 
-                segmentsBank.Enqueue(
-                    new Segment { 
-                        Duration = segmentDuration,
-                        FileName = sfn, 
-                        Path = output,
-                        _debugInfo = $"duration={segmentDuration} sec, offset={position} sec"
-                    }
-                );
+                lock (locker)
+                {
+                    segmentsBank.Enqueue(
+                        new Segment
+                        {
+                            Duration = segmentDuration,
+                            FileName = sfn,
+                            Path = output,
+                            _debugInfo = $"duration={segmentDuration} sec, offset={position} sec"
+                        }
+                    );
+                }
 
                 segmentIndex++;
             }
@@ -258,7 +267,7 @@ internal partial class Program
         {
             while (true)
             {
-                Log($"user={host.username}. Updating the thumbnail broadcast...");
+                Log($"user={host.username}. Updating the thumbnail broadcast... Thread id={Thread.CurrentThread.ManagedThreadId}");
                 await UpdateThumbnail();
 
                 Thread.Sleep(120000);
@@ -351,7 +360,7 @@ internal partial class Program
 
             stream.Position = 0;
             stream.Seek(0, SeekOrigin.Begin);
-
+            stream.Flush();
             stream.CopyTo(fs);
 
             return fs;

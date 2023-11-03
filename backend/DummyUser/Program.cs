@@ -175,12 +175,14 @@ internal partial class Program
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(ex.Message);
+            Console.WriteLine($"Error occured on thread {Thread.CurrentThread.ManagedThreadId}");
             Console.ForegroundColor = ConsoleColor.White;
         }
         finally
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("It is happening again.");
+            Console.WriteLine($"Error occured on thread {Thread.CurrentThread.ManagedThreadId}");
             Console.Out.Flush();
             Console.ForegroundColor = ConsoleColor.White;
         }
