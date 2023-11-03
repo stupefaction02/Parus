@@ -82,14 +82,21 @@
             await PostFile(fs, uri);
         }
 
-        public async Task PostPlaylists((string, Stream)[] streams, string hostid)
+        public void PostPlaylists1((string, Stream)[] streams, string hostid)
         {
-            string uri = HslBasePath + $"/uploadPlaylists?usrDirectory={hostid}";
+            string uri = HslBasePath + $"/uploadPlaylists1";//?usrDirectory={hostid}";
 
-            await PostFiles(streams, uri);
+            PostFiles(streams, uri);
         }
 
-        private async Task PostFiles((string, Stream)[] streams, string uri)
+        public void PostPlaylists(string data, string hostid)
+        {
+            string uri = HslBasePath + $"/uploadPlaylists1";
+
+            PostRaw(data, uri);
+        }
+
+        private void PostFiles((string, Stream)[] streams, string uri)
         {
             using (MultipartFormDataContent content = new MultipartFormDataContent())
             {
@@ -108,12 +115,21 @@
                     content.Add(fileContent, "file" + index, name);
                 }
 
-                HttpResponseMessage response = await webClient.PostAsync(uri, content);
+                HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
                 Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
-                if (response.IsSuccessStatusCode)
-                {
-                    return;
-                }
+            }
+        }
+
+        private void PostRaw(string data, string uri)
+        {
+            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            {
+                StringContent stringContent = new StringContent(data);
+
+                content.Add(stringContent, "playlist");
+
+                HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
+                Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
             }
         }
     }

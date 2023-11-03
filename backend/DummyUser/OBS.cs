@@ -68,6 +68,10 @@ internal partial class Program
             FFmpeg.SetExecutablesPath("C:\\Program Files (x86)\\ffmpeg\\bin");
 
             Directory.CreateDirectory( Path.Combine(videoDir, hostIdFormatted) );
+
+            playlistBuilder.AddQuality("180");
+            playlistBuilder.AddQuality("360");
+            playlistBuilder.AddQuality("720");
         }
 
         public async Task RunAsync()
@@ -121,7 +125,7 @@ internal partial class Program
 
         private object locker = new object();
 
-        private async Task StartSendingSegments()
+        private void StartSendingSegments()
         {
             int segmentsSent = 0;
 
@@ -141,23 +145,25 @@ internal partial class Program
                         Log($"user={host.username}. Sending {segment.FileName}. Already sent={segmentsSent} ...");
                         broadcastClient.PostSegmentAsync(segment, hostid).GetAwaiter().GetResult();
 
-                        playlistBuilder.AddSegment(segment);
+                        playlistBuilder.AddSegment(segment.Duration, path: segment.FileName);
 
                         if (segmentsSent % 5 == 0)
                         {
-                            SendPlaylist().GetAwaiter().GetResult();
+                            SendPlaylist();
                         }
                     }
 
                     Thread.Sleep(500);
                 }
+
+                Thread.Sleep(500);
             }
         }
 
-        private async Task SendPlaylist()
+        private void SendPlaylist1()
         {
             Log($"user={host.username}. Sending playlists...");
-            using (Stream stream720 = playlistBuilder.Build())
+            using (Stream stream720 = playlistBuilder.BuildStream())
             {
                 (string, Stream)[] data = new (string, Stream)[3]
                 {
@@ -166,8 +172,15 @@ internal partial class Program
                     ("playlist.m3u8", stream720)
                 };
 
-                await broadcastClient.PostPlaylists(data, hostIdFormatted);
+                broadcastClient.PostPlaylists1(data, hostIdFormatted);
             }
+        }
+
+        private void SendPlaylist()
+        {
+            Log($"user={host.username}. Sending playlists...");
+
+            broadcastClient.PostPlaylists(playlistBuilder.BuildStringAll(), hostIdFormatted);
         }
 
         private string segmentsDir;
@@ -330,26 +343,56 @@ internal partial class Program
         private readonly int segmentsStartOffset;
         private int segmentsIndex;
 
-        public PlaylistBuilder()
-        {
-            lines.Add("#EXTM3U");
-            lines.Add("#EXT-X-TARGETDURATION:11");
-            lines.Add("#EXT-X-VERSION:3");
-            lines.Add("#EXT-X-PLAYLIST-TYPE:VOD");
+        private Dictionary<string, List<string>> headersStore = new Dictionary<string, List<string>>();
 
-            segmentsStartOffset = 4;
+        public void AddQuality(string name)
+        {
+            if (headersStore.ContainsKey(name))
+            {
+                headersStore.Remove(name);
+            }
+
+            List<string> headerLines = new List<string>
+            {
+                "#EXTM3U",
+                "#EXT-X-TARGETDURATION:11",
+                "#EXT-X-VERSION:3",
+                "#EXT-X-PLAYLIST-TYPE:VOD"
+            };
+
+            headersStore.Add(name, headerLines);
         }
 
-        public void AddSegment(Segment segment)
+
+        public void AddSegment(double duration, string path)
         {
-            double dur = segment.Duration;
-            lines.Add($"#EXTINF:{dur},");
-            lines.Add(segment.FileName);
+            lines.Add($"#EXTINF:{duration}");
+            lines.Add(path);
 
             segmentsIndex += 2;
         }
 
-        public Stream Build()
+        public string BuildStringAll() 
+        {
+            string ret = "";
+
+            foreach (var header in headersStore)
+            {
+                List<string> headerLines = header.Value;
+
+                headerLines.AddRange(lines);
+
+                headerLines.Add("#EXT-X-ENDLIST");
+
+                ret += string.Join(Environment.NewLine, headerLines);
+
+                ret += Environment.NewLine;
+            }
+
+            return ret;
+        }
+
+        public Stream BuildStream()
         {
             lines.Add("#EXT-X-ENDLIST");
 

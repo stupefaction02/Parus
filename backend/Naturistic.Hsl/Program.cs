@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -68,11 +69,6 @@ namespace Naturistic.Hsl
 
             application.MapPost("/uploadSegment", async (HttpContext ctx, IFormFile file, string usrDirectory) => {
 
-                //if (file == null)
-                //{
-                //    return new BadRequestResult();
-                //}
-
                 string directoryPath = Path.Combine(liveDir, usrDirectory);
                 // TODO: replace Path.COmbine with your own
                 Directory.CreateDirectory(directoryPath);
@@ -87,15 +83,10 @@ namespace Naturistic.Hsl
 
                     long kbs = file.Length / (long)1024;
                     Console.Write($". Total size: {kbs} kbs" + Environment.NewLine);
-                    await inputFs.CopyToAsync(destFs);
+                    //await inputFs.CopyToAsync(destFs);
                 }
 
-                foreach (var h in ctx.Request.Headers)
-                {
-                    Console.WriteLine($"{h.Key}:{h.Value}");
-                }
-
-                //return new OkResult();
+                //LogHeaders(ctx.Request);
             });
 
             application.MapPost("/uploadPlaylists", async (IFormFileCollection files, string usrDirectory) => {
@@ -121,8 +112,9 @@ namespace Naturistic.Hsl
                         Stream inputFs = file.OpenReadStream();
                         inputFs.Position = 0;
                         inputFs.Seek(0, SeekOrigin.Begin);
-
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write($"Uploading playlist {file.FileName} file as ~/{liveDirName}/{usrDirectory}/{masterPlaylistCommonName}");
+                        Console.ForegroundColor = ConsoleColor.White;
                         await inputFs.CopyToAsync(destFs);
 
                         totalLength += inputFs.Length;
@@ -133,12 +125,22 @@ namespace Naturistic.Hsl
                 Console.Write($". Total size: {kbs} kbs" + Environment.NewLine);
             });
 
-            application.MapPost("/uploadPlaylists1", async (HttpContext ctx, string usrDirectory) => {
-                long l = ctx.Request.Body.Length;
-                Console.WriteLine($"Length: " + l);
+            application.MapPost("/uploadPlaylists1", async (HttpContext ctx) => {
+                using (StreamReader reader = new StreamReader(ctx.Request.Body, Encoding.UTF8))
+                {
+                    Console.WriteLine(await reader.ReadToEndAsync());
+                }
             });
 
             application.Run();
+        }
+
+        private static void LogHeaders(HttpRequest request)
+        {
+            foreach (var h in request.Headers)
+            {
+                Console.WriteLine($"{h.Key}:{h.Value}");
+            }
         }
 
         private static string[] GetOrCreateQualityOptionsDirectories(string usrDirectory)
