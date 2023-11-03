@@ -41,7 +41,7 @@ namespace Naturistic.Hsl
 
             application.UseHslStaticFiles();
 
-
+            string endPlaylistLine = "#EXT-X-ENDLIST";
             string liveDirName = "live";
             string masterPlaylistCommonName = "master_playlist.m3u8";
             string playlistCommonName = "playlist.m3u8";
@@ -89,47 +89,53 @@ namespace Naturistic.Hsl
                 //LogHeaders(ctx.Request);
             });
 
-            application.MapPost("/uploadPlaylists", async (IFormFileCollection files, string usrDirectory) => {
-                GetOrCreateQualityOptionsDirectories(usrDirectory);
+            application.MapPost("/uploadPlaylists", async (HttpContext ctx, string usrDirectory) => {
+                string directoryPath = PathCombine(liveDir, usrDirectory);
 
-                // /live/{userid}/
-                string directoryPath = Path.Combine(liveDir, usrDirectory);
+                string[] dirs = GetOrCreateQualityOptionsDirectories(directoryPath);
 
                 long totalLength = 0;
 
-                int qdi = 0;
-                string[] dirs = GetOrCreateQualityOptionsDirectories(directoryPath);
-                foreach (IFormFile file in files)
+                using (StreamReader reader = new StreamReader(ctx.Request.Body, Encoding.UTF8))
                 {
-                    // /live/{userid}/{quality}
-                    string qualityDir = dirs[qdi];
-                    qdi++;
-
-                    // /live/{userid}/{quality}/playlist.m3u8
-                    string fn = Path.Combine(qualityDir, playlistCommonName);
-                    using (FileStream destFs = File.Create(fn))
+                    // skip headers 
+                    for (int i = 0; i < 4; i++)
                     {
-                        Stream inputFs = file.OpenReadStream();
-                        inputFs.Position = 0;
-                        inputFs.Seek(0, SeekOrigin.Begin);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write($"Uploading playlist {file.FileName} file as ~/{liveDirName}/{usrDirectory}/{masterPlaylistCommonName}");
-                        Console.ForegroundColor = ConsoleColor.White;
-                        await inputFs.CopyToAsync(destFs);
+                        await reader.ReadLineAsync();
+                    }
 
-                        totalLength += inputFs.Length;
+                    string line = null;
+                    foreach (string qdir in dirs)
+                    {
+                        string p = PathCombine(directoryPath, qdir);
+
+                        using FileStream fs = File.Create( PathCombine(p, playlistCommonName) );
+                        using StreamWriter sw = new StreamWriter(fs);
+
+                        while (true)
+                        {
+                            line = await reader.ReadLineAsync();
+#if DEBUG
+                            totalLength += Encoding.UTF8.GetByteCount(line);
+#endif
+                            sw.WriteLine(line);
+
+                            if (line == endPlaylistLine)
+                            {
+                                line = null;
+
+                                await sw.FlushAsync();
+
+                                break;
+                            }
+                        }
                     }
                 }
 
+#if DEBUG
                 long kbs = totalLength / (long)1024;
                 Console.Write($". Total size: {kbs} kbs" + Environment.NewLine);
-            });
-
-            application.MapPost("/uploadPlaylists1", async (HttpContext ctx) => {
-                using (StreamReader reader = new StreamReader(ctx.Request.Body, Encoding.UTF8))
-                {
-                    Console.WriteLine(await reader.ReadToEndAsync());
-                }
+#endif
             });
 
             application.Run();

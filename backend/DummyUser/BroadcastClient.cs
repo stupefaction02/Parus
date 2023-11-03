@@ -82,42 +82,11 @@
             await PostFile(fs, uri);
         }
 
-        public void PostPlaylists1((string, Stream)[] streams, string hostid)
-        {
-            string uri = HslBasePath + $"/uploadPlaylists1";//?usrDirectory={hostid}";
-
-            PostFiles(streams, uri);
-        }
-
         public void PostPlaylists(string data, string hostid)
         {
-            string uri = HslBasePath + $"/uploadPlaylists1";
+            string uri = HslBasePath + $"/uploadPlaylists?usrDirectory={hostid}";
 
             PostRaw(data, uri);
-        }
-
-        private void PostFiles((string, Stream)[] streams, string uri)
-        {
-            using (MultipartFormDataContent content = new MultipartFormDataContent())
-            {
-                int index = 0;
-                foreach ((string, Stream) tuple in streams)
-                {
-                    string name = tuple.Item1;
-                    Stream stream = tuple.Item2;
-
-                    stream.Position = 0;
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                    StreamContent fileContent = new StreamContent(stream);
-
-                    index++;
-                    content.Add(fileContent, "file" + index, name);
-                }
-
-                HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
-                Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
-            }
         }
 
         private void PostRaw(string data, string uri)

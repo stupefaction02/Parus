@@ -156,23 +156,7 @@ internal partial class Program
                     Thread.Sleep(500);
                 }
 
-                Thread.Sleep(500);
-            }
-        }
-
-        private void SendPlaylist1()
-        {
-            Log($"user={host.username}. Sending playlists...");
-            using (Stream stream720 = playlistBuilder.BuildStream())
-            {
-                (string, Stream)[] data = new (string, Stream)[3]
-                {
-                    ("playlist.m3u8", stream720),
-                    ("playlist.m3u8", stream720),
-                    ("playlist.m3u8", stream720)
-                };
-
-                broadcastClient.PostPlaylists1(data, hostIdFormatted);
+                Thread.Sleep(200);
             }
         }
 
