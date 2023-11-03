@@ -17,6 +17,7 @@ namespace ImageServer
 {
     public class Program
     {
+        static string contentRoot;
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { WebRootPath = "Data" });
@@ -24,6 +25,8 @@ namespace ImageServer
             builder.Services.AddCors();
 
             WebApplication application = builder.Build();
+
+            contentRoot = application.Environment.WebRootPath;
 
             application.UseCors(options => options.AllowAnyOrigin());
 
@@ -35,17 +38,15 @@ namespace ImageServer
 			application.Run();
         }
 
-		private static async Task UploadHandler(HttpContext context, IFormFile file, [FromServices] IWebHostEnvironment env)
+        private static async Task UploadHandler(HttpContext context, IFormFile file, [FromServices] IWebHostEnvironment env)
 		{
-            string contentRoot = env.WebRootPath;
-
             string fn = Path.Combine(contentRoot, "previews", file.FileName);
             using (FileStream destFs = File.Create(fn))
             {
                 Stream inputFs = file.OpenReadStream();
                 inputFs.Seek(0, SeekOrigin.Begin);
 
-                Console.WriteLine($"Uploading {file.FileName} file to {fn}");
+                Console.WriteLine($"Uploading {file.FileName} file as ~/previews/{file.FileName}");
                 await inputFs.CopyToAsync(destFs);
             }
         }

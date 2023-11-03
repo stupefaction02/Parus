@@ -29,29 +29,11 @@
             await PostFile(fs, uri);
         }
 
-        public async Task PostMasterPlaylist(string hostId, string manifestPath = null)
+        public void PostMasterPlaylist(string data, string hostId)
         {
-            string hostid = hostId.Replace("-", "");
-            string fn = "manifest/" + "manifest_" + hostid.Substring(0, 12) + ".m3u8";
+            string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostId}";
 
-            using FileStream fs = File.Create(fn);
-            using MemoryStream ms = new MemoryStream();
-            using StreamWriter sw = new StreamWriter(ms);
-
-            sw.WriteLine("#EXTM3U");
-            sw.WriteLine("#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=6221600,CODECS=\"mp4a.40.2,avc1.640028\",RESOLUTION=1920x1080,NAME=\"1080\"");
-            sw.WriteLine($"{HslBasePath}/live/{hostid}/1000K/playlist-1000K.m3u8");
-
-            string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostid}";
-
-            await sw.FlushAsync();
-            ms.Seek(0, SeekOrigin.Begin);
-
-            await ms.CopyToAsync(fs);
-
-            sw.Close();
-
-            await PostFile(fs, uri);
+            PostRaw(data, uri);
         }
 
         private async Task PostFile(FileStream fs, string uri)

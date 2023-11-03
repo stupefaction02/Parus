@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Xml.Serialization;
 using Newtonsoft.Json.Linq;
 using Xabe.FFmpeg;
@@ -49,6 +48,7 @@ internal partial class Program
         private Queue<Segment> segmentsBank = new Queue<Segment>();
 
         private PlaylistBuilder playlistBuilder = new PlaylistBuilder();
+        private ManifestBuilder manifestBuilder = new ManifestBuilder();
 
         public OBS(User host)
         {
@@ -85,13 +85,28 @@ internal partial class Program
             await Task.WhenAny(updatingThumbnailTask, retrieveSegmentsTask, updatingPlaylistTask);
         }
 
-        private async Task SendManifest()
+        private string[] qualiyOptions = new string[3]
         {
+            "180",
+            "360",
+            "720"
+        };
+
+        private void UpdateManifest()
+        {
+            string url1 = $"https://localhost:2020/live/{hostIdFormatted}/{qualiyOptions[0]}/playlist.m3u8";
+            string url2 = $"https://localhost:2020/live/{hostIdFormatted}/{qualiyOptions[1]}/playlist.m3u8";
+            string url3 = $"https://localhost:2020/live/{hostIdFormatted}/{qualiyOptions[2]}/playlist.m3u8";
+            manifestBuilder.AddPlaylist(url1);
+            manifestBuilder.AddPlaylist(url2);
+            manifestBuilder.AddPlaylist(url3);
+
             Log($"user={host.username}. Sending the master manifest...");
-            await broadcastClient.PostMasterPlaylist(hostId);
+            broadcastClient.PostMasterPlaylist(manifestBuilder.BuildString(), hostId);
         }
 
         bool repeat = true;
+        bool needUpdateManifest = true;
 
         private async Task StartRetreivingSegments()
         {
@@ -150,6 +165,11 @@ internal partial class Program
                         if (segmentsSent % 5 == 0)
                         {
                             SendPlaylist();
+
+                            if (needUpdateManifest)
+                            {
+                                UpdateManifest();
+                            }
                         }
                     }
 
@@ -188,8 +208,6 @@ internal partial class Program
 
         UInt64 segmentIndex = 1;
 
-        string b;
-
         /// <summary>
         /// Retrieve the next 5 segments and adds it to the bank
         /// </summary>
@@ -222,7 +240,7 @@ internal partial class Program
 
                 Log($"Procceding {sfn}. offset={position} sec.");
 
-                IConversionResult result = FFmpeg.Conversions.New()
+                FFmpeg.Conversions.New()
                     .AddStream<IStream>(videoStream)
                     .AddParameter($"-ss {TimeSpan.FromSeconds(position)} -t {TimeSpan.FromSeconds(this.segmentDuration)}")
                     .SetOutput(output)
@@ -317,80 +335,6 @@ internal partial class Program
         public void Dispose()
         {
             broadcastClient.Dispose();
-        }
-    }
-
-    public class PlaylistBuilder
-    {
-        private List<string> lines = new List<string>();
-
-        private readonly int segmentsStartOffset;
-        private int segmentsIndex;
-
-        private Dictionary<string, List<string>> headersStore = new Dictionary<string, List<string>>();
-
-        public void AddQuality(string name)
-        {
-            if (headersStore.ContainsKey(name))
-            {
-                headersStore.Remove(name);
-            }
-
-            List<string> headerLines = new List<string>
-            {
-                "#EXTM3U",
-                "#EXT-X-TARGETDURATION:11",
-                "#EXT-X-VERSION:3",
-                "#EXT-X-PLAYLIST-TYPE:VOD"
-            };
-
-            headersStore.Add(name, headerLines);
-        }
-
-
-        public void AddSegment(double duration, string path)
-        {
-            lines.Add($"#EXTINF:{duration}");
-            lines.Add(path);
-
-            segmentsIndex += 2;
-        }
-
-        public string BuildStringAll() 
-        {
-            string ret = "";
-
-            foreach (var header in headersStore)
-            {
-                List<string> headerLines = header.Value;
-
-                headerLines.AddRange(lines);
-
-                headerLines.Add("#EXT-X-ENDLIST");
-
-                ret += string.Join(Environment.NewLine, headerLines);
-
-                ret += Environment.NewLine;
-            }
-
-            return ret;
-        }
-
-        public Stream BuildStream()
-        {
-            lines.Add("#EXT-X-ENDLIST");
-
-            string s = string.Join(Environment.NewLine, lines);
-
-            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(s));
-            FileStream fs = File.Create("playlists/playlist" + Guid.NewGuid().ToString() + ".m3u8");
-
-            stream.Position = 0;
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.Flush();
-            stream.CopyTo(fs);
-
-            return fs;
         }
     }
 }
