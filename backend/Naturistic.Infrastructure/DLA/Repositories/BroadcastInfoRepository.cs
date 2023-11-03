@@ -6,12 +6,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Services;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DLA.Repositories
 {
     public class BroadcastInfoRepository : IBroadcastInfoRepository
     {

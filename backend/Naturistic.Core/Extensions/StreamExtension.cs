@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using System.IO;
 
-namespace Naturistic.Core.Extensions
+namespace Parus.Core.Extensions
 {
     public static class StreamExtension
     {

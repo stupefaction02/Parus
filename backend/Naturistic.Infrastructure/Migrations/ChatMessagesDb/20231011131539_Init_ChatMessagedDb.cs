@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations.ChatMessagesDb
+namespace Parus.Infrastructure.Migrations.ChatMessagesDb
 {
     /// <inheritdoc />
     public partial class Init_ChatMessagedDb : Migration

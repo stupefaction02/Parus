@@ -1,23 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using MaikeBing.EntityFrameworkCore;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Infrastructure.DLA.Repositories;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.DLA.Repositories;
 using Cassandra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Naturistic.Backend.Authentication;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Core.Services;
+using Parus.Backend.Authentication;
+using Parus.Core.Interfaces.Services;
+using Parus.Core.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 
-namespace Naturistic.Backend.Extensions
+namespace Parus.Backend.Extensions
 {
     public static class ServicesExtensions
     {

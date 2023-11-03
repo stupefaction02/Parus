@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Text;
 
-namespace Naturistic.Core.Services
+namespace Parus.Core.Services
 {
     public class FileManager
     {

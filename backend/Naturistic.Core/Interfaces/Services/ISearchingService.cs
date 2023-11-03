@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Core.Interfaces.Services
+namespace Parus.Core.Interfaces.Services
 {
     public interface ISearchingService
     {

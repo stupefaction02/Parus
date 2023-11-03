@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
     public class SampleContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
     {

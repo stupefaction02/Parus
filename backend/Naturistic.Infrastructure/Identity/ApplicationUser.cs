@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
 	public class ApplicationUser : IdentityUser, IUser
     {

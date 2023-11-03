@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations
+namespace Parus.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitBL : Migration

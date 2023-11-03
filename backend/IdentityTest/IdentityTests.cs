@@ -17,26 +17,26 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Naturistic.Backend.Controllers;
-using Naturistic.Backend.Services;
-using Naturistic.Core;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
-using Naturistic.WebUI.Pages.Identity;
+using Parus.Backend.Controllers;
+using Parus.Backend.Services;
+using Parus.Core;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Services;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
+using Parus.WebUI.Pages.Identity;
 
 namespace IdentityTest
 {
 	public partial class IdentityTests
 	{
 		IServiceProvider backendServices =
-			Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
+			Parus.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
 
 		IServiceProvider services1 =
-			Naturistic.WebUI.Program.CreateHostBuilder(new string[] { }).Build().Services;
+			Parus.WebUI.Program.CreateHostBuilder(new string[] { }).Build().Services;
 
 		private T GetBackendService<T>()
 		{
@@ -48,7 +48,7 @@ namespace IdentityTest
 			return services1.GetRequiredService<T>();
 		}
 
-		private Naturistic.Backend.Controllers.IdentityController GetIdentityController()
+		private Parus.Backend.Controllers.IdentityController GetIdentityController()
 		{
 			var a = GetBackendService<IWebHostEnvironment>();
 			var a1 = GetBackendService<UserManager<ApplicationUser>>();
@@ -59,9 +59,9 @@ namespace IdentityTest
 			var a9 = GetBackendService<IPasswordRecoveryTokensRepository>();
 			var a10 = GetBackendService<IEmailService>();
 			var a11 = GetBackendService<IPasswordHasher<ApplicationUser>>();
-			var a12 = GetBackendService<ILogger<Naturistic.Backend.Controllers.IdentityController>>();
+			var a12 = GetBackendService<ILogger<Parus.Backend.Controllers.IdentityController>>();
 
-			return new Naturistic.Backend.Controllers.IdentityController(a, a1, a2, a3, a6, a7, a9, a10, a11, a12);
+			return new Parus.Backend.Controllers.IdentityController(a, a1, a2, a3, a6, a7, a9, a10, a11, a12);
 		}
 
 		public class MyServerAddressesFeature : IServerAddressesFeature
@@ -78,7 +78,7 @@ namespace IdentityTest
 		IServer server;
 		ILocalizationService webLocalization;
 		IPasswordRecoveryTokensRepository tokens;
-		Logger<Naturistic.WebUI.Pages.Identity.EditPasswordModel> weblogger;
+		Logger<Parus.WebUI.Pages.Identity.EditPasswordModel> weblogger;
 		IUserRepository users;
 		UserManager<ApplicationUser> userManager;
 		IPasswordHasher<ApplicationUser> passwordHasher;
@@ -86,8 +86,8 @@ namespace IdentityTest
 		IConfrimCodesRepository confirmCodes;
 		public IdentityTests()
         {
-			var b1 = Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build();
-			var b2 = Naturistic.WebUI.Program.CreateHostBuilder(new string[] { }).Build();
+			var b1 = Parus.Backend.Program.CreateHostBuilder(new string[] { }).Build();
+			var b2 = Parus.WebUI.Program.CreateHostBuilder(new string[] { }).Build();
 
 			//Task.Run(async () => 
 			//{
@@ -124,7 +124,7 @@ namespace IdentityTest
 
 			var controller = GetIdentityController();
 
-			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Naturistic.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
+			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Parus.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
 
 			Assert.True(registerUser.Value != null);
 
@@ -221,7 +221,7 @@ namespace IdentityTest
 
 			var controller = GetIdentityController();
 
-			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Naturistic.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
+			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Parus.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
 
 			Assert.True(registerUser.Value != null);
 
@@ -267,7 +267,7 @@ namespace IdentityTest
 
 			var controller = GetIdentityController();
 
-			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Naturistic.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
+			JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Parus.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
 
 			Assert.True(registerUser.Value != null);
 
@@ -344,7 +344,7 @@ namespace IdentityTest
         [Fact]
         public async void GetHostUser_CreateBroadcast_DeleteBroadcast()
 		{
-            BroadcastController bc = new Naturistic.Backend.Controllers.BroadcastController();
+            BroadcastController bc = new Parus.Backend.Controllers.BroadcastController();
 
             UserManager<ApplicationUser> um = GetBackendService<UserManager<ApplicationUser>>();
             ApplicationDbContext context = GetBackendService<ApplicationDbContext>();

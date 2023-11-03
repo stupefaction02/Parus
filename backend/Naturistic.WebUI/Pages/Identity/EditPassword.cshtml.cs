@@ -3,14 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Http;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
 
-namespace Naturistic.WebUI.Pages.Identity
+namespace Parus.WebUI.Pages.Identity
 {
 	public class EditPasswordModelLocalizationGlossary
     {

@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 
-using Naturistic.Infrastructure.Identity;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Core;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Interfaces.Repositories;
+using Parus.Infrastructure.Identity;
+using Parus.Infrastructure.DLA;
+using Parus.Core;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces;
+using Parus.Core.Interfaces.Repositories;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Naturistic.Backend.Services;
+using Parus.Backend.Services;
 using BenchmarkDotNet.Attributes;
 
-namespace Naturistic.Backend.Controllers
+namespace Parus.Backend.Controllers
 {
 	[ApiController] 
 	public class BroadcastController : Controller

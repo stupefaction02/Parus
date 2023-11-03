@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Naturistic.Infrastructure.DLA;
+using Parus.Infrastructure.DLA;
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations.ChatMessagesDb
+namespace Parus.Infrastructure.Migrations.ChatMessagesDb
 {
     [DbContext(typeof(ChatMessagesDbContext))]
     partial class ChatMessagesDbContextModelSnapshot : ModelSnapshot

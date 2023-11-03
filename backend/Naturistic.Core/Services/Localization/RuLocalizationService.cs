@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Naturistic.Core.Interfaces;
+using Parus.Core.Interfaces;
 
-namespace Naturistic.Core.Services.Localization
+namespace Parus.Core.Services.Localization
 {
 	public class RuLocalizationService : LocalizationService
 	{

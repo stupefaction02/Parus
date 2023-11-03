@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations
+namespace Parus.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddCategoryIewerCount : Migration

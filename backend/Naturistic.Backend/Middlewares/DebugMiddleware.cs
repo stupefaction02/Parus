@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace Naturistic.Backend.Middlewares
+namespace Parus.Backend.Middlewares
 {
 	public class DebugMiddleware
     {

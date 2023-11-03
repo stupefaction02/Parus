@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Naturistic.Backend.Extensions;
-using Naturistic.Backend.Services.Chat.SignalR;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Services.Localization;
-using Naturistic.Backend.Services;
+using Parus.Backend.Extensions;
+using Parus.Backend.Services.Chat.SignalR;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
+using Parus.Core.Interfaces;
+using Parus.Core.Services.Localization;
+using Parus.Backend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using Naturistic.Backend.Middlewares;
+using Parus.Backend.Middlewares;
 
-namespace Naturistic.Backend
+namespace Parus.Backend
 {
     public class Startup
     {

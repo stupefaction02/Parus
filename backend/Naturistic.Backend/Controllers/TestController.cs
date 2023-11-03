@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Naturistic.Backend.Services;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
+using Parus.Backend.Services;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Backend.Controllers
+namespace Parus.Backend.Controllers
 {
 	[ApiController]
 	public class TestController : Controller

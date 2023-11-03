@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Naturistic.Infrastructure.DLA;
+using Parus.Infrastructure.DLA;
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations
+namespace Parus.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230901172829_OverviewData07")]

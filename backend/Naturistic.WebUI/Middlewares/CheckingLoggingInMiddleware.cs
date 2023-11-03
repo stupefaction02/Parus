@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace Naturistic.WebUI.Middlewares
+namespace Parus.WebUI.Middlewares
 {
 	public class NaturisticAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
 	{

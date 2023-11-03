@@ -4,7 +4,7 @@ using System;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace Naturistic.Backend.Authentication
+namespace Parus.Backend.Authentication
 {
 	public class JwtAuthOptions
 	{

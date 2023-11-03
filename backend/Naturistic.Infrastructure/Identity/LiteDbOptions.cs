@@ -1,4 +1,4 @@
-﻿namespace Naturistic.Infrastructure.Identity
+﻿namespace Parus.Infrastructure.Identity
 {
     public class LiteDbOptions
     {

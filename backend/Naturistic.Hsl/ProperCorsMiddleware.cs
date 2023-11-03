@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Naturistic.Hsl
+namespace Parus.Hsl
 {
     public class ProperCorsMiddleware
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Naturistic.Core.Entities
+namespace Parus.Core.Entities
 {
     public class BroadcastInfoKeyword
     {

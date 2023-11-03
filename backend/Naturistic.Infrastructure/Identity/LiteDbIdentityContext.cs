@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
     public class LiteDbIdentityContext : IdentityDbContext<ApplicationUser>
     {

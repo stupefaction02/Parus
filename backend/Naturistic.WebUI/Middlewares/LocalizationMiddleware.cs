@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Services.Localization;
+using Parus.Core.Interfaces;
+using Parus.Core.Services.Localization;
 
-namespace Naturistic.WebUI.Middlewares
+namespace Parus.WebUI.Middlewares
 {
 	public class LocalizationMiddleware
 	{

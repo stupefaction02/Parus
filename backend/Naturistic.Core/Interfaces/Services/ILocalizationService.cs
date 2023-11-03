@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Naturistic.Core.Interfaces
+namespace Parus.Core.Interfaces
 {
 	public interface ILocalizationService
 	{

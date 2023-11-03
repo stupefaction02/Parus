@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Naturistic.WebUI
+namespace Parus.WebUI
 {
     public class Program
     {

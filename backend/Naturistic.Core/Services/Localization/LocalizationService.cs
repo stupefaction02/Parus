@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Naturistic.Core.Interfaces;
+using Parus.Core.Interfaces;
 using Newtonsoft.Json.Linq;
 
-namespace Naturistic.Core.Services.Localization
+namespace Parus.Core.Services.Localization
 {
 	public class LocalizationService : ILocalizationService
 	{

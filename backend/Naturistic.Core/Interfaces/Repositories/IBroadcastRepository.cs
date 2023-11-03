@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Core.Interfaces.Repositories
+namespace Parus.Core.Interfaces.Repositories
 {
     public interface IBroadcastInfoRepository
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Naturistic.Core.Services
+namespace Parus.Core.Services
 {
     public class MailSettings
     {

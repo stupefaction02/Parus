@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
+namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     /// <inheritdoc />
     public partial class RebuildConfirmCodeToUserRElation2 : Migration

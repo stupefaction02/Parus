@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Naturistic.Hsl.Services;
+using Parus.Hsl.Services;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 
-namespace Naturistic.Hsl
+namespace Parus.Hsl
 {
     [ApiController]
 	public class VideoController : Controller

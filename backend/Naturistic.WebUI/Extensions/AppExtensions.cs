@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Naturistic.WebUI.Middlewares;
+using Parus.WebUI.Middlewares;
 
-namespace Naturistic.WebUI.Extensions
+namespace Parus.WebUI.Extensions
 {
     public static class AppExtensions
     {

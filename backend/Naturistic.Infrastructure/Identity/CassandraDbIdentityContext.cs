@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
     public class CassandraDbIdentityContext : IdentityDbContext<ApplicationUser>
     {

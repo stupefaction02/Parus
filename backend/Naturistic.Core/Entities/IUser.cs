@@ -1,4 +1,4 @@
-﻿namespace Naturistic.Core.Entities
+﻿namespace Parus.Core.Entities
 {
 	public interface IUser
     {

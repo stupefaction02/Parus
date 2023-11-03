@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Naturistic.Hsl.Services
+namespace Parus.Hsl.Services
 {
     public class FileManager
     {

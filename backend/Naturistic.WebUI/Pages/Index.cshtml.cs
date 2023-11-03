@@ -12,13 +12,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using MimeKit.Cryptography;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Services;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.WebUI.Pages
+namespace Parus.WebUI.Pages
 {
     public class IndexModel : PageModel
     {

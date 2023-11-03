@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
+namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
     [Migration("20230701094145_Init.WithTestUsers")]

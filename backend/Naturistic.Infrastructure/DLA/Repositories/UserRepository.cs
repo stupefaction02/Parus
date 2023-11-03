@@ -5,11 +5,11 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DLA.Repositories
 {
     public class UserRepository : IUserRepository
     {

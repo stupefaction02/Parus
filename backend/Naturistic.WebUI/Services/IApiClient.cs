@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Naturistic.Core.Entities;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.WebUI.Services
+namespace Parus.WebUI.Services
 { 
     public interface IApiClient
     {

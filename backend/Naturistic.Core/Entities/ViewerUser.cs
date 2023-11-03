@@ -1,4 +1,4 @@
-namespace Naturistic.Core.Entities
+namespace Parus.Core.Entities
 {
     // can watch broadcast, can chat in chats
     public class ViewerUser

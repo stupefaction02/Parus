@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Services;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 
-namespace Naturistic.WebUI.Services
+namespace Parus.WebUI.Services
 {
     public class MSSQLSearchingService : ISearchingService
     {

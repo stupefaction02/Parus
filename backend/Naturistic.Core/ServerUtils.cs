@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Naturistic.Common
+namespace Parus.Common
 {
     public static class ServerUtils
     {

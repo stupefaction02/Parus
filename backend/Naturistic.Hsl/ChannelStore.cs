@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace Naturistic.Hsl
+namespace Parus.Hsl
 {
     /// <summary>
     /// 

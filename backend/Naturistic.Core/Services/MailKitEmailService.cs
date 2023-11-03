@@ -4,9 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
-using Naturistic.Core.Interfaces.Services;
+using Parus.Core.Interfaces.Services;
 
-namespace Naturistic.Core.Services
+namespace Parus.Core.Services
 {
 	public class MailKitEmailService : IEmailService
 	{

@@ -9,22 +9,22 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-using Naturistic.Infrastructure.Identity;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Backend.Authentication;
+using Parus.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Backend.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
-using Naturistic.Core.Interfaces.Services;
+using Parus.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Services.Localization;
+using Parus.Core.Interfaces;
+using Parus.Core.Services.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Common.Utils;
 
-namespace Naturistic.Backend.Controllers
+namespace Parus.Backend.Controllers
 {
     [ApiController]
     public class IdentityController : Controller

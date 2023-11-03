@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-using Naturistic.WebUI.Services;
-using Naturistic.Infrastructure.Identity;
+using Parus.WebUI.Services;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.WebUI.Pages.Account
+namespace Parus.WebUI.Pages.Account
 {
     public class IndexModel : PageModel
     {

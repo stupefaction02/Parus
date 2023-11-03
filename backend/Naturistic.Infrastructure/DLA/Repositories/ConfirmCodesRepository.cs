@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DLA.Repositories
 {
     public class ConfrimCodesRepository : IConfrimCodesRepository
     {

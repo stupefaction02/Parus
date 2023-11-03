@@ -10,24 +10,24 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-using Naturistic.WebUI.Services;
-using Naturistic.Infrastructure;
-using Naturistic.Infrastructure.Identity;
+using Parus.WebUI.Services;
+using Parus.Infrastructure;
+using Parus.Infrastructure.Identity;
 using System.Net.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using NETCore.MailKit.Extensions;
 using NETCore.MailKit.Infrastructure.Internal;
-using Naturistic.WebUI.Extensions;
-using Naturistic.WebUI.Middlewares;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Services.Localization;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Infrastructure.DLA.Repositories;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Core.Interfaces.Services;
+using Parus.WebUI.Extensions;
+using Parus.WebUI.Middlewares;
+using Parus.Core.Interfaces;
+using Parus.Core.Services.Localization;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.DLA.Repositories;
+using Parus.Infrastructure.DLA;
+using Parus.Core.Interfaces.Services;
 
-namespace Naturistic.WebUI
+namespace Parus.WebUI
 {
     public class Startup
     {

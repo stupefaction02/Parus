@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 
-namespace Naturistic.Hsl
+namespace Parus.Hsl
 {
     public class Program
     {

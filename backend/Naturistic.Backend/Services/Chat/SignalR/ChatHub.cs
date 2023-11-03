@@ -4,7 +4,7 @@ using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Naturistic.Backend.Services.Chat.SignalR
+namespace Parus.Backend.Services.Chat.SignalR
 {
     public class ChatHub : Hub
     {

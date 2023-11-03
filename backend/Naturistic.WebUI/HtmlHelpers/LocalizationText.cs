@@ -2,9 +2,9 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Naturistic.Core.Interfaces;
+using Parus.Core.Interfaces;
 
-namespace Naturistic.WebUI.HtmlHelpers
+namespace Parus.WebUI.HtmlHelpers
 {
     public static class LocalizationHelper
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Naturistic.WebUI.Extensions
+namespace Parus.WebUI.Extensions
 {
     public static class ServicesCollectionExtensions
     {

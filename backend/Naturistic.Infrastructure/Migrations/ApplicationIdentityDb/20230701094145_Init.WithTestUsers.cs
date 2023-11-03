@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
+namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     public partial class InitWithTestUsers : Migration
     {

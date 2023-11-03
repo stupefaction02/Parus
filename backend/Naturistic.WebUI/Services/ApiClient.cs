@@ -5,11 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using Naturistic.Core.Entities;
-using Naturistic.Core.Extensions;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Core.Extensions;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.WebUI.Services
+namespace Parus.WebUI.Services
 { 
     public class ApiClient : IApiClient
     {

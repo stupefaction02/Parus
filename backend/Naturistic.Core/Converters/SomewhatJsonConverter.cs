@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Naturistic.Core.Converters
+namespace Parus.Core.Converters
 {
     public class SomewhatJsonConverter 
     {

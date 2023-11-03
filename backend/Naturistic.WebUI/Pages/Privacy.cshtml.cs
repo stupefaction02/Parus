@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Naturistic.WebUI.Pages
+namespace Parus.WebUI.Pages
 {
     public class PrivacyModel : PageModel
     {

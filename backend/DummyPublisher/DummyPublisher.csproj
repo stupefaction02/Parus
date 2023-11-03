@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Naturistic.Core\Naturistic.Core.csproj" />
+    <ProjectReference Include="..\Naturistic.Core\Parus.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Common\Parus.Common.csproj" />
   </ItemGroup>
   
 </Project>

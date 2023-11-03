@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Backend.Extensions
+namespace Parus.Backend.Extensions
 {
     public static class IdentityExtensions
     {

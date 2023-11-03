@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Naturistic.Core.Entities
+namespace Parus.Core.Entities
 {
     public class Chat
     {

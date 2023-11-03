@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-using Naturistic.WebUI.Services;
-using Naturistic.Infrastructure.Identity;
+using Parus.WebUI.Services;
+using Parus.Infrastructure.Identity;
 using Cassandra;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Naturistic.Core.Interfaces;
+using Parus.Core.Interfaces;
 
-namespace Naturistic.WebUI.Pages.Identity
+namespace Parus.WebUI.Pages.Identity
 {
     public class RecoveryPageLocalizationGlossary
     {

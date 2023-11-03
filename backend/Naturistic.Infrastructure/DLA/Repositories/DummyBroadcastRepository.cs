@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces.Repositories;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces.Repositories;
 
-namespace Naturistic.Infrastructure.DLA
+namespace Parus.Infrastructure.DLA
 {
 	public class DummyBroadcastRepository// : IBroadcastRepository
 	{

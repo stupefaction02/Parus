@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Naturistic.Infrastructure.Identity;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Infrastructure.DLA.Entities
+namespace Parus.Infrastructure.DLA.Entities
 {
-	public class BroadcastUser : Naturistic.Core.Entities.BroadcastUser
+	public class BroadcastUser : Parus.Core.Entities.BroadcastUser
 	{
         public ApplicationUser User { get; set; }
     }

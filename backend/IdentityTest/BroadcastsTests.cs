@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Naturistic.Backend.Controllers;
-using Naturistic.Core;
-using Naturistic.Core.Entities;
-using Naturistic.Core.Interfaces;
-using Naturistic.Core.Interfaces.Repositories;
-using Naturistic.Core.Interfaces.Services;
-using Naturistic.Infrastructure.DLA.Repositories;
-using Naturistic.Infrastructure.Identity;
+using Parus.Backend.Controllers;
+using Parus.Core;
+using Parus.Core.Entities;
+using Parus.Core.Interfaces;
+using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Services;
+using Parus.Infrastructure.DLA.Repositories;
+using Parus.Infrastructure.Identity;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -25,7 +25,7 @@ namespace IdentityTest
 	public class BroadcastsTests
 	{
 		readonly IServiceProvider services =
-			Naturistic.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
+			Parus.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
 
 		private T GetService<T>()
 		{

@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Naturistic.Core.Entities;
-using Naturistic.Infrastructure;
+using Parus.Core.Entities;
+using Parus.Infrastructure;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
     public class ConfirmCode : IVerificationCode
     {

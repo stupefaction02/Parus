@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore; 
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Infrastructure.DLA
+namespace Parus.Infrastructure.DLA
 {
     public class ChatMessagesDbContext : DbContext
     {

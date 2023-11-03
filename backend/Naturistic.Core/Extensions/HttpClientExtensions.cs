@@ -8,7 +8,7 @@ using System.Net.Http;
 
 using Newtonsoft.Json;
 
-namespace Naturistic.Core.Extensions
+namespace Parus.Core.Extensions
 {
     public static class HttpClientExtensions
     {

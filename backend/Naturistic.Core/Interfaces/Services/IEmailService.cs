@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Naturistic.Core.Interfaces.Services
+namespace Parus.Core.Interfaces.Services
 {
     public interface IEmailService
     {

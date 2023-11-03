@@ -1,8 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using Naturistic.Core.Entities;
+using Parus.Core.Entities;
 
-namespace Naturistic.Core.Entities
+namespace Parus.Core.Entities
 {
 	// Hosts broadcast, can edit channel
 	public class BroadcastUser

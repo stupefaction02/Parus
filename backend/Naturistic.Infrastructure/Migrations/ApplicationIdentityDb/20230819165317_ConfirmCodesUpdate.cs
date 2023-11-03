@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Naturistic.Infrastructure.Migrations.ApplicationIdentityDb
+namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     /// <inheritdoc />
     public partial class ConfirmCodesUpdate : Migration

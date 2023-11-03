@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Naturistic.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces.Repositories;
 
-namespace Naturistic.Infrastructure.Identity
+namespace Parus.Infrastructure.Identity
 {
 	public class PasswordRecoveryToken : IPasswordRecoveryToken
     {

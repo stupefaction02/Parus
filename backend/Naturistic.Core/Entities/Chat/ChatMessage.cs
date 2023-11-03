@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Naturistic.Core.Entities
+namespace Parus.Core.Entities
 {
     public class ChatMessage
     {

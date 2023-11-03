@@ -8,11 +8,11 @@ using Azure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Naturistic.Core.Entities;
-using Naturistic.Infrastructure.DLA;
-using Naturistic.Infrastructure.Identity;
+using Parus.Core.Entities;
+using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Identity;
 
-namespace Naturistic.Backend.Services
+namespace Parus.Backend.Services
 {
     public class BroadcastControl
     {
