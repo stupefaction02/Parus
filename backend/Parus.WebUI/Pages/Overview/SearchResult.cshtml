@@ -32,13 +32,13 @@
             switch (sector)
             {
                 case "users":
-                    <partial name="/Pages/Overview/SearchAllResults_Users.cshtml" />
+                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Users.cshtml" />
                     break;
                 case "broadcasts":
-                    <partial name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
+                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
                     break;
                 case "categories":
-                    <partial name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
+                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
                     break;
 
                 default:

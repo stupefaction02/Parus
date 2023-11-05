@@ -22,8 +22,6 @@ namespace Parus.WebUI.Pages
 {
     public class IndexModel : PageModel
     {
-        public const int PAGE_SIZE = 12;
-
         public int PageCount { get; set; }
 
         public int Page { get; set; }
@@ -33,7 +31,7 @@ namespace Parus.WebUI.Pages
         public IActionResult OnGet([FromQuery] string page, string search,
             [FromServices] IBroadcastInfoRepository broadcastInfoRepository)
         {
-            PageCount = (broadcastInfoRepository.Count() / PAGE_SIZE) + 1;
+            PageCount = (broadcastInfoRepository.Count() / PaginationData.PAGE_SIZE) + 1;
 
             int pageInt32;
             if (!Int32.TryParse(page, out pageInt32))
@@ -43,8 +41,8 @@ namespace Parus.WebUI.Pages
 
             Page = pageInt32;
 
-            int start = (pageInt32 - 1) * PAGE_SIZE;
-            Broadcasts = broadcastInfoRepository.GetInterval(start, count: PAGE_SIZE);
+            int start = (pageInt32 - 1) * PaginationData.PAGE_SIZE;
+            Broadcasts = broadcastInfoRepository.GetInterval(start, count: PaginationData.PAGE_SIZE);
 
             return Page();
         }

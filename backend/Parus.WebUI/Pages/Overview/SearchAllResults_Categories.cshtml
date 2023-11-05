@@ -1,7 +1,100 @@
-﻿@using Parus.Core.Interfaces;
+﻿@using Microsoft.Extensions.Configuration;
+@using Parus.Core.Entities;
+@using Parus.Core.Interfaces;
+@using Parus.Core.Interfaces.Services;
 @using Parus.WebUI.HtmlHelpers;
 
 @inject ILocalizationService localization
+@inject IConfiguration configuration
+@inject ISearchingService searchingService
 
-Ololoo
-      
+@{
+    string imageServer = configuration["ImageServer:Url"];
+
+    string page = Context.Request.Query["page"];
+
+    int pageInt32;
+    if (!Int32.TryParse(page, out pageInt32))
+    {
+        pageInt32 = 1;
+    }
+
+    var Categories = (IEnumerable<IUser>)searchingService.SearchBroadcastsByTitleTags(Model);
+
+    // why do i do this... :(
+    int usersCount = 0;
+    foreach (var item in Categories)
+    {
+        usersCount++;
+    }
+
+    int pageCount = (usersCount / PaginationData.PAGE_SIZE) + 1;
+
+    PaginationData pd = new PaginationData { Page = pageInt32, PageCount = pageCount };
+}
+
+
+@if (Categories.Count() > 0)
+{
+    <article class="results_block">
+        @{
+            <div class="article_h">
+                <span class="article_h_span">Категории</span>
+            </div>
+
+            <div class="results_elems_categories">
+                @foreach (var cat in Model.Categories)
+                {
+                    string viewsCount = cat.ViewsCount + " зрителей";
+
+                    <div class="results_elems_category">
+                        <div class="results_elems_category_img">
+                            <a href="#@(cat.Name)">
+                                <img class="broadcast_block_img" src="@(imageServer)/categories/@(cat.Name).jpg" />
+                            </a>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column">
+                            <div class="results_elems_category_info_name">
+                                <strong>
+                                    <a class="results_elems_category_info_name_a"
+                                       href="/categories/@(cat.GetRef())">Category Name</a>
+                                </strong>
+                            </div>
+
+                            <p class="results_elems_category_info_views">
+                                @cat.ViewsCount
+                            </p>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="separator">
+                <div class="sidepart">
+                    <div></div>
+                </div>
+                <div class="text">
+                    <button id="show_categories_btn">
+                        <div>
+                            <div>
+                                <div>
+                                    <div class="text_c">
+                                        <p aria-label="Показать все">Показать все</p>
+                                    </div>
+
+                                    <div class="arrow">
+                                        <svg width="2rem" height="2rem" viewBox="0 0 20 20"><path d="M14.5 6.5 10 11 5.5 6.5 4 8l6 6 6-6-1.5-1.5z"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="sidepart">
+                    <div></div>
+                </div>
+            </div>
+        }
+    </article>
+}

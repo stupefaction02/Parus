@@ -34,6 +34,11 @@ namespace Parus.WebUI.Services
             return broadcasts.Search(q).Take(count);
         }
 
+        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q)
+        {
+            return broadcasts.Search(q);
+        }
+
         public IEnumerable<Tag> SearchTagsByName(string q, int count)
         {
             return data.Tags
@@ -54,14 +59,18 @@ namespace Parus.WebUI.Services
 
         public IEnumerable<IUser> SearchUsersByName(string q, int v)
         {
-            //return users.Users.Where(x => EF.Functions.Like(x.GetUsername(), $"%{q}%"))
-            //    .Take(v);
-
             return usersdentityCtx.Users
                 .OrderBy(x => x.UserName)
                 .Where(x => EF.Functions.Like(x.UserName, $"%{q}%"))
                 .Take(v)
                 .ToList();
+        }
+
+        public IQueryable<IUser> SearchUsersByName(string q)
+        {
+            return usersdentityCtx.Users
+                .OrderBy(x => x.UserName)
+                .Where(x => EF.Functions.Like(x.UserName, $"%{q}%"));
         }
     }
 }
