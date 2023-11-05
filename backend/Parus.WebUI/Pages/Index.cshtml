@@ -1,0 +1,98 @@
+﻿@page "/"
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+@using Microsoft.Extensions.Configuration;
+@using Parus.WebUI.HtmlHelpers
+
+@inject IConfiguration configuration
+
+@section AdditionalScripts
+{
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/editpassword.js"></script>
+}
+
+@section AdditionalStyles
+{
+    <link href="~/css/overview.css" rel="stylesheet" media="all">
+}
+
+<div class="broadcast_block_container">
+    @{
+        string imageServer = configuration["ImageServer:Url"];
+
+        foreach (var broadcast in Model.Broadcasts)
+        {
+            <div class="broadcast_block">
+                <a href="@(broadcast.Ref)">
+                    <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                </a>
+                <div class="broadcast_block_info">
+                    <a href="@(broadcast.Ref)" style="display: flex; align-items: center;">
+                        <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
+
+                        <div style="margin-top: 12px; width: 85%">
+                            <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
+                            <label class="broadcast_block_info_username">@broadcast.Username</label>
+                        </div>
+                    </a>
+
+                    <div style="padding-left: 50px; margin-top: -8px; ">
+                        <label class="broadcast_block_info_category">@broadcast.Category.Name</label>
+
+                        <div class="broadcast_block_info_tags">
+
+                            @foreach (var tag in broadcast.Tags)
+                            {
+                                <a class="broadcast_block_info_tag">
+                                    <span>@tag.Name</span>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    
+</div>
+
+@if (Model.PageCount > 1) {
+
+    <div class="overview_pagination">
+    @{
+        string hrefPar = "?page=";
+        int page = Model.Page;
+
+        bool prevHrefDisabled = page <= 1;
+        bool nextHrefDisabled = page >= Model.PageCount;
+
+        int previousPageHref = prevHrefDisabled ? 1 : (page - 1);
+        int nextPageHref = nextHrefDisabled ? 1 : (page + 1);
+    }
+
+    @if (prevHrefDisabled)
+    {
+        <a class="pagination_arrow" disabled>&laquo;</a>
+    }
+    else
+    {
+        <a class="pagination_arrow" href="?page=@previousPageHref">&laquo;</a>
+    }
+
+    @PaginatorHelper.RegularPagination(page, Model.PageCount, hrefPar)
+
+    @if (nextHrefDisabled)
+    {
+        <a class="pagination_arrow" disabled>&raquo;</a>
+    }
+    else
+    {
+        <a class="pagination_arrow" href="?page=@nextPageHref">&raquo;</a>
+    }
+
+    </div>
+}

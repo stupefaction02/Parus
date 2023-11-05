@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Naturistic.Core\Parus.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Common\Parus.Common.csproj" />
+    <ProjectReference Include="..\Parus.Core\Parus.Core.csproj" />
   </ItemGroup>
   
 </Project>

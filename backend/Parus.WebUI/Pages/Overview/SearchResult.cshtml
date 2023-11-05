@@ -1,0 +1,54 @@
+﻿@page "/search"
+@model SearchResultModel
+@{
+    ViewData["Title"] = " - Naturistic";
+}
+
+@using Microsoft.Extensions.Configuration;
+@using Parus.Core.Entities;
+@using Parus.Infrastructure.Identity;
+@using Parus.WebUI.HtmlHelpers
+
+@section AdditionalScripts
+{
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/searchingresults.js"></script>
+}
+
+@section AdditionalStyles
+{
+    <link href="~/css/overview.css" rel="stylesheet" media="all">
+    <link href="~/css/searching.css" rel="stylesheet" media="all">
+}
+
+<div class="results">
+
+    @{
+        string sector = HttpContext.Request.Query["sector"];
+        string q = HttpContext.Request.Query["q"];
+
+        if (!String.IsNullOrEmpty(q))
+        {
+            switch (sector)
+            {
+                case "users":
+                    <partial name="/Pages/Overview/SearchAllResults_Users.cshtml" />
+                    break;
+                case "broadcasts":
+                    <partial name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
+                    break;
+                case "categories":
+                    <partial name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
+                    break;
+
+                default:
+                    <partial model=@(q) name="/Pages/Overview/SearchResults_Overview.cshtml" />
+                    break;
+            }
+        }
+    }
+
+</div>
+
+
+

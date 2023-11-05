@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Core", "Naturistic.Core\Parus.Core.csproj", "{54A35E62-D7B8-470E-8625-1BF71F16F963}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Core", "Parus.Core\Parus.Core.csproj", "{54A35E62-D7B8-470E-8625-1BF71F16F963}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Infrastructure", "Naturistic.Infrastructure\Parus.Infrastructure.csproj", "{6DD04D54-F68A-4591-B138-08E7DA4CC3C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Infrastructure", "Parus.Infrastructure\Parus.Infrastructure.csproj", "{6DD04D54-F68A-4591-B138-08E7DA4CC3C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.WebUI", "Naturistic.WebUI\Parus.WebUI.csproj", "{AFFD27FE-AFC0-4C62-802B-E44DC736B961}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.WebUI", "Parus.WebUI\Parus.WebUI.csproj", "{AFFD27FE-AFC0-4C62-802B-E44DC736B961}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Backend", "Naturistic.Backend\Parus.Backend.csproj", "{240AAFCB-51E1-4C89-9FEF-CB3332E861F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Backend", "Parus.Backend\Parus.Backend.csproj", "{240AAFCB-51E1-4C89-9FEF-CB3332E861F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Hsl", "Naturistic.Hsl\Parus.Hsl.csproj", "{FAD307D8-E834-4ABC-9C23-6F8FB154C5B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Hsl", "Parus.Hsl\Parus.Hsl.csproj", "{FAD307D8-E834-4ABC-9C23-6F8FB154C5B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyPublisher", "DummyPublisher\DummyPublisher.csproj", "{C594498C-78A6-4049-9FDA-701DA6B1445B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Common", "Common\Parus.Common.csproj", "{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Common", "Parus.Common\Parus.Common.csproj", "{B0F8959B-5C1D-408A-A9CD-08C2CDC5EAC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{28049071-93B1-4C77-9F8E-948388D0BCC3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityTest", "IdentityTest\IdentityTest.csproj", "{0F199DC7-FE3D-4068-925B-7448DF38F7C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.CDN", "ImageServer\Parus.CDN.csproj", "{40604DDD-F78C-42FA-A47B-05F9E6EE094F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.CDN", "Parus.CDN\Parus.CDN.csproj", "{40604DDD-F78C-42FA-A47B-05F9E6EE094F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dummies", "Dummies", "{D3E031A3-A59C-417E-8848-15D18E71E9AF}"
 EndProject

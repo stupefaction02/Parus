@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Naturistic.Backend\Parus.Backend.csproj" />
-    <ProjectReference Include="..\Naturistic.WebUI\Parus.WebUI.csproj" />
+    <ProjectReference Include="..\Parus.Backend\Parus.Backend.csproj" />
+    <ProjectReference Include="..\Parus.WebUI\Parus.WebUI.csproj" />
   </ItemGroup>
 
 </Project>
