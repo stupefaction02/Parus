@@ -3,6 +3,9 @@
 @using Parus.Core.Interfaces;
 @using Parus.Core.Interfaces.Services;
 @using Parus.WebUI.HtmlHelpers;
+@using Parus.WebUI.Pages.Overview.Contexts;
+
+@model AllCategoiresSearchResultContext
 
 @inject ILocalizationService localization
 @inject IConfiguration configuration
@@ -11,30 +14,11 @@
 @{
     string imageServer = configuration["ImageServer:Url"];
 
-    string page = Context.Request.Query["page"];
-
-    int pageInt32;
-    if (!Int32.TryParse(page, out pageInt32))
-    {
-        pageInt32 = 1;
-    }
-
-    var Categories = (IEnumerable<BroadcastCategory>)searchingService.SearchCategoryByName(Model);
-
-    // why do i do this... :(
-    int usersCount = 0;
-    foreach (var item in Categories)
-    {
-        usersCount++;
-    }
-
-    int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
-
-    PaginationContext pd = new PaginationContext { Page = pageInt32, PageCount = pageCount };
+    Model.Init(searchingService, Context.Request.Query["page"]);
 }
 
 
-@if (Categories.Count() > 0)
+@if (Model.Categories.Count() > 0)
 {
     <article class="results_block">
         @{
@@ -98,3 +82,5 @@
         }
     </article>
 }
+
+<partial model=@(Model.Pagination) name="/Pages/Shared/Pagination.cshtml" />

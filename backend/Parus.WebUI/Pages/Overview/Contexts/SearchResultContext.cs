@@ -12,6 +12,7 @@ using Parus.Core.Entities;
 using Parus.Core.Interfaces;
 using Parus.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
+using System.Drawing.Printing;
 
 namespace Parus.WebUI.Pages.Overview.Contexts
 {
@@ -54,7 +55,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
             int usersCount = searchingService.CountUsersByName(Query);
 
             int start = (pageInt32 - 1) * PAGE_SIZE;
-            this.Users = (IEnumerable<IUser>)searchingService.SearchUsersByName(Query, start, PAGE_SIZE);
+            this.Users = searchingService.SearchUsersByName(Query, start, PAGE_SIZE);
 
             int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
 
@@ -69,7 +70,9 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
     public class AllBroadcastSearchResultContext : SearchResultContext
     {
-        public IEnumerable<IUser> Users { get; set; }
+        public const int PAGE_SIZE = 12;
+
+        public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
 
         public AllBroadcastSearchResultContext(string query) : base(query)
         {
@@ -89,11 +92,12 @@ namespace Parus.WebUI.Pages.Overview.Contexts
                 pageInt32 = 1;
             }
 
-            int usersCount = searchingService.CountUsersByName(Query);
+            int count = searchingService.CountUsersByName(Query);
 
-            this.Users = (IEnumerable<IUser>)searchingService.SearchUsersByName(Query, PaginationContext.PAGE_SIZE);
+            int start = (pageInt32 - 1) * PAGE_SIZE;
+            this.Broadcasts = searchingService.SearchBroadcastsByTitleTags(Query, PAGE_SIZE);
 
-            int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
+            int pageCount = (count / PAGE_SIZE) + 1;
 
             Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 
@@ -106,7 +110,9 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
     public class AllCategoiresSearchResultContext : SearchResultContext
     {
-        public IEnumerable<IUser> Users { get; set; }
+        public const int PAGE_SIZE = 12;
+
+        public IEnumerable<BroadcastCategory> Categories { get; set; }
 
         public AllCategoiresSearchResultContext(string query) : base(query)
         {
@@ -128,9 +134,10 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
             int usersCount = searchingService.CountUsersByName(Query);
 
-            this.Users = (IEnumerable<IUser>)searchingService.SearchCategoryByName(Query, PaginationContext.PAGE_SIZE);
+            int start = (pageInt32 - 1) * PAGE_SIZE;
+            this.Categories = searchingService.SearchCategoryByName(Query, start, PAGE_SIZE);
 
-            int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
+            int pageCount = (usersCount / PAGE_SIZE) + 1;
 
             Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 
