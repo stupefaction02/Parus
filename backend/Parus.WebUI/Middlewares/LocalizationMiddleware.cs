@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Parus.Core.Interfaces;
@@ -21,7 +22,7 @@ namespace Parus.WebUI.Middlewares
             this.logger = logger;
         }
 
-		public Task Invoke(HttpContext httpContext)
+		public Task Invoke(HttpContext httpContext, [FromServices] ILocalizationService localization)
 		{
 			string locale = httpContext.Request.Cookies["locale"];
 
@@ -31,7 +32,9 @@ namespace Parus.WebUI.Middlewares
 				httpContext.Response.Cookies.Append("locale", locale = "ru");
 			}
 
-			return _next(httpContext);
+            localization.SetLocale(locale);
+
+            return _next(httpContext);
 		}
 	}
 }

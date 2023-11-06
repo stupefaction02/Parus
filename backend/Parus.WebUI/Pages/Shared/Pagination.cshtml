@@ -2,7 +2,7 @@
 @using Parus.Core.Entities;
 @using Parus.WebUI.HtmlHelpers;
 
-@model PaginationData
+@model PaginationContext
 
 @if (Model.PageCount > 1)
 {
@@ -24,7 +24,7 @@
         }
         else
         {
-            <a class="pagination_arrow" href="?page=@previousPageHref">&laquo;</a>
+            <a class="pagination_arrow" href="@(Model.Path)?page=@previousPageHref">&laquo;</a>
         }
 
         @PaginatorHelper.RegularPagination(page, Model.PageCount, hrefPar)
@@ -35,7 +35,7 @@
         }
         else
         {
-            <a class="pagination_arrow" href="?page=@nextPageHref">&raquo;</a>
+            <a class="pagination_arrow" href="@(Model.Path)?page=@nextPageHref">&raquo;</a>
         }
 
     </div>

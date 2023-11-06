@@ -4,6 +4,10 @@
 @using Parus.Core.Interfaces.Services;
 @using Parus.Infrastructure.Identity;
 @using Parus.WebUI.HtmlHelpers;
+@using System.Diagnostics;
+@using Parus.WebUI.Pages.Overview.Contexts;
+
+@model AllUsersSearchResultContext
 
 @inject ILocalizationService localization
 @inject ISearchingService searchingService
@@ -12,38 +16,19 @@
 @{
     string imageServer = configuration["ImageServer:Url"];
 
-    string page = Context.Request.Query["page"];
-
-    int pageInt32;
-    if (!Int32.TryParse(page, out pageInt32))
-    {
-        pageInt32 = 1;
-    }
-
-    var Users = (IEnumerable<IUser>)searchingService.SearchUsersByName(Model);
-
-    // why do i do this... :(
-    int usersCount = 0;
-    foreach (var item in Users)
-    {
-        usersCount++;
-    }
-
-    int pageCount = (usersCount / PaginationData.PAGE_SIZE) + 1;
-
-    PaginationData pd = new PaginationData { Page = pageInt32, PageCount = pageCount };
+    Model.Init(searchingService, Context.Request.Query["page"]);
 }
 
-@if (Users.Any())
+@if (Model.Users.Any())
 {
     <article class="results_block">
         @{
             <div class="article_h">
-                <span class="article_h_span">Пользователи</span>
+                <span class="article_h_span">@(Html.RetreiveRawText("SEARCH_SECTOR_USER_HEADER", localization))</span>
             </div>
 
             <div class="results_elems_categories">
-                @foreach (ApplicationUser usr in Users)
+                @foreach (ApplicationUser usr in Model.Users)
                 {
                     <div class="user_result">
                         <div class="user_result_container">
@@ -105,5 +90,5 @@
     </article>
 }
 
-<partial model=@(pd) name="/Pages/Shared/Pagination.cshtml" />
+<partial model=@(Model.Pagination) name="/Pages/Shared/Pagination.cshtml" />
       

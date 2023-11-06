@@ -22,15 +22,8 @@ namespace Parus.WebUI.Pages
 {
     public class SearchResultModel : PageModel
     {
-        public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
-        public IEnumerable<BroadcastCategory> Categories { get; set; }
-        public IEnumerable<IUser> Users { get; set; }
-
-        public IActionResult OnGet([FromQuery] string q, string sector,
-            [FromServices] ISearchingService searchingService)
+        public IActionResult OnGet()
         {
-            
-
             return Page();
         }
     }

@@ -7,7 +7,8 @@
 @using Microsoft.Extensions.Configuration;
 @using Parus.Core.Entities;
 @using Parus.Infrastructure.Identity;
-@using Parus.WebUI.HtmlHelpers
+@using Parus.WebUI.HtmlHelpers;
+@using Parus.WebUI.Pages.Overview.Contexts;
 
 @section AdditionalScripts
 {
@@ -32,13 +33,13 @@
             switch (sector)
             {
                 case "users":
-                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Users.cshtml" />
+                    <partial model=@(new AllUsersSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Users.cshtml" />
                     break;
                 case "broadcasts":
-                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
+                    <partial model=@(new AllCategoiresSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
                     break;
                 case "categories":
-                    <partial model=@(q) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
+                    <partial model=@(new AllBroadcastSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
                     break;
 
                 default:

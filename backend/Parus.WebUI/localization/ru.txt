@@ -18,3 +18,4 @@ EDITPSWRD_NOMATCH=Пароли не совпадают
 COMPLETE_BTN=Установить пароль
 CHAT_SYSTEM_CONNECT=Вы вошли в чат!
 CHAT_SYSTEM_DISCONNECT=Вас выкинуло из чата :( 
+SEARCH_SECTOR_USER_HEADER=Пользователи по запросу {query}

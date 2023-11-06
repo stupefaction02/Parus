@@ -19,7 +19,7 @@
         pageInt32 = 1;
     }
 
-    var Categories = (IEnumerable<IUser>)searchingService.SearchBroadcastsByTitleTags(Model);
+    var Categories = (IEnumerable<BroadcastCategory>)searchingService.SearchCategoryByName(Model);
 
     // why do i do this... :(
     int usersCount = 0;
@@ -28,9 +28,9 @@
         usersCount++;
     }
 
-    int pageCount = (usersCount / PaginationData.PAGE_SIZE) + 1;
+    int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
 
-    PaginationData pd = new PaginationData { Page = pageInt32, PageCount = pageCount };
+    PaginationContext pd = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 }
 
 

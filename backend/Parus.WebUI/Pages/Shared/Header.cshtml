@@ -7,8 +7,7 @@
 
 
 @{
-    string locale = this.Context.Request.Cookies["locale"];
-    localization.SetLocale(locale);
+    
 
     RouteEndpoint endpoit = Context.Request.HttpContext.GetEndpoint() as RouteEndpoint;
 

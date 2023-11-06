@@ -29,6 +29,11 @@ namespace Parus.WebUI.Services
             this.data = data;
         }
 
+        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string query, int start, int count)
+        {
+            return null;
+        }
+
         public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q, int count)
         {
             return broadcasts.Search(q).Take(count);
@@ -48,6 +53,14 @@ namespace Parus.WebUI.Services
                 .ToList();
         }
 
+        public int CountBroadcastsByTitleTags(string query)
+        {
+            return data.BroadcastsKeywords
+                .Count(x => EF.Functions.Like(x.Keyword, $"%{query}%"));
+        }
+
+
+
         public IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int count)
         {
             return data.Categories
@@ -57,20 +70,62 @@ namespace Parus.WebUI.Services
                 .ToList();
         }
 
-        public IEnumerable<IUser> SearchUsersByName(string q, int v)
+        public IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int start, int count)
         {
-            return usersdentityCtx.Users
-                .OrderBy(x => x.UserName)
-                .Where(x => EF.Functions.Like(x.UserName, $"%{q}%"))
-                .Take(v)
+            return data.Categories
+                .OrderBy(x => x.Name)
+                .Where(x => EF.Functions.Like(x.Name, $"%{q}%"))
+                .Skip(start)
+                .Take(count)
                 .ToList();
         }
 
-        public IQueryable<IUser> SearchUsersByName(string q)
+        public int CountCategoriesByName(string query)
+        {
+            return data.Categories
+                .OrderBy(x => x.Name)
+                .Count(x => EF.Functions.Like(x.Name, $"%{query}%"));
+        }
+
+        public IEnumerable<IUser> SearchUsersByName(string query, int count)
         {
             return usersdentityCtx.Users
                 .OrderBy(x => x.UserName)
-                .Where(x => EF.Functions.Like(x.UserName, $"%{q}%"));
+                .Where(x => EF.Functions.Like(x.UserName, $"%{query}%"))
+                .Take(count)
+                .ToList();
+        }
+
+
+        public IQueryable<IUser> SearchUsersByName(string query)
+        {
+            return usersdentityCtx.Users
+                .OrderBy(x => x.UserName)
+                .Where(x => EF.Functions.Like(x.UserName, $"%{query}%"));
+        }
+
+        public int CountUsersByName(string query)
+        {
+            return usersdentityCtx.Users
+                .OrderBy(x => x.UserName)
+                .Count(x => EF.Functions.Like(x.UserName, $"%{query}%"));
+        }
+
+        public IEnumerable<BroadcastCategory> SearchCategoryByName(string query)
+        {
+            return data.Categories
+                .OrderBy(x => x.Name)
+                .Where(x => EF.Functions.Like(x.Name, $"%{query}%"));
+        }
+
+        public IEnumerable<IUser> SearchUsersByName(string query, int start, int count)
+        {
+            return usersdentityCtx.Users
+                .OrderBy(x => x.UserName)
+                .Where(x => EF.Functions.Like(x.UserName, $"%{query}%"))
+                .Skip(start)
+                .Take(count)
+                .ToList();
         }
     }
 }
