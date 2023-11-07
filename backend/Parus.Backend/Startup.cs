@@ -44,6 +44,8 @@ namespace Parus.Backend
 
             services.AddMail(Configuration);
 
+            services.AddResponseCompression();
+
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
         }

@@ -150,20 +150,22 @@ internal partial class Program
         }
     }
 
-    private static List<User> ConfirmedUsers;
+    private static IEnumerable<User> ConfirmedUsers;
 
     static string AdminJWT => "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJuYmYiOjE2OTc4MDQ2MTEsImV4cCI6MTc1NDA1MTAxMSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMiIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjUwMDIifQ.wOOfJlyvSCf6VqPsOxx8HsONDbRu5TqKEOrzyAZibkU";
 
     private static async Task StartBroadcast(string[] args)
     {
-        ConfirmedUsers = await GetUser();
+        var users = ConfirmedUsers = (await GetUser()).Take(1);
 
+        await StartBroadcastCore(users);
+        return;
         try
         {
             if (await CleanUp())
             {
                 List<Task> tasks = new List<Task>();
-                foreach (User confirmedUser in ConfirmedUsers.Take(1))
+                foreach (User confirmedUser in users)
                 {
                     tasks.Add(RunOBSAsync(confirmedUser));
                 }
@@ -186,6 +188,82 @@ internal partial class Program
             Console.Out.Flush();
             Console.ForegroundColor = ConsoleColor.White;
         }
+    }
+
+    private static List<User> broadcastingUsers = new List<User>();
+
+    private static async Task StartBroadcastCore(IEnumerable<User> users)
+    {
+        foreach (User usr in users)
+        {
+            string uri = CreateBroadcastCreationUri();
+            string jwt = await GetJWTForUser(usr);
+
+            usr.jwt = jwt;
+
+            broadcastingUsers.Add(usr);
+
+            Console.WriteLine($"User {usr.username} has started broadcast. uri={uri}");
+
+            var t = await Request(uri, jwt, HttpMethod.Post);
+
+
+        }
+    }
+
+    private static async Task StopBroadcast(IEnumerable<User> users)
+    {
+        foreach (User usr in users)
+        {
+            string uri = CreateBroadcastStopingUri();
+
+            Console.WriteLine($"User {usr.username} is stoping broadcast... uri={uri}");
+
+            await Request(uri, usr.jwt, HttpMethod.Delete);
+        }
+    }
+
+    private static async Task<string> GetJWTForUser(User usr)
+    {
+        string uri = api + $"/test/getjwt?username={usr.username}";
+
+        return await GetStringAsync(uri);
+    }
+
+    static int broadcastIndex = 0;
+
+    static string api = "https://localhost:5001/api";
+
+    private static async Task<string> GetStringAsync(string uri)
+    {
+        string ret;
+
+        HttpResponseMessage resp = await Request(uri, "", HttpMethod.Get);
+
+        using (StreamReader ms = new StreamReader(resp.Content.ReadAsStream()))
+        {
+            ret = ms.ReadToEnd();
+        }
+
+        return ret;
+    }
+
+    private static string CreateBroadcastCreationUri()
+    {
+        broadcastIndex++;
+
+        string title = $"Test broadcast %231{broadcastIndex}";
+
+        return $"{api}/broadcasts/start?title={title}&catId=1&tags[]=1,2";
+    }
+
+    private static string CreateBroadcastStopingUri()
+    {
+        broadcastIndex++;
+
+        string title = $"Test broadcast #{broadcastIndex}";
+
+        return $"{api}/broadcasts/start?title={title}&catId=1&tagsIds=[1,2]";
     }
 
     private static Task RunOBSAsync(User user)
@@ -245,6 +323,7 @@ internal partial class Program
 
         request.Headers.Add("Cookie", $"locale=ru; JWT={jwt};");
         request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+        //request.Headers.Add("Content-Type", "text/plain");
 
         return await httpClient.SendAsync(request);
     }
@@ -255,5 +334,6 @@ internal partial class Program
         public string email;
         public string id;
         public string emailConfirmed;
+        public string jwt;
     }
 }

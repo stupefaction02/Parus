@@ -23,6 +23,8 @@ using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Common.Utils;
+using System.Net.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace Parus.Backend.Controllers
 {
@@ -77,11 +79,26 @@ namespace Parus.Backend.Controllers
             return "Secret!";
         }
 
+        [EnableRouteResponseCompression]
 		[HttpGet]
 		[Route("api/test/users")]
 		public object Users()
         {
             return Json(userRepository.Users);
+        }
+
+        [HttpGet]
+        [Route("api/test/getjwt")]
+        public string GetJWT(string username)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, username)
+            };
+
+            ClaimsIdentity identity = new ClaimsIdentity(claims);
+
+            return CreateJWT(identity).Token;
         }
 
         [HttpGet]

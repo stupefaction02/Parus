@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Parus.Backend.Services;
 using BenchmarkDotNet.Attributes;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Parus.Backend.Controllers
 {
@@ -30,7 +31,7 @@ namespace Parus.Backend.Controllers
 	{
 		private ClaimsPrincipal user;
 
-        public new ClaimsPrincipal User 
+        public new ClaimsPrincipal User  
 		{ 
 			get 
 			{ 
@@ -133,7 +134,11 @@ namespace Parus.Backend.Controllers
 
 		[HttpPost]
         [Route("api/broadcasts/start")]
-        public async Task<IActionResult> StartBroadcast(string preview, string title, int catId, int[] tagsIds, 
+		[AllowAnonymous]
+        public async Task<IActionResult> StartBroadcast(
+			[FromQuery] string title,
+            [FromQuery] int catId,
+            [FromQuery] int[] tags, 
 			[FromServices] ApplicationDbContext context, 
 			[FromServices] ApplicationIdentityDbContext identityDbContext, 
 			[FromServices] BroadcastControl broadcastControl)
@@ -153,7 +158,9 @@ namespace Parus.Backend.Controllers
                 return Unauthorized();
             }
 
-            await broadcastControl.StartBroadcastAsync(catId, tagsIds, title, user, context);
+            Console.WriteLine($"{user.UserName} is starting broadcast...");
+
+            await broadcastControl.StartBroadcastAsync(catId, tags, title, user, context);
 
             return Ok();
         }
@@ -179,6 +186,8 @@ namespace Parus.Backend.Controllers
             {
                 return Unauthorized();
             }
+
+            Console.WriteLine($"{user.UserName} is stoping broadcast...");
 
             await broadcastControl.StopBroadcastAsync(user, context);
 

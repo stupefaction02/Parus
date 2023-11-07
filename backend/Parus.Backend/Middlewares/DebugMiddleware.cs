@@ -61,6 +61,7 @@ namespace Parus.Backend.Middlewares
 
                         if (roles.Count > 0)
                         {
+                            rolesInfo = "";
                             foreach (var role in roles)
                             {
                                 rolesInfo += role + " ";
