@@ -35,7 +35,7 @@ namespace Parus.Backend.Services
                 Category = dbContext.Categories.SingleOrDefault(x => x.Id == category),
                 Tags = userTags,
                 Username = user.UserName,
-                Preview = "defaults/preview_bright.jpg",
+                Preview = user.GetId().Replace("-", "") + ".png",
                 Ref = user.UserName,
                 Title = title,
             };

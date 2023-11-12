@@ -13,8 +13,14 @@ internal partial class Program
 {
     private static void Main(string[] args)
     {
+        Console.Title = "DummyUser";
+
         StartBroadcast(args).GetAwaiter().GetResult();
+
+        CleanUp().GetAwaiter().GetResult();
+
         Console.ReadKey();
+
         return;
         //if (args.Length > 0)
         //{
@@ -156,29 +162,27 @@ internal partial class Program
 
     private static async Task StartBroadcast(string[] args)
     {
-        var users = ConfirmedUsers = (await GetUsers()).Take(2);
+        //await CleanUp();
+
+        var users = ConfirmedUsers = (await GetUsers()).Take(3);
 
         Console.WriteLine("Stopping all broadcasts...");
-        await StopBroadcast(users);
+        await CleanUp();
 
         Console.WriteLine("");
 
         Console.WriteLine("Starting all broadcasts...");
         await StartBroadcastCore(users);
 
-        return;
         try
         {
-            if (await CleanUp())
+            List<Task> tasks = new List<Task>();
+            foreach (User confirmedUser in users)
             {
-                List<Task> tasks = new List<Task>();
-                foreach (User confirmedUser in users)
-                {
-                    tasks.Add(RunOBSAsync(confirmedUser));
-                }
-
-                await Task.WhenAll(tasks.ToArray());
+                tasks.Add(RunOBSAsync(confirmedUser));
             }
+
+            await Task.WhenAll(tasks.ToArray());
         }
         catch (Exception ex)
         {

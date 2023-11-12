@@ -2,7 +2,7 @@
 {
     public class BroadcastClient : IDisposable
     {
-        private HttpClient webClient = new HttpClient();
+        private HttpClient webClient = new HttpClient(new HttpMessageHandler1(new HttpClientHandler()));
 
         public string HslBasePath { get; set; }
 
@@ -81,6 +81,35 @@
 
                 HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
                 Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
+            }
+        }
+
+        public class HttpMessageHandler1 : DelegatingHandler
+        {
+            public HttpMessageHandler1(HttpMessageHandler innerHandler)
+            : base(innerHandler)
+            { }
+
+            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+                CancellationToken cancellationToken)
+            {
+                HttpResponseMessage response = null;
+
+            Send:
+                try
+                {
+                    response = await base.SendAsync(request, cancellationToken);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return response;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    goto Send;
+                }
+
+                return response;
             }
         }
     }

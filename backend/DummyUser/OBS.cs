@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.ExceptionServices;
 using System.Xml.Serialization;
@@ -56,8 +57,8 @@ internal partial class Program
 
             broadcastClient.HslBasePath = OBS.ApiPath;
 
-//            videoFileName = Path.Combine(videoDir, videos[ (new Random()).Next(0, videos.Length) ]);
-            videoFileName = Path.Combine(videoDir, videos[ 1 ]);
+            videoFileName = Path.Combine(videoDir, videos[(new Random()).Next(0, videos.Length)]);
+            //videoFileName = Path.Combine(videoDir, videos[ 1 ]);
 
             Log($"Booting OBS with video = {videoFileName} ...");
 
@@ -67,7 +68,7 @@ internal partial class Program
 
             FFmpeg.SetExecutablesPath("C:\\Program Files (x86)\\ffmpeg\\bin");
 
-            Directory.CreateDirectory( Path.Combine(videoDir, hostIdFormatted) );
+            Directory.CreateDirectory(Path.Combine(videoDir, hostIdFormatted));
 
             playlistBuilder.AddQuality("180");
             playlistBuilder.AddQuality("360");
@@ -76,13 +77,11 @@ internal partial class Program
 
         public async Task RunAsync()
         {
-            Task updatingThumbnailTask = Task.Run(StartUpdatingThumbnail);
-
             Task retrieveSegmentsTask = Task.Run(StartRetreivingSegments);
 
             Task updatingPlaylistTask = Task.Run(StartSendingSegments);
 
-            await Task.WhenAny(updatingThumbnailTask, retrieveSegmentsTask, updatingPlaylistTask);
+            await Task.WhenAny(retrieveSegmentsTask, updatingPlaylistTask);
         }
 
         private string[] qualiyOptions = new string[3]
@@ -157,7 +156,7 @@ internal partial class Program
                         Segment segment = segmentsBank.Dequeue();
 
                         segmentsSent++;
-                        Log($"user={host.username}. Sending {segment.FileName}. Already sent={segmentsSent} ...");
+                        //Log($"user={host.username}. Sending {segment.FileName}. Already sent={segmentsSent} ...");
                         broadcastClient.PostSegmentAsync(segment, hostid).GetAwaiter().GetResult();
 
                         playlistBuilder.AddSegment(segment.Duration, path: segment.FileName);
@@ -171,6 +170,9 @@ internal partial class Program
                                 UpdateManifest();
                             }
                         }
+
+                        Log($"user={host.username}. Updating thumbnail...");
+                        Task.Run(() => UpdateThumbnail(segment.Path));
                     }
 
                     Thread.Sleep(500);
@@ -283,9 +285,6 @@ internal partial class Program
             while (true)
             {
                 Log($"user={host.username}. Updating the thumbnail broadcast... Thread id={Thread.CurrentThread.ManagedThreadId}");
-                await UpdateThumbnail();
-
-                Thread.Sleep(120000);
             }
         }
 
@@ -294,27 +293,47 @@ internal partial class Program
             Console.WriteLine(msg);
         }
 
-        private async Task UpdateThumbnail()
+        int l = 0;
+        /// <summary>
+        /// Create and send preview from 0 second of the segment
+        /// </summary>
+        /// <param name="segmentFn">Segment's .ts video file path</param>
+        private async Task UpdateThumbnail(string segmentFn)
         {
             string hostid = hostId.Replace("-", "");
 
-            string output = Path.Combine(thumbnailsDir, hostid + ".png");
-            string input = videoFileName;
-
+            string output = Path.Combine(thumbnailsDir, hostid + $"____{l}.png");
+            string input = segmentFn;
+            
             if (!File.Exists(input))
             {
                 throw new IOException($"Could find video sample. Add {videoFileName} to video folder in bin folder.");
             }
 
-            IConversion conversion = await
-                FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(second));
+            //IConversion conversion = await
+            //    FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(4));
 
-            IConversionResult result = await conversion.Start();
+            //IConversionResult result = await conversion.Start("-y");
 
-            if (result != null) 
-            {
-                await broadcastClient.PostThumbnail(thumbnailPath: output);
-            }
+            //if (result != null)
+            //{
+            //    await broadcastClient.PostThumbnail(thumbnailPath: output);
+            //}
+
+            var t = StartGettingPreviewProcess(input, output, offset: l);
+            l += 5;
+            await broadcastClient.PostThumbnail(thumbnailPath: output);
+        }
+        //ffmpeg -ss 15 -i ./1.mp4 -frames:v 1 -q:v 2 output2.jpg
+        public bool StartGettingPreviewProcess(string input, string output, int offset)
+        {
+            Process process = new Process();
+
+            process.StartInfo.WorkingDirectory = "C:\\Users\\Ivan\\Desktop\\sensorium\\NET Projects\\ASPNET\\NatureForYou\\backend\\DummyUser\\bin\\Debug\\net6.0\\";
+            process.StartInfo.FileName = "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe";
+            process.StartInfo.Arguments = $"-ss {offset} -i {input} -frames:v 1 -q:v 2 {output}.jpg";
+            process.StartInfo.CreateNoWindow = true;
+            return process.Start();
         }
 
         public class Segment
@@ -337,4 +356,6 @@ internal partial class Program
             broadcastClient.Dispose();
         }
     }
+
+    
 }

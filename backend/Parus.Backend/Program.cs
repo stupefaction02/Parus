@@ -15,6 +15,7 @@ namespace Parus.Backend
     {
         public static void Main(string[] args)
         {
+            Console.Title = "Backend";
             CreateHostBuilder(args).Build().Run();
         }
 

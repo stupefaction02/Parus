@@ -14,6 +14,8 @@ namespace Parus.WebUI
     {
         public static void Main(string[] args)
         {
+            Console.Title = "WebUI";
+
             CreateHostBuilder(args).Build().Run();
         }
 

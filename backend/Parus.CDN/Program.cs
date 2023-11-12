@@ -14,6 +14,8 @@ namespace ImageServer
         static string contentRoot;
         public static void Main(string[] args)
         {
+            Console.Title = "CDN";
+
             var builder = WebApplication.CreateBuilder(new WebApplicationOptions { WebRootPath = "Data" });
 
             builder.Services.AddCors();

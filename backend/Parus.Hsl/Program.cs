@@ -25,6 +25,8 @@ namespace Parus.Hsl
 
         public static void Main(string[] args)
         {
+            Console.Title = "Hsl";
+
             WebApplicationBuilder builder = WebApplication.CreateBuilder(
                 new WebApplicationOptions { WebRootPath = "Data" });
 
@@ -50,6 +52,9 @@ namespace Parus.Hsl
             string liveDir = Path.Combine(contentRoot, liveDirName);
 
             application.MapPost("/uploadManifest", async (IFormFile file, string usrDirectory) => { 
+
+                if (file == null) { return; }
+
                 string directoryPath = Path.Combine(liveDir, usrDirectory);
                 // TODO: replace Path.COmbine with your own
                 Directory.CreateDirectory(directoryPath);

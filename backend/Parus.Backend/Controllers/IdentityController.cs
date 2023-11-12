@@ -513,6 +513,19 @@ namespace Parus.Backend.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("api/account/refreshtoken")]
+        public async Task<object> GetRefreshToken(string nickname)
+        {
+            if (userRepository.CheckIfNicknameExists(nickname))
+            {
+                return Ok("Y");
+            }
+            else
+            {
+                return Ok("N");
+            }
+        }
 
         public enum RegisterType : sbyte
         {
