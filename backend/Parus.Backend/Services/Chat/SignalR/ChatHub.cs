@@ -35,11 +35,23 @@ namespace Parus.Backend.Services.Chat.SignalR
 
         public override Task OnConnectedAsync()
         {
-            string chatName = Context.GetHttpContext().Request.Cookies["chatName"];
-            Console.WriteLine(Context.ConnectionId);
-            Groups.AddToGroupAsync(Context.ConnectionId, chatName);
-
+            //string chatName = Context.GetHttpContext().Request.Cookies["chatName"];
+            //Console.WriteLine(Context.ConnectionId);
+            //Groups.AddToGroupAsync(Context.ConnectionId, chatName);
+            
             return base.OnConnectedAsync();
-        } 
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task JoinChat(string chatName)
+        {
+            Console.WriteLine($"User conn.id={Context.ConnectionId} has joined {chatName} group");
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatName);
+        }
     }
 }

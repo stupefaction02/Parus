@@ -69,8 +69,10 @@ namespace Parus.WebUI.Middlewares
                     }
                 }
             }
-            
-            string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}";
+
+            string time = DateTime.UtcNow.ToString("HH:mm:ss");
+
+            string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. {time}";
 
 			Debug.WriteLine(info);
 			logger.LogInformation(info);

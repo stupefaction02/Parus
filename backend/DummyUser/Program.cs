@@ -156,9 +156,16 @@ internal partial class Program
 
     private static async Task StartBroadcast(string[] args)
     {
-        var users = ConfirmedUsers = (await GetUser()).Take(1);
+        var users = ConfirmedUsers = (await GetUsers()).Take(2);
 
+        Console.WriteLine("Stopping all broadcasts...");
+        await StopBroadcast(users);
+
+        Console.WriteLine("");
+
+        Console.WriteLine("Starting all broadcasts...");
         await StartBroadcastCore(users);
+
         return;
         try
         {
@@ -197,37 +204,35 @@ internal partial class Program
         foreach (User usr in users)
         {
             string uri = CreateBroadcastCreationUri();
-            string jwt = await GetJWTForUser(usr);
-
-            usr.jwt = jwt;
-
+            
             broadcastingUsers.Add(usr);
 
-            Console.WriteLine($"User {usr.username} has started broadcast. uri={uri}");
+            Console.WriteLine($"{usr.username} has started broadcast. uri={uri}");
 
-            var t = await Request(uri, jwt, HttpMethod.Post);
+            CreatedApiResponse res = await GetJSON<CreatedApiResponse>(uri, usr.jwt, HttpMethod.Post);
 
-
+            if (res != null)
+            {
+                usr.broadcastKey = res.broadcastKey;    
+            }
         }
+    }
+
+    private class CreatedApiResponse
+    {
+        public string broadcastKey;
     }
 
     private static async Task StopBroadcast(IEnumerable<User> users)
     {
         foreach (User usr in users)
         {
-            string uri = CreateBroadcastStopingUri();
+            string uri = $"{api}/broadcasts/stop?broadcastKey=amogus";
 
-            Console.WriteLine($"User {usr.username} is stoping broadcast... uri={uri}");
+            Console.WriteLine($"{usr.username} is stoping broadcast... uri={uri}");
 
-            await Request(uri, usr.jwt, HttpMethod.Delete);
+            var y = await Request(uri, usr.jwt, HttpMethod.Delete);
         }
-    }
-
-    private static async Task<string> GetJWTForUser(User usr)
-    {
-        string uri = api + $"/test/getjwt?username={usr.username}";
-
-        return await GetStringAsync(uri);
     }
 
     static int broadcastIndex = 0;
@@ -257,15 +262,6 @@ internal partial class Program
         return $"{api}/broadcasts/start?title={title}&catId=1&tags[]=1,2";
     }
 
-    private static string CreateBroadcastStopingUri()
-    {
-        broadcastIndex++;
-
-        string title = $"Test broadcast #{broadcastIndex}";
-
-        return $"{api}/broadcasts/start?title={title}&catId=1&tagsIds=[1,2]";
-    }
-
     private static Task RunOBSAsync(User user)
     {
         OBS obs = new OBS(user);
@@ -274,7 +270,7 @@ internal partial class Program
         return Task.Run(async () => await obs.RunAsync());
     }
 
-    private async static Task<List<User>> GetUser()
+    private async static Task<List<User>> GetUsers()
     {
         string uri = "https://localhost:5001/api/test/userslimited";
 
@@ -335,5 +331,6 @@ internal partial class Program
         public string id;
         public string emailConfirmed;
         public string jwt;
+        internal string broadcastKey;
     }
 }

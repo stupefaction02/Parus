@@ -66,10 +66,12 @@ if (sendBtn != null) {
 
     hubConnection.start()
         .then(function () {
-            //messages.appendChild(CreateSystemMessage(sys_con_txt));
+            hubConnection.invoke("JoinChat", chatName).catch(function (err) { debugger
+                return console.error(err.toString());
+            });
         })
         .catch(function (err) {
-            return console.error(err.toString());
+            //return console.error(err.toString());
         });
 }
 

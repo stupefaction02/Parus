@@ -48,13 +48,20 @@ namespace Parus.Infrastructure.DLA.Repositories
                 .AsEnumerable().SingleOrDefault(predicate);
         }
 
+        /// <summary>
+        /// Deletes with checking on existing
+        /// </summary>
+        /// <param name="userId"></param>
         public void RemoveOne(string userId)
         {
             BroadcastInfo target = OneLazy(x => x.HostUserId == userId);
 
-            context.Broadcasts.Remove(target);
+            if (target != null)
+            {
+                context.Broadcasts.Remove(target);
 
-            context.SaveChanges();
+                context.SaveChanges();
+            }
         }
 
         public void Add(BroadcastInfo broadcast)

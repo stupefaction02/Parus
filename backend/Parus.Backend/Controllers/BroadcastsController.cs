@@ -23,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Parus.Backend.Services;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Authorization;
+using Nest;
 
 namespace Parus.Backend.Controllers
 {
@@ -162,12 +163,13 @@ namespace Parus.Backend.Controllers
 
             await broadcastControl.StartBroadcastAsync(catId, tags, title, user, context);
 
-            return Ok();
+            return Json(new { broadcastKey = "" });
         }
 
         [Route("api/broadcasts/stop")]
         [HttpDelete]
         public async Task<IActionResult> StopBroadcast(
+			[FromQuery] string broadcastKey,
 			[FromServices] IBroadcastInfoRepository context,
             [FromServices] ApplicationIdentityDbContext identityDbContext,
             [FromServices] BroadcastControl broadcastControl)

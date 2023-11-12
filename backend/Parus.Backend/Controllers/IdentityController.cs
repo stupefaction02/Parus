@@ -87,9 +87,7 @@ namespace Parus.Backend.Controllers
             return Json(userRepository.Users);
         }
 
-        [HttpGet]
-        [Route("api/test/getjwt")]
-        public string GetJWT(string username)
+        private string GetJWT(string username)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -109,7 +107,13 @@ namespace Parus.Backend.Controllers
             {
                 ApplicationUser usr = (ApplicationUser)x;
 
-                return new { id = usr.Id, username = usr.UserName, email = usr.Email, emailConfirmed = usr.EmailConfirmed };
+                return new { 
+                    id = usr.Id, 
+                    username = usr.UserName, 
+                    email = usr.Email, 
+                    emailConfirmed = usr.EmailConfirmed,
+                    jwt = GetJWT(usr.UserName)
+                };
             }));
         }
 

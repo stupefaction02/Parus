@@ -362,7 +362,7 @@ namespace IdentityTest
 
             bc.User = new ClaimsPrincipal(identity);
 
-            IActionResult result = await bc.StartBroadcast("preview#1", "title#1", 1, new int[] { 1, 2 }, context, ic, bco);
+            IActionResult result = await bc.StartBroadcast("title#1", 1, new int[] { 1, 2 }, context, ic, bco);
 
 			Assert.IsType<OkResult>(result);
 
@@ -371,7 +371,7 @@ namespace IdentityTest
 			Assert.NotNull(createdBroadcast);
 			Assert.True(createdBroadcast.HostUserId == hostUserId);
 
-            IActionResult stopBroadcastResult = await bc.StopBroadcast(br, ic, bco);
+            IActionResult stopBroadcastResult = await bc.StopBroadcast("", br, ic, bco);
 
             Assert.IsType<OkResult>(result);
 
