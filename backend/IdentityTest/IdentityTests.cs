@@ -1,5 +1,6 @@
 
 using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
@@ -17,7 +18,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Parus.Backend.Authentication;
 using Parus.Backend.Controllers;
+using Parus.Backend.Middlewares;
 using Parus.Backend.Services;
 using Parus.Core;
 using Parus.Core.Entities;
@@ -160,7 +164,7 @@ namespace IdentityTest
 
 			var testCookies = new Dictionary<string, string>();
 			testCookies.Add("locale", "ru");
-			editPasswordPage.PageContext = TestContexts.CreateHttpContext(testCookies);
+			editPasswordPage.PageContext = TestContexts.CreatePageContext(testCookies);
 
 			// skip email checking part
 			// assumed user got his email with token and went to editpassword page
@@ -380,5 +384,42 @@ namespace IdentityTest
             Assert.Null(alreadyDeleted);
         }
 
+		[Fact]
+        public async void FailToLoginAndGetRefreshToken()
+		{
+            CheckingLoggingInMiddleware clmw = new CheckingLoggingInMiddleware(new RequestDelegate(x => { return null; }));
+
+            List<Claim> claims = new List<Claim>
+                {
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, "ivan21")
+                };
+
+            JwtSecurityToken jwt = new JwtSecurityToken(
+                    issuer: JwtAuthOptions.ISSUER,
+                    audience: JwtAuthOptions.AUDIENCE,
+                    notBefore: DateTime.UtcNow,
+                    claims: claims,
+                    expires: DateTime.UtcNow.Add(TimeSpan.FromSeconds(1)),
+                    signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
+			string strJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            var testCookies = new Dictionary<string, string>();
+            testCookies.Add("locale", "ru");
+            testCookies.Add("JWT", strJwt);
+
+			var testHeader = new Dictionary<string, string>();
+			testHeader.Add("Authorization", "Bearer " + strJwt);
+
+			Thread.Sleep(1000);
+
+            HttpContext ctx = TestContexts.CreateContext1(testCookies, testHeader);
+			ctx.RequestServices = backendServices;
+            TestIdentity te = new TestIdentity();
+			te._IsAuthenticated = false;
+            ctx.User = new ClaimsPrincipal(te);
+			
+            await clmw.Invoke(ctx);
+        }
     }
 }

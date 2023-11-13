@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parus.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Parus.Infrastructure.Identity;
 namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231113124254_AddRefreshTokens01")]
+    partial class AddRefreshTokens01
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -393,9 +396,7 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 
                     b.HasKey("RefreshTokenId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("RefreshSessions");
                 });
@@ -500,8 +501,8 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
             modelBuilder.Entity("Parus.Infrastructure.Identity.RefreshSession", b =>
                 {
                     b.HasOne("Parus.Infrastructure.Identity.ApplicationUser", "User")
-                        .WithOne("RefreshSession")
-                        .HasForeignKey("Parus.Infrastructure.Identity.RefreshSession", "UserId");
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
@@ -516,8 +517,6 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Navigation("ConfirmCode");
 
                     b.Navigation("PasswordRecoveryToken");
-
-                    b.Navigation("RefreshSession");
                 });
 #pragma warning restore 612, 618
         }

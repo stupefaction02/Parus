@@ -23,6 +23,7 @@ namespace Parus.Infrastructure.Identity
 
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
         public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
 

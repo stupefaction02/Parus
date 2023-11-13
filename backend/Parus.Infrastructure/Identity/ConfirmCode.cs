@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -21,5 +22,23 @@ namespace Parus.Infrastructure.Identity
         public string UserId { get; set; }
 
         public int Code { get; set; } 
+    }
+
+    public class RefreshSession
+    {
+        [Key]
+        public int RefreshTokenId { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        [Column(TypeName = "nvarchar(450)")]
+        public string UserId { get; set; }
+
+        public string Token { get; set; }
+
+        public string Fingerprint { get; set; }
+
+        [Timestamp]
+        public int ExpiresAt { get; set; }
     }
 }

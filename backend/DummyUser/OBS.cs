@@ -320,7 +320,7 @@ internal partial class Program
             //    await broadcastClient.PostThumbnail(thumbnailPath: output);
             //}
 
-            var t = StartGettingPreviewProcess(input, output, offset: l);
+            StartGettingPreviewProcess(input, output, offset: 10);
             l += 5;
             await broadcastClient.PostThumbnail(thumbnailPath: output);
         }
@@ -331,7 +331,7 @@ internal partial class Program
 
             process.StartInfo.WorkingDirectory = "C:\\Users\\Ivan\\Desktop\\sensorium\\NET Projects\\ASPNET\\NatureForYou\\backend\\DummyUser\\bin\\Debug\\net6.0\\";
             process.StartInfo.FileName = "C:\\Program Files (x86)\\ffmpeg\\bin\\ffmpeg.exe";
-            process.StartInfo.Arguments = $"-ss {offset} -i {input} -frames:v 1 -q:v 2 {output}.jpg";
+            process.StartInfo.Arguments = $"-ss -y {offset} -i {input} -frames:v 1 -q:v 2 {output}.jpg";
             process.StartInfo.CreateNoWindow = true;
             return process.Start();
         }

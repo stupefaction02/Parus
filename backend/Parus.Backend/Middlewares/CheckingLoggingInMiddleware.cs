@@ -51,14 +51,11 @@ namespace Parus.Backend.Middlewares
 	public class CheckingLoggingInMiddleware
     {
         private readonly RequestDelegate _next;
-		private readonly IServiceProvider serviceProvider;
         private readonly ILogger<CheckingLoggingInMiddleware> logger;
 
-        public CheckingLoggingInMiddleware(RequestDelegate next, IServiceProvider servicePRovider, ILogger<CheckingLoggingInMiddleware> logger)
+        public CheckingLoggingInMiddleware(RequestDelegate next)
         {
             _next = next;
-			this.serviceProvider = servicePRovider;
-            this.logger = logger;
         }
 
 		public Task Invoke(HttpContext httpContext)
@@ -126,7 +123,7 @@ namespace Parus.Backend.Middlewares
             else
             {
                 string error = result.Failure.Message;
-                logger.LogError(error);
+                //logger.LogError(error);
             }
         }
     }

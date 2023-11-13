@@ -25,6 +25,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Common.Utils;
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
+using Nest;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Parus.Backend.Controllers
 {
@@ -513,18 +516,28 @@ namespace Parus.Backend.Controllers
             return Ok();
         }
 
+        [Authorize(JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [Route("api/account/refreshtoken")]
-        public async Task<object> GetRefreshToken(string nickname)
+        public async Task<object> RefreshToken([FromServices] ApplicationIdentityDbContext identityDbContext)
         {
-            if (userRepository.CheckIfNicknameExists(nickname))
-            {
-                return Ok("Y");
-            }
-            else
-            {
-                return Ok("N");
-            }
+            //ApplicationUser user = identityDbContext.Users
+            //    .Include(x => x.RefreshSession)
+            //    .AsEnumerable()
+            //    .SingleOrDefault(x => x.UserName == User.Identity.Name);
+
+            //if (user == null)
+            //{
+            //    return Unauthorized();
+            //}
+
+            string rsUuid = HttpContext.Request.Cookies["refreshToken"];
+
+            RefreshSession lastRs = identityDbContext.RefreshSessions
+                .AsEnumerable()
+                .SingleOrDefault(x => x.Token == rsUuid);
+
+            return Ok("Y");
         }
 
         public enum RegisterType : sbyte

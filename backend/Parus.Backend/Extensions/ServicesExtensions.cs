@@ -127,7 +127,7 @@ namespace Parus.Backend.Extensions
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidateIssuer = false,
-
+                            ClockSkew = new System.TimeSpan(0, 0, 0),
                             ValidIssuer = configuration["Authentication:JWT:ValidIssuer"],
 
                             ValidateAudience = false,

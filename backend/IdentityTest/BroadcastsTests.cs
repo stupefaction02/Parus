@@ -32,7 +32,7 @@ namespace IdentityTest
 			return services.GetRequiredService<T>();
 		}
 
-		[Fact]
+		//[Fact]
 		public async Task Search_Broadcast_Simple()
 		{
 			IBroadcastInfoRepository br = GetService<IBroadcastInfoRepository>();

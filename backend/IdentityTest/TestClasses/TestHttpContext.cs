@@ -39,7 +39,7 @@ namespace IdentityTest
 			}
 		}
 
-		public static PageContext CreateHttpContext(Dictionary<string, string> cookies)
+		public static PageContext CreatePageContext(Dictionary<string, string> cookies)
 		{
 			TestHttpContext ctx = new TestHttpContext();
 			TestHttpRequest request = new TestHttpRequest();
@@ -64,7 +64,30 @@ namespace IdentityTest
 			};
 			return pageCtx;
 		}
-	}
+
+        public static TestHttpContext CreateContext1(Dictionary<string, string> cookies,
+            Dictionary<string, string> headers)
+        {
+            TestHttpContext ctx = new TestHttpContext();
+            TestHttpRequest request = new TestHttpRequest();
+            TestHttpResponse response = new TestHttpResponse();
+
+            foreach (var cookie in cookies)
+            {
+                request.AddCookie(cookie.Key, cookie.Value);
+            }
+
+			foreach (var h in headers)
+			{
+				request.AddHeader(h.Key, h.Value);
+			}
+
+			ctx.SetRequest(request);
+            ctx.SetResponse(response);
+
+            return ctx;
+        }
+    }
 
 	public class TestIdentity : ClaimsIdentity
 	{
@@ -72,7 +95,13 @@ namespace IdentityTest
         {
         }
 
-        public override bool IsAuthenticated => true;
+        public TestIdentity() : base()
+        {
+            
+        }
+
+		public bool _IsAuthenticated = true;
+        public override bool IsAuthenticated => _IsAuthenticated;
 
 		
     }

@@ -32,6 +32,8 @@ namespace Parus.Infrastructure.Identity
         [NotMapped]
         public IVerificationCode ConfirmCodeCore { get => ConfirmCode; }
 
+        public RefreshSession RefreshSession { get; set; }
+
         public override string ToString()
         {
             return $"{this.UserName} {this.Email} {this.Id}";
