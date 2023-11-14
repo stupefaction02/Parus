@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Common.Utils;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Builder;
@@ -384,15 +385,35 @@ namespace IdentityTest
             Assert.Null(alreadyDeleted);
         }
 
-		[Fact]
+
+		private string fingerPrint;
+		private string resreshToken;
+        [Fact]
         public async void FailToLoginAndGetRefreshToken()
 		{
-            CheckingLoggingInMiddleware clmw = new CheckingLoggingInMiddleware(new RequestDelegate(x => { return null; }));
+			IdentityController identityController = GetIdentityController();
+            ApplicationIdentityDbContext context = GetBackendService<ApplicationIdentityDbContext>();
+            CheckingLoggingInMiddleware clmw = new CheckingLoggingInMiddleware(x => Next(x));
+            IUserRepository users = GetBackendService<IUserRepository>();
+
+            /* Registration Starts */
+
+            string username = "test_ivan1243123";
+            string email = "testivan1241312@gcom";
+            string password = "zx1";
+
+            var controller = GetIdentityController();
+
+            JsonResult registerUser = (JsonResult)await controller.Register(username, email, password, Gender.Male, Parus.Backend.Controllers.IdentityController.RegisterType.ViewerUser);
+
+            ApplicationUser newUser = (ApplicationUser)users.One(x => x.GetUsername() == username);
+
+			Assert.NotNull(newUser);
 
             List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, "ivan21")
-                };
+            {
+				new Claim(ClaimsIdentity.DefaultNameClaimType, username)
+			};
 
             JwtSecurityToken jwt = new JwtSecurityToken(
                     issuer: JwtAuthOptions.ISSUER,
@@ -404,14 +425,38 @@ namespace IdentityTest
 
 			string strJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            var testCookies = new Dictionary<string, string>();
-            testCookies.Add("locale", "ru");
-            testCookies.Add("JWT", strJwt);
+            var testCookies = new Dictionary<string, string>
+            {
+                { "locale", "ru" },
+                { "JWT", strJwt }
+            };
 
-			var testHeader = new Dictionary<string, string>();
-			testHeader.Add("Authorization", "Bearer " + strJwt);
+            var testHeader = new Dictionary<string, string>
+            {
+                { "Authorization", "Bearer " + strJwt }
+            };
 
-			Thread.Sleep(1000);
+            fingerPrint = Guid.NewGuid().ToString();
+            resreshToken = Guid.NewGuid().ToString().Replace("-", "");
+
+			int expTs = DateTimeUtils.ToUnixTimeSeconds(
+				DateTime.UtcNow.Add(RefreshSession.LifeTime) );
+            RefreshSession newRs = new RefreshSession
+            {
+                // TODO: Replace with something more efficeint
+                Token = resreshToken,
+                Fingerprint = fingerPrint,
+                ExpiresAt = expTs,
+				User = newUser,
+                
+            }; 
+
+			context.RefreshSessions.Add(newRs);
+			context.SaveChanges();
+
+			/* Registration Ends */
+
+            Thread.Sleep(1000);
 
             HttpContext ctx = TestContexts.CreateContext1(testCookies, testHeader);
 			ctx.RequestServices = backendServices;
@@ -420,6 +465,23 @@ namespace IdentityTest
             ctx.User = new ClaimsPrincipal(te);
 			
             await clmw.Invoke(ctx);
-        }
+
+			async Task Next(HttpContext ctx)
+			{
+				Assert.False(ctx.User.Identity.IsAuthenticated);
+
+                ((TestHttpRequest)(ctx.Request)).AddCookie("refreshToken", resreshToken);
+
+                identityController.ControllerContext.HttpContext = ctx;
+
+				var res = identityController.RefreshToken(fingerPrint, context).GetAwaiter().GetResult();
+
+				Assert.IsNotType<UnauthorizedResult>(res);
+				Assert.IsNotType<ForbidResult>(res);
+
+
+				return;
+			};
+		}
     }
 }

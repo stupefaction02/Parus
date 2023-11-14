@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parus.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Parus.Infrastructure.Identity;
 namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231114192036_AddRefreshTokens03")]
+    partial class AddRefreshTokens03
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -294,6 +297,9 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("RefreshSessionRefreshTokenId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -314,6 +320,8 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.HasIndex("RefreshSessionRefreshTokenId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -378,6 +386,8 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RefreshTokenId"));
 
                     b.Property<int>("ExpiresAt")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("int");
 
                     b.Property<string>("Fingerprint")
@@ -390,10 +400,6 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RefreshTokenId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("RefreshSessions");
                 });
@@ -473,6 +479,15 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Parus.Infrastructure.Identity.ApplicationUser", b =>
+                {
+                    b.HasOne("Parus.Infrastructure.Identity.RefreshSession", "RefreshSession")
+                        .WithMany()
+                        .HasForeignKey("RefreshSessionRefreshTokenId");
+
+                    b.Navigation("RefreshSession");
+                });
+
             modelBuilder.Entity("Parus.Infrastructure.Identity.ConfirmCode", b =>
                 {
                     b.HasOne("Parus.Infrastructure.Identity.ApplicationUser", "User")
@@ -495,15 +510,6 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Parus.Infrastructure.Identity.RefreshSession", b =>
-                {
-                    b.HasOne("Parus.Infrastructure.Identity.ApplicationUser", "User")
-                        .WithOne("RefreshSession")
-                        .HasForeignKey("Parus.Infrastructure.Identity.RefreshSession", "UserId");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Parus.Core.Entities.BroadcastCategory", b =>
                 {
                     b.Navigation("Broadcasts");
@@ -514,8 +520,6 @@ namespace Parus.Infrastructure.Migrations.ApplicationIdentityDb
                     b.Navigation("ConfirmCode");
 
                     b.Navigation("PasswordRecoveryToken");
-
-                    b.Navigation("RefreshSession");
                 });
 #pragma warning restore 612, 618
         }

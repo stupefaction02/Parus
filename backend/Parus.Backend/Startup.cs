@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Parus.Backend.Middlewares;
+using System;
 
 namespace Parus.Backend
 {
@@ -48,6 +49,19 @@ namespace Parus.Backend
 
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
+
+            int refreshSessionLifetime;
+            if (Int32.TryParse(
+                Configuration["Authentication:RefreshSession:LifeTime"],
+                out refreshSessionLifetime
+            ))
+            {
+                RefreshSession.LifeTime = new TimeSpan(refreshSessionLifetime, 0, 0);
+            }
+            else
+            {
+                RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

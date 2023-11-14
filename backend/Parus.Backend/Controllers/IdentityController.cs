@@ -27,12 +27,19 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Nest;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Parus.Backend.Controllers
 {
+    public class ParusController : Controller
+    {
+        public void Log(string message)
+        {
+
+        }
+    }
+
     [ApiController]
-    public class IdentityController : Controller
+    public class IdentityController : ParusController
     {
         private readonly IWebHostEnvironment hostEnviroment;
 
@@ -155,6 +162,32 @@ namespace Parus.Backend.Controllers
                 Username = user.Name
 			};
 		}
+
+        private JwtToken CreateJWT(string username, IEnumerable<Claim> claims)
+        {
+            logger.LogInformation($"Tryig to create JWT token for user {username} ...");
+
+            DateTime now = DateTime.UtcNow;
+
+            JwtSecurityToken jwt = new JwtSecurityToken(
+                    issuer: JwtAuthOptions.ISSUER,
+                    audience: JwtAuthOptions.AUDIENCE,
+                    notBefore: now,
+                    claims: claims,
+                    expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
+                    signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+            var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            logger.LogInformation(encodedJwt);
+
+            logger.LogInformation($"JWT token for user {username} has been created.");
+
+            return new JwtToken
+            {
+                Token = encodedJwt,
+                Username = username
+            };
+        }
 
         private struct JwtToken
         {
@@ -503,7 +536,7 @@ namespace Parus.Backend.Controllers
                 Token = token,
                 User = user,
                 UserId = user.Id,
-                ExpireAt = TimeUtils.ToUnixTimeSeconds(expireDate)
+                ExpireAt = DateTimeUtils.ToUnixTimeSeconds(expireDate)
             };
 
             passwordRecoveryTokens.Add(recoveryToken);
@@ -516,10 +549,10 @@ namespace Parus.Backend.Controllers
             return Ok();
         }
 
-        [Authorize(JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [Route("api/account/refreshtoken")]
-        public async Task<object> RefreshToken([FromServices] ApplicationIdentityDbContext identityDbContext)
+        public async Task<object> RefreshToken(string fingerPrint,
+            [FromServices] ApplicationIdentityDbContext identityDbContext)
         {
             //ApplicationUser user = identityDbContext.Users
             //    .Include(x => x.RefreshSession)
@@ -533,11 +566,56 @@ namespace Parus.Backend.Controllers
 
             string rsUuid = HttpContext.Request.Cookies["refreshToken"];
 
+            if (String.IsNullOrEmpty(rsUuid))
+            {
+                return Unauthorized();
+            }
+
             RefreshSession lastRs = identityDbContext.RefreshSessions
+                .Include(x => x.User)
                 .AsEnumerable()
                 .SingleOrDefault(x => x.Token == rsUuid);
 
-            return Ok("Y");
+            int now = DateTimeUtils.ToUnixTimeSeconds(DateTime.UtcNow);
+            if (lastRs.ExpiresAt < now)
+            {
+                Log("token expired.");
+                return Unauthorized();
+            }
+
+            if (lastRs.Fingerprint != fingerPrint)
+            {
+                Log("finger print dismatch.");
+                return Forbid();
+            }
+
+            ApplicationUser user = lastRs.User;
+
+            int expTs = DateTimeUtils.ToUnixTimeSeconds(
+                DateTime.UtcNow.Add(RefreshSession.LifeTime)
+            );
+            RefreshSession newRefreshSession = new RefreshSession
+            {
+                // TODO: Replace with something more efficeint
+                Token = Guid.NewGuid().ToString().Replace("-", ""),
+                Fingerprint = fingerPrint,
+                ExpiresAt = expTs,
+                User = user
+            };
+
+            await identityDbContext.RefreshSessions.AddAsync(newRefreshSession);
+
+            await identityDbContext.SaveChangesAsync();
+
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
+            };
+            string jwt = CreateJWT(user.GetUsername(), claims).Token;
+
+            HttpContext.Response.Headers.Append("Set-Cookie", $"refreshToken='{newRefreshSession.Token}';");
+
+            return Json(new { accessToken = jwt, refreshToken = newRefreshSession.Token });
         }
 
         public enum RegisterType : sbyte

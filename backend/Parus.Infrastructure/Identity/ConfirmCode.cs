@@ -26,6 +26,11 @@ namespace Parus.Infrastructure.Identity
 
     public class RefreshSession
     {
+        [NonSerialized]
+        [NotMapped]
+        public static TimeSpan LifeTime;
+
+
         [Key]
         public int RefreshTokenId { get; set; }
 
@@ -38,7 +43,6 @@ namespace Parus.Infrastructure.Identity
 
         public string Fingerprint { get; set; }
 
-        [Timestamp]
         public int ExpiresAt { get; set; }
     }
 }

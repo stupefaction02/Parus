@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Utils
 {
-    public static class TimeUtils
+    public static class DateTimeUtils
     {
         public static int ToUnixTimeSeconds(DateTime date)
         {
