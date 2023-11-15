@@ -398,8 +398,8 @@ namespace IdentityTest
 
             /* Registration Starts */
 
-            string username = "test_ivan1243123";
-            string email = "testivan1241312@gcom";
+            string username = "test_ivan1243123dada";
+            string email = "testivan124sss1312@gcom";
             string password = "zx1";
 
             var controller = GetIdentityController();
@@ -463,7 +463,7 @@ namespace IdentityTest
             TestIdentity te = new TestIdentity();
 			te._IsAuthenticated = false;
             ctx.User = new ClaimsPrincipal(te);
-			
+			Console.WriteLine(resreshToken);
             await clmw.Invoke(ctx);
 
 			async Task Next(HttpContext ctx)
@@ -479,9 +479,22 @@ namespace IdentityTest
 				Assert.IsNotType<UnauthorizedResult>(res);
 				Assert.IsNotType<ForbidResult>(res);
 
-
-				return;
+                return;
 			};
-		}
+
+			var added = context.RefreshSessions.SingleOrDefault(x => x.UserId == newUser.Id);
+			
+			Assert.NotNull(added);
+
+            var previousSession = context.RefreshSessions.SingleOrDefault(x => x.Token == resreshToken);
+
+			Assert.Null(previousSession);
+            /* cleaning */
+
+            context.RefreshSessions.Remove(added);
+            users.RemoveOne(newUser.UserName);
+
+			context.SaveChanges();
+        }
     }
 }

@@ -554,16 +554,6 @@ namespace Parus.Backend.Controllers
         public async Task<object> RefreshToken(string fingerPrint,
             [FromServices] ApplicationIdentityDbContext identityDbContext)
         {
-            //ApplicationUser user = identityDbContext.Users
-            //    .Include(x => x.RefreshSession)
-            //    .AsEnumerable()
-            //    .SingleOrDefault(x => x.UserName == User.Identity.Name);
-
-            //if (user == null)
-            //{
-            //    return Unauthorized();
-            //}
-
             string rsUuid = HttpContext.Request.Cookies["refreshToken"];
 
             if (String.IsNullOrEmpty(rsUuid))
@@ -602,6 +592,9 @@ namespace Parus.Backend.Controllers
                 ExpiresAt = expTs,
                 User = user
             };
+            Console.WriteLine(newRefreshSession.Token);
+
+            identityDbContext.RefreshSessions.Remove(lastRs);
 
             await identityDbContext.RefreshSessions.AddAsync(newRefreshSession);
 
