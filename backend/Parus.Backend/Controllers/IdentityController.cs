@@ -27,6 +27,7 @@ using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Nest;
 using Microsoft.EntityFrameworkCore;
+using Parus.Infrastructure.DLA.Repositories;
 
 namespace Parus.Backend.Controllers
 {
@@ -41,40 +42,10 @@ namespace Parus.Backend.Controllers
     [ApiController]
     public class IdentityController : ParusController
     {
-        private readonly IWebHostEnvironment hostEnviroment;
-
         private readonly ILogger<IdentityController> logger;
-        private readonly UserManager<ApplicationUser> userManager;
 
-        private readonly SignInManager<ApplicationUser> signInManager;
-
-        private IConfiguration configuration;
-        private readonly IUserRepository userRepository;
-        private readonly IConfrimCodesRepository confrimCodesRepository;
-        private readonly IPasswordRecoveryTokensRepository passwordRecoveryTokens;
-        private readonly IEmailService emailService;
-        private readonly IPasswordHasher<ApplicationUser> passwordHasher;
-
-        public IdentityController(IWebHostEnvironment hostEnviroment, 
-                           UserManager<ApplicationUser> userManager,
-                           SignInManager<ApplicationUser> signInManager, 
-                           IConfiguration configuration,
-                           IUserRepository userRepository,
-                           IConfrimCodesRepository confrimCodesRepository,
-                           IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
-						   IEmailService emailService,
-                           IPasswordHasher<ApplicationUser> passwordHasher,
-						   ILogger<IdentityController> logger)
+        public IdentityController(ILogger<IdentityController> logger)
         {
-            this.hostEnviroment = hostEnviroment;
-            this.configuration = configuration;
-            this.userRepository = userRepository;
-            this.confrimCodesRepository = confrimCodesRepository;
-            this.passwordRecoveryTokens = passwordRecoveryTokensRepository;
-            this.emailService = emailService;
-            this.passwordHasher = passwordHasher;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
             this.logger = logger;
         }
 
@@ -92,7 +63,7 @@ namespace Parus.Backend.Controllers
         [EnableRouteResponseCompression]
 		[HttpGet]
 		[Route("api/test/users")]
-		public object Users()
+		public object Users(IUserRepository userRepository)
         {
             return Json(userRepository.Users);
         }
@@ -111,7 +82,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/userslimited")]
-        public object UsersLimited()
+        public object UsersLimited(IUserRepository userRepository)
         {
             return Json(userRepository.Users.Where(x => x.EmailConfirmed).Select(x =>
             {
@@ -129,7 +100,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
 		[Route("api/test/getuser")]
-		public object Users(string username)
+		public object Users(string username, IUserRepository userRepository)
 		{
 			return Json(userRepository.FindUserByUsername(username));
 		}
@@ -207,7 +178,12 @@ namespace Parus.Backend.Controllers
 
 		[HttpPost]
         [Route("api/account/login")]
-        public async Task<object> Login(string username, string password)
+        public async Task<object> Login(
+            string username, 
+            string password,
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            IPasswordHasher<ApplicationUser> passwordHasher)
         {
             logger.LogInformation($"Attempt to login {username}");
             ApplicationUser user = await userManager.FindByNameAsync(username);
@@ -235,8 +211,14 @@ namespace Parus.Backend.Controllers
         // TODO: reconsider gender enum type as something with less size
         [HttpPost]
         [Route("api/account/register")]
-		public async Task<object> Register(string username, string email,
-         string password, Gender gender, RegisterType registerType)
+		public object Register(
+            string username, 
+            string email,
+            string password, 
+            Gender gender, 
+            RegisterType registerType,
+            [FromServices] UserManager<ApplicationUser> userManager,
+            IUserRepository userRepository)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
@@ -246,7 +228,7 @@ namespace Parus.Backend.Controllers
                 Email = email
             };
 
-            var created = await userManager.CreateAsync(user, password);
+            var created = userManager.CreateAsync(user, password).GetAwaiter().GetResult();
 
             if (created.Succeeded)
             {
@@ -307,25 +289,7 @@ namespace Parus.Backend.Controllers
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
 
-        private async Task<int> CreateVerificaionCodeAsync(string username)
-        {
-            string a = random.Next(1, 10).ToString();
-            string b = random.Next(0, 10).ToString();
-            string c = random.Next(0, 10).ToString();
-            string d = random.Next(0, 10).ToString();
-            string f = random.Next(0, 10).ToString();
-            int confirmNumber = Int32.Parse(a + b + c + d + f);
-
-            var user = await userManager.FindByNameAsync(username);
-
-            confrimCodesRepository.Add(new ConfirmCode { Code = confirmNumber, User = user, UserId = username });
-
-            logger.LogInformation($"Creating digit confirmation with numbers {confirmNumber} for user: {username}");
-
-            return confirmNumber;
-        }
-
-        private int GetVerificationCode(string userId)
+        private int GetVerificationCode(string userId, IConfrimCodesRepository confrimCodesRepository)
         {
             IVerificationCode number = confrimCodesRepository.OneByUser(userId);
 
@@ -339,7 +303,10 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/requestverificationcode")]
-        public async Task<object> CreateVerificationCodeAsync(string username, bool force)
+        public async Task<object> CreateVerificationCodeAsync(string username, bool force,
+            IConfrimCodesRepository confrimCodesRepository,
+            IEmailService emailService,
+            UserManager<ApplicationUser> userManager)
         {
             var user = await userManager.FindByNameAsync(username);
 
@@ -398,9 +365,11 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/verifyaccount")]
-        public async Task<object> VerifyAccountAsync(string username, int code)
+        public async Task<object> VerifyAccountAsync(string username, int code,
+            IUserRepository userRepository,
+            IConfrimCodesRepository confrimCodesRepository)
         {
-			IUser user = this.userRepository.One(x => x.GetUsername() == username);
+			IUser user = userRepository.One(x => x.GetUsername() == username);
 
 			if (user == null)
 			{
@@ -411,7 +380,7 @@ namespace Parus.Backend.Controllers
 				return Json(CreateJsonError(errorInfo));
 			}
 
-			int exprectedCode = GetVerificationCode(user.GetId());
+			int exprectedCode = GetVerificationCode(user.GetId(), confrimCodesRepository);
 
             if (exprectedCode == code)
             {
@@ -447,7 +416,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/users")]
-        public object GetUsers()
+        public object GetUsers(UserManager<ApplicationUser> userManager)
         {
             return Ok(userManager.Users);
         }
@@ -461,7 +430,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/account/checkifemailexists")]
-        public async Task<object> CheckIfEmailExists(string email)
+        public async Task<object> CheckIfEmailExists(string email, IUserRepository userRepository)
         {
             if (userRepository.CheckIfEmailExists(email))
             {
@@ -475,7 +444,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/account/checkifnicknameexists")]
-        public async Task<object> CheckIfNicknameExists(string nickname)
+        public async Task<object> CheckIfNicknameExists(string nickname, IUserRepository userRepository)
         {
             if (userRepository.CheckIfNicknameExists(nickname))
             {
@@ -493,7 +462,11 @@ namespace Parus.Backend.Controllers
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [Route("api/account/sendrecoveryemail")]
 		public async Task<object> SendRecoveryEmail(string username, string email, string locale,
-            [FromServices] IServer server, [FromServices] ILocalizationService localization)
+            IPasswordRecoveryTokensRepository passwordRecoveryTokens,
+            IPasswordHasher<ApplicationUser> passwordHasher,
+            [FromServices] IServer server, 
+            [FromServices] ILocalizationService localization,
+            UserManager<ApplicationUser> userManager)
         {
             ApplicationUser user = await userManager.FindByNameAsync(username);
 

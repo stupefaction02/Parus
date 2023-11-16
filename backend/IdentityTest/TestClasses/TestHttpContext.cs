@@ -1,11 +1,22 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace IdentityTest
 {
-	public class TestContexts
+    public class MyServerAddressesFeature : IServerAddressesFeature
+    {
+        public ICollection<string> Addresses { get; } = new string[2]
+        {
+                "", ""
+        };
+
+        public bool PreferHostingUrls { get; set; }
+    }
+
+    public class TestContexts
 	{
 		public class TestHttpContext : HttpContext
 		{
