@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common.Utils
+namespace Parus.Common.Utils
 {
     public static class DateTimeUtils
     {

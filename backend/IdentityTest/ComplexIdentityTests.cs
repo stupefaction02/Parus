@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using Common.Utils;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +12,7 @@ using Parus.Backend.Authentication;
 using Parus.Backend.Controllers;
 using Parus.Backend.Middlewares;
 using Parus.Backend.Services;
+using Parus.Common.Utils;
 using Parus.Core;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
@@ -22,6 +22,15 @@ using Parus.Infrastructure.Identity;
 
 namespace IdentityTest
 {
+    public partial class TokenRefreshingTests
+    {
+        public TokenRefreshingTests()
+        {
+            Helper.Boot();
+        }
+
+    }
+
     public partial class ComplexIdentityTests
 	{
 		
@@ -36,6 +45,8 @@ namespace IdentityTest
 			public string email; 
 			public IdentityController controller;
 			public IUser user;
+
+            public RefreshSession RefreshSession { get; internal set; }
         }
 
 		private RegistratonContext RegisterUser()
@@ -49,23 +60,26 @@ namespace IdentityTest
 
 			var um = Helper.GetBackendService<UserManager<ApplicationUser>>();
             IUserRepository users = Helper.GetBackendService<IUserRepository>();
+            ApplicationIdentityDbContext idc = Helper.GetBackendService<ApplicationIdentityDbContext>();
+
             Thread.Sleep(3000);
             JsonResult registerUser = (JsonResult)
-                (controller.Register(username, email, password, Gender.Male, IdentityController.RegisterType.ViewerUser, um, users));
+                (controller.Register(username, email, password, Gender.Male, IdentityController.RegisterType.ViewerUser, um, users, idc));
 
             Assert.True(registerUser.Value != null);
 
-            ApiServerResponse jsonResult;
+            AuthenticateResponseJson jsonResult;
             using (MemoryStream ms = new MemoryStream())
             {
                 JsonSerializer.SerializeAsync(ms, registerUser.Value, typeof(object),
                     new JsonSerializerOptions() { }).GetAwaiter().GetResult();
                 var jsonResulltString = Encoding.UTF8.GetString(ms.ToArray());
-                jsonResult = JsonSerializer.Deserialize<ApiServerResponse>(jsonResulltString);
+                jsonResult = JsonSerializer.Deserialize<AuthenticateResponseJson>(jsonResulltString);
             }
 
+            Console.WriteLine(jsonResult.RefreshToken.Token);
             Assert.True(jsonResult != null);
-            Assert.True(jsonResult.Success == "Y");
+            Assert.True(jsonResult.Success);
 
             bool added = Helper.users.Contains(x => x.GetUsername() == username);
 
@@ -74,7 +88,11 @@ namespace IdentityTest
             Assert.True(added);
             Assert.True(a != null);
 
-			return new RegistratonContext { user = got, username = username, email = email, controller = controller };
+            RefreshSession addedRefreshToken = idc.RefreshSessions.SingleOrDefault(x => x.UserId == got.GetId());
+
+            Assert.NotNull(addedRefreshToken);
+
+            return new RegistratonContext { RefreshSession = addedRefreshToken, user = got, username = username, email = email, controller = controller };
         }
 
         [Fact]
@@ -139,6 +157,20 @@ namespace IdentityTest
         private void DeleteUser(string username)
         {
             Helper.users.ClearTracking();
+
+            string id = Helper.users.One(x => x.GetUsername() == username).GetId();
+
+            ApplicationIdentityDbContext idc = Helper.GetBackendService<ApplicationIdentityDbContext>();
+            var notDeletedRefreshSession = idc.RefreshSessions.SingleOrDefault(x => x.UserId == id);
+
+            idc.RefreshSessions.Remove(notDeletedRefreshSession);
+
+            idc.SaveChanges();
+
+            var deletedRefreshSession = idc.RefreshSessions.SingleOrDefault(x => x.UserId == id);
+
+            Assert.Null(deletedRefreshSession);
+
             Helper.users.RemoveOne(username: username);
 
             bool stillExists = Helper.users.Contains(x => x.GetUsername() == username);

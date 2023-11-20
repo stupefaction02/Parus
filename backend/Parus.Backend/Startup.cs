@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Parus.Backend.Middlewares;
 using System;
+using Parus.Backend.Authentication;
 
 namespace Parus.Backend
 {
@@ -61,6 +62,19 @@ namespace Parus.Backend
             else
             {
                 RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
+            }
+
+            int accessTokenLifetime;
+            if (Int32.TryParse(
+                Configuration["Authentication:JWT:LifeTime_minutes"],
+                out accessTokenLifetime
+            ))
+            {
+                JwtAuthOptions.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
+            }
+            else
+            {
+                JwtAuthOptions.Lifetime = new TimeSpan(0, 15, 0);
             }
         }
 

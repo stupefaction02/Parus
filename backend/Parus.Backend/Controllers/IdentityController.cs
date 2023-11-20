@@ -22,23 +22,16 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Common.Utils;
+
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
 using Nest;
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.DLA.Repositories;
+using Parus.Common.Utils;
 
 namespace Parus.Backend.Controllers
 {
-    public class ParusController : Controller
-    {
-        public void Log(string message)
-        {
-
-        }
-    }
-
     [ApiController]
     public class IdentityController : ParusController
     {
@@ -218,7 +211,8 @@ namespace Parus.Backend.Controllers
             Gender gender, 
             RegisterType registerType,
             [FromServices] UserManager<ApplicationUser> userManager,
-            IUserRepository userRepository)
+            IUserRepository userRepository, 
+            ApplicationIdentityDbContext identityDbContext)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
@@ -243,12 +237,24 @@ namespace Parus.Backend.Controllers
                 ClaimsIdentity identity = new ClaimsIdentity(claims);
 
                 JwtToken jwt = CreateJWT(identity);
+                RefreshSession refreshSession = AddRefreshToken(user, "fingerprint01", identityDbContext);
 
                 logger.LogInformation("User registered successfully!");
 
-                // TODO: put on another thread
+                // jwt expires timestamp
+                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(
+                        DateTime.Now.Add( JwtAuthOptions.Lifetime )
+                    );
+                var response = new
+                {
+                    success = true,
+                    access_token = new { jwt = jwt.Token, expires = jwtExpires }, 
+                    refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
+                };
 
-                return Json(CreateJsonSuccess(new { access_token = jwt.Token }));
+                identityDbContext.SaveChanges();
+
+                return Json(response);
 			}
             else
             {
@@ -266,7 +272,27 @@ namespace Parus.Backend.Controllers
             }
 		}
 
-		private object CreateJsonError(string message)
+        // TODO: more effiecent way ot create tokens, with passwordHasher maybe ?
+        private RefreshSession AddRefreshToken(ApplicationUser user, string fingerPrint, 
+            ApplicationIdentityDbContext identityDbContext)
+        {
+            //identityDbContext.RefreshSessions.Remove();
+
+            RefreshSession rs = new RefreshSession
+            {
+                // TODO: Replace with something more efficeint
+                Token = Guid.NewGuid().ToString().Replace("-", ""),
+                Fingerprint = fingerPrint,
+                ExpiresAt = DateTimeUtils.ToUnixTimeSeconds( DateTime.Now.Add(RefreshSession.LifeTime) ),
+                User = user
+            };
+
+            identityDbContext.RefreshSessions.Add(rs);
+
+            return rs;
+        }
+
+        private object CreateJsonError(string message)
 		{
             return new { success = "N", message = message };
 		}

@@ -158,12 +158,13 @@ function sendGet (url, onsuccess) {
             reg_loading_gif.style.display = "none";
 
             //requestJwtToken(nickname);
-
-            if (e.success == "Y") {
+            debugger
+            if (e.success.toString() == "true") {
 
                 hidePopup();
 
-                document.cookie = "JWT=" + e.payload.access_token + "; path=/";
+                SetCookie("JWT", e.access_token.jwt, e.access_token.expires);
+                SetCookie("refreshToken", e.refresh_token.token, e.refresh_token.expires);
 
                 var popup = new VerificationPopup("site_popup");
                
@@ -187,6 +188,12 @@ function sendGet (url, onsuccess) {
         var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + username + "&email=" + email + "&password=" + password + "&gender=" + gender;
         console.log(url);
         sendPost(url, onsuccess);
+    }
+
+    function SetCookie(cookie, cookieValue, expireUnix) {
+        let date = new Date(Date.now() + expireUnix);
+        var exp = date.toUTCString();
+        document.cookie = cookie + "=" + cookieValue + "; path=/; expires=" + exp + " ;";
     }
 
     regform_submit.onclick = regform_submit_onsubmit;
