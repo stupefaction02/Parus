@@ -16,6 +16,8 @@ using Parus.Core.Interfaces.Services;
 using Parus.Core.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
+using System;
+using Nest;
 
 namespace Parus.Backend.Extensions
 {
@@ -23,17 +25,58 @@ namespace Parus.Backend.Extensions
     {
         public static void ConfigureSqlDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            string connectionString = configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-            string identityConenctionString = configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+            string hostingService = configuration["Hosting:Service"];
+
+            string connectionString = GetCoreDbConnectionString();
+            string identityConenctionString = GetIdentityConnectionString();
+
             services.AddDbContext<ApplicationDbContext>(options => {
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
             });
             
-            //services.AddTransient<ApplicationIdentityDbContext>();
-            
             services.AddDbContext<ApplicationIdentityDbContext>(options =>
                 options.UseSqlServer(identityConenctionString));
+
+            string GetCoreDbConnectionString()
+            {
+                if (String.IsNullOrEmpty(hostingService))
+                {
+                    // procedd with localhost
+                    return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
+                }
+                else
+                {
+                    if (hostingService == "somee")
+                    {
+                        return configuration["ConnectionStrings:Somee:Default"];
+                    }
+                    else
+                    {
+                        return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
+                    }
+                }
+            }
+
+            string GetIdentityConnectionString()
+            {
+                if (String.IsNullOrEmpty(hostingService))
+                {
+                    // procedd with localhost
+                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                }
+                else
+                {
+                    if (hostingService == "somee")
+                    {
+                        return configuration["ConnectionStrings:Somee:Identity"];
+                    }
+                    else
+                    {
+                        return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                    }
+                }
+            }
         }
         
         public static void ConfigureLiteDbDatabase(this IServiceCollection services, IConfiguration configuration)
@@ -102,6 +145,8 @@ namespace Parus.Backend.Extensions
                 .AddDefaultTokenProviders();
         }
 
+        
+
         public static void AddMail(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IEmailService, MailKitEmailService>();
@@ -121,25 +166,55 @@ namespace Parus.Backend.Extensions
             string key = configuration["Authentication:JWT:SecretKey"];
             
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(options =>
-                    {
-                        options.RequireHttpsMetadata = false;
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuer = false,
-                            ClockSkew = new System.TimeSpan(0, 0, 0),
-                            ValidIssuer = configuration["Authentication:JWT:ValidIssuer"],
+                    .AddJwtBearer(AddJwtBearer);
 
-                            ValidateAudience = false,
+            int refreshSessionLifetime;
+            if (Int32.TryParse(
+                configuration["Authentication:RefreshSession:LifeTime"],
+                out refreshSessionLifetime
+            ))
+            {
+                RefreshSession.LifeTime = new TimeSpan(refreshSessionLifetime, 0, 0);
+            }
+            else
+            {
+                RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
+            }
 
-                            ValidAudience = configuration["Authentication:JWT:ValidAudience"],
-                            ValidateLifetime = true,
+            int accessTokenLifetime;
+            if (Int32.TryParse(
+                configuration["Authentication:JWT:LifeTime_minutes"],
+                out accessTokenLifetime
+            ))
+            {
+                JwtAuthOptions.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
+            }
+            else
+            {
+                JwtAuthOptions.Lifetime = new TimeSpan(0, 15, 0);
+            }
 
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(key)),
+            void AddJwtBearer(JwtBearerOptions options)
+            {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ClockSkew = new System.TimeSpan(0, 0, 0),
+                    ValidIssuer = configuration["Authentication:JWT:ValidIssuer"],
 
-                            ValidateIssuerSigningKey = true,
-                        };
-                    });
+                    ValidateAudience = false,
+
+                    ValidAudience = configuration["Authentication:JWT:ValidAudience"],
+                    ValidateLifetime = true,
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(key)),
+
+                    ValidateIssuerSigningKey = true,
+                };
+            }
         }
-	}
+
+        
+    }
 }

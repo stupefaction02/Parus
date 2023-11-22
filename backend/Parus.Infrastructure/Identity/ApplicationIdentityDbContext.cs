@@ -75,11 +75,11 @@ namespace Parus.Infrastructure.Identity
             //builder.Entity<ApplicationUser>().HasData(testUsers);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            string connectionString =
-                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.Users;TrustServerCertificate=True;Integrated Security=True;";
-            optionsBuilder.UseSqlServer(connectionString);
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    string connectionString =
+        //            "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.Users;TrustServerCertificate=True;Integrated Security=True;";
+        //    optionsBuilder.UseSqlServer(connectionString);
+        //}
     }
 }

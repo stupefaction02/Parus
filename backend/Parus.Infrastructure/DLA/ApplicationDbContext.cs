@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Parus.Core.Entities;
 
 namespace Parus.Infrastructure.DLA
 {
     public class ApplicationDbContext : DbContext
     {
-		#region System
-		public ApplicationDbContext()
+        private readonly DbContextOptions<ApplicationDbContext> options;
+        #region System
+        public ApplicationDbContext()
         {
             
         }
         
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
         {
+            this.options = options;
         }
 		#endregion
 
@@ -41,8 +44,6 @@ namespace Parus.Infrastructure.DLA
             //modelBuilder.Entity<BroadcastInfo>().Property(x => x.Title).IsRequired().HasMaxLength(titeLength);
 
             ConfigureRelations(modelBuilder);
-
-            //Seed(modelBuilder);
         }
 
 		private void ConfigureRelations(ModelBuilder modelBuilder)
@@ -50,16 +51,17 @@ namespace Parus.Infrastructure.DLA
 
 		}
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (true)//!optionsBuilder.IsConfigured)
-            {
-                // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
-                string connectionString =
-                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;TrustServerCertificate=True;Integrated Security=True;";
-                //"Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;User Id=sa;Password=!Kronos39!;";
-                optionsBuilder.UseSqlServer(connectionString);
-            }
-        }
+		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+  //      {
+            
+  //          if (true)//!optionsBuilder.IsConfigured)
+  //          {
+  //              // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
+  //              string connectionString =
+  //                  "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;TrustServerCertificate=True;Integrated Security=True;";
+  //              //"Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;User Id=sa;Password=!Kronos39!;";
+  //              optionsBuilder.UseSqlServer(connectionString);
+  //          }
+  //      }
     }
 }

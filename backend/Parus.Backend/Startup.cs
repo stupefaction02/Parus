@@ -10,8 +10,6 @@ using Parus.Infrastructure.Identity;
 using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
 using Parus.Backend.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Parus.Backend.Middlewares;
 using System;
@@ -34,7 +32,9 @@ namespace Parus.Backend
 
             services.AddSignalR();
 
-            services.AddDbContext<ApplicationDbContext>();
+            services.ConfigureSqlDatabase(Configuration);
+
+            //services.AddDbContext<ApplicationDbContext>();
 
             services.ConfigureCors();
 
@@ -51,31 +51,9 @@ namespace Parus.Backend
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
 
-            int refreshSessionLifetime;
-            if (Int32.TryParse(
-                Configuration["Authentication:RefreshSession:LifeTime"],
-                out refreshSessionLifetime
-            ))
-            {
-                RefreshSession.LifeTime = new TimeSpan(refreshSessionLifetime, 0, 0);
-            }
-            else
-            {
-                RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
-            }
+            
 
-            int accessTokenLifetime;
-            if (Int32.TryParse(
-                Configuration["Authentication:JWT:LifeTime_minutes"],
-                out accessTokenLifetime
-            ))
-            {
-                JwtAuthOptions.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
-            }
-            else
-            {
-                JwtAuthOptions.Lifetime = new TimeSpan(0, 15, 0);
-            }
+           
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
