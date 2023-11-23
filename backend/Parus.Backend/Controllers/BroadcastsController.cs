@@ -23,7 +23,6 @@ using Microsoft.EntityFrameworkCore;
 using Parus.Backend.Services;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Authorization;
-using Nest;
 
 namespace Parus.Backend.Controllers
 {

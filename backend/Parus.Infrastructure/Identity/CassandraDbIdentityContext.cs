@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using Cassandra;
+
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

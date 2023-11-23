@@ -1,7 +1,6 @@
 
 using System.Text.Json;
 using System.Text;
-using Cassandra;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;

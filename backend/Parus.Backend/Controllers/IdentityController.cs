@@ -25,7 +25,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using System.Net.Http;
 using Microsoft.AspNetCore.Http;
-using Nest;
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.DLA.Repositories;
 using Parus.Common.Utils;

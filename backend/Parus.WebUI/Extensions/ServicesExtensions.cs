@@ -5,10 +5,10 @@ using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using MaikeBing.EntityFrameworkCore;
+
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA.Repositories;
-using Cassandra;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Mvc;

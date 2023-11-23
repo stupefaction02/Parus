@@ -5,10 +5,9 @@ using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using MaikeBing.EntityFrameworkCore;
+
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA.Repositories;
-using Cassandra;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Parus.Backend.Authentication;
@@ -17,7 +16,7 @@ using Parus.Core.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System;
-using Nest;
+
 
 namespace Parus.Backend.Extensions
 {
@@ -81,16 +80,16 @@ namespace Parus.Backend.Extensions
         
         public static void ConfigureLiteDbDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<LiteDbOptions>(configuration.GetSection("Options.IdentityLiteDbOptions"));
+            //services.Configure<LiteDbOptions>(configuration.GetSection("Options.IdentityLiteDbOptions"));
             
-            //services.AddSingleton<LiteDbIdentityContext>();
+            ////services.AddSingleton<LiteDbIdentityContext>();
 
-            string identityString = configuration.GetConnectionString("ConnectionStrings.LiteDbIdentity");
+            //string identityString = configuration.GetConnectionString("ConnectionStrings.LiteDbIdentity");
             
-            services.AddDbContext<LiteDbIdentityContext>(options =>
-            {
-                options.UseLiteDB(identityString);
-            });
+            //services.AddDbContext<LiteDbIdentityContext>(options =>
+            //{
+            //    options.UseLiteDB(identityString);
+            //});
         }
         
         public static void ConfigureCassandraDb(this IServiceCollection services, IConfiguration configuration)

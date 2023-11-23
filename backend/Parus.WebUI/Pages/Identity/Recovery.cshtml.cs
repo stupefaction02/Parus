@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 using Parus.WebUI.Services;
 using Parus.Infrastructure.Identity;
-using Cassandra;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Parus.Core.Interfaces;
