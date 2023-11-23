@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System.Linq;
+using System;
 
 namespace Parus.WebUI.Extensions
 {
@@ -66,9 +67,65 @@ namespace Parus.WebUI.Extensions
             });
         }
 
+        public static void ConfigureSqlDatabase(this IServiceCollection services, IConfiguration configuration)
+        {
+            string hostingService = configuration["Hosting:Service"];
+
+            string connectionString = GetCoreDbConnectionString();
+            string identityConenctionString = GetIdentityConnectionString();
+
+            services.AddDbContext<ApplicationDbContext>(options => {
+                options.UseSqlServer(connectionString);
+                options.EnableSensitiveDataLogging();
+            });
+
+            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+                options.UseSqlServer(identityConenctionString));
+
+            string GetCoreDbConnectionString()
+            {
+                if (String.IsNullOrEmpty(hostingService))
+                {
+                    // procedd with localhost
+                    return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
+                }
+                else
+                {
+                    if (hostingService == "somee")
+                    {
+                        return configuration["ConnectionStrings:Somee:Default"];
+                    }
+                    else
+                    {
+                        return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
+                    }
+                }
+            }
+
+            string GetIdentityConnectionString()
+            {
+                if (String.IsNullOrEmpty(hostingService))
+                {
+                    // procedd with localhost
+                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                }
+                else
+                {
+                    if (hostingService == "somee")
+                    {
+                        return configuration["ConnectionStrings:Somee:Identity"];
+                    }
+                    else
+                    {
+                        return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                    }
+                }
+            }
+        }
+
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddScoped<ApplicationIdentityDbContext>();
+            //services.AddScoped<ApplicationIdentityDbContext>();
 
             services.Configure<IdentityOptions>(options =>
                 { options.SignIn.RequireConfirmedEmail = false; }

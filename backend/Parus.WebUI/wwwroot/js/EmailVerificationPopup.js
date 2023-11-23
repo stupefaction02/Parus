@@ -79,11 +79,11 @@ export class VerificationPopup {
         console.log(url);
 
         var self = this;
-
+        debugger
         this.sendPost(url, function (e) {
             if (e.success == "Y") {
                 self.ShowPopup();
-                //debugger
+                debugger
                 var spanPlaceholder = document.querySelector("#verification_info .placeholder");
 
                 spanPlaceholder.textContent = self.username;

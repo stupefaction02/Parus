@@ -335,13 +335,12 @@ namespace Parus.Backend.Controllers
         {
             var user = await userManager.FindByNameAsync(username);
 
-            if (force) goto L1;
+            if (force) goto CreateNew;
 
             ConfirmCode addedCode = (ConfirmCode)confrimCodesRepository.OneByUser(user.GetId());
 
-            bool alreadExists = addedCode != null;
-
-            if (alreadExists)
+            // if alread exists
+            if (addedCode != null)
             {
                 bool expired = false;
 
@@ -352,13 +351,13 @@ namespace Parus.Backend.Controllers
                     confrimCodesRepository.Remove(user.ConfirmCode);
 
                     // go to create new one
-                    goto L1;
+                    goto CreateNew;
                 }
                 // otherwise user will user old code
                 return CreateJsonError($"{username} already has token.");
             }
 
-            L1:
+            CreateNew:
             // Too overheading but more random
             string a = random.Next(1, 10).ToString();
 			string b = random.Next(0, 10).ToString();

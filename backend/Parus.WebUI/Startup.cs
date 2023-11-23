@@ -58,6 +58,8 @@ namespace Parus.WebUI
 
             services.AddSession();
 
+            services.ConfigureSqlDatabase(Configuration);
+
             services.ConfigureIdentity();
 
 			services.AddJwtAuthentication(Configuration);
