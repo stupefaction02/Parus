@@ -43,3 +43,8 @@
         color: white;
         background-color: #9f81ca;
     }
+
+.transparent_button {
+    border: 0px;
+    background: transparent;
+}

@@ -1,27 +1,25 @@
 ﻿@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Configuration
 @using Microsoft.Extensions.Logging;
 @using Parus.Infrastructure.Identity;
 
 @inject UserManager<ApplicationUser> userManager;
+@inject IConfiguration configuration;
+
+@{
+    string imageServer = configuration["ImageServer:Url"];
+}
 
 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
     <div class="header_container">
-        <a class="navbar-brand" asp-area="" asp-page="/Index">Naturistic.WebUI</a>
+        <a class="navbar-brand" asp-area="" asp-page="/Index">Parus</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        
-
-        <!-- <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"> -->
         <ul class="navbar-nav flex-grow-1">
-            @*<li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-            </li>*@
+            
         </ul>
 
         @if (User.Identity.IsAuthenticated)
@@ -45,9 +43,23 @@
                         <a id="confirm_account_link" href="javascript:void(0)">Confirm account!</a>
                     </li>
                 }
-                <li class="nav-item">
-                    <button class="color1_btn color1_btn_header" id="header_signout_button">Sign Out</button>
-                </li>
+
+                <div id="header_user_settings" class="header_user_settings">
+                    <img alt="@(usr.UserName)" style="width: 42px; height: 42px; cursor: pointer" 
+                         src="@(imageServer)/layer/overview_header_users_setting.png">
+
+                    <div style="position: absolute;">
+                        <div class="header_user_settings_popup" style="display: none">
+                            <button id="header_account_button" class="header_user_settings_popup_link transparent_button">
+                                <a href="/account">Account</a>
+                            </button>
+                            <hr class="header_user_settings_popup_hr" />
+                            <button id="header_signout_button" class="transparent_button">Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+
+                
             </ul>
         }
         else

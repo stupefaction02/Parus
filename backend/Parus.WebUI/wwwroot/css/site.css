@@ -1,4 +1,15 @@
-﻿.header_container {
+﻿/* Body */
+
+hr {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.navbar {
+    padding: .5rem 2.2rem !important;
+}
+
+.header_container {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -52,4 +63,41 @@
 
 .send_code_text {
     text-decoration: none;
+}
+
+
+/* header */
+
+.header_user_settings {
+    
+}
+
+.header_user_settings_popup {
+    border-radius: 5px;
+    box-shadow: #772d7d 0px 0px 1px 1px inset;
+    width: 100px;
+    height: auto;
+    padding: 5px;
+    display: block;
+    right: -35px;
+    position: absolute;
+    background: white;
+}
+
+    .header_user_settings_popup button {
+        color: red;
+        font-weight: 400;
+        width: 100%;
+    }
+
+.header_user_settings_popup_link {
+    color: blue !important;
+    font-weight: 400 !important;
+    width: 100% !important;
+    
+}
+
+.header_user_settings_popup_hr {
+    margin-top: 4px;
+    margin-bottom: 4px;
 }

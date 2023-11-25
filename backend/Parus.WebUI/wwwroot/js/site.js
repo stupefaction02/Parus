@@ -7,15 +7,30 @@ import { LoginPopup } from "./LoginPopup.js";
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    
-    
-
+    var header_user_settings = document.getElementById("header_user_settings");
     var confirm_account_link = document.getElementById("confirm_account_link");
     var header_signout_button = document.getElementById("header_signout_button");
     var header_login_btn = document.getElementById("header_login_btn");
     var header_register_btn = document.getElementById("header_register_btn");
 
-    //header_login_btn.onmouseover = e => { debugger }
+    var header_user_settings_popup_is_open = false;
+    if (header_user_settings !== null) {
+
+        header_user_settings.onclick = function (e) {
+            var popup = header_user_settings.getElementsByClassName("header_user_settings_popup")[0];
+            
+            if (popup !== null) {
+                if (header_user_settings_popup_is_open) {
+                    popup.style.display = "none";
+                    header_user_settings_popup_is_open = false;
+                }
+                else {
+                    popup.style.display = "block";
+                    header_user_settings_popup_is_open = true;
+                }
+            }
+        }
+    }
 
     if (header_signout_button !== null) {
         header_signout_button.onclick = function (e) {  
