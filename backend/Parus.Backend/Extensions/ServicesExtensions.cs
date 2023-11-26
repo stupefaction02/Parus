@@ -32,7 +32,7 @@ namespace Parus.Backend.Extensions
             services.AddDbContext<ApplicationDbContext>(options => {
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
-            });
+            }, ServiceLifetime.Transient);
             
             services.AddDbContext<ApplicationIdentityDbContext>(options =>
                 options.UseSqlServer(identityConenctionString));

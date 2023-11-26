@@ -22,14 +22,6 @@ using Parus.Infrastructure.Identity;
 
 namespace IdentityTest
 {
-    public partial class TokenRefreshingTests
-    {
-        public TokenRefreshingTests()
-        {
-            Helper.Boot();
-        }
-
-    }
 
     public partial class ComplexIdentityTests
 	{
@@ -39,80 +31,27 @@ namespace IdentityTest
 			Helper.Boot();
 		}
 
-		public struct RegistratonContext
-		{
-			public string username; 
-			public string email; 
-			public IdentityController controller;
-			public IUser user;
-
-            public RefreshSession RefreshSession { get; internal set; }
-        }
-
-		private RegistratonContext RegisterUser()
-		{
-			string a = Guid.NewGuid().ToString().Substring(0, 8);
-            string username = "test_ivan73_" + a;
-            string email = "testivan73" + a + "@gmail.com";
-            string password = "zx1";
-
-            var controller = Helper.GetIdentityController();
-
-			var um = Helper.GetBackendService<UserManager<ApplicationUser>>();
-            IUserRepository users = Helper.GetBackendService<IUserRepository>();
-            ApplicationIdentityDbContext idc = Helper.GetBackendService<ApplicationIdentityDbContext>();
-
-            Thread.Sleep(3000);
-            JsonResult registerUser = (JsonResult)
-                (controller.Register(username, email, password, Gender.Male, IdentityController.RegisterType.ViewerUser, um, users, idc));
-
-            Assert.True(registerUser.Value != null);
-
-            AuthenticateResponseJson jsonResult;
-            using (MemoryStream ms = new MemoryStream())
-            {
-                JsonSerializer.SerializeAsync(ms, registerUser.Value, typeof(object),
-                    new JsonSerializerOptions() { }).GetAwaiter().GetResult();
-                var jsonResulltString = Encoding.UTF8.GetString(ms.ToArray());
-                jsonResult = JsonSerializer.Deserialize<AuthenticateResponseJson>(jsonResulltString);
-            }
-
-            Console.WriteLine(jsonResult.RefreshToken.Token);
-            Assert.True(jsonResult != null);
-            Assert.True(jsonResult.Success);
-
-            bool added = Helper.users.Contains(x => x.GetUsername() == username);
-
-            IUser got = Helper.users.One(x => x.GetUsername() == username);
-
-            Assert.True(added);
-            Assert.True(a != null);
-
-            RefreshSession addedRefreshToken = idc.RefreshSessions.SingleOrDefault(x => x.UserId == got.GetId());
-
-            Assert.NotNull(addedRefreshToken);
-
-            return new RegistratonContext { RefreshSession = addedRefreshToken, user = got, username = username, email = email, controller = controller };
-        }
+		
 
         [Fact]
-		public async void RegisterUser_RequestRecovery_EditPassword_DeleteUser()
+		public void RegisterUser_RequestRecovery_EditPassword_DeleteUser()
 		{
             string newpassword = "zx2";
 
-			var ctx = RegisterUser();
+			var ctx = Helper.RegisterUser();
 
             Helper.server.Features.Set<IServerAddressesFeature>(new MyServerAddressesFeature());
 
 			var passwordRecoveryTokens = Helper.GetBackendService<IPasswordRecoveryTokensRepository>();
             var passwordHasher = Helper.GetBackendService<IPasswordHasher<ApplicationUser>>();
             var userManager = Helper.GetBackendService<UserManager<ApplicationUser>>();
-            var senderRecoveryEmail = await ctx.controller.SendRecoveryEmail(ctx.username, ctx.email, "ru",
+            var senderRecoveryEmail = ctx.controller.SendRecoveryEmail(ctx.username, ctx.email, "ru",
                 passwordRecoveryTokens,
                 passwordHasher,
                 Helper.server, 
                 Helper.serverLocalization,
-                userManager);
+                userManager)
+				.GetAwaiter().GetResult();
 
 			Assert.IsType<OkResult>(senderRecoveryEmail);
 
@@ -131,12 +70,14 @@ namespace IdentityTest
 
 			Assert.IsType<PageResult>(editPasswordModelGet);
 
-			var identity = await Helper.CreateIdentityAsync((ApplicationUser)ctx.user, Helper.userManager);
+			var identity = Helper.CreateIdentityAsync((ApplicationUser)ctx.user, Helper.userManager)
+                .GetAwaiter().GetResult();
             Helper.editPasswordPage.HttpContext.User = new ClaimsPrincipal(identity);
 
             Helper.tokens.ClearTracking();
             Helper.users.ClearTracking();
-			var editPasswordPageResult = await Helper.editPasswordPage.OnPostAsync(newpassword);
+			var editPasswordPageResult = Helper.editPasswordPage.OnPostAsync(newpassword)
+                .GetAwaiter().GetResult();
 
 			Assert.IsType<RedirectToPageResult>(editPasswordPageResult);
 
@@ -151,64 +92,39 @@ namespace IdentityTest
 			PasswordRecoveryToken deletedToken = (PasswordRecoveryToken)repository.OneByUser(editedUser.GetId());
 			Assert.Null(deletedToken);
 
-			DeleteUser(ctx.username);
+			Helper.DeleteUser(ctx.username);
 		}
 
-        private void DeleteUser(string username)
-        {
-            Helper.users.ClearTracking();
-
-            string id = Helper.users.One(x => x.GetUsername() == username).GetId();
-
-            ApplicationIdentityDbContext idc = Helper.GetBackendService<ApplicationIdentityDbContext>();
-            var notDeletedRefreshSession = idc.RefreshSessions.SingleOrDefault(x => x.UserId == id);
-
-            idc.RefreshSessions.Remove(notDeletedRefreshSession);
-
-            idc.SaveChanges();
-
-            var deletedRefreshSession = idc.RefreshSessions.SingleOrDefault(x => x.UserId == id);
-
-            Assert.Null(deletedRefreshSession);
-
-            Helper.users.RemoveOne(username: username);
-
-            bool stillExists = Helper.users.Contains(x => x.GetUsername() == username);
-
-            // second check 
-            IUser deletedUser = Helper.users.One(x => x.GetUsername() == username);
-
-            Assert.False(stillExists);
-            Assert.Null(deletedUser);
-        }
+        
 
         [Fact]
-		public async void RegisterUser_DeleteUser()
+		public void RegisterUser_DeleteUser()
 		{
-            RegistratonContext ctx = RegisterUser();
+            RegistratonContext ctx = Helper.RegisterUser();
 
-            DeleteUser(ctx.username);
+            Helper.DeleteUser(ctx.username);
 		}
 
 		[Fact]
-		public async void RegisterUser_LoginUSer_ConfirmUser_DeleteUser()
+		public void RegisterUser_LoginUSer_ConfirmUser_DeleteUser()
 		{
-			RegistratonContext ctx = RegisterUser();
+			RegistratonContext ctx = Helper.RegisterUser();
 
             var codes = Helper.GetBackendService<IConfrimCodesRepository>();
             var emails = Helper.GetBackendService<IEmailService>();
             var um = Helper.GetBackendService<UserManager<ApplicationUser>>();
             Thread.Sleep(3000);
             JsonResult createCodeResult = 
-				(JsonResult)(await ctx.controller.CreateVerificationCodeAsync(ctx.username, true, 
+				(JsonResult)(ctx.controller.CreateVerificationCodeAsync(ctx.username, true, 
                 codes, 
                 emails,
-                um));
+                um))
+                .GetAwaiter().GetResult();
 
 			ApiServerResponse createCodeResultJsonResult;
 			using (MemoryStream ms = new MemoryStream())
 			{
-				await JsonSerializer.SerializeAsync(ms, createCodeResult.Value, typeof(object),
+				JsonSerializer.Serialize(ms, createCodeResult.Value, typeof(object),
 					new JsonSerializerOptions() { });
 				var r1 = Encoding.UTF8.GetString(ms.ToArray());
 				createCodeResultJsonResult = JsonSerializer.Deserialize<ApiServerResponse>(r1);
@@ -227,12 +143,14 @@ namespace IdentityTest
 
             IUserRepository users = Helper.GetBackendService<IUserRepository>();
             JsonResult verifyResult =
-				(JsonResult)(await ctx.controller.VerifyAccountAsync(ctx.username, addedCode.Code, users, codes));
+				(JsonResult)
+				(ctx.controller.VerifyAccountAsync(ctx.username, addedCode.Code, users, codes))
+                .GetAwaiter().GetResult();
 
 			ApiServerResponse verifyResultResultJsonResult;
 			using (MemoryStream ms = new MemoryStream())
 			{
-				await JsonSerializer.SerializeAsync(ms, verifyResult.Value, typeof(object),
+				JsonSerializer.Serialize(ms, verifyResult.Value, typeof(object),
 					new JsonSerializerOptions() { });
 				var r2 = Encoding.UTF8.GetString(ms.ToArray());
 				verifyResultResultJsonResult = JsonSerializer.Deserialize<ApiServerResponse>(r2);
@@ -251,12 +169,12 @@ namespace IdentityTest
 			ConfirmCode stillAddedCode = (ConfirmCode)Helper.confirmCodes.OneByUser(ctx.user.GetId());
 			Assert.Null(stillAddedCode);
 
-			DeleteUser(ctx.username);
+            Helper.DeleteUser(ctx.username);
 		}
 
 
         //[Fact]
-        public async void GetHostUser_CreateBroadcast_DeleteBroadcast()
+        public void GetHostUser_CreateBroadcast_DeleteBroadcast()
 		{
             BroadcastController bc = new Parus.Backend.Controllers.BroadcastController();
 
@@ -272,11 +190,11 @@ namespace IdentityTest
 
             Assert.True(hostUser != null);
 
-            ClaimsIdentity identity = await Helper.CreateIdentityAsync((ApplicationUser)hostUser, um);
+            ClaimsIdentity identity = Helper.CreateIdentityAsync((ApplicationUser)hostUser, um).GetAwaiter().GetResult();
 
             bc.User = new ClaimsPrincipal(identity);
 
-            IActionResult result = await bc.StartBroadcast("title#1", 1, new int[] { 1, 2 }, context, ic, bco);
+            IActionResult result = bc.StartBroadcast("title#1", 1, new int[] { 1, 2 }, context, ic, bco).GetAwaiter().GetResult();
 
 			Assert.IsType<OkResult>(result);
 
@@ -285,7 +203,7 @@ namespace IdentityTest
 			Assert.NotNull(createdBroadcast);
 			Assert.True(createdBroadcast.HostUserId == hostUserId);
 
-            IActionResult stopBroadcastResult = await bc.StopBroadcast("", br, ic, bco);
+            IActionResult stopBroadcastResult = bc.StopBroadcast("", br, ic, bco).GetAwaiter().GetResult();
 
             Assert.IsType<OkResult>(result);
 
@@ -298,7 +216,7 @@ namespace IdentityTest
 		private string fingerPrint;
 		private string resreshToken;
         [Fact]
-        public async void FailToLoginAndGetRefreshToken()
+        public void FailToLoginAndGetRefreshToken()
 		{
 			IdentityController identityController = Helper.GetIdentityController();
             ApplicationIdentityDbContext context = Helper.GetBackendService<ApplicationIdentityDbContext>();
@@ -306,7 +224,7 @@ namespace IdentityTest
 
             /* Registration Starts */
 
-            RegistratonContext ctx = RegisterUser();
+            RegistratonContext ctx = Helper.RegisterUser();
 
             ApplicationUser newUser = (ApplicationUser)Helper.users.One(x => x.GetUsername() == ctx.username);
 
@@ -366,7 +284,7 @@ namespace IdentityTest
 			te._IsAuthenticated = false;
             httpContext.User = new ClaimsPrincipal(te);
 			Console.WriteLine(resreshToken);
-            await clmw.Invoke(httpContext);
+            clmw.Invoke(httpContext).GetAwaiter().GetResult();
 
 			async Task Next(HttpContext ctx)
 			{

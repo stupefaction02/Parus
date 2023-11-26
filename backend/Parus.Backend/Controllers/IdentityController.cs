@@ -34,6 +34,18 @@ namespace Parus.Backend.Controllers
     [ApiController]
     public class IdentityController : ParusController
     {
+        public new ClaimsPrincipal User
+        {
+            get
+            {
+                return HttpContext != null ? HttpContext.User : user;
+            }
+            set
+            {
+                user = value;
+            }
+        }
+
         private readonly ILogger<IdentityController> logger;
 
         public IdentityController(ILogger<IdentityController> logger)
@@ -313,6 +325,7 @@ namespace Parus.Backend.Controllers
 
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
+        private ClaimsPrincipal user;
 
         private int GetVerificationCode(string userId, IConfrimCodesRepository confrimCodesRepository)
         {
@@ -625,12 +638,34 @@ namespace Parus.Backend.Controllers
 
             if (result.Succeeded)
             {
-                return Json(new { message = "Valid." });
+                return Json(new { message = "Valid" });
             }
             else
             {
-                return Json(new { message = "Invalid." });
+                return Json(new { message = "Invalid" });
             }
+        }
+
+        // TODO: Make this [Authorize]
+        //[Authorize]
+        [HttpGet]
+        [Route("api/account/editPassword")]
+        public async Task<object> EditPassword(string newPassword,
+            [FromServices] IPasswordHasher<ApplicationUser> passwordHasher,
+            [FromServices] IUserRepository users)
+        {
+            // since we require authorization we alread have username from token
+            // otherwise this method won't be called
+            string username = User.Identity.Name;
+            ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == username);
+
+            string newHash = passwordHasher.HashPassword(user, newPassword);
+
+            user.PasswordHash = newHash;
+
+            users.Update(user);
+
+            return Json(new { message = "Success" });
         }
 
         public enum RegisterType : sbyte
