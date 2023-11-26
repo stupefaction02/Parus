@@ -608,6 +608,31 @@ namespace Parus.Backend.Controllers
             return Json(new { accessToken = jwt, refreshToken = newRefreshSession.Token });
         }
 
+        // TODO: Make this [Authorize]
+        //[Authorize]
+        [HttpGet]
+        [Route("api/account/checkPassword")]
+        public async Task<object> CheckPassword(string password,
+            [FromServices] SignInManager<ApplicationUser> signInManager,
+            [FromServices] IUserRepository users)
+        {
+            // since we require authorization we alread have username from token
+            // otherwise this method won't be called
+            string username = User.Identity.Name;
+            IUser user = users.One(x => x.GetUsername() == username);
+
+            var result = await signInManager.PasswordSignInAsync((ApplicationUser)user, password, false, false);
+
+            if (result.Succeeded)
+            {
+                return Json(new { message = "Valid." });
+            }
+            else
+            {
+                return Json(new { message = "Invalid." });
+            }
+        }
+
         public enum RegisterType : sbyte
         {
             ViewerUser = 2,

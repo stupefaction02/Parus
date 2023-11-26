@@ -32,14 +32,49 @@
 
     <div id="setting_content" class="setting_content">
         <div id="setting_content_security" class="setting_content_security" style="display: none">
-            <button id="compete_btn" class="color1_btn"
+            <button id="change_password_btn" class="color1_btn"
                     style="height: 38px; padding: 5px" type="button">
-                <a style="color: white;" href="/account/recovery">Поменять пароль</a>
+                Поменять пароль
             </button>
         </div>
 
         <div id="setting_content_other" class="setting_content_other" style="display: none">
             Other
+        </div>
+    </div>
+</div>
+
+<div class="popups">
+    <div id="change_password_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="verification_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card">
+                        <div class="row row-space">
+                            <div class="group">
+                                <input id="first_password" class="form_input" required value="athleandotcommer" type="text" name="nickname">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="input_label">Текущий пароль</label>
+                                <label id="first_password_input_error" class="input_error">Пароли не совпадают</label>
+                            </div>
+                        </div>
+
+                        <div class="row row-space">
+                            <div class="group">
+                                <input id="second_password" class="form_input" required value="athleandotcommer" type="text" name="nickname">
+                                <span class="highlight"></span>
+                                <span class="bar"></span>
+                                <label class="input_label">Новый пароль</label>
+                                <label id="nickname_input_error" class="input_error">Username is already taken</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

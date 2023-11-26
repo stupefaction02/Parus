@@ -29,6 +29,7 @@ function switchOption(option) {
 
         case "security":
             selectedElem = document.getElementById("setting_content_security");
+            InitSecurityOption();
             break;
     }
     //debugger
@@ -36,4 +37,50 @@ function switchOption(option) {
     selectedElem.style = "display";
     currentOptionElem.style = "none";
     currentOptionElem = selectedElem;
+}
+
+sendPost(url, onsuccess) {
+    $.ajax({
+        url: url,
+        method: 'post',
+        success: onsuccess
+    });
+}
+
+sendGet(url, onsuccess) {
+    $.ajax({
+        url: url,
+        method: 'get',
+        success: onsuccess
+    });
+}
+
+function InitSecurityOption() {
+    var change_password_btn = document.getElementById("change_password_btn");
+
+    var checkPassword = function (password) {
+        var url = "https://localhost:5001/api/account/checkPassword?username=" + username + "&password=" + password;
+        var ret = false;
+        sendGet(url, function (e) {
+            debugger
+
+        });
+    }
+
+    change_password_btn.onclick = function () { debugger
+        var change_password_popup = document.getElementById("change_password_popup");
+
+        change_password_popup.style.display = "block";
+
+        var old_password = document.getElementById("first_password");
+        var new_password = document.getElementById("first_password");
+
+        var rightPassword = checkPassword( old_password.value );
+        if (rightPassword) {
+
+        }
+        else {
+
+        }
+    }
 }
