@@ -6,7 +6,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Naturistic.WebUI": {
+    "Parus.WebUI": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

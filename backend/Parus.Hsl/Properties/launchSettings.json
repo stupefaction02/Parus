@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Naturistic.Hsl": {
+    "Parus.Hsl": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "https://localhost:2020;http://localhost:2021",
