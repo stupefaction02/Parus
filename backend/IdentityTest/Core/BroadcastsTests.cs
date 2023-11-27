@@ -19,27 +19,27 @@ using Parus.Infrastructure.Identity;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace IdentityTest
+namespace Tests.Core
 {
-	public class BroadcastsTests
-	{
-		readonly IServiceProvider services =
-			Parus.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
+    public class BroadcastsTests
+    {
+        readonly IServiceProvider services =
+            Parus.Backend.Program.CreateHostBuilder(new string[] { }).Build().Services;
 
-		private T GetService<T>()
-		{
-			return services.GetRequiredService<T>();
-		}
+        private T GetService<T>()
+        {
+            return services.GetRequiredService<T>();
+        }
 
-		//[Fact]
-		public async Task Search_Broadcast_Simple()
-		{
-			IBroadcastInfoRepository br = GetService<IBroadcastInfoRepository>();
+        //[Fact]
+        public async Task Search_Broadcast_Simple()
+        {
+            IBroadcastInfoRepository br = GetService<IBroadcastInfoRepository>();
             BroadcastController bc = BroadcastController;
 
-			string input = "Aboba";
+            string input = "Aboba";
 
-			JsonResult r = (JsonResult)await bc.SearchBroadcasts(input, br);
+            JsonResult r = (JsonResult)await bc.SearchBroadcasts(input, br);
 
             SearchResponse jsonResult;
             using (MemoryStream ms = new MemoryStream())
@@ -54,18 +54,18 @@ namespace IdentityTest
             //Assert.True(jsonResult.Success == "Y");
         }
 
-		public class SearchResponse
-		{
+        public class SearchResponse
+        {
             public string MyProperty { get; set; }
         }
 
-		BroadcastController bc;
-		private BroadcastController BroadcastController
-		{
-			get
-			{
-				return bc == null ? bc = new BroadcastController() : bc;
-			}
-		}
-	}
+        BroadcastController bc;
+        private BroadcastController BroadcastController
+        {
+            get
+            {
+                return bc == null ? bc = new BroadcastController() : bc;
+            }
+        }
+    }
 }

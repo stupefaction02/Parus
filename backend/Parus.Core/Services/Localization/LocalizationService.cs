@@ -47,7 +47,7 @@ namespace Parus.Core.Services.Localization
                 }
 			}
 			
-			var t = stream.ReadLine();
+			//var t = stream.ReadLine();
 			stream.BaseStream.Position = 0;
 
 			return value;
