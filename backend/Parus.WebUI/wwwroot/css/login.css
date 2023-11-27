@@ -38,6 +38,13 @@
     color: red;
 }
 
+.label_info {
+    font-size: 16px;
+    color: purple;
+    text-transform: capitalize;
+    display: block;
+    margin-bottom: 5px;
+}
 
 .popup_close {
     width: 25px;

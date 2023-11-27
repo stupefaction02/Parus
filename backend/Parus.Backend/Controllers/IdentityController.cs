@@ -28,6 +28,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.DLA.Repositories;
 using Parus.Common.Utils;
+using System.Diagnostics;
 
 namespace Parus.Backend.Controllers
 {
@@ -201,7 +202,7 @@ namespace Parus.Backend.Controllers
                 ClaimsIdentity identity = await CreateIdentityAsync(user);
 
                 JwtToken newToken = CreateJWT(identity);
-                return CreateJsonSuccess(additionalParameter: newToken.Token);
+                return Json(new { success = "true", payload = newToken.Token });
             }
             else
             {
@@ -648,7 +649,7 @@ namespace Parus.Backend.Controllers
 
         // TODO: Make this [Authorize]
         //[Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("api/account/editPassword")]
         public async Task<object> EditPassword(string newPassword,
             [FromServices] IPasswordHasher<ApplicationUser> passwordHasher,
@@ -664,6 +665,8 @@ namespace Parus.Backend.Controllers
             user.PasswordHash = newHash;
 
             users.Update(user);
+
+            Debug.WriteLine($"Password of {user} has been changed.");
 
             return Json(new { message = "Success" });
         }

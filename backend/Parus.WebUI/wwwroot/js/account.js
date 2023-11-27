@@ -67,13 +67,10 @@ function sendGet(url, onsuccess) {
 function InitSecurityOption() {
     var change_password_btn = document.getElementById("change_password_btn");
 
-    var checkPassword = function (password) {
+    var checkPassword = function (password, success) {
         var url = "https://localhost:5001/api/account/checkPassword?password=" + password;
         var ret = false;
-        sendGet(url, function (e) {
-            debugger
-
-        });
+        sendGet(url, success);
     }
 
     //change_password_btn.removeEventListener("click");
@@ -82,7 +79,7 @@ function InitSecurityOption() {
         var change_password_close_popup = document.getElementById("change_password_close_popup");
 
         var change_password_close_popup_click = function () {
-            change_password_popup.style.display = "block";
+            change_password_popup.style.display = "none";
         };
         change_password_close_popup.removeEventListener("click", change_password_close_popup_click);
         change_password_close_popup.addEventListener("click", change_password_close_popup_click);
@@ -93,19 +90,37 @@ function InitSecurityOption() {
 
         var changePassword = function () {
             var old_password = document.getElementById("first_password");
+            var new_password = document.getElementById("new_password");
+            var password = new_password.value;
 
-            var rightPassword = checkPassword(old_password.value);
-            if (rightPassword) {
-                var new_password = document.getElementById("new_password");
+            if (password !== "" && password !== null) {
+                checkPassword(old_password.value, function (e) {
 
-                var url = "https://localhost:5001/api/account/updatePassword?password=" + password;
-                sendPost(url, function () {
-                    window.location.reload();
+                    if (e.message == "Valid") {
+
+                        if (old_password.textContent === password) {
+                            var new_password_input_error = document.getElementById("new_password_input_error");
+                            new_password_input_error.style.display = "block";
+                            new_password_input_error.textContent = "Новый пароль не должен совпадать с предыдущим";
+                        }
+
+                        var url = "https://localhost:5001/api/account/editPassword?newPassword=" + password;
+                        sendPost(url, function (e) {
+                            let date = new Date(Date.now() + (60 * 60 * 1));
+                            var exp = date.toUTCString();
+                            document.cookie = "password_changed=1;expires=" + exp + ";path=/account;";
+                            window.location.reload();
+                        });
+                    } else {
+                        var first_password_input_error = document.getElementById("first_password_input_error");
+                        first_password_input_error.style.display = "block";
+                        first_password_input_error.textContent = "Пароли не совпадают";
+                    }
                 });
-            }
-            else {
-                var first_password_input_error = document.getElementById("first_password_input_error");
-                first_password_input_error.style.display = "block";
+            } else {
+                var new_password_input_error = document.getElementById("new_password_input_error");
+                new_password_input_error.style.display = "block";
+                new_password_input_error.textContent = "Введите новый пароль";
             }
         }
 

@@ -16,6 +16,11 @@
     <link href="~/css/account.css" rel="stylesheet" media="all">
 }
 
+@{
+    // after we succesulfy changed password we reload page and notify an user about that
+    bool passwordChangedSuccess = HttpContext.Request.Cookies.Keys.Contains("password_changed");
+}
+
 <div class="" style="display: flex; flex-direction: row; text-align: center;">
     <div id="account_sidebar" class="account_sidebar">
         <div data="other" class="account_sidebar_item">
@@ -36,6 +41,13 @@
                     style="height: 38px; padding: 5px" type="button">
                 Поменять пароль
             </button>
+
+            @if (passwordChangedSuccess)
+            {
+                <div style="margin-top: 12px; width: 180px; height: 60px; color: white; background: green;">
+                    Вы успешно поменяли пароль
+                </div>
+            }
         </div>
 
         <div id="setting_content_other" class="setting_content_other" style="display: none">
@@ -59,25 +71,25 @@
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label class="input_label">Текущий пароль</label>
-                                <label id="first_password_input_error" class="input_error">Пароли не совпадают</label>
+                                <label id="first_password_input_error" style="display: none" class="input_error"></label>
                             </div>
                         </div>
 
-                        <div class="row row-space">
+                        <div class="row row-space" style="margin-bottom: 6px">
                             <div class="group">
                                 <input id="new_password" class="form_input" required type="text" name="nickname">
                                 <span class="highlight"></span>
                                 <span class="bar"></span>
                                 <label class="input_label">Новый пароль</label>
-                                @* <label id="nickname_input_error" class="input_error">Username is already taken</label> *@
+                                <label id="new_password_input_error" class="input_error"></label>
                             </div>
                         </div>
-                    </div>
 
-                    <button id="change_pswd_button" class="color1_btn"
-                        style="height: 38px; padding: 5px" type="button">
+                        <button id="change_pswd_button" class="color1_btn"
+                            style="height: 38px; padding: 5px" type="button">
                             Готово
-                    </button>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

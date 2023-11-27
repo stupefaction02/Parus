@@ -60,13 +60,18 @@ export class LoginPopup {
                     success: (e) => {
                         //debugger
 
-                        if (e.success == "Y") {
+                        if (e.success == "true") {
                             document.cookie = "JWT=" + e.payload + "; path=/";
 
                             document.location.reload();
                         }
                         else {
                             login_error_label.style.display = "block";
+
+                            var password_recovery_label =
+                                document.getElementById("password_recovery_label");
+
+                            password_recovery_label.style.display = "block";
                         }
                     },
                     error: (e) => { debugger
