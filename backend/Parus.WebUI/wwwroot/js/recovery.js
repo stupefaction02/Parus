@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	var repeat_btn = document.getElementById("repeat_btn");
 	var complete_btn = document.getElementById("complete_btn");
 
+	var email;
+
 	var sendPost = function (url, onsuccess) {
 		$.ajax({
 			url: url,
@@ -41,6 +43,10 @@ document.addEventListener('DOMContentLoaded', function () {
 		phase1.style.display = "none";
 		phase2.style.display = "none";
 		phase3.style.display = "block";
+
+		var check_email_span = document.getElementById("check_email_span");
+		
+		check_email_span.textContent = email;
 	}
 
 	switchToPhase1();
@@ -52,8 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			recovery_continue_btn.disabled = true;
 		}
 
-		if (ValidateEmail(e.target.value)) {
+		if (ValidateEmail(text)) {
 			recovery_continue_btn.disabled = false;
+
+			email = text;
 		}
 	}
 
@@ -80,8 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 		sendPost(url, function (e)
 		{
-			debugger
-
 			switchToPhase3();
 		});
 	}

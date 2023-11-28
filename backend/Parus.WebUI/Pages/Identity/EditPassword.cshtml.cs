@@ -9,6 +9,7 @@ using Parus.Core.Interfaces;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace Parus.WebUI.Pages.Identity
 {
@@ -60,7 +61,21 @@ namespace Parus.WebUI.Pages.Identity
                 return Unauthorized();
             }
 
-            IUser user = tokens.GetUser(token);
+            IPasswordRecoveryToken tokenEntry = tokens.GetTokenWithUser(token);
+            
+            if (tokenEntry == null)
+            {
+                return BadRequest(new { message = "Invalid token" });
+            }
+
+            string msg;
+            if (!tokenEntry.Validate(out msg))
+            {
+                PageContext.HttpContext.Response.WriteAsync(msg);
+                return Unauthorized();
+            }
+
+            IUser user = tokenEntry.GetUser();
 
             if (user == null)
             {

@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
-using PAru.Core.Extensions;
+using Parus.Core.Extensions;
 using Common.Extensions;
 using Newtonsoft.Json;
 using System.Drawing;

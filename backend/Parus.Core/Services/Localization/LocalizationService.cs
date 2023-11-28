@@ -13,6 +13,9 @@ namespace Parus.Core.Services.Localization
 
 		public void SetLocale(string locale)
         {
+            // in case if we call this method mroe than once during request 
+            if (stream != null) return;
+
 			string localeFn = default;
 			switch (locale)
 			{

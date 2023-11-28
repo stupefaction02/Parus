@@ -112,8 +112,10 @@ function sendGet (url, onsuccess) {
         popup.style.display = "none";
     }
 
-    header_register_btn.onclick = function (e) {
-        showPopup();
+    if (header_register_btn !== null) {
+        header_register_btn.onclick = function (e) {
+            showPopup();
+        }
     }
 
     var request_verificaion_code = function (username, onsuccess) {

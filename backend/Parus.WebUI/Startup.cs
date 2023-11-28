@@ -64,7 +64,7 @@ namespace Parus.WebUI
 
 			services.AddJwtAuthentication(Configuration);
 
-            services.AddTransient<ILocalizationService, LocalizationService>();
+            services.AddScoped<ILocalizationService, LocalizationService>();
 
             services.AddDbContext<ApplicationDbContext>();
 

@@ -17,7 +17,14 @@ namespace Parus.Core.Interfaces.Repositories
 		IPasswordRecoveryToken OneByUser(string userId);
 		void ClearTracking();
 		Task DeleteAsync(IPasswordRecoveryToken token);
-	}
+        IPasswordRecoveryToken GetTokenWithUser(string token);
+    }
 
-    public interface IPasswordRecoveryToken { }
+    public interface IPasswordRecoveryToken
+    {
+        long GetExpiresAt();
+        string GetToken();
+        IUser GetUser();
+        bool Validate(out string errorMessage);
+    }
 }

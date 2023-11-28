@@ -77,5 +77,13 @@ namespace Parus.Infrastructure.DLA.Repositories
 		{
 			context.ChangeTracker.Clear();
 		}
-	}
+
+        public IPasswordRecoveryToken GetTokenWithUser(string token)
+        {
+            return context.PasswordRecoveryTokens
+                .Include(x => x.User)
+                .AsEnumerable()
+                .SingleOrDefault(x => x.GetToken() == token);
+        }
+    }
 }

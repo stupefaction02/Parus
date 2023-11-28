@@ -1,8 +1,14 @@
+import { RedirectToIndex } from "./common.js";
+import { CURRENT_API_PATH } from "./config.js";
+
 var weak_password_error = document.getElementById("weak_password_error");
 var nomatch_password_error = document.getElementById("nomatch_password_error");
 var new_password_input = document.getElementById("new_password_input");
 var new_password_input_repeat = document.getElementById("new_password_input_repeat");
 var compete_btn = document.getElementById("compete_btn");
+
+var urlSearchParams = new URLSearchParams(window.location.search)
+var token = urlSearchParams.get("token");
 
 var canSend = false;
 
@@ -72,6 +78,16 @@ new_password_input_repeat.oninput = function (e) {
 	}
 }
 
+var sendPost = function (url, onsuccess) {
+	$.ajax({
+		url: url,
+		method: 'post',
+		//dataType: 'html',
+		//data: { text: 'Текст' },     
+		success: onsuccess
+	});
+}
+
 compete_btn.onclick = function (e) {
 
 	if (new_password_input.length == 0) {
@@ -81,9 +97,14 @@ compete_btn.onclick = function (e) {
 	}
 
 	if (new_password_input.value == new_password_input_repeat.value) {
-		var url = location.origin + "/account/editpassword&newpassword=" + new_password_input.value;
+		var uri = CURRENT_API_PATH + "/account/recoverPassword?token=" + token + "&newPassword=" + new_password_input.value;
 		
-		window.location.href = url;
+		sendPost(uri, function (e) {
+			if (e.success == "true")
+			{
+				RedirectToIndex();
+			}
+		});
 
 		return;
 	}

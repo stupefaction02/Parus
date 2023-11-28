@@ -29,6 +29,7 @@ using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.DLA.Repositories;
 using Parus.Common.Utils;
 using System.Diagnostics;
+using MimeKit.Cryptography;
 
 namespace Parus.Backend.Controllers
 {
@@ -506,6 +507,13 @@ namespace Parus.Backend.Controllers
             [FromServices] ILocalizationService localization,
             UserManager<ApplicationUser> userManager)
         {
+            // TODO: Add protection from the case when user can 
+            // request a recovery code multiple times for different mails and thus 
+            // stuff up the database
+            // 1. add checking if mail belongs to user with exact username entered on phase 1
+            // 2. usual request count limitations
+            // 3. point 2 but add IP checking as well
+
             ApplicationUser user = await userManager.FindByNameAsync(username);
 
             if (user == null)
@@ -523,10 +531,9 @@ namespace Parus.Backend.Controllers
 
             var addresses = server.Features.Get<IServerAddressesFeature>().Addresses;
 
-            string https = addresses.First();
+            string https = "https://localhost:5002";// addresses.First();
 
-            string randomString = Guid.NewGuid().ToString();
-            string token = passwordHasher.HashPassword(null, randomString);
+            string token = Guid.NewGuid().ToString().Replace("-", "AMOGUS");// passwordHasher.HashPassword(null, randomString);
 
             string url = https + $"/account/editpassword?token={token}";
 
@@ -580,13 +587,13 @@ namespace Parus.Backend.Controllers
             int now = DateTimeUtils.ToUnixTimeSeconds(DateTime.UtcNow);
             if (lastRs.ExpiresAt < now)
             {
-                Log("token expired.");
+                LogInfo_Debug("token expired.");
                 return Unauthorized();
             }
 
             if (lastRs.Fingerprint != fingerPrint)
             {
-                Log("finger print dismatch.");
+                LogInfo_Debug("finger print dismatch.");
                 return Forbid();
             }
 
@@ -658,7 +665,43 @@ namespace Parus.Backend.Controllers
             // since we require authorization we alread have username from token
             // otherwise this method won't be called
             string username = User.Identity.Name;
+
+            return EditPasswordCore(username, newPassword, passwordHasher, users);
+        }
+
+        [HttpPost]
+        [Route("api/account/recoverPassword")]
+        public async Task<object> RecoverPassword(string token, string newPassword,
+            [FromServices] IPasswordHasher<ApplicationUser> passwordHasher,
+            [FromServices] IUserRepository users,
+            [FromServices] IPasswordRecoveryTokensRepository tokens)
+        {
+            IPasswordRecoveryToken tokenEntry = tokens.GetTokenWithUser(token);
+            
+            string msg;
+            if (tokenEntry.Validate(out msg))
+            {
+                IUser user = tokenEntry.GetUser();
+
+                if (user == null)
+                {
+                    return Unauthorized();
+                }
+
+                return EditPasswordCore(user.GetUsername(), newPassword, passwordHasher, users);
+            }
+
+            return Unauthorized(new { message = "Token is outdated" });
+        }
+
+        private JsonResult EditPasswordCore(string username, string newPassword, IPasswordHasher<ApplicationUser> passwordHasher, IUserRepository users)
+        {
             ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == username);
+
+            if (user == null)
+            {
+                return Json(new { message = "Fail" });
+            }
 
             string newHash = passwordHasher.HashPassword(user, newPassword);
 
@@ -666,9 +709,9 @@ namespace Parus.Backend.Controllers
 
             users.Update(user);
 
-            Debug.WriteLine($"Password of {user} has been changed.");
+            LogInfo_Debug($"Password of {user} has been changed.");
 
-            return Json(new { message = "Success" });
+            return Json(new { success = "true" });
         }
 
         public enum RegisterType : sbyte
