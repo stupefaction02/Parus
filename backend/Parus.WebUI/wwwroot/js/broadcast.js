@@ -1,15 +1,36 @@
 import { GetCookie } from "./common.js";
+import { HLSPlayer } from "./HlsPlayer/HLSPlayer.js";
 
-/*var jwtToken = GetCookie("JWT");*/
+var play_button = document.getElementById("play_button");
+var plays = true;
 
-//$.ajax({
-//    url: "https://localhost:5001/api/test/auth",
-//    method: 'get',
-//    beforeSend: function (request) {
-//        request.setRequestHeader("Authorization", "Bearer " + GetCookie("JWT"));
-//    },
-//});
-/*debugger*/
+var hlsServiceUrl = "https://localhost:2020";
+
+var video = document.getElementById('video');
+
+var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
+
+var hlsPlayer = new HLSPlayer(video, manifestUrl);
+
+function switch_play() {
+    if (plays) {
+        plays = false;
+
+        pause();
+    } else {
+        plays = true;
+
+        play();
+    }
+}
+
+function play() {
+
+}
+
+function pause() {
+
+}
 
 var maxMessages = 50;
 var messageCount = 0;

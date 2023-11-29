@@ -1,6 +1,15 @@
+import HlsPlayer from "../HlsPlayer/HLSPlayer.js"
+
 var play_button = document.getElementById("play_button");
 var plays = true;
 
+var hlsServiceUrl = "https://localhost:2020";
+
+var video = document.getElementById('video');
+
+var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
+
+var hlsPlayer = new HlsPlayer(video, manifestUrl);
 
 function switch_play() {
     if (plays) {
@@ -42,100 +51,100 @@ function pause() {
 //    attributes: true //configure it to listen to attribute changes
 //});
 
-function ParseManifest() {
-    var hlsServiceUrl = "https://localhost:2020";
-    var playlistUrl = "";
+//function ParseManifest() {
+//    var hlsServiceUrl = "https://localhost:2020";
+//    var playlistUrl = "";
 
-    var serverUrl = "https://localhost:3939";
-    var serverBroadcastsUrl = "api/broadcasts/sessions";
+//    var serverUrl = "https://localhost:3939";
+//    var serverBroadcastsUrl = "api/broadcasts/sessions";
 
-    // Channel we got previously when we loaded channel, so
-    var channelId = 1;
-    var localManifestUrl = `${serverUrl}/${serverBroadcastsUrl}?channelId=` + channelId;
+//    // Channel we got previously when we loaded channel, so
+//    var channelId = 1;
+//    var localManifestUrl = `${serverUrl}/${serverBroadcastsUrl}?channelId=` + channelId;
 
-    var video = document.getElementById('video');
+//    var video = document.getElementById('video');
    
-    var videoSrc = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
+//    var videoSrc = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 
-    var config = {
-        debug: true,
-        enableWorker: false,
-        lowLatencyMode: false,
-        backBufferLength: 290,
-        startPosition: 0,
-        capLevelToPlayerSize: false
-    };
+//    var config = {
+//        debug: true,
+//        enableWorker: false,
+//        lowLatencyMode: false,
+//        backBufferLength: 290,
+//        startPosition: 0,
+//        capLevelToPlayerSize: false
+//    };
 
-    var hls = new Hls(config);
+//    var hls = new Hls(config);
 
-    console.log("Hls.isSupported() = " + Hls.isSupported());
+//    console.log("Hls.isSupported() = " + Hls.isSupported());
 
-    // loading manifest
-    hls.loadSource(videoSrc);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, function (e, data) {
-        console.log("Manifest has parsed!"); /*debugger*/
-        //video.play();
-    });
+//    // loading manifest
+//    hls.loadSource(videoSrc);
+//    hls.attachMedia(video);
+//    hls.on(Hls.Events.MANIFEST_PARSED, function (e, data) {
+//        console.log("Manifest has parsed!"); /*debugger*/
+//        //video.play();
+//    });
 
-    hls.on(Hls.Events.FRAG_LOADED, function (e, data) {
-       /* debugger*/
-    })
+//    hls.on(Hls.Events.FRAG_LOADED, function (e, data) {
+//       /* debugger*/
+//    })
 
-    hls.on(Hls.Events.FRAG_PARSED, function (e, data) {
-        /*debugger*/
-    })
+//    hls.on(Hls.Events.FRAG_PARSED, function (e, data) {
+//        /*debugger*/
+//    })
 
-    hls.on(Hls.Events.ERROR, function (event, data) {
-        console.log("Manifest loading error!" + " type: " + data.type + " details: " + data.details + ", message: " + data.error.message);
+//    hls.on(Hls.Events.ERROR, function (event, data) {
+//        console.log("Manifest loading error!" + " type: " + data.type + " details: " + data.details + ", message: " + data.error.message);
 
-        //debugger
-    });
+//        //debugger
+//    });
 
-    //fetch(localManifestUrl).then(response => {
+//    //fetch(localManifestUrl).then(response => {
 
-    //    response.json().then(function (data) {
+//    //    response.json().then(function (data) {
 
-    //        console.log(`Got a channel from server: ${data.channelSessionKey}`);
+//    //        console.log(`Got a channel from server: ${data.channelSessionKey}`);
 
-    //        debugger
+//    //        debugger
 
-    //        var manifestFilename = CryptoJS.MD5(data.channelSessionKey + 'master_manifest').toString();
+//    //        var manifestFilename = CryptoJS.MD5(data.channelSessionKey + 'master_manifest').toString();
 
-    //        if (manifestFilename != "") {
+//    //        if (manifestFilename != "") {
 
-    //            var video = document.getElementById('video');
-    //            //var videoSrc = `${hlsServiceUrl}/${playlistUrl}?manifestFile=${manifestFilename}.m3u8`;
-    //            var videoSrc = `${hlsServiceUrl}/${playlistUrl}?manifestFile=1.m3u8`;
+//    //            var video = document.getElementById('video');
+//    //            //var videoSrc = `${hlsServiceUrl}/${playlistUrl}?manifestFile=${manifestFilename}.m3u8`;
+//    //            var videoSrc = `${hlsServiceUrl}/${playlistUrl}?manifestFile=1.m3u8`;
 
-    //            if (Hls.isSupported()) {
+//    //            if (Hls.isSupported()) {
 
-    //                console.log('Loading url ... \n' + videoSrc);
+//    //                console.log('Loading url ... \n' + videoSrc);
 
-    //                var hls = new Hls();
-    //                // loading manifest
-    //                hls.loadSource(videoSrc);
-    //                hls.attachMedia(video);
-    //                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-    //                    debugger
-    //                    video.play();
-    //                });
+//    //                var hls = new Hls();
+//    //                // loading manifest
+//    //                hls.loadSource(videoSrc);
+//    //                hls.attachMedia(video);
+//    //                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+//    //                    debugger
+//    //                    video.play();
+//    //                });
 
-    //                hls.on(Hls.Events.ERROR, function (event, data) {
-    //                    var errorType = data.type;
-    //                    var errorDetails = data.details;
-    //                    var errorFatal = data.fatal;
+//    //                hls.on(Hls.Events.ERROR, function (event, data) {
+//    //                    var errorType = data.type;
+//    //                    var errorDetails = data.details;
+//    //                    var errorFatal = data.fatal;
 
-    //                    debugger
-    //                });
-    //            }
-    //        }
-    //        else {
-    //            console.log("Can't get channel key from a server");
-    //        }
-    //    });
-    //});
-}
+//    //                    debugger
+//    //                });
+//    //            }
+//    //        }
+//    //        else {
+//    //            console.log("Can't get channel key from a server");
+//    //        }
+//    //    });
+//    //});
+//}
 
 play_button.onclick = function () {
     switch_play();
