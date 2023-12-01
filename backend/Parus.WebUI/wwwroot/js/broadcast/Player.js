@@ -1,5 +1,5 @@
 import HlsPlayer from "../HlsPlayer/HLSPlayer.js"
-
+console.log(exports);
 var play_button = document.getElementById("play_button");
 var plays = true;
 
@@ -10,6 +10,11 @@ var video = document.getElementById('video');
 var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 
 var hlsPlayer = new HlsPlayer(video, manifestUrl);
+
+setInterval(() =>
+{
+    hlsPlayer.Play();
+}, 3000);
 
 function switch_play() {
     if (plays) {
