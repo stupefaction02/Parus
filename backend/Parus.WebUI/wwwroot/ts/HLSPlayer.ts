@@ -1,3 +1,5 @@
+import { HttpClient } from "./HttpClient.js";
+
 class Helper {
     static TrimEndUntilChar_nochecks(str: string, stopChar: string): string {
         let charsTotal = str.length;
@@ -31,43 +33,6 @@ class Helper {
     }
 }
 
-type BlobResponse = (blob: Blob) => void;
-type StringResponse = (str: string) => void;
-class HttpClient {
-
-    // async
-    static GetFileAsString(url: string, onsuccess: StringResponse): void {
-        const xhr = new XMLHttpRequest();
-        const _url = url;
-        xhr.open("GET", _url);
-        xhr.send();
-
-        xhr.onreadystatechange = (e) => {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                const status = xhr.status;
-                if (status === 0 || (status >= 200 && status < 400)) {
-                    onsuccess(xhr.responseText);
-                } else {
-                    //err = "error!";
-                }
-            }
-        };
-    }
-
-    static GetBlob(url: string, onsuccess: BlobResponse): void {
-        const xhr = new XMLHttpRequest();
-        const _url = url;
-        xhr.open("GET", _url);
-
-        xhr.responseType = "blob";
-        xhr.onload = (e) => {
-            onsuccess(xhr.response as Blob);
-        };
-
-        xhr.send();
-    }
-}
-
 class Manifest
 {
     // 180
@@ -87,7 +52,8 @@ type Nullable<T> = T | null;
 class Segment {
     public filename: string = "";
 
-    public blob: Nullable<Blob> = null;
+    public blob: Blob;
+    public buffer: ArrayBuffer;
 
     public blobUrl: string = "";
 
@@ -108,28 +74,25 @@ export class SegmentController {
             var seg = segments[i];
             var segUrl = playlist.url + seg.filename;
 
-            HttpClient.GetBlob(segUrl, (x) => this.OnSegmentLoaded(seg, x));
+            //HttpClient.GetBlob(segUrl, (x) => this.OnSegmentLoaded(seg, x));
+            HttpClient.GetArrayBuffer(segUrl, (x) => this.OnSegmentLoaded(seg, x));
         }
     }
 
-    OnSegmentLoaded(segment: Segment, videoFileBlob: Blob): void { 
+    OnSegmentLoaded1(segment: Segment, videoFileBlob: Blob): void { 
         segment.blobUrl = URL.createObjectURL(videoFileBlob);
-
+        segment.blob = videoFileBlob;
+        console.log("Segment loaded.");
         this.segmentBank.push(segment);
     }
 
-    //public NextSegments(count: number): Array<Segment> {
-    //    var ret: Array<Segment> = [];
+    OnSegmentLoaded(segment: Segment, buf: ArrayBuffer): void {
+        segment.buffer = buf;
+        console.log("Segment loaded." + " buf:" + buf);
+        this.segmentBank.push(segment);
 
-    //    var i: number = 0;
-    //    while (count != 0) {
-    //        var seg = this.segmentBank[i - 1];
 
-    //        ret.push(seg);
-    //    }
-
-    //    return ret;
-    //}
+    }
 }
 
 export class PlaylistController {
@@ -250,6 +213,7 @@ export class HLSPlayer {
     playlistController: PlaylistController;
     segmentController: SegmentController;
     private _objectUrl: string = "";
+
     constructor(media: HTMLMediaElement, manifestUrl: string) {
         this.media = media;
 
@@ -266,20 +230,74 @@ export class HLSPlayer {
         this.AttachMedia(media);
     }
 
+    private sourceBuffer: SourceBuffer;
+    private mediaSource: MediaSource;
+
     AttachMedia(media: HTMLMediaElement) {
-        debugger
-        
+
+        var self = this;
+
         var mediaSourceType = Helper.getMediaSource(true);
 
-        var ms = new mediaSourceType();
+        var mediaSource = new MediaSource();
 
-        const objectUrl = (this._objectUrl = self.URL.createObjectURL(ms));
+        this.mediaSource = mediaSource;
 
+        //this.mediaSource.
+
+        var avaibleSegments = this.segmentController.segmentBank;
+        
+        const objectUrl = (this._objectUrl = URL.createObjectURL(mediaSource));
         media.src = objectUrl;
+        
+        mediaSource.addEventListener("sourceopen", function () {
+            // NOTE: Browsers are VERY picky about the codec being EXACTLY
+            // right here. Make sure you know which codecs you're using!
+            self.sourceBuffer = mediaSource.addSourceBuffer("video/mp4;codecs=avc1.64001f");
+            //debugger
+
+            self.sourceBuffer.mode = "segments";
+
+            // If we requested any video data prior to setting up the SourceBuffer,
+            // we want to make sure we only append one blob at a time
+            self.sourceBuffer.addEventListener("updateend",
+                () => self.appendToSourceBuffer());
+
+            self.sourceBuffer.addEventListener("error", (a) => { debugger });
+        });
+
+        //mediaSource.err
+    }
+
+    async appendToSourceBuffer() {
+        if (
+            this.mediaSource.readyState === "open" &&
+            this.sourceBuffer &&
+            this.sourceBuffer.updating === false
+        ) {
+            if (this.segmentController.segmentBank.length > 0) {
+                var seg = this.segmentController.segmentBank.shift();
+                var buffer = seg.buffer;
+                this.sourceBuffer.appendBuffer( new Uint8Array(buffer) );
+                
+                console.log("blob: " + seg.blobUrl + " append to buffer.");
+            }
+        }
+
+        // Limit the total buffer size to 20 minutes
+        // This way we don't run out of RAM
+        //if (
+        //    this.media.buffered.length &&
+        //    this.media.buffered.end(0) - this.media.buffered.start(0) > 1200
+        //) {
+        //    this.sourceBuffer.remove(0, this.media.buffered.end(0) - 1200)
+        //}
     }
 
     OnPlaylistLoaded(playlist: Playlist) {
         this.segmentController.ApplyPlaylist(playlist);
+
+        
     }
 
     OnManifestLoaded(e: Manifest) {
@@ -288,9 +306,8 @@ export class HLSPlayer {
 
     Play(): void {
         var avaiableSegments = this.segmentController.segmentBank;
-        
 
-
+        var self = this;
 
         //if (avaiableSegments.length > 0) {
         //    for (var i = 0; i < 1; i++) {
@@ -298,7 +315,19 @@ export class HLSPlayer {
         //        this.media.src = url;
         //    }
         //}
+        self.appendToSourceBuffer();
+        
+        setInterval(function () {
+            // NEW: Try to flush our queue of video data to the video element
+            self.appendToSourceBuffer();
 
+            var e = self.mediaSource;
+            var e1 = self.media;
+
+            debugger
+        }, 1000);
+        
+        console.log("play");
         //this.media.play();
     }
 }

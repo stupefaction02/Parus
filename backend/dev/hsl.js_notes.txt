@@ -20,7 +20,7 @@
 5) completing transmuxing in  _handleTransmuxComplete() method on stream-controller 1079
 6) this method triggers FRAG_PARSING_INIT_SEGMENT (0 refs in API) event and BUFFER_APPENDING event Events.FRAG_PARSED
 
-
+fragBufferedComplete - called after frag is put on buffer, logs PTS, DTS, and buffer. In our case it shows incorrect buffer time track.
 
 
 # Transmuxing = Transmuxing, also referred to as repackaging or packetizing, is a process in which audio and video files are repackaged into different delivery formats without changing the files’ contents.

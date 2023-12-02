@@ -11,10 +11,10 @@ var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 
 var hlsPlayer = new HlsPlayer(video, manifestUrl);
 
-setInterval(() =>
+setTimeout(() =>
 {
     hlsPlayer.Play();
-}, 3000);
+}, 1000);
 
 function switch_play() {
     if (plays) {
