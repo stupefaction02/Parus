@@ -324,7 +324,7 @@ export class HLSPlayer {
             var e = self.mediaSource;
             var e1 = self.media;
 
-            debugger
+            //debugger
         }, 1000);
         
         console.log("play");

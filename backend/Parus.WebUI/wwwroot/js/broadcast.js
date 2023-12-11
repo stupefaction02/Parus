@@ -10,9 +10,16 @@ var video = document.getElementById('video');
 
 var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 
-var hlsPlayer = new HLSPlayer(video, manifestUrl);
+var url = "https://localhost:2020/live/desh02/1_dash.mpd";
+var player = dashjs.MediaPlayer().create();
 
-setTimeout(() => { hlsPlayer.Play(); }, 12000);
+//player.updateSettings({
+//    'debug': {
+//        'logLevel': dashjs.Debug.LOG_LEVEL_INFO
+//    }
+//});
+
+player.initialize(video, url, true);
 
 function switch_play() {
     if (plays) {

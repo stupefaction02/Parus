@@ -1,0 +1,22 @@
+﻿@page "/test"
+
+<div>
+    <video style="width: 640px; height: 360px;" src="https://localhost:2020/live/desh01/720/720_0.m4v" id="videoPlayer" controls></video>
+</div>
+<script src="lib/dash.js/dist/dash.all.debug.js"></script>
+<script>
+    (function () {
+        var url = "https://localhost:2020/live/desh02/1_dash.mpd";
+        var player = dashjs.MediaPlayer().create();
+
+        player.updateSettings({
+            'debug': {
+                'logLevel': dashjs.Debug.LOG_LEVEL_INFO
+            }
+        });
+
+        player.initialize(document.querySelector("#videoPlayer"), url, true);
+
+        document.querySelector("#videoPlayer").onerror = function (e) { console.log("video eror!"); }
+    })();
+</script>

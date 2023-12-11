@@ -10,7 +10,16 @@ namespace Parus.WebUI
         {
             Console.Title = "WebUI";
 
-            CreateHostBuilder(args).Build().Run();
+            var builder = CreateHostBuilder(args)
+                //.UseKestrel()
+                //.UseUrls("http://localhost:6001")
+                //.UseStartup<Startup>()
+                //.UseIISIntegration()
+                .Build();
+
+            //((WebHostBuilder)builder).UseUrls("http://0.0.0.0:6001");
+
+            builder.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

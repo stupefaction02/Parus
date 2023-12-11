@@ -192,6 +192,8 @@ namespace Parus.Hsl
             // or this
             FileExtensionContentTypeProvider fectp = new FileExtensionContentTypeProvider();
             fectp.Mappings.Add(".m3u8", "text/plain");
+            fectp.Mappings.Add(".mpd", "text/plain");
+            fectp.Mappings.Add(".mv4", "text/plain");
 
             StaticFileOptions options = new StaticFileOptions 
             { 
@@ -206,9 +208,17 @@ namespace Parus.Hsl
                         context.Context.Response.Headers.CacheControl = "public, max-age=3600";
                         context.Context.Response.Headers.AcceptRanges = "bytes";
                     } 
-                    else if (ext == "m3u8")
+                    else if (ext == ".m4v")
                     {
-
+                        context.Context.Response.Headers.ContentType = "video/mp4";
+                        context.Context.Response.Headers.AcceptRanges = "bytes";
+                        context.Context.Response.Headers.CacheControl = "max-age=29727833"; 
+                        context.Context.Response.Headers.AccessControlMaxAge = "86400";
+                        context.Context.Response.Headers.AccessControlAllowCredentials = "true";
+                    }
+                    else if (ext == ".mpd")
+                    {
+                        context.Context.Response.Headers.ContentType = "application/dash+xml";
                     }
                 }
             };
