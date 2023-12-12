@@ -18,13 +18,21 @@ document.addEventListener('DOMContentLoaded', function () {
     header_search_input.addEventListener("keydown", function (e) {
         if (e.key == "Enter") {
             var q = header_search_input.value;
-            window.location.href = window.location.href + "search?q=" + q;
+            window.location.href = window.location.origin + "/search?q=" + q;
         }
+    });
+
+    header_search_input.addEventListener("focus", function (e) {
+        document.getElementsByClassName("header_search_icon_highlight")[0].style.display = "block";
+    });
+
+    header_search_input.addEventListener("focusout", function (e) {
+        document.getElementsByClassName("header_search_icon_highlight")[0].style.display = "none";
     });
 
     header_search_icon.addEventListener("mousedown", function () {
         var q = header_search_input.value;
-        window.location.href = window.location.href + "search?q=" + q;
+        window.location.href = window.location.origin + "/search?q=" + q;
     });
 
     var header_user_settings_popup_is_open = false;

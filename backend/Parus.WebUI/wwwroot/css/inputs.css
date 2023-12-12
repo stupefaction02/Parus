@@ -1,3 +1,10 @@
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: #9147FF !important;
+}
+
 h2 {
     text-align: center;
     margin-bottom: 35px;
@@ -156,9 +163,45 @@ h2 {
     border-top-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 0px;
+    position: relative;
+}
+
+.header_search_icon_highlight {
+    position: absolute;
+    top: -2px;
+    border-right-color: #9147FF;
+    border-right-width: 2px;
+    border-right-style: solid;
+    border-top-color: #9147FF;
+    border-top-width: 2px;
+    border-top-style: solid;
+    border-bottom-color: #9147FF;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-left-color: #9147FF;
+    border-left-width: 2px;
+    border-left-style: solid;
+    background-color: transparent;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+    border-left-width: 2px;
+    width: inherit;
+    height: 39px;
+    display: none;
+}
+
+/*.header_search_input:focus ~ .header_search_icon_highlight {
+    display: block;
+}*/
+
+.header_search_input {
+    
 }
 
 .header_search {
+    position: relative;
     display: flex;
     width: 245px;
     height: 35px;
