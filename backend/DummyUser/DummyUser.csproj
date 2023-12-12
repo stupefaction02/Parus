@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="HlsOBS.bak.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="video\1.mp4" />
     <None Remove="video\2.mp4" />
     <None Remove="video\3.mov" />
@@ -32,6 +36,10 @@
     <EmbeddedResource Include="video\1.mp4">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Desh\" />
   </ItemGroup>
 
 </Project>

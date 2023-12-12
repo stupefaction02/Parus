@@ -1,116 +1,113 @@
-﻿internal partial class Program
+﻿public class BroadcastClient : IDisposable
 {
-    public class BroadcastClient : IDisposable
+    private HttpClient webClient = new HttpClient(new HttpMessageHandler1(new HttpClientHandler()));
+
+    public string HslBasePath { get; set; }
+
+    public string ImagesBasePath { get; set; }
+
+    public BroadcastClient()
     {
-        private HttpClient webClient = new HttpClient(new HttpMessageHandler1(new HttpClientHandler()));
+        //webClient.DefaultRequestHeaders.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue("gzip, deflate, br"));
 
-        public string HslBasePath { get; set; }
+        webClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
+    }
 
-        public string ImagesBasePath { get; set; }
+    public void Dispose()
+    {
+        webClient.Dispose();
+    }
 
-        public BroadcastClient()
+    public async Task PostThumbnail(string thumbnailPath)
+    {
+        using FileStream fs = File.OpenRead(thumbnailPath);
+
+        string uri = "https://localhost:5004/upload";
+
+        await PostFile(fs, uri);
+    }
+
+    public void PostMasterPlaylist(string data, string hostId)
+    {
+        string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostId}";
+
+        PostRaw(data, uri);
+    }
+
+    private async Task PostFile(FileStream fs, string uri)
+    {
+        using (MultipartFormDataContent content = new MultipartFormDataContent())
         {
-            //webClient.DefaultRequestHeaders.AcceptEncoding.Add(new System.Net.Http.Headers.StringWithQualityHeaderValue("gzip, deflate, br"));
+            fs.Seek(0, SeekOrigin.Begin);
 
-            webClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
-        }
+            StreamContent fileContent = new StreamContent(fs);
 
-        public void Dispose()
-        {
-            webClient.Dispose();
-        }
+            content.Add(fileContent, "file", Path.GetFileName(fs.Name));
 
-        public async Task PostThumbnail(string thumbnailPath)
-        {
-            using FileStream fs = File.OpenRead(thumbnailPath);
+            HttpResponseMessage response = await webClient.PostAsync(uri, content);
 
-            string uri = "https://localhost:5004/upload";
-
-            await PostFile(fs, uri);
-        }
-
-        public void PostMasterPlaylist(string data, string hostId)
-        {
-            string uri = HslBasePath + $"/uploadManifest?usrDirectory={hostId}";
-
-            PostRaw(data, uri);
-        }
-
-        private async Task PostFile(FileStream fs, string uri)
-        {
-            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            if (response.IsSuccessStatusCode)
             {
-                fs.Seek(0, SeekOrigin.Begin);
+                return;
+            }
+        }
+    }
 
-                StreamContent fileContent = new StreamContent(fs);
+    public async Task PostSegmentAsync(DeshOBS.Segment segment, string hostid)
+    {
+        using FileStream fs = File.OpenRead(segment.Path);
 
-                content.Add(fileContent, "file", Path.GetFileName(fs.Name));
+        string uri = HslBasePath + $"/uploadSegment?usrDirectory={hostid}";
 
-                HttpResponseMessage response = await webClient.PostAsync(uri, content);
+        await PostFile(fs, uri);
+    }
 
+    public void PostPlaylists(string data, string hostid)
+    {
+        string uri = HslBasePath + $"/uploadPlaylists?usrDirectory={hostid}";
+
+        PostRaw(data, uri);
+    }
+
+    private void PostRaw(string data, string uri)
+    {
+        using (MultipartFormDataContent content = new MultipartFormDataContent())
+        {
+            StringContent stringContent = new StringContent(data);
+
+            content.Add(stringContent, "playlist");
+
+            HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
+            Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
+        }
+    }
+
+    public class HttpMessageHandler1 : DelegatingHandler
+    {
+        public HttpMessageHandler1(HttpMessageHandler innerHandler)
+        : base(innerHandler)
+        { }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
+            CancellationToken cancellationToken)
+        {
+            HttpResponseMessage response = null;
+
+        Send:
+            try
+            {
+                response = await base.SendAsync(request, cancellationToken);
                 if (response.IsSuccessStatusCode)
                 {
-                    return;
+                    return response;
                 }
             }
-        }
-
-        public async Task PostSegmentAsync(OBS.Segment segment, string hostid)
-        {
-            using FileStream fs = File.OpenRead(segment.Path);
-
-            string uri = HslBasePath + $"/uploadSegment?usrDirectory={hostid}";
-
-            await PostFile(fs, uri);
-        }
-
-        public void PostPlaylists(string data, string hostid)
-        {
-            string uri = HslBasePath + $"/uploadPlaylists?usrDirectory={hostid}";
-
-            PostRaw(data, uri);
-        }
-
-        private void PostRaw(string data, string uri)
-        {
-            using (MultipartFormDataContent content = new MultipartFormDataContent())
+            catch (Exception ex)
             {
-                StringContent stringContent = new StringContent(data);
-
-                content.Add(stringContent, "playlist");
-
-                HttpResponseMessage response = webClient.PostAsync(uri, content).GetAwaiter().GetResult();
-                Console.WriteLine($"Request url={uri}, ok={response.IsSuccessStatusCode}");
+                goto Send;
             }
-        }
 
-        public class HttpMessageHandler1 : DelegatingHandler
-        {
-            public HttpMessageHandler1(HttpMessageHandler innerHandler)
-            : base(innerHandler)
-            { }
-
-            protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
-                CancellationToken cancellationToken)
-            {
-                HttpResponseMessage response = null;
-
-            Send:
-                try
-                {
-                    response = await base.SendAsync(request, cancellationToken);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        return response;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    goto Send;
-                }
-
-                return response;
-            }
+            return response;
         }
     }
 }

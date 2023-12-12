@@ -10,15 +10,24 @@
 
 @{
     string imageServer = configuration["ImageServer:Url"];
-    
+
     var Broadcasts = searchingService.SearchBroadcastsByTitleTags(Model, 8);
 
-    var Categories = searchingService.SearchCategoryByName(Model, 5);
+    int broadcastCount = 0;
+    foreach (var item in Broadcasts) broadcastCount++;
 
-    var Users = searchingService.SearchUsersByName(Model, 5);
+    var categories = searchingService.SearchCategoryByName(Model, 5);
+
+    int categoriesCount = 0;
+    foreach (var item in categories) categoriesCount++;
+
+    var users = searchingService.SearchUsersByName(Model, 5);
+
+    int usersCount = 0;
+    foreach (var item in users) usersCount++;
 }
 
-        @if (Broadcasts.Count() > 0)
+        @if (broadcastCount > 0)
         {
             <article class="results_block" style="min-height: 224px; max-height: 1029.2px;">
                 @{
@@ -92,7 +101,7 @@
             </article>
         }
 
-        @if (Categories.Count() > 0)
+        @if (categoriesCount > 0)
         {
             <article class="results_block">
                 @{
@@ -101,7 +110,7 @@
                     </div>
 
                     <div class="results_elems_categories">
-                        @foreach (var cat in Model.Categories)
+                @foreach (var cat in categories)
                         {
                             string viewsCount = cat.ViewsCount + " зрителей";
 
@@ -157,7 +166,7 @@
             </article>
         }
 
-        @if (Users.Count() > 0)
+        @if (usersCount > 0)
         {
             <article class="results_block">
                 @{
@@ -166,7 +175,7 @@
                     </div>
 
                     <div class="results_elems_categories">
-                        @foreach (ApplicationUser usr in Model.Users)
+                @foreach (ApplicationUser usr in users)
                         {
                             <div class="user_result">
                                 <div class="user_result_container">

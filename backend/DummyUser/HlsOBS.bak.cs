@@ -6,11 +6,16 @@ using System.Xml.Serialization;
 using Newtonsoft.Json.Linq;
 using Xabe.FFmpeg;
 using static Program;
-using static Program.OBS;
+using static Program.DeshOBS;
+
+public abstract class Obs
+{
+    public abstract Task RunAsync();
+}
 
 internal partial class Program
 {
-    public class OBS : IDisposable
+    public class DeshOBS : Obs, IDisposable
     {
         private static string ApiPath => "https://localhost:2020";
 
@@ -51,11 +56,11 @@ internal partial class Program
         private PlaylistBuilder playlistBuilder = new PlaylistBuilder();
         private ManifestBuilder manifestBuilder = new ManifestBuilder();
 
-        public OBS(User host)
+        public DeshOBS(User host)
         {
             this.host = host;
 
-            broadcastClient.HslBasePath = OBS.ApiPath;
+            broadcastClient.HslBasePath = DeshOBS.ApiPath;
 
             videoFileName = Path.Combine(videoDir, videos[(new Random()).Next(0, videos.Length)]);
             //videoFileName = Path.Combine(videoDir, videos[ 1 ]);
@@ -75,7 +80,7 @@ internal partial class Program
             playlistBuilder.AddQuality("720");
         }
 
-        public async Task RunAsync()
+        public override async Task RunAsync()
         {
             Task retrieveSegmentsTask = Task.Run(StartRetreivingSegments);
 

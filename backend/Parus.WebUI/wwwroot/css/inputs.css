@@ -142,6 +142,7 @@ h2 {
 
 
 .header_search_icon {
+    cursor: pointer;
     background-color: white;
     border-bottom-right-radius: 6px;
     border-top-right-radius: 6px;

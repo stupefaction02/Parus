@@ -12,6 +12,20 @@ document.addEventListener('DOMContentLoaded', function () {
     var header_signout_button = document.getElementById("header_signout_button");
     var header_login_btn = document.getElementById("header_login_btn");
     var header_register_btn = document.getElementById("header_register_btn");
+    var header_search_icon = document.getElementById("header_search_icon");
+    var header_search_input = document.getElementById("header_search_input");
+
+    header_search_input.addEventListener("keydown", function (e) {
+        if (e.key == "Enter") {
+            var q = header_search_input.value;
+            window.location.href = window.location.href + "search?q=" + q;
+        }
+    });
+
+    header_search_icon.addEventListener("mousedown", function () {
+        var q = header_search_input.value;
+        window.location.href = window.location.href + "search?q=" + q;
+    });
 
     var header_user_settings_popup_is_open = false;
     if (header_user_settings !== null) {

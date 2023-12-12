@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http.Connections.Client;
 using Microsoft.AspNetCore.SignalR.Client;
 using Newtonsoft.Json;
 
-internal partial class Program
+public class Program
 {
     private static void Main(string[] args)
     {
@@ -268,7 +268,7 @@ internal partial class Program
 
     private static Task RunOBSAsync(User user)
     {
-        OBS obs = new OBS(user);
+        DeshOBS obs = new DeshOBS(user);
 
         // fall a settings of broadcast
         return Task.Run(async () => await obs.RunAsync());
