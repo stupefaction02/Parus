@@ -12,5 +12,10 @@ namespace Parus.Backend.Controllers
             Console.WriteLine(message);    
 #endif
         }
+
+		protected object CreateJsonSuccess()
+		{
+			return new { success = "Y" };
+		}
     }
 }

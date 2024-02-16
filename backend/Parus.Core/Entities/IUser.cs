@@ -11,5 +11,7 @@
 		public bool EmailConfirmed { get; set; }
 
         public IVerificationCode ConfirmCodeCore { get; }
+
+        public bool GetTwoFactorEnabled();
     }
 }

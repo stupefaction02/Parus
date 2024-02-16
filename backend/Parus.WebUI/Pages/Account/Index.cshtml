@@ -1,12 +1,20 @@
 ﻿@page "/account"
+@using Parus.Core.Entities
+@using Parus.Core.Interfaces.Repositories
+@using Parus.Infrastructure.DLA.Repositories
+@using Parus.Infrastructure.Identity
 @model IndexModel
 @{
     ViewData["Title"] = "Account";
 }
 
+@inject IUserRepository users;
+
 @section AdditionalScripts
 {
     <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/account/2FTpopup.js"></script>
+    <script type="module" src="~/js/account/2FAEmailVerificationPopup.js"></script>
     <script type="module" src="~/js/account.js"></script>
 }
 
@@ -19,6 +27,10 @@
 @{
     // after we succesulfy changed password we reload page and notify an user about that
     bool passwordChangedSuccess = HttpContext.Request.Cookies.Keys.Contains("password_changed");
+
+    IUser user = users.One(x => x.GetUsername() == User.Identity.Name);
+
+
 }
 
 <div class="" style="display: flex; flex-direction: row; text-align: center;">
@@ -47,6 +59,21 @@
                 <div style="margin-top: 12px; width: 180px; height: 60px; color: white; background: green;">
                     Вы успешно поменяли пароль
                 </div>
+            }
+            
+            @if (user.GetTwoFactorEnabled())
+            {
+                <button id="disable_2ft_btn" class="color1_btn"
+                        style="height: 38px; padding: 5px" type="button">
+                    Выключить двухфакторную аутенфикацию
+                </button>
+            }
+            else
+            {
+                <button id="enable_2ft_btn" class="color1_btn"
+                        style="height: 38px; padding: 5px" type="button">
+                    Включить двухфакторную аутенфикацию
+                </button>
             }
         </div>
 
@@ -89,6 +116,33 @@
                             style="height: 38px; padding: 5px" type="button">
                             Готово
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="enable_2tf_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680" style="width: 490px !important">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="enable_2tf_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card" style="padding: 0px 36px 32px 36px;">
+                        <h3>
+                            Двухфакторная аутентификация
+                        </h3>
+                        
+                        <div class="enter_email_phase">
+                            <partial name="/Pages/Account/Enable2FA/EnterEmail.cshtml" />
+                        </div>
+                        @* <div class="enter_password_phase" style="display: block">
+                            <partial name="/Pages/Account/Enable2FA/CheckPassword.cshtml" />
+                        </div> *@
+                        <div class="enter_code_phase" style="display: none">
+                            <partial name="/Pages/Account/Enable2FA/EnterCode.cshtml" />
+                        </div>
                     </div>
                 </div>
             </div>

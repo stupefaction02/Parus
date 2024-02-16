@@ -24,6 +24,19 @@ namespace Parus.Infrastructure.Identity
         public int Code { get; set; } 
     }
 
+    public class TwoFactoryEmailVerificationCode : IVerificationCode
+    {
+        [Key]
+        public int ConfirmCodeId { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        [Column(TypeName = "nvarchar(450)")]
+        public string UserId { get; set; }
+
+        public int Code { get; set; }
+    }
+
     public class RefreshSession
     {
         [NonSerialized]

@@ -315,11 +315,6 @@ namespace Parus.Backend.Controllers
 			return new { success = "Y", message = message };
 		}
 
-		private object CreateJsonSuccess()
-		{
-			return new { success = "Y" };
-		}
-
         private object CreateJsonSuccess(object additionalParameter)
         {
             return new { success = "Y", payload = additionalParameter };

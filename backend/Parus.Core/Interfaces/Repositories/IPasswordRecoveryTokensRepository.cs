@@ -27,4 +27,12 @@ namespace Parus.Core.Interfaces.Repositories
         IUser GetUser();
         bool Validate(out string errorMessage);
     }
+
+    public interface I2FAEmailCheckigCode
+    {
+        long GetExpiresAt();
+        int GetCode();
+        IUser GetUser();
+        bool Validate(out string errorMessage);
+    }
 }

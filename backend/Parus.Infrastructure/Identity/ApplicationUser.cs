@@ -27,6 +27,8 @@ namespace Parus.Infrastructure.Identity
 
         public ConfirmCode ConfirmCode { get; set; }
 
+        public TwoFactoryEmailVerificationCode TwoFAEmailVerificationCode { get; set; }
+
         public PasswordRecoveryToken PasswordRecoveryToken { get; set; }
 
         [NotMapped]
@@ -37,6 +39,11 @@ namespace Parus.Infrastructure.Identity
         public override string ToString()
         {
             return $"{this.UserName} {this.Email} {this.Id}";
+        }
+
+        public bool GetTwoFactorEnabled()
+        {
+            return this.TwoFactorEnabled;
         }
     }
 }

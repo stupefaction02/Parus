@@ -1,4 +1,5 @@
 import { GetCookie } from "./common.js";
+import { TwoTFpopup } from "./account/2FTpopup.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 
 var account_sidebar = document.getElementById("account_sidebar");
@@ -126,5 +127,26 @@ function InitSecurityOption() {
 
         changePasswordButton.removeEventListener("click", changePassword);
         changePasswordButton.addEventListener("click", changePassword);
+    }
+
+    var enable_2ft_btn = document.getElementById("enable_2ft_btn");
+    //debugger
+    var enable_2tf_popup_shown = false;
+    var popup;
+    enable_2ft_btn.onclick = function () {
+        if (!enable_2tf_popup_shown) { //debugger
+
+            popup = new TwoTFpopup("enable_2tf_popup");    
+
+            enable_2tf_popup_shown = true;
+
+            popup.Show();
+        }
+        else
+        {
+            popup.Hide();
+
+            enable_2tf_popup_shown = false;
+        }
     }
 }

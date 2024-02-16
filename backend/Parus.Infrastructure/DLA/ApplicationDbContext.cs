@@ -51,17 +51,17 @@ namespace Parus.Infrastructure.DLA
 
 		}
 
-		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-  //      {
-            
-  //          if (true)//!optionsBuilder.IsConfigured)
-  //          {
-  //              // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
-  //              string connectionString =
-  //                  "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;TrustServerCertificate=True;Integrated Security=True;";
-  //              //"Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;User Id=sa;Password=!Kronos39!;";
-  //              optionsBuilder.UseSqlServer(connectionString);
-  //          }
-  //      }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+
+            if (!optionsBuilder.IsConfigured)
+            {
+                // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
+                string connectionString =
+                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;TrustServerCertificate=True;Integrated Security=True;";
+                //"Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;User Id=sa;Password=!Kronos39!;";
+                optionsBuilder.UseSqlServer(connectionString);
+            }
+        }
     }
 }
