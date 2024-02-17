@@ -134,14 +134,17 @@
                             Двухфакторная аутентификация
                         </h3>
                         
-                        <div class="enter_email_phase">
+                        <div id="enter_email_phase">
                             <partial name="/Pages/Account/Enable2FA/EnterEmail.cshtml" />
                         </div>
                         @* <div class="enter_password_phase" style="display: block">
                             <partial name="/Pages/Account/Enable2FA/CheckPassword.cshtml" />
                         </div> *@
-                        <div class="enter_code_phase" style="display: none">
+                        <div id="enter_code_phase" style="display: none">
                             <partial name="/Pages/Account/Enable2FA/EnterCode.cshtml" />
+                        </div>
+                        <div id="qr_code_phase" style="display: none">
+                            <partial name="/Pages/Account/Enable2FA/QrCode.cshtml" />
                         </div>
                     </div>
                 </div>

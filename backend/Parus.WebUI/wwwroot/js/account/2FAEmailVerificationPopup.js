@@ -13,10 +13,6 @@ export class TwoFAEmailVerificationPopup {
 
         this.send_code_again = send_code_again;
 
-        var spanPlaceholder = document.querySelector("#2fa_verification_info .placeholder");
-        
-        spanPlaceholder.textContent = GetCookie("identity.username");
-
         send_code_again.onclick = function (e) {
             self.send_code_again_onclick(e);
         };
@@ -37,6 +33,12 @@ export class TwoFAEmailVerificationPopup {
         }
 
         this.inputs = inputs;
+    }
+
+    UpdatePlaceholder() {
+        var spanPlaceholder = document.querySelector("#2fa_verification_info .placeholder");
+
+        spanPlaceholder.textContent = GetCookie("identity.username");
     }
 
     SetUsername (username) {
@@ -75,7 +77,7 @@ export class TwoFAEmailVerificationPopup {
         debugger
         this.sendPost(url, function (e) {
             if (e.success == "Y") {
-                self.ShowPopup();
+                //self.ShowPopup();
                 debugger
                 var spanPlaceholder = document.querySelector("#2fa_verification_info .placeholder");
 
@@ -109,12 +111,16 @@ export class TwoFAEmailVerificationPopup {
                 code += inputNode.value;
             }
 
-            self.send_code(code, function (e) { self.send_code_handler(e); });
+            self.send_code(code, function (e)
+            {
+                // calling callback
+                self.onsuccess(e);
+            });
         }
     }
 
     send_code (code, onsuccess) {
-        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&username=" + this.username;
+        var url = "https://localhost:5001/api/account/2FA/verify?code=" + code;
 
         this.sendPost(url, onsuccess);
     }
@@ -124,7 +130,7 @@ export class TwoFAEmailVerificationPopup {
         //console.log(window.location.protocol + "://" + window.location.host);
         //window.location.href = window.location.protocol + "://" + window.location.host;
 
-        window.location.reload();
+        this.onsuccess();
     }
 
     reg_email_input_oninput (e) {
@@ -147,7 +153,8 @@ export class TwoFAEmailVerificationPopup {
         $.ajax({
             url: url,
             method: 'post',
-            success: onsuccess
+            success: onsuccess,
+            xhrFields: { withCredentials: true }
         });
     }
 }
