@@ -37,6 +37,17 @@ namespace Parus.Infrastructure.Identity
         public int Code { get; set; }
     }
 
+    public class TwoFactoryCustomerKey
+    {
+        [Key]
+        public string UserId { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        [Column(TypeName = "nvarchar(72)")]
+        public string Key { get; set; }
+    }
+
     public class RefreshSession
     {
         [NonSerialized]

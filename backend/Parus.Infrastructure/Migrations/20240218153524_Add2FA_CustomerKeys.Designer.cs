@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parus.Infrastructure.Identity;
 
@@ -11,9 +12,11 @@ using Parus.Infrastructure.Identity;
 namespace Parus.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationIdentityDbContext))]
-    partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240218153524_Add2FA_CustomerKeys")]
+    partial class Add2FA_CustomerKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -408,7 +411,7 @@ namespace Parus.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("TwoFactoryCustomerKeys");
+                    b.ToTable("TwoFactoryUserKeys");
                 });
 
             modelBuilder.Entity("Parus.Infrastructure.Identity.TwoFactoryEmailVerificationCode", b =>
@@ -431,7 +434,7 @@ namespace Parus.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("TwoFactoryVerificationCodes");
+                    b.ToTable("TwoFAVerificationCodes");
                 });
 
             modelBuilder.Entity("BroadcastInfoTag", b =>

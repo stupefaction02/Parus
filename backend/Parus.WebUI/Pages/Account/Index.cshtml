@@ -61,20 +61,22 @@
                 </div>
             }
             
-            @if (user.GetTwoFactorEnabled())
-            {
-                <button id="disable_2ft_btn" class="color1_btn"
-                        style="height: 38px; padding: 5px" type="button">
-                    Выключить двухфакторную аутенфикацию
-                </button>
-            }
-            else
-            {
-                <button id="enable_2ft_btn" class="color1_btn"
-                        style="height: 38px; padding: 5px" type="button">
-                    Включить двухфакторную аутенфикацию
-                </button>
-            }
+            <div id="2fa_buttons">
+                @if (user.GetTwoFactorEnabled())
+                {
+                    <button id="disable_2ft_btn" class="color1_btn"
+                            style="height: 38px; padding: 5px" type="button">
+                        Выключить двухфакторную аутенфикацию
+                    </button>
+                }
+                else
+                {
+                    <button id="enable_2ft_btn" class="color1_btn"
+                            style="height: 38px; padding: 5px" type="button">
+                        Включить двухфакторную аутенфикацию
+                    </button>
+                }
+            </div>
         </div>
 
         <div id="setting_content_other" class="setting_content_other" style="display: none">
@@ -145,6 +147,48 @@
                         </div>
                         <div id="qr_code_phase" style="display: none">
                             <partial name="/Pages/Account/Enable2FA/QrCode.cshtml" />
+                        </div>
+
+                        <div id="done_phase" style="display: none">
+                            Двухфакторная аутенфикация включена!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="disbale_2tf_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680" style="width: 490px !important">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="disable_2tf_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card" style="padding: 0px 36px 32px 36px;">
+                        <h3>
+                            Двухфакторная аутентификация
+                        </h3>
+                        
+                        <div id="2fa_disable_phase1">
+                            <p>Введите код из приложения аутенфиации</p>
+
+                            <div class="row row-space">
+                                <div class="group">
+                                    <input id="2fa_disable_code_input" autocomplete="off" class="form_input" maxlength="6" required type="text" name="qrcode">
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                    <label id="2fa_disable_code_error" style="display: none" class="input_error">Неправильный код</label>
+                                </div>
+                            </div>
+
+                            <button id="2fa_disable_phase1_btn" class="color1_btn" type="button">
+                                Отправить
+                            </button>
+
+                        </div>
+                        <div id="2fa_disable_phase2">
+
                         </div>
                     </div>
                 </div>

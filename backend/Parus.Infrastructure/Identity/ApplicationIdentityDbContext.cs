@@ -27,7 +27,10 @@ namespace Parus.Infrastructure.Identity
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
         public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
 
-        public DbSet<TwoFactoryEmailVerificationCode> TwoFAVerificationCodes { get; set; }
+        public DbSet<TwoFactoryEmailVerificationCode> TwoFactoryVerificationCodes { get; set; }
+        
+        // Description/Comment: keys is created when user scans qr_code and send numbers to the server
+        public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
             : base(options)
@@ -55,6 +58,13 @@ namespace Parus.Infrastructure.Identity
                     .WithOne(e => e.User)
                     .HasForeignKey<TwoFactoryEmailVerificationCode>(e => e.UserId)
                     .IsRequired();
+
+            //builder.Entity<TwoFactoryCustomerKey>().Property(x => x.UserId);
+
+            builder.Entity<ApplicationUser>()
+                    .HasOne(e => e.CustomerKey)
+                    .WithOne(e => e.User)
+                    .HasForeignKey<TwoFactoryCustomerKey>(e => e.UserId);
 
             builder.Entity<ApplicationUser>()
                     .Property(x => x.AvatarPath)

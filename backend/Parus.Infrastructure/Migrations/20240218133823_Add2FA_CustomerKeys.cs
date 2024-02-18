@@ -5,7 +5,7 @@
 namespace Parus.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Add2FAVerifCodes01 : Migration
+    public partial class Add2FA_CustomerKeys : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

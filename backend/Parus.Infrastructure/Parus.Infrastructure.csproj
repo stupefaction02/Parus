@@ -8,6 +8,7 @@
     <Compile Remove="Identity\CassandraDbIdentityContext.cs" />
     <Compile Remove="Identity\LiteDbIdentityContext.cs" />
     <Compile Remove="Identity\LiteDbOptions.cs" />
+    <Compile Remove="Migrations\20240218133823_Add2FA_CustomerKeys.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,13 +5,13 @@
 namespace Parus.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Add2FAVerifCodes01 : Migration
+    public partial class Add2FA_CustomerKeys : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "TwoFactoryCustomerKey",
+                name: "TwoFactoryCustomerKeys",
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -19,9 +19,9 @@ namespace Parus.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TwoFactoryCustomerKey", x => x.UserId);
+                    table.PrimaryKey("PK_TwoFactoryCustomerKeys", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_TwoFactoryCustomerKey_AspNetUsers_UserId",
+                        name: "FK_TwoFactoryCustomerKeys_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -32,7 +32,7 @@ namespace Parus.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("TwoFactoryCustomerKey");
+            migrationBuilder.DropTable("TwoFactoryCustomerKeys");
         }
     }
 }

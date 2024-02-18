@@ -29,14 +29,14 @@
     </p>
     <div class="row row-space">
         <div class="group">
-            <input id="code_input" class="form_input" max="6" required type="text" name="qrcode">
+            <input id="code_input" autocomplete="off" class="form_input" maxlength="6" required type="text" name="qrcode">
             <span class="highlight"></span>
             <span class="bar"></span>
-            <label id="code_error" class="input_error">Неправильный код</label>
+            <label id="code_error" style="display: none" class="input_error">Неправильный код</label>
         </div>
     </div>
 </div>
 
 <button id="2fa_enable_btn" class="color1_btn" type="button">
-    Продолжить
+    Отправить
 </button>

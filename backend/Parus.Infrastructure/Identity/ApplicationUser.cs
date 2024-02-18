@@ -29,6 +29,8 @@ namespace Parus.Infrastructure.Identity
 
         public TwoFactoryEmailVerificationCode TwoFAEmailVerificationCode { get; set; }
 
+        public TwoFactoryCustomerKey CustomerKey { get; set; }
+
         public PasswordRecoveryToken PasswordRecoveryToken { get; set; }
 
         [NotMapped]

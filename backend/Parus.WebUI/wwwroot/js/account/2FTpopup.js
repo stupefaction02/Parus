@@ -54,13 +54,17 @@ export class TwoTFpopup {
             var code = code_input.value;
 
             var url = "https://localhost:5001/api/account/2FA/verify2FACode?code="
-                + code + "&" + "key=" + self.TwoFASecretKey;
+                + code + "&" + "customerKey=" + self.TwoFASecretKey;
 
             self.sendPost(url, function (e) {
                 //debugger
 
                 if (e.success == "Y") {
+                    var done_phase = document.getElementById("done_phase");
 
+                    self.phase3panel.style.setProperty("display", "none");
+
+                    done_phase.style.setProperty("display", "block");
                 } else {
                     code_error.style.setProperty("display", "block");
                 }
@@ -70,9 +74,9 @@ export class TwoTFpopup {
         code_input.oninput = function () {
             if (code_input.value.length == 6) {
                 two_fa_enable_btn.disabled = false;
+            } else {
+                two_fa_enable_btn.disabled = true;
             }
-
-            two_fa_enable_btn.disabled = true;
         }
 
         console.log("qr code panel is shown.");
@@ -155,6 +159,89 @@ export class TwoTFpopup {
                 withCredentials: true
             },
             
+        });
+    }
+}
+
+export class TwoFAdisablePopup {
+    constructor(popopElemId) {
+        this.popup = document.getElementById(popopElemId);
+
+        this.closeBtn = document.getElementById("disable_2tf_close_popup");
+
+        var self = this;
+        this.closeBtn.onclick = function () { self.Hide(); };
+
+        this.InitPhase1();
+
+        this.phase2_inited = false;
+        this.phase3_inited = false;
+    }
+
+    Show() {
+        this.popup.style.setProperty("display", "block");
+    }
+
+    Hide() {
+        this.popup.style.setProperty("display", "none");
+    }
+
+    InitPhase1() {
+        this.phase1panel = document.getElementById("2fa_disable_phase1");
+
+        var input = document.getElementById("2fa_disable_code_input");
+        var btn = document.getElementById("2fa_disable_phase1_btn");
+
+        var self = this;
+
+        input.oninput = function () {
+            if (input.value.length == 6) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        btn.onclick = function () {
+            var url = "https://localhost:5001/api/account/2FA/disable?code=" + input.value;
+
+            self.sendPut(url, self.OnVerifyCodeSuccess);       
+        }
+    }
+
+    OnVerifyCodeSuccess() {
+        debugger
+    }
+
+    SwitchToPhase1() {
+        this.phase1panel.style.setProperty("display", "none");
+
+        if (this.phase3panel !== undefined) {
+            this.phase3panel.style.setProperty("display", "none");
+        }
+
+        if (!this.phase2_inited) {
+            this.init_phase_2();
+        } else {
+            this.phase2panel.style.setProperty("display", "block");
+        }
+    }
+
+    sendPost(url, onsuccess) {
+        $.ajax({
+            url: url,
+            method: 'post',
+            success: onsuccess,
+            xhrFields: { withCredentials: true }
+        });
+    }
+
+    sendPut(url, onsuccess) {
+        $.ajax({
+            url: url,
+            method: 'put',
+            success: onsuccess,
+            xhrFields: { withCredentials: true }
         });
     }
 }

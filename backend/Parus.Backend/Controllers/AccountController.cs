@@ -1,6 +1,9 @@
 ﻿using Google.Authenticator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -37,7 +40,7 @@ namespace Parus.Backend.Controllers
             ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == User.Identity.Name);
 
             TwoFactoryEmailVerificationCode addedCode = (TwoFactoryEmailVerificationCode)context
-                .TwoFAVerificationCodes
+                .TwoFactoryVerificationCodes
                     .SingleOrDefault(x => x.UserId == user.GetId());
 
             // if alread exists
@@ -49,7 +52,7 @@ namespace Parus.Backend.Controllers
                 if (expired)
                 {
                     // here we must lock thread 
-                    context.TwoFAVerificationCodes.Remove(user.TwoFAEmailVerificationCode);
+                    context.TwoFactoryVerificationCodes.Remove(user.TwoFAEmailVerificationCode);
 
                     // proceed to create new one
                 }
@@ -60,7 +63,7 @@ namespace Parus.Backend.Controllers
             // Too overheading but more random
             int code = Parus.Core.Utils.CodesUtils.RandomizeEmailVerificatioCode();
 
-            context.TwoFAVerificationCodes
+            context.TwoFactoryVerificationCodes
                 .Add(new TwoFactoryEmailVerificationCode { Code = code, User = user, UserId = user.Id });
 
             Console.WriteLine($"Creating confirmation code with numbers {code} for user: {User.Identity.Name}");
@@ -138,10 +141,10 @@ namespace Parus.Backend.Controllers
 
                 logger.LogInformation(errorInfo);
 
-                return Json(CreateJsonError(errorInfo));
+                return Json( CreateJsonError(errorInfo) );
             }
 
-            var codeEntry = context.TwoFAVerificationCodes.SingleOrDefault
+            var codeEntry = context.TwoFactoryVerificationCodes.SingleOrDefault
                 (x => x.UserId == user.GetId());
 
             if (codeEntry == null)
@@ -154,6 +157,10 @@ namespace Parus.Backend.Controllers
             if (exprectedCode == code)
             {
                 ApplicationUser appUser = (ApplicationUser)user;
+
+                context.TwoFactoryVerificationCodes.Remove(codeEntry);
+
+                await context.SaveChangesAsync();
 
                 return GetTwoFactorAuthenticationData(configuration["ApplicationName"], appUser);
             }
@@ -169,20 +176,109 @@ namespace Parus.Backend.Controllers
 
         // Guid.New() generates 36 chars
         private const int uidLegnth = 36;
+        // TODO: Pull from configuration 
+        // set up during server setup
+        private readonly static int googleCodeLength = 6;
 
         [HttpPost]
         [Route("api/account/2FA/verify2FACode")]
-        public JsonResult Verify2FACode(int code, string key)
+        public async Task<JsonResult> Verify2FACode(int code, string customerKey, ApplicationIdentityDbContext context)
         {
-            TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
-
-            if (key.Length == uidLegnth)
+            // 5 levels of security :)
+            if (User.Identity.IsAuthenticated)
             {
-                string codeStr = code.ToString();
-                if (twoFactor.ValidateTwoFactorPIN(key, codeStr, TimeSpan.FromSeconds(30)))
+                if (customerKey.Length == uidLegnth)
                 {
-                    HttpContext.Response.StatusCode = 200;
-                    return Json(new { success = "Y" });
+                    TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+
+                    string codeStr = code.ToString();
+                    if (codeStr.Length == googleCodeLength)
+                    {
+                        if (twoFactor.ValidateTwoFactorPIN(customerKey, codeStr, TimeSpan.FromSeconds(30)))
+                        {
+                            var appUser = context.Users.SingleOrDefault(x => x.UserName == User.Identity.Name);
+
+                            if (appUser == null)
+                            {
+                                HttpContext.Response.StatusCode = 401;
+                                return Json(new { success = "N", error = "Couldn't find user with this username." });
+                            }
+
+                            appUser.TwoFactorEnabled = true;
+
+                            context.Users.Update(appUser);
+
+                            string userId = appUser.Id;
+
+                            var existedCustomerKey = context.TwoFactoryCustomerKeys.SingleOrDefault(x => x.UserId == userId);
+                            if (existedCustomerKey != null)
+                            {
+                                existedCustomerKey.Key = customerKey;
+                                context.Update(existedCustomerKey);
+                            }
+                            else
+                            {
+                                await context.TwoFactoryCustomerKeys.AddAsync(
+                                    new TwoFactoryCustomerKey() { Key = customerKey, UserId = userId });
+                            }
+
+                            await context.SaveChangesAsync();
+
+                            Console.WriteLine($"2FA was enabled for user {appUser.GetUsername()}");
+
+                            HttpContext.Response.StatusCode = 200;
+                            return Json(new { success = "Y" });
+                        }
+                    }
+                }
+            }
+
+            HttpContext.Response.StatusCode = 401;
+            return Json(new { success = "N", error = "Forbidden." });
+        }
+
+        [HttpPut]
+        [Route("api/account/2FA/disable")]
+        public async Task<JsonResult> Disable2FA(int code, ApplicationIdentityDbContext context)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                // TODO: Database.Users.IdEmail
+                var appUser = context.Users
+                    .Include(x => x.CustomerKey)
+                    .SingleOrDefault(x => x.UserName == User.Identity.Name);
+
+                if (appUser == null)
+                {
+                    HttpContext.Response.StatusCode = 404;
+                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                }
+
+                var customerKey = appUser.CustomerKey;
+                if (customerKey == null)
+                {
+                    HttpContext.Response.StatusCode = 500;
+                    return Json(new { success = "N", error = "Server Error. Contact the Webmaster." });
+                }
+
+                TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+
+                string codeStr = code.ToString();
+                if (codeStr.Length == googleCodeLength)
+                {
+                    if (twoFactor.ValidateTwoFactorPIN(customerKey.Key, codeStr, TimeSpan.FromSeconds(30)))
+                    {
+                        appUser.TwoFactorEnabled = false;
+
+                        context.Users.Update(appUser);
+
+                        Console.WriteLine($"2FA was disabled for user {appUser.GetUsername()}");
+
+                        await context.SaveChangesAsync();
+
+                        HttpContext.Response.StatusCode = 200;
+                        return Json(new { success = "Y" });
+                    }
                 }
             }
 
