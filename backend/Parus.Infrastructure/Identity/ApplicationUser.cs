@@ -38,14 +38,34 @@ namespace Parus.Infrastructure.Identity
 
         public RefreshSession RefreshSession { get; set; }
 
+        /// <summary>
+        /// ref: <see cref="IndexingRule"/>
+        /// </summary>
+        public byte IndexingRule { get; set; }
+
+        public void SetIndexingRule(IndexingRule rule)
+        {
+            IndexingRule = (byte)rule;
+        }
+
         public override string ToString()
         {
             return $"{this.UserName} {this.Email} {this.Id}";
         }
 
+        public string GetAvatarPath()
+        {
+            return AvatarPath;
+        }
+
         public bool GetTwoFactorEnabled()
         {
             return this.TwoFactorEnabled;
+        }
+
+        public byte GetIndexingRule()
+        {
+            return IndexingRule;
         }
     }
 }

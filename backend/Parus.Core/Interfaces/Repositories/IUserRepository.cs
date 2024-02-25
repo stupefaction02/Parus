@@ -18,7 +18,9 @@ namespace Parus.Core.Interfaces.Repositories
 		void Update(Action value);
 		bool Update(IUser user);
 		void ClearTracking();
-	}
+        void UpdateWithoutContextSave(IUser user);
+        int SaveChanges();
+    }
 
     public interface IConfrimCodesRepository
     {

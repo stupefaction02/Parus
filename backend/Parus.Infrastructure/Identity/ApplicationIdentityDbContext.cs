@@ -83,6 +83,10 @@ namespace Parus.Infrastructure.Identity
             builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(true);
             builder.Entity<ConfirmCode>().Property(x => x.UserId).IsRequired(true);
 
+            builder.Entity<ApplicationUser>()
+                .Property(x => x.IndexingRule)
+                .HasDefaultValue(1);
+
             //builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired();
 
             //var testUsers = new ApplicationUser[3] {

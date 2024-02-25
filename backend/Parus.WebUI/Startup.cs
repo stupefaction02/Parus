@@ -26,6 +26,7 @@ using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA.Repositories;
 using Parus.Infrastructure.DLA;
 using Parus.Core.Interfaces.Services;
+using Parus.Core.Services.ElasticSearch;
 
 namespace Parus.WebUI
 {
@@ -72,6 +73,8 @@ namespace Parus.WebUI
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ISearchingService, MSSQLSearchingService>();
+
+            services.AddElastic(Configuration);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

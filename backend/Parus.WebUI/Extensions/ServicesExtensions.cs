@@ -16,6 +16,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System.Linq;
 using System;
+using Parus.Core.Services.ElasticSearch;
+using Microsoft.Identity.Client;
 
 namespace Parus.WebUI.Extensions
 {
@@ -144,6 +146,24 @@ namespace Parus.WebUI.Extensions
                 })
                 .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
                 .AddDefaultTokenProviders();
+        }
+
+        public static void AddElastic(this IServiceCollection services, 
+            IConfiguration configuration)
+        {
+            // configuration for configure elastic
+            ElasticSearchEngine engine = new ElasticSearchEngine(cdnUrl: configuration["CDN:AvasPath"]);
+
+            engine.GetUsersAction = GetUsers;
+
+            services.AddSingleton<ElasticSearchEngine>(engine);
+
+            IUserRepository GetUsers()
+            {
+                ServiceProvider provider = services.BuildServiceProvider();
+
+                return provider.GetService<IUserRepository>();
+            }
         }
     }
 }

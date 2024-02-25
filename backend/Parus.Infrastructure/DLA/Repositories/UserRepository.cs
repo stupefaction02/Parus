@@ -85,6 +85,16 @@ namespace Parus.Infrastructure.DLA.Repositories
             return context.SaveChanges() > 0;
 		}
 
+        public void UpdateWithoutContextSave(IUser user)
+        {
+            context.Users.Update((ApplicationUser)user);
+        }
+
+        public int SaveChanges()
+        {
+            return context.SaveChanges();
+        }
+
         public void ClearTracking()
         {
 			context.ChangeTracker.Clear();
