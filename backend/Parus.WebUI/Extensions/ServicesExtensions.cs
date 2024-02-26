@@ -152,9 +152,8 @@ namespace Parus.WebUI.Extensions
             IConfiguration configuration)
         {
             // configuration for configure elastic
-            ElasticSearchEngine engine = new ElasticSearchEngine(cdnUrl: configuration["CDN:AvasPath"]);
-
-            engine.GetUsersAction = GetUsers;
+            ElasticSearchEngine engine = new ElasticSearchEngine(cdnUrl: configuration["CDN:AvasPath"],
+                GetUsers, GetBroadcasts);
 
             services.AddSingleton<ElasticSearchEngine>(engine);
 
@@ -164,6 +163,13 @@ namespace Parus.WebUI.Extensions
 
                 return provider.GetService<IUserRepository>();
             }
+
+            IBroadcastInfoRepository GetBroadcasts()
+            {
+                ServiceProvider provider = services.BuildServiceProvider();
+
+                return provider.GetService<IBroadcastInfoRepository>();
+            } 
         }
     }
 }
