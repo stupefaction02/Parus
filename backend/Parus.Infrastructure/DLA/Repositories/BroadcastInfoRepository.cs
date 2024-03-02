@@ -13,6 +13,33 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.DLA.Repositories
 {
+    public class BroadcastCategoryRepository : IBroadcastCategoryRepository
+    {
+        public IEnumerable<BroadcastCategory> Categories { get => context.Categories; }
+
+        private readonly ApplicationDbContext context;
+
+        public BroadcastCategoryRepository(ApplicationDbContext context)
+        {
+            this.context = context;
+        }
+
+        public void UpdateWithoutContextSave(BroadcastCategory cat)
+        {
+            context.Categories.Update(cat);
+        }
+
+        public int SaveChanges()
+        {
+            return context.SaveChanges();
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await context.SaveChangesAsync();
+        }
+    }
+
     public class BroadcastInfoRepository : IBroadcastInfoRepository
     {
         private readonly ApplicationDbContext context;
@@ -73,6 +100,8 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         const string titleProp = nameof(BroadcastInfoKeyword.Keyword);
 
+        public IEnumerable<BroadcastInfo> Broadcasts { get => this.context.Broadcasts; }
+
         //[Benchmark(Description = "BroadcastInfoRepository.Search")]
         public IEnumerable<BroadcastInfo> Search(string query)
         {
@@ -83,6 +112,16 @@ namespace Parus.Infrastructure.DLA.Repositories
                 .ThenInclude(x => x.Tags)
                 .Where(x => EF.Functions.Like(x.Keyword, $"%{query}%"))
                 .Select(x => x.BroadcastInfo);
+        }
+
+        public void UpdateWithoutContextSave(BroadcastInfo user)
+        {
+            context.Broadcasts.Update(user);
+        }
+
+        public int SaveChanges()
+        {
+            return context.SaveChanges();
         }
     }
 }

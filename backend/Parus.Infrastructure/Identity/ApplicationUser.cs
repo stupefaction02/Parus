@@ -63,7 +63,7 @@ namespace Parus.Infrastructure.Identity
             return this.TwoFactorEnabled;
         }
 
-        public byte GetIndexingRule()
+        public byte GetIndexingStatus()
         {
             return IndexingRule;
         }

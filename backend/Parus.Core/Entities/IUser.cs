@@ -14,7 +14,7 @@
 
         public bool GetTwoFactorEnabled();
 
-        byte GetIndexingRule();
+        byte GetIndexingStatus();
 
         string GetAvatarPath();
         void SetIndexingRule(IndexingRule rule);

@@ -1,5 +1,6 @@
 ﻿using Parus.Core.Entities;
 using Parus.Core.Interfaces.Services;
+using Parus.Core.Services.ElasticSearch.Indexing;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,11 +8,10 @@ namespace Parus.Core.Services.ElasticSearch
 {
     public class ElasticSearchService : ISearchingService
     {
-        private readonly ElasticSearchEngine engine;
+        private readonly ElasticIndexingEngine engine;
 
-        public ElasticSearchService(ElasticSearchEngine engine)
+        public ElasticSearchService()
         {
-            this.engine = engine;
         }
 
         public int CountBroadcastsByTitleTags(string query)

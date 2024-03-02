@@ -16,8 +16,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System.Linq;
 using System;
-using Parus.Core.Services.ElasticSearch;
 using Microsoft.Identity.Client;
+using Parus.WebUI.Services;
+using Parus.Core.Services.ElasticSearch.Indexing;
+using Parus.Core.Services.ElasticSearch;
+using Parus.Core.Interfaces.Services;
 
 namespace Parus.WebUI.Extensions
 {
@@ -148,28 +151,12 @@ namespace Parus.WebUI.Extensions
                 .AddDefaultTokenProviders();
         }
 
-        public static void AddElastic(this IServiceCollection services, 
-            IConfiguration configuration)
+        public static void AddElastic(this IServiceCollection services, IConfiguration configuration)
         {
-            // configuration for configure elastic
-            ElasticSearchEngine engine = new ElasticSearchEngine(cdnUrl: configuration["CDN:AvasPath"],
-                GetUsers, GetBroadcasts);
+            // configuration to configure engine
+            ElasticSearchService engine = new ElasticSearchService();
 
-            services.AddSingleton<ElasticSearchEngine>(engine);
-
-            IUserRepository GetUsers()
-            {
-                ServiceProvider provider = services.BuildServiceProvider();
-
-                return provider.GetService<IUserRepository>();
-            }
-
-            IBroadcastInfoRepository GetBroadcasts()
-            {
-                ServiceProvider provider = services.BuildServiceProvider();
-
-                return provider.GetService<IBroadcastInfoRepository>();
-            } 
+            services.AddSingleton<ISearchingService>(engine);
         }
     }
 }

@@ -12,49 +12,37 @@ namespace Parus.Core.Services.ElasticSearch
     {
         static private Socket socket;
 
-        HttpClient client;
+        HttpClient _client;
 
         Uri uri;
         public ElasticTransport(string uri, (string, string) auth)
         {
-            var handler = new HttpClientHandler();
+            HttpClientHandler handler = new HttpClientHandler();
 
-            // basically force program to trust the certificate that elastic sent
-           // handler.ServerCertificateCustomValidationCallback +=
-         //       (sender, cert, chain, sslPolicyErrors) => true;
+            _client = new HttpClient(handler);
 
-            this.client = new HttpClient(handler);
+            //_client.Timeout = new TimeSpan(0, 0, 5);
 
             this.uri = new Uri(uri);
 
-            this.client.BaseAddress = this.uri;
+            _client.BaseAddress = this.uri;
 
-            this.client.DefaultRequestHeaders.Authorization =
+            _client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue(auth.Item1, auth.Item2);
 
-
             //this.client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-        }
-
-        public void Connect()
-        {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            socket.Connect(IPAddress.Loopback, 9200);
-
-            socket.Blocking = true;
         }
 
         public async Task<(Stream, HttpStatusCode)> GetContentAsync(string uri)
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
-
+                
                 Method = HttpMethod.Get,
-                RequestUri = new Uri(client.BaseAddress + uri)
+                RequestUri = new Uri(_client.BaseAddress + uri)
             };
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request);
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return (await responseMessage.Content.ReadAsStreamAsync(), responseMessage.StatusCode);
         }
@@ -64,10 +52,10 @@ namespace Parus.Core.Services.ElasticSearch
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri(client.BaseAddress + uri)
+                RequestUri = new Uri(_client.BaseAddress + uri)
             };
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request);
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return responseMessage.StatusCode;
         }
@@ -77,11 +65,25 @@ namespace Parus.Core.Services.ElasticSearch
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Put,
-                RequestUri = new Uri(client.BaseAddress + uri),
+                RequestUri = new Uri(_client.BaseAddress + uri),
                 Content = new StringContent(data, Encoding.UTF8, "application/json")
             };
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request);
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
+
+            return responseMessage.StatusCode;
+        }
+
+        public async Task<HttpStatusCode> PostStringAsync(string uri, string data)
+        {
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(_client.BaseAddress + uri),
+                Content = new StringContent(data, Encoding.UTF8, "application/json")
+            };
+
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return responseMessage.StatusCode;
         }
@@ -91,11 +93,11 @@ namespace Parus.Core.Services.ElasticSearch
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri(client.BaseAddress + uri),
+                RequestUri = new Uri(_client.BaseAddress + uri),
                 Content = new StringContent(data, Encoding.UTF8, "application/json")
             };
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request);
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return responseMessage.StatusCode;
         }
@@ -105,10 +107,10 @@ namespace Parus.Core.Services.ElasticSearch
             HttpRequestMessage request = new HttpRequestMessage
             {
                 Method = HttpMethod.Put,
-                RequestUri = new Uri(client.BaseAddress + uri)
+                RequestUri = new Uri(_client.BaseAddress + uri)
             };
 
-            HttpResponseMessage responseMessage = await client.SendAsync(request);
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return responseMessage.StatusCode;
         }

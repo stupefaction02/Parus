@@ -107,6 +107,13 @@ namespace Parus.Backend.Controllers
         }
 
         [HttpGet]
+        [Route("api/test/test1")]
+		public object Test1()
+		{
+			return "Test";
+		}
+
+        [HttpGet]
         [Route("api/test/seed1")]
         public IActionResult Seed1([FromServices] ApplicationDbContext context)
         {
@@ -114,24 +121,44 @@ namespace Parus.Backend.Controllers
 
 			context.SaveChanges();
 
-            string[] names = new string[6]
+            string[] names = new string[12]
 			{
 				"athleanx_com",
 				"SuperIvan",
 				"TwickyEwe",
 				"Milky",
 				"Fredrick_Hudsen",
-				"ADC_Vr"
+				"ADC_Vr",
+				"Oleg Kashin",
+				"Michael Svetoff",
+				"Putin",
+				"Lomonosoff",
+				"Van Darkholme",
+				"Gay Website"
 			};
 
-            string[] titles = new string[6]
+            string[] titles = new string[20]
             {
                 "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
                 "🦐FIRST TIME INSCRYPTION!!! LEGGOOO! ❤️BLOWHOLE BLAST RESTOCKED -> !GG / !Merch 《VTuber》!socials",
                 "Weekly Dev Stream! | !merch",
                 "SPOOKTEMBER DAY 4: I'M BACK! DRAMA + SPOOKS + GAMING | !TTS !advgg | !figure |",
                 "Yay a new update in Genshin!!",
-                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad"
+                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad",
+				"Bondage? Gay website?",
+				"Stick your finger in my ass",
+				"AAAAAAAAAAAAAAAAaahhhh",
+				"Fuck you",
+				"Vse donlzhny zigovat",
+				"-_-",
+				"ayyyy lmaoo",
+				"Bratishkaaa",
+				"Golubaya luna",
+				"Goluuuubaya",
+				"5:5",
+				"Watching 0_0",
+				"Batynya batyna batyna cumbutt",
+				"P-P-P-P-P Z-z-z-z-z-z-z"
             };
 
 			string[] previews = new string[6]
@@ -147,7 +174,7 @@ namespace Parus.Backend.Controllers
 			var broadcasts = new List<BroadcastInfo>();
 			var keywords = new List<BroadcastInfoKeyword>();
 
-			for (int i = 1; i < 1000; i++)
+			for (int i = 1; i < 15000; i++)
 			{
 				int cat = (new Random()).Next(1, 5);
 				int tag = (new Random()).Next(2, 4);
@@ -176,14 +203,6 @@ namespace Parus.Backend.Controllers
 				};
 
 				broadcasts.Add(broadcast1);
-
-				keywords.Add(
-					new BroadcastInfoKeyword
-					{
-						BroadcastInfo = broadcast1,
-						Keyword = $"{title} {preview} {tag1.Name} {tag2.Name} {cat1.Name}"
-					}
-                );
 
                 Console.WriteLine($"Broadcast info {name} created!");
             }

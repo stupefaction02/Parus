@@ -29,6 +29,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyUser", "DummyUser\Dumm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel", "ControlPanel\ControlPanel.csproj", "{A000E61A-8D2A-4EB3-BE2E-C890C2F34006}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Indexing", "Indexing", "{C5D32BD9-9F51-4316-8FA4-3C4564804CED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parus.IndexingService", "Parus.IndexingService\Parus.IndexingService.csproj", "{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,10 @@ Global
 		{A000E61A-8D2A-4EB3-BE2E-C890C2F34006}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A000E61A-8D2A-4EB3-BE2E-C890C2F34006}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A000E61A-8D2A-4EB3-BE2E-C890C2F34006}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,6 +96,7 @@ Global
 		{0F199DC7-FE3D-4068-925B-7448DF38F7C4} = {28049071-93B1-4C77-9F8E-948388D0BCC3}
 		{39F01041-4AEC-4092-913C-E004C666AA9F} = {D3E031A3-A59C-417E-8848-15D18E71E9AF}
 		{A000E61A-8D2A-4EB3-BE2E-C890C2F34006} = {28049071-93B1-4C77-9F8E-948388D0BCC3}
+		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC} = {C5D32BD9-9F51-4316-8FA4-3C4564804CED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD49B428-22A9-4B04-91A7-C84C58B54C78}

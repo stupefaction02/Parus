@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Parus.Core.Entities;
+using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.DLA
 {
@@ -37,19 +38,20 @@ namespace Parus.Infrastructure.DLA
 
         #endregion
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             //// move to config
             //int titeLength = 250;
             //modelBuilder.Entity<BroadcastInfo>().Property(x => x.Title).IsRequired().HasMaxLength(titeLength);
 
-            ConfigureRelations(modelBuilder);
+            builder.Entity<BroadcastInfo>()
+                .Property(x => x.IndexingStatus)
+                .HasDefaultValue(1);
+
+            builder.Entity<BroadcastCategory>()
+                .Property(x => x.IndexingStatus)
+                .HasDefaultValue(1);
         }
-
-		private void ConfigureRelations(ModelBuilder modelBuilder)
-		{
-
-		}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
