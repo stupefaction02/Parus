@@ -13,26 +13,26 @@ namespace Parus.Core.Services.ElasticSearch
 {
     public partial class ElasticSearchService
     {
-        public class SearchLiteResult
+        public class SearchLiteResult<T>
         {
             [JsonPropertyName("hits")]
-            public SearchResultHits Hits { get; set; }
+            public SearchResultHits<T> Hits { get; set; }
         }
 
-        public class SearchResultHits
+        public class SearchResultHits<T>
         {
             [JsonPropertyName("total")]
             public SearchLiteResultHitsTotal Total { get; set; }
 
             [JsonPropertyName("hits")]
-            public IEnumerable<SearchResultHit> Hits { get; set; }
+            public IEnumerable<SearchResultHit<T>> Hits { get; set; }
         }
 
-        public class SearchResultHit
+        public class SearchResultHit<T>
         {
             //BroadcastInfoElasticDto
             [JsonPropertyName("_source")]
-            public BroadcastInfoElasticDto Source { get; set; }
+            public T Source { get; set; }
         }
 
         public class SearchLiteResultHitsTotal
@@ -42,12 +42,12 @@ namespace Parus.Core.Services.ElasticSearch
         }
     }
 
-    public struct BroadcastResult 
+    public struct Result 
     {
-        IEnumerable<BroadcastInfoElasticDto> Items;
+        public object Items;
         public int TotalCount;
 
-        public BroadcastResult(int totalCount, IEnumerable<BroadcastInfoElasticDto> items) : this()
+        public Result(int totalCount, object items) : this()
         {
             TotalCount = totalCount;
             Items = items;
@@ -56,9 +56,9 @@ namespace Parus.Core.Services.ElasticSearch
 
     public partial class ElasticSearchService
     {
-        private static string searchPath = "_search?q=last_name:";
+        private static string searchUsernamePath = "_search?q=username:";
         private static string searchTitlePath = "_search?q=title:";
-        private static string searchUserPath = "_search?q=username:";
+        private static string searchCatNamePath = "_search?q=name:";
 
         private readonly string elasticHost;
         private readonly ElasticTransport _transport;
@@ -68,22 +68,41 @@ namespace Parus.Core.Services.ElasticSearch
             this._transport = transport;
         }
 
-        public async Task<BroadcastResult> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
+        public async Task<Result> LiteSearch<T>(string url)
         {
-            // TODO: Caching :<
-            string url = searchTitlePath + query + $"&size={count}&from={start}";
-
             (HttpStatusCode, string) result = await _transport.GetStringAsync(url);
 
             if (result.Item1 == HttpStatusCode.OK)
             {
-                SearchLiteResult r = JsonSerializer.Deserialize<SearchLiteResult>(result.Item2);
+                var r = JsonSerializer.Deserialize
+                    <SearchLiteResult<T>>(result.Item2);
 
-                return new BroadcastResult(r.Hits.Total.Value,
-                    r.Hits.Hits.Select(x => x.Source));
+                return new Result(r.Hits.Total.Value, r.Hits.Hits.Select(x => x.Source));
             }
 
-            return new BroadcastResult();
+            return new Result();
+        }
+
+        public async Task<Result> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
+        {
+            // TODO: Caching :<
+            string url = searchTitlePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearch<BroadcastInfoElasticDto>(url);
+        }
+
+        public async Task<Result> SearchUsersByUsernameAsync(string query, int start, int count)
+        {
+            string url = searchUsernamePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearch<UserElasticDto>(url);
+        }
+
+        public async Task<Result> SearchCategoriesByNameAsync(string query, int start, int count)
+        {
+            string url = searchCatNamePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearch<BroadcastCategory>(url);
         }
     }
 }

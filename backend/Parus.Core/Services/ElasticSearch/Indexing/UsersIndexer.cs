@@ -12,7 +12,7 @@ using System.Threading.Channels;
 
 namespace Parus.Core.Services.ElasticSearch.Indexing
 {
-    public class UserToJson
+    public class UserElasticDto
     {
         [JsonPropertyName("username")]
         public string Username { get; set; }
@@ -88,7 +88,7 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
             await AddIndex(indexName);
 
-            UserToJson userData = new UserToJson
+            UserElasticDto userData = new UserElasticDto
             {
                 Username = user.GetUsername(),
                 Description = "aaaa",

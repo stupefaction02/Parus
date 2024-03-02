@@ -1,16 +1,5 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Parus.Core.Interfaces;
-using Parus.Core.Services.Localization;
-using Microsoft.AspNetCore.Routing;
-using System;
-using Parus.Core.Interfaces.Services;
 using Parus.Core.Services.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
-using Parus.Core.Entities;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -32,24 +21,24 @@ WebApplication app = builder.Build();
 
 app.UseHttpsRedirection();
 
-app.MapGet("/{q}", async (string q, [FromServices] ElasticSearchService searchingService) =>
+app.MapGet("/{q}", async (string q, int page, int size, 
+    [FromServices] ElasticSearchService searchingService) =>
 {
-    var broadcasts = await searchingService.SearchBroadcastsByTitleTagsAsync(q, 0, 8);
-    //int broadcastsTotal = searchingService.CountBroadcastsByTitleTags(q);
+    int start = page == 0 ? 1 : size * (page - 1);
+    int count = size == 0 ? 5 : size;
 
-    //IEnumerable<BroadcastCategory> categories = searchingService.SearchCategoryByName(q, 0, 5);
-    //int categoriesTotal = searchingService.CountCategoriesByName(q);
+    var broadcasts = await searchingService.SearchBroadcastsByTitleTagsAsync(q, start, count);
+    var users = await searchingService.SearchUsersByUsernameAsync(q, start, count);
+    var categories = await searchingService.SearchCategoriesByNameAsync(q, start, count);
 
-    //IEnumerable<IUser> users = searchingService.SearchUsersByName(q, 0, 5);
-    //int usersTotal = searchingService.CountUsersByName(q);
-
-    //var ret = new 
-    //{ 
-    //    broadcast = broadcasts,
-    //    broadcast_total = broadcastsTotal,
-    //};
-
-    //return ret;
+    return new { 
+        broadcast = broadcasts.Items,
+        broadcastTotal = broadcasts.TotalCount,
+        user = users.Items,
+        usersTotal = users.TotalCount,
+        categories = categories.Items,
+        categoriesTotal = categories.TotalCount
+    };
 });
 
 app.Run();

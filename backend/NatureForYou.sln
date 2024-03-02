@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyUser", "DummyUser\Dumm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanel", "ControlPanel\ControlPanel.csproj", "{A000E61A-8D2A-4EB3-BE2E-C890C2F34006}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Indexing", "Indexing", "{C5D32BD9-9F51-4316-8FA4-3C4564804CED}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Searching", "Searching", "{C5D32BD9-9F51-4316-8FA4-3C4564804CED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.IndexingService", "Parus.IndexingService\Parus.IndexingService.csproj", "{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC}"
 EndProject
@@ -38,6 +38,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{EC398582-35D2-47AF-AC4B-F3862210C617}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parus.Searching", "Parus.Searching\Parus.Searching.csproj", "{A6D181AC-888A-4FCE-86F9-917E4ACE1D04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B439DC10-F669-4193-B4E4-1B76C7BD4AAD}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,7 +114,7 @@ Global
 		{39F01041-4AEC-4092-913C-E004C666AA9F} = {D3E031A3-A59C-417E-8848-15D18E71E9AF}
 		{A000E61A-8D2A-4EB3-BE2E-C890C2F34006} = {28049071-93B1-4C77-9F8E-948388D0BCC3}
 		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC} = {C5D32BD9-9F51-4316-8FA4-3C4564804CED}
-		{A6D181AC-888A-4FCE-86F9-917E4ACE1D04} = {AC422BAB-5E98-4607-9C96-F28816E491D6}
+		{A6D181AC-888A-4FCE-86F9-917E4ACE1D04} = {C5D32BD9-9F51-4316-8FA4-3C4564804CED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD49B428-22A9-4B04-91A7-C84C58B54C78}
