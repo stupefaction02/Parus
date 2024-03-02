@@ -154,9 +154,9 @@ namespace Parus.WebUI.Extensions
         public static void AddElastic(this IServiceCollection services, IConfiguration configuration)
         {
             // configuration to configure engine
-            ElasticSearchService engine = new ElasticSearchService();
+            //ElasticSearchService engine = new ElasticSearchService();
 
-            services.AddSingleton<ISearchingService>(engine);
+            //services.AddSingleton<ISearchingService>(engine);
         }
     }
 }

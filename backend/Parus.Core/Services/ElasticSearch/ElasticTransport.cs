@@ -14,8 +14,8 @@ namespace Parus.Core.Services.ElasticSearch
 
         HttpClient _client;
 
-        Uri uri;
-        public ElasticTransport(string uri, (string, string) auth)
+        Uri host;
+        public ElasticTransport(string host, (string, string) auth)
         {
             HttpClientHandler handler = new HttpClientHandler();
 
@@ -23,9 +23,9 @@ namespace Parus.Core.Services.ElasticSearch
 
             //_client.Timeout = new TimeSpan(0, 0, 5);
 
-            this.uri = new Uri(uri);
+            this.host = new Uri(host);
 
-            _client.BaseAddress = this.uri;
+            _client.BaseAddress = this.host;
 
             _client.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue(auth.Item1, auth.Item2);
@@ -72,6 +72,19 @@ namespace Parus.Core.Services.ElasticSearch
             HttpResponseMessage responseMessage = await _client.SendAsync(request);
 
             return responseMessage.StatusCode;
+        }
+
+        public async Task<(HttpStatusCode, string)> GetStringAsync(string uri)
+        {
+            HttpRequestMessage request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(_client.BaseAddress + uri)
+            };
+
+            HttpResponseMessage responseMessage = await _client.SendAsync(request);
+
+            return (responseMessage.StatusCode, await responseMessage.Content.ReadAsStringAsync());
         }
 
         public async Task<HttpStatusCode> PostStringAsync(string uri, string data)

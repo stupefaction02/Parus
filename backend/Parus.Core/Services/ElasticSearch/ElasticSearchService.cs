@@ -3,80 +3,87 @@ using Parus.Core.Interfaces.Services;
 using Parus.Core.Services.ElasticSearch.Indexing;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Parus.Core.Services.ElasticSearch
 {
-    public class ElasticSearchService : ISearchingService
+    public partial class ElasticSearchService
     {
-        private readonly ElasticIndexingEngine engine;
-
-        public ElasticSearchService()
+        public class SearchLiteResult
         {
+            [JsonPropertyName("hits")]
+            public SearchResultHits Hits { get; set; }
         }
 
-        public int CountBroadcastsByTitleTags(string query)
+        public class SearchResultHits
         {
-            throw new System.NotImplementedException();
+            [JsonPropertyName("total")]
+            public SearchLiteResultHitsTotal Total { get; set; }
+
+            [JsonPropertyName("hits")]
+            public IEnumerable<SearchResultHit> Hits { get; set; }
         }
 
-        public int CountCategoriesByName(string query)
+        public class SearchResultHit
         {
-            throw new System.NotImplementedException();
+            //BroadcastInfoElasticDto
+            [JsonPropertyName("_source")]
+            public BroadcastInfoElasticDto Source { get; set; }
         }
 
-        public int CountUsersByName(string q)
+        public class SearchLiteResultHitsTotal
         {
-            throw new System.NotImplementedException();
+            [JsonPropertyName("value")]
+            public int Value { get; set; }
+        }
+    }
+
+    public struct BroadcastResult 
+    {
+        IEnumerable<BroadcastInfoElasticDto> Items;
+        public int TotalCount;
+
+        public BroadcastResult(int totalCount, IEnumerable<BroadcastInfoElasticDto> items) : this()
+        {
+            TotalCount = totalCount;
+            Items = items;
+        }
+    }
+
+    public partial class ElasticSearchService
+    {
+        private static string searchPath = "_search?q=last_name:";
+        private static string searchTitlePath = "_search?q=title:";
+        private static string searchUserPath = "_search?q=username:";
+
+        private readonly string elasticHost;
+        private readonly ElasticTransport _transport;
+
+        public ElasticSearchService(ElasticTransport transport)
+        {
+            this._transport = transport;
         }
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q, int count)
+        public async Task<BroadcastResult> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
         {
-            throw new System.NotImplementedException();
-        }
+            // TODO: Caching :<
+            string url = searchTitlePath + query + $"&size={count}&from={start}";
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q)
-        {
-            throw new System.NotImplementedException();
-        }
+            (HttpStatusCode, string) result = await _transport.GetStringAsync(url);
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string query, int start, int count)
-        {
-            throw new System.NotImplementedException();
-        }
+            if (result.Item1 == HttpStatusCode.OK)
+            {
+                SearchLiteResult r = JsonSerializer.Deserialize<SearchLiteResult>(result.Item2);
 
-        public IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int count)
-        {
-            throw new System.NotImplementedException();
-        }
+                return new BroadcastResult(r.Hits.Total.Value,
+                    r.Hits.Hits.Select(x => x.Source));
+            }
 
-        public IEnumerable<BroadcastCategory> SearchCategoryByName(string q)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int start, int count)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<Tag> SearchTagsByName(string q, int count)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IQueryable<IUser> SearchUsersByName(string query)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<IUser> SearchUsersByName(string query, int count)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<IUser> SearchUsersByName(string query, int start, int count)
-        {
-            throw new System.NotImplementedException();
+            return new BroadcastResult();
         }
     }
 }
