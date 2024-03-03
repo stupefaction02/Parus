@@ -30,11 +30,11 @@
                 @foreach (var broadcast in Model.Broadcasts)
                 {
                     <div class="broadcast_block">
-                        <a href="@(broadcast.Ref)">
+                        <a href="@(broadcast.Username)">
                             <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
                         </a>
                         <div class="broadcast_block_info">
-                            <a href="@(broadcast.Ref)" style="display: flex; align-items: center;">
+                            <a href="@(broadcast.Username)" style="display: flex; align-items: center;">
                                 <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
 
                                 <div style="margin-top: 12px; width: 85%">
@@ -44,7 +44,7 @@
                             </a>
 
                             <div style="padding-left: 50px; margin-top: -8px; ">
-                                <label class="broadcast_block_info_category">@broadcast.Category.Name</label>
+                                <label class="broadcast_block_info_category">@broadcast.CategoryName</label>
 
                                 <div class="broadcast_block_info_tags">
 

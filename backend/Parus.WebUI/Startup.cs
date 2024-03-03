@@ -72,7 +72,7 @@ namespace Parus.WebUI
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<ISearchingService, ElasticSearchService>();
+            //services.AddTransient<ISearchingService, MSSQLSearchingService>();
 
             services.AddElastic(Configuration);
         }

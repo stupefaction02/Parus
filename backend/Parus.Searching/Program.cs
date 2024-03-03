@@ -27,17 +27,14 @@ app.MapGet("/{q}", async (string q, int page, int size,
     int start = page == 0 ? 1 : size * (page - 1);
     int count = size == 0 ? 5 : size;
 
-    var broadcasts = await searchingService.SearchBroadcastsByTitleTagsAsync(q, start, count);
-    var users = await searchingService.SearchUsersByUsernameAsync(q, start, count);
-    var categories = await searchingService.SearchCategoriesByNameAsync(q, start, count);
+    var broadcasts = await searchingService.SearchBroadcastsByTitleTagsJsonAsync(q, start, count);
+    var users = await searchingService.SearchUsersByUsernameJsonAsync(q, start, count);
+    var categories = await searchingService.SearchCategoriesByNameJsonAsync(q, start, count);
 
     return new { 
-        broadcast = broadcasts.Items,
-        broadcastTotal = broadcasts.TotalCount,
-        user = users.Items,
-        usersTotal = users.TotalCount,
-        categories = categories.Items,
-        categoriesTotal = categories.TotalCount
+        broadcast = broadcasts,
+        users = users,
+        categories = categories,
     };
 });
 

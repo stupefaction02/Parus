@@ -12,25 +12,9 @@ using System.Threading.Channels;
 
 namespace Parus.Core.Services.ElasticSearch.Indexing
 {
-    public class UserElasticDto
-    {
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
-
-        [JsonPropertyName("avapath")]
-        public string Avapath { get; set; }
-
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
-
-        [JsonPropertyName("subCountsStr")]
-        public int SubCountsStr { get; set; }
-    }
-
     public class UsersIndexer : Indexer
     {
         private readonly string _cdnAvasFolderPath;
-        private readonly ElasticTransport _transport;
         private readonly IUserRepository repository;
         private static string _indexPrefix = "users_";
         private FirstLetterIndexingRule _indexingRule = new FirstLetterIndexingRule(_indexPrefix);

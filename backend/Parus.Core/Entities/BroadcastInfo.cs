@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -17,7 +18,19 @@ namespace Parus.Core.Entities
         public int Id { get; set; }
     }
 
-    public class BroadcastInfoElasticDto
+    // For all search results, for ElasticDto and normal MSSQL output (our model BroadcastInfo)
+    public interface IBroadcastsInfoSearchResult
+    {
+        int Id { get; set; }
+        string Username { get; set; }
+        string CategoryName { get; set; }
+        string AvatarPic { get; set; }
+        string Preview { get; set; }
+        string Title { get; set; }
+        List<Tag> Tags { get; set; }
+    }
+
+    public class BroadcastInfoElasticDto : IBroadcastsInfoSearchResult
     {
         public int Id { get; set; }
 
@@ -25,7 +38,7 @@ namespace Parus.Core.Entities
         public string Username { get; set; }
 
         [JsonPropertyName("catId")]
-        public string CategoryId { get; set; }
+        public string CategoryName { get; set; }
 
         [JsonPropertyName("ava")]
         public string AvatarPic { get; set; }
@@ -40,7 +53,7 @@ namespace Parus.Core.Entities
         public List<Tag> Tags { get; set; }
     }
 
-    public class BroadcastInfo
+    public class BroadcastInfo : IBroadcastsInfoSearchResult
     {
         /// <summary>
         /// ref: <see cref="Parus.Core.Entities.IndexingRule"/>
@@ -66,6 +79,9 @@ namespace Parus.Core.Entities
         public List<Tag> Tags { get; set; }
 
         public BroadcastCategory Category { get; set; }
+
+        [NotMapped]
+        public string CategoryName { get; set; }
 
         //public byte IndexingStatus { get; set; }
 

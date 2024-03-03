@@ -1,6 +1,31 @@
-﻿namespace Parus.Core.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Parus.Core.Entities
 {
-	public interface IUser
+    public interface IUserSearchResult
+    {
+        string Username { get; set; }
+        string Avapath { get; set; }
+        string Description { get; set; }
+        int SubCountsStr { get; set; }
+    }
+
+    public class UserElasticDto : IUserSearchResult
+    {
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+
+        [JsonPropertyName("avapath")]
+        public string Avapath { get; set; }
+
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonPropertyName("subCountsStr")]
+        public int SubCountsStr { get; set; }
+    }
+
+    public interface IUser// : IUserSearchResult
     {
         public string GetUsername();
 

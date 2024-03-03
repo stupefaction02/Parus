@@ -32,7 +32,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
     public class AllUsersSearchResultContext : SearchResultContext
     {
-        public IEnumerable<IUser> Users { get; set; }
+        public IEnumerable<IUserSearchResult> Users { get; set; }
 
         public const int PAGE_SIZE = 12;
 
@@ -72,7 +72,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
     {
         public const int PAGE_SIZE = 12;
 
-        public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
+        public IEnumerable<IBroadcastsInfoSearchResult> Broadcasts { get; set; }
 
         public AllBroadcastSearchResultContext(string query) : base(query)
         {

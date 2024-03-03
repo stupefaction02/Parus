@@ -1,4 +1,5 @@
 ﻿using Parus.Core.Entities;
+using Parus.Common.Utils;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services.ElasticSearch.Indexing;
 using System.Collections.Generic;
@@ -45,7 +46,13 @@ namespace Parus.Core.Services.ElasticSearch
     public struct Result 
     {
         public object Items;
+        public string Json;
         public int TotalCount;
+
+        public Result(string json) : this()
+        {
+            Json = json;
+        }
 
         public Result(int totalCount, object items) : this()
         {
@@ -60,7 +67,6 @@ namespace Parus.Core.Services.ElasticSearch
         private static string searchTitlePath = "_search?q=title:";
         private static string searchCatNamePath = "_search?q=name:";
 
-        private readonly string elasticHost;
         private readonly ElasticTransport _transport;
 
         public ElasticSearchService(ElasticTransport transport)
@@ -78,6 +84,24 @@ namespace Parus.Core.Services.ElasticSearch
                     <SearchLiteResult<T>>(result.Item2);
 
                 return new Result(r.Hits.Total.Value, r.Hits.Hits.Select(x => x.Source));
+            }
+
+            return new Result();
+        }
+
+        // ElasticSearch json to out json
+        private string JsonToDtoJson(string json)
+        {
+            return JsonUtils.FormatElasticSearchResultJson(json);
+        }
+
+        public async Task<Result> LiteSearchJson(string url)
+        {
+            (HttpStatusCode, string) result = await _transport.GetStringAsync(url);
+
+            if (result.Item1 == HttpStatusCode.OK)
+            {            
+                return new Result( JsonToDtoJson(result.Item2) );
             }
 
             return new Result();
@@ -103,6 +127,29 @@ namespace Parus.Core.Services.ElasticSearch
             string url = searchCatNamePath + query + $"&size={count}&from={start}";
 
             return await LiteSearch<BroadcastCategory>(url);
+        }
+
+
+        public async Task<Result> SearchBroadcastsByTitleTagsJsonAsync(string query, int start, int count)
+        {
+            // TODO: Caching :<
+            string url = searchTitlePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearchJson(url);
+        }
+
+        public async Task<Result> SearchUsersByUsernameJsonAsync(string query, int start, int count)
+        {
+            string url = searchUsernamePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearchJson(url);
+        }
+
+        public async Task<Result> SearchCategoriesByNameJsonAsync(string query, int start, int count)
+        {
+            string url = searchCatNamePath + query + $"&size={count}&from={start}";
+
+            return await LiteSearchJson(url);
         }
     }
 }

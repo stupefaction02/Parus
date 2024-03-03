@@ -14,7 +14,7 @@ using Org.BouncyCastle.Bcpg.OpenPgp;
 
 namespace Parus.WebUI.Services
 {
-    public class MSSQLSearchingService : ISearchingService
+    public class MSSQLSearchingService //: ISearchingService
     {
         private readonly IBroadcastInfoRepository broadcasts;
         private readonly ApplicationIdentityDbContext usersdentityCtx;
