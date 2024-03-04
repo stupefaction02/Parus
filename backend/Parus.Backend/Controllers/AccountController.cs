@@ -39,46 +39,57 @@ namespace Parus.Backend.Controllers
 
             ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == User.Identity.Name);
 
-            TwoFactoryEmailVerificationCode addedCode = (TwoFactoryEmailVerificationCode)context
+            TwoFactoryEmailVerificationCode addedCode = context
                 .TwoFactoryVerificationCodes
                     .SingleOrDefault(x => x.UserId == user.GetId());
 
+            // Too overheading but more random
+            int code = Core.Utils.CodesUtils.RandomizeEmailVerificatioCode();
+
+            EmailResponse emailResponse;
             // if alread exists
+            // we udpate existed code
+            // more protection from abusive users that can create many tokens and flood the database
             if (addedCode != null)
             {
-                bool expired = false;
+                addedCode.Code = code;
 
-                // exceptional case, expired code must've been already deleted
-                if (expired)
+                // TODO: update expire date too
+                context.TwoFactoryVerificationCodes.Update(addedCode);
+
+                if ((await context.SaveChangesAsync()) > 0)
                 {
-                    // here we must lock thread 
-                    context.TwoFactoryVerificationCodes.Remove(user.TwoFAEmailVerificationCode);
-
-                    // proceed to create new one
+                    emailResponse = await SendVerificationEmail(emailService, user);
+                    if (emailResponse.Success)
+                    {
+                        Console.WriteLine($"{user.UserName} already has a token. Updating existing code... code={code}");
+                        return Accepted($"{user.UserName} already has a token.");
+                    }
                 }
-                // otherwise user will user old code
-                else { return Accepted($"{user.UserName} already has a token."); }
-            }
 
-            // Too overheading but more random
-            int code = Parus.Core.Utils.CodesUtils.RandomizeEmailVerificatioCode();
+                return StatusCode(500);
+            }
 
             context.TwoFactoryVerificationCodes
                 .Add(new TwoFactoryEmailVerificationCode { Code = code, User = user, UserId = user.Id });
 
             Console.WriteLine($"Creating confirmation code with numbers {code} for user: {User.Identity.Name}");
 
-            string emailBody = "";
-            var emailResponse = await emailService.SendEmailAsync(user.Email, "Email Verification", emailBody);
-
+            emailResponse = await SendVerificationEmail(emailService, user);
             if (emailResponse.Success)
             {
                 context.SaveChanges();
 
-                return Json(CreateJsonSuccess());
+                return Json(JsonSuccess());
             }
 
             return Json(CreateJsonError(emailResponse.Mssage));
+        }
+
+        private async Task<EmailResponse> SendVerificationEmail(IEmailService emailService, ApplicationUser user)
+        {
+            string emailBody = "";
+            return await emailService.SendEmailAsync(user.Email, "Email Verification", emailBody);
         }
 
         [NonAction]
@@ -147,6 +158,7 @@ namespace Parus.Backend.Controllers
             var codeEntry = context.TwoFactoryVerificationCodes.SingleOrDefault
                 (x => x.UserId == user.GetId());
 
+            // TODO: Also add a checking if code has expired
             if (codeEntry == null)
             {
                 return NotFound(new { error = "Code is expired." });
@@ -227,7 +239,7 @@ namespace Parus.Backend.Controllers
                             Console.WriteLine($"2FA was enabled for user {appUser.GetUsername()}");
 
                             HttpContext.Response.StatusCode = 200;
-                            return Json(new { success = "Y" });
+                            return JsonSuccess();
                         }
                     }
                 }
@@ -277,7 +289,7 @@ namespace Parus.Backend.Controllers
                         await context.SaveChangesAsync();
 
                         HttpContext.Response.StatusCode = 200;
-                        return Json(new { success = "Y" });
+                        return JsonSuccess();
                     }
                 }
             }

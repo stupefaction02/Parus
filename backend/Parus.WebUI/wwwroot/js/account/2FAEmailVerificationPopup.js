@@ -1,3 +1,4 @@
+import { CURRENT_API_PATH } from "../config.js";
 import { GetCookie } from "../common.js";
 
 export class TwoFAEmailVerificationPopup {
@@ -70,7 +71,7 @@ export class TwoFAEmailVerificationPopup {
     }
 
     request_verificaion_code (username, forceCreate) { 
-        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
+        var url = CURRENT_API_PATH + "/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
         console.log(url);
 
         var self = this;
@@ -120,7 +121,7 @@ export class TwoFAEmailVerificationPopup {
     }
 
     send_code (code, onsuccess) {
-        var url = "https://localhost:5001/api/account/2FA/verify?code=" + code;
+        var url = CURRENT_API_PATH + "/account/2FA/verify?code=" + code;
 
         this.sendPost(url, onsuccess);
     }

@@ -67,7 +67,9 @@ namespace Parus.WebUI.Middlewares
 				{
 					httpContext.Request.Headers.Add("Authorization", "Bearer " + jwtCoockie);
 
-					AuthenticateResult result = (httpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)).Result;
+                    // if failes with method not found
+                    // https://stackoverflow.com/questions/76750686/method-not-found-boolean-microsoft-identitymodel-tokens-tokenutilities-isrecov
+                    AuthenticateResult result = (httpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)).Result;
 
 					if (result.Succeeded)
 					{

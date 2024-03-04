@@ -1,3 +1,5 @@
+import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
+
 export class LoginPopup {
     constructor(popupId) { //debugger
         var popup = document.getElementById(popupId);
@@ -52,7 +54,7 @@ export class LoginPopup {
             var password = passwordInput.value;
 
             if (username !== null && username !== "" && password !== null && password !== "") {
-                var url = "https://localhost:5001/api/account/login?username=" + username + "&password=" + password;
+                var url = CURRENT_API_PATH + "/account/login?username=" + username + "&password=" + password;
 
                 $.ajax({
                     url: url,

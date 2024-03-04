@@ -1,3 +1,4 @@
+import { CURRENT_API_PATH } from "../config.js";
 import { ValidateEmail } from "../common.js";
 import { TwoFAEmailVerificationPopup } from "./2FAEmailVerificationPopup.js";
 
@@ -35,6 +36,14 @@ export class TwoTFpopup {
         this.init_phase_3();
     }
 
+    enableButton(btn, enable) {
+        if (enable) {
+
+        } else {
+
+        }
+    }
+
     init_phase_3() {
         this.phase3panel = document.getElementById("qr_code_phase");
 
@@ -53,7 +62,7 @@ export class TwoTFpopup {
 
             var code = code_input.value;
 
-            var url = "https://localhost:5001/api/account/2FA/verify2FACode?code="
+            var url = CURRENT_API_PATH + "/account/2FA/verify2FACode?code="
                 + code + "&" + "customerKey=" + self.TwoFASecretKey;
 
             self.sendPost(url, function (e) {
@@ -65,6 +74,8 @@ export class TwoTFpopup {
                     self.phase3panel.style.setProperty("display", "none");
 
                     done_phase.style.setProperty("display", "block");
+
+                    self.enableButton(two_fa_enable_btn, true);
                 } else {
                     code_error.style.setProperty("display", "block");
                 }
@@ -119,7 +130,7 @@ export class TwoTFpopup {
 
         var this1 = this;
         this.ac_ep_continue_btn.onclick = function () {
-            var url = "https://localhost:5001/api/account/2FA/request2FAVerificationEmailCode";
+            var url = CURRENT_API_PATH + "/account/2FA/request2FAVerificationEmailCode";
 
             this1.sendPost(url, function (e) {
                 console.log(e.payload);
@@ -203,7 +214,7 @@ export class TwoFAdisablePopup {
         }
 
         btn.onclick = function () {
-            var url = "https://localhost:5001/api/account/2FA/disable?code=" + input.value;
+            var url = CURRENT_API_PATH + "/account/2FA/disable?code=" + input.value;
 
             self.sendPut(url, self.OnVerifyCodeSuccess);       
         }

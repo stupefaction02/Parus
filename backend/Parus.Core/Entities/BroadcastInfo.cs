@@ -99,7 +99,8 @@ namespace Parus.Core.Entities
                 Id = Id,
                 Username = Username,
                 Preview = Preview,
-                Tags = Tags
+                Tags = Tags,
+                CategoryName = Category == null ? "" : Category.Name
             };
         }
     }

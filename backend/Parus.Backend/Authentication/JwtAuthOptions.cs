@@ -1,8 +1,6 @@
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Parus.Backend.Authentication
 {

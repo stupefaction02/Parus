@@ -15,11 +15,11 @@ var onitemclick = function (e) {
 
 switchOption("security");
 
-for (var i = 0; i < account_sidebar.children.length; i++) { debugger
+for (var i = 0; i < account_sidebar.children.length; i++) { //debugger
     account_sidebar.children[i].onclick = onitemclick;
 }
 
-var currentOptionElem = new HTMLElement();
+var currentOptionElem = undefined;
 var currentOption = "security";
 function switchOption(option) {
 
@@ -39,8 +39,11 @@ function switchOption(option) {
     //debugger
     currentOption = option;
     selectedElem.style = "display";
-    currentOptionElem.style = "none";
-    currentOptionElem = selectedElem;
+
+    if (currentOptionElem !== undefined) {
+        currentOptionElem.style = "none";
+        currentOptionElem = selectedElem;
+    }
 }
 
 function sendPost(url, onsuccess) {
@@ -69,7 +72,7 @@ function InitSecurityOption() {
     var change_password_btn = document.getElementById("change_password_btn");
 
     var checkPassword = function (password, success) {
-        var url = "https://localhost:5001/api/account/checkPassword?password=" + password;
+        var url = CURRENT_API_PATH + "/account/checkPassword?password=" + password;
         var ret = false;
         sendGet(url, success);
     }
@@ -105,7 +108,7 @@ function InitSecurityOption() {
                             new_password_input_error.textContent = "Новый пароль не должен совпадать с предыдущим";
                         }
 
-                        var url = "https://localhost:5001/api/account/editPassword?newPassword=" + password;
+                        var url = CURRENT_API_PATH + "/account/editPassword?newPassword=" + password;
                         sendPost(url, function (e) {
                             let date = new Date(Date.now() + (60 * 60 * 1));
                             var exp = date.toUTCString();

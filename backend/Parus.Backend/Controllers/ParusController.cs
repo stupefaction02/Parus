@@ -15,9 +15,16 @@ namespace Parus.Backend.Controllers
 #endif
         }
 
-		protected object CreateJsonSuccess()
+        // TODO: Format appropriate to 'API Best Practices'
+		protected JsonResult JsonSuccess()
 		{
-			return new { success = "Y" };
+			return Json(new { success = "Y" });
 		}
+
+        // TODO: Format appropriate to 'API Best Practices'
+        protected JsonResult JsonFail()
+        {
+            return Json(new { success = "N" });
+        }
     }
 }

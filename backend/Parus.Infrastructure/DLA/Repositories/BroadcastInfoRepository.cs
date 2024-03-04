@@ -100,7 +100,7 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         const string titleProp = nameof(BroadcastInfoKeyword.Keyword);
 
-        public IEnumerable<BroadcastInfo> Broadcasts { get => this.context.Broadcasts; }
+        public IEnumerable<BroadcastInfo> Broadcasts { get => this.context.Broadcasts.Include(x => x.Category).Include(x => x.Tags); }
 
         //[Benchmark(Description = "BroadcastInfoRepository.Search")]
         public IEnumerable<BroadcastInfo> Search(string query)

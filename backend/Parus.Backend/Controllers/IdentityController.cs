@@ -391,7 +391,7 @@ namespace Parus.Backend.Controllers
 
             if (emailResponse.Success)
             {
-				return Json(CreateJsonSuccess());
+				return Json(JsonSuccess());
 			}
 
 			return Json(CreateJsonError(emailResponse.Mssage));
@@ -428,7 +428,7 @@ namespace Parus.Backend.Controllers
 
                     confrimCodesRepository.Remove(appUser.ConfirmCode);
 
-					return Json(CreateJsonSuccess());
+					return Json(JsonSuccess());
 				}
 
                 // if database has fucked up
