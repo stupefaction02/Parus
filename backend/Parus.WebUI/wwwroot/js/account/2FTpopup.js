@@ -3,7 +3,7 @@ import { ValidateEmail } from "../common.js";
 import { TwoFAEmailVerificationPopup } from "./2FAEmailVerificationPopup.js";
 
 export class TwoTFpopup {
-    constructor(popopElemId) {
+    constructor(popopElemId, onsuccess) {
         this.popup = document.getElementById(popopElemId);
 
         this.closeBtn = document.getElementById("enable_2tf_close_popup");
@@ -15,6 +15,8 @@ export class TwoTFpopup {
 
         this.phase2_inited = false;
         this.phase3_inited = false;
+
+        this.onsuccess = onsuccess;
     }
 
     switchToPhase2() {
@@ -34,14 +36,6 @@ export class TwoTFpopup {
         this.phase2panel.style.setProperty("display", "none");
 
         this.init_phase_3();
-    }
-
-    enableButton(btn, enable) {
-        if (enable) {
-
-        } else {
-
-        }
     }
 
     init_phase_3() {
@@ -75,7 +69,9 @@ export class TwoTFpopup {
 
                     done_phase.style.setProperty("display", "block");
 
-                    self.enableButton(two_fa_enable_btn, true);
+                    if (self.onsuccess !== undefined) {
+                        self.onsuccess(two_fa_enable_btn);
+                    }
                 } else {
                     code_error.style.setProperty("display", "block");
                 }

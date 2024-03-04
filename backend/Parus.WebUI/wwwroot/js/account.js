@@ -140,8 +140,9 @@ function InitSecurityOption() {
     if (enable_2ft_btn != null) {
         enable_2ft_btn.onclick = function () {
             if (!enable_2tf_popup_created) { //debugger
-
-                popup = new TwoTFpopup("enable_2tf_popup");
+                popup = new TwoTFpopup("enable_2tf_popup", function (btn) {
+                    debugger
+                });
 
                 enable_2tf_popup_created = true;
             }
