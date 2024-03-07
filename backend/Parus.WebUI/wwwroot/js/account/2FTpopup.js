@@ -48,7 +48,6 @@ export class TwoTFpopup {
         two_fa_enable_btn.disabled = false;
 
         var code_input = document.getElementById("code_input");
-        var code_error = document.getElementById("code_error");
 
         var self = this;
         two_fa_enable_btn.onclick = function () {
@@ -58,6 +57,16 @@ export class TwoTFpopup {
 
             var url = CURRENT_API_PATH + "/account/2FA/verify2FACode?code="
                 + code + "&" + "customerKey=" + self.TwoFASecretKey;
+
+            var onfail = function (e) {
+                if (e.status == 400) {
+                    var json = e.responseJSON;
+
+                    if (json.errorCode == "2FA_WRONG_QR_CODE") {
+                        self.showWrongQrCodeError(json.errorCode);
+                    }
+                }
+            }
 
             self.sendPost(url, function (e) {
                 //debugger
@@ -73,9 +82,11 @@ export class TwoTFpopup {
                         self.onsuccess(two_fa_enable_btn);
                     }
                 } else {
+                    var code_error = document.getElementById("code_error");
+
                     code_error.style.setProperty("display", "block");
                 }
-            });
+            }, onfail);
         }
 
         code_input.oninput = function () {
@@ -87,6 +98,14 @@ export class TwoTFpopup {
         }
 
         console.log("qr code panel is shown.");
+    }
+
+    showWrongQrCodeError() {
+        var code_error = document.getElementById("code_error");
+
+        code_error.textContent = "Неправильный код";
+
+        code_error.style.setProperty("display", "block");
     }
 
     init_phase_2() {
@@ -157,11 +176,12 @@ export class TwoTFpopup {
         this.popup.style.setProperty("display", "none");
     }
 
-    sendPost(url, onsuccess) {
+    sendPost(url, onsuccess, onfail) {
         $.ajax({
             url: url,
             method: 'post',
             success: onsuccess,
+            error: onfail,
             xhrFields: {
                 withCredentials: true
             },
@@ -171,7 +191,7 @@ export class TwoTFpopup {
 }
 
 export class TwoFAdisablePopup {
-    constructor(popopElemId) {
+    constructor(popopElemId, onsuccess) {
         this.popup = document.getElementById(popopElemId);
 
         this.closeBtn = document.getElementById("disable_2tf_close_popup");
@@ -183,6 +203,8 @@ export class TwoFAdisablePopup {
 
         this.phase2_inited = false;
         this.phase3_inited = false;
+
+        this.onsuccess = onsuccess;
     }
 
     Show() {
@@ -209,15 +231,35 @@ export class TwoFAdisablePopup {
             }
         }
 
+        var onfail = function (e) {
+            if (e.status == 400) {
+                var json = e.responseJSON;
+
+                if (json.errorCode == "2FA_WRONG_QR_CODE") {
+                    self.showWrongQrCodeError(json.errorCode);
+                }
+            }
+        }
+
         btn.onclick = function () {
             var url = CURRENT_API_PATH + "/account/2FA/disable?code=" + input.value;
 
-            self.sendPut(url, self.OnVerifyCodeSuccess);       
+            self.sendPut(url, self.OnVerifyCodeSuccess, onfail);
         }
     }
 
+    showWrongQrCodeError() {
+        var code_error = document.getElementById("code_error");
+
+        code_error.textContent = "Неправильный код";
+
+        code_error.style.setProperty("display", "block");
+    }
+
     OnVerifyCodeSuccess() {
-        debugger
+        if (self.onsuccess !== undefined) {
+            self.onsuccess();
+        }
     }
 
     SwitchToPhase1() {
@@ -243,10 +285,11 @@ export class TwoFAdisablePopup {
         });
     }
 
-    sendPut(url, onsuccess) {
+    sendPut(url, onsuccess, onfail) {
         $.ajax({
             url: url,
             method: 'put',
+            error: onfail,
             success: onsuccess,
             xhrFields: { withCredentials: true }
         });

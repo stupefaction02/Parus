@@ -2,7 +2,7 @@ import { CURRENT_API_PATH } from "../config.js";
 import { GetCookie } from "../common.js";
 
 export class TwoFAEmailVerificationPopup {
-    constructor(popupId) { //debugger
+    constructor() { //debugger
         this.send_code_again_timer = document.getElementById("2fa_send_code_again_timer");
 
         var self = this;
@@ -112,18 +112,38 @@ export class TwoFAEmailVerificationPopup {
                 code += inputNode.value;
             }
 
+            var onfail = function (e, a, b) {
+                if (e.status == 400) {
+                    if (e.responseJSON.success = "N") {
+                        var errorCode = e.responseJSON.error;
+
+                        // TODO: Pull MAIL_VERIF_WRONG_CODE from serverResponseCodes.js
+                        if (errorCode === "MAIL_VERIF_WRONG_CODE") {
+                            self.showError(errorCode);
+                        }
+                    }
+                }
+            };
             self.send_code(code, function (e)
             {
                 // calling callback
                 self.onsuccess(e);
-            });
+            }, onfail);
         }
     }
 
-    send_code (code, onsuccess) {
+    showError(errorCode) {
+        var errorLabel = document.getElementById("2fa_verification_error");
+
+        // TODO: Pull MAIL_VERIF_WRONG_CODE text from locale_ru.js
+        errorLabel.textContent = "Неправильный код";
+        errorLabel.style.setProperty("display", "block");
+    }
+
+    send_code (code, onsuccess, onfail) {
         var url = CURRENT_API_PATH + "/account/2FA/verify?code=" + code;
 
-        this.sendPost(url, onsuccess);
+        this.sendPost(url, onsuccess, onfail);
     }
 
     send_code_handler(e) {
@@ -150,11 +170,12 @@ export class TwoFAEmailVerificationPopup {
         setInterval(() => this.updateTimer(this), 900);
     }
 
-    sendPost (url, onsuccess) {
+    sendPost(url, onsuccess, onfail) {
         $.ajax({
             url: url,
             method: 'post',
             success: onsuccess,
+            error: onfail,
             xhrFields: { withCredentials: true }
         });
     }

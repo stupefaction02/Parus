@@ -26,5 +26,10 @@ namespace Parus.Backend.Controllers
         {
             return Json(new { success = "N" });
         }
+
+        protected JsonResult JsonFail(string errorMessage)
+        {
+            return Json(new { success = "N", error = errorMessage });
+        }
     }
 }

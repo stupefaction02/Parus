@@ -179,10 +179,12 @@ namespace Parus.Backend.Controllers
             else
             {
                 string errorInfo = $"Number required for {username} confirmation are wrong! Waiting for client to send right number.";
-
                 logger.LogInformation(errorInfo);
 
-                return BadRequest(new { error = errorInfo });
+                string errorCode = $"MAIL_VERIF_WRONG_CODE";
+
+                HttpContext.Response.StatusCode = 400;
+                return JsonFail(errorCode);
             }
         }
 

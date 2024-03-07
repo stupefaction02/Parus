@@ -132,28 +132,33 @@ function InitSecurityOption() {
         changePasswordButton.addEventListener("click", changePassword);
     }
 
-    var enable_2ft_btn = document.getElementById("enable_2ft_btn");
-    //debugger
-    var enable_2tf_popup_created = false;
-    var popup;
+    var twoFAbuttons = document.getElementById("2fa_buttons");
 
-    if (enable_2ft_btn != null) {
-        enable_2ft_btn.onclick = function () {
-            if (!enable_2tf_popup_created) { //debugger
-                popup = new TwoTFpopup("enable_2tf_popup", function (btn) {
-                    debugger
-                });
+    var btn = twoFAbuttons.children[0];
 
-                enable_2tf_popup_created = true;
-            }
+    if (btn.id === "enable_2ft_btn") {
+        InitEnable2FAButton(btn, "enable_2tf_popup");
+    } else if (btn.id === "disable_2ft_btn") {
+        InitDisable2FAButton(btn, "disable_2tf_popup");
+    }
+}
 
-            popup.Show();
-        }
-    } else {
-        disable_2ft_btn.onclick = function () {
-            var d_popup = new TwoFAdisablePopup("disbale_2tf_popup");
+function InitDisable2FAButton(btn, id) {
+    var popup = new TwoFAdisablePopup(id, function (btn) {
+        InitEnable2FAButton();
+    });
 
-            d_popup.Show();
-        }
+    btn.onclick = function () {
+        popup.Show();
+    }
+}
+
+function InitEnable2FAButton(btn, id) {
+    var popup = new TwoTFpopup(id, function (btn) {
+        InitDisable2FAButton();
+    });
+
+    btn.onclick = function () {
+        popup.Show();
     }
 }
