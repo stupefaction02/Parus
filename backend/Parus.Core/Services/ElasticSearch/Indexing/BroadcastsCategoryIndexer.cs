@@ -59,7 +59,7 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
             await repository.SaveChangesAsync();
 
-            Console.WriteLine($"Done! {changed}/{total}");
+            Console.WriteLine($"BroadcastsCategoryIndexer has done its work. Changed entries: {changed}, Total: {total}");
         }
 
         private async Task<bool> ProcessAddToIndexStatus(BroadcastCategory category,

@@ -44,7 +44,7 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
             repository.SaveChanges();
 
-            Console.WriteLine($"Done! {changed}/{total}");
+            Console.WriteLine($"BroadcastsIndexer has done its work. Changed entries: {changed}, Total: {total}");
         }
 
         private async Task<bool> ProcessAddToIndexStatus(BroadcastInfo broadcast, IBroadcastInfoRepository repository)

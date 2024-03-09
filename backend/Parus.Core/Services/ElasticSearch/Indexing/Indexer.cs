@@ -8,7 +8,6 @@ using Parus.Common.Extensions;
 
 namespace Parus.Core.Services.ElasticSearch.Indexing
 {
-
     public class FirstLetterIndexingRule
     {
         private readonly string _indexPrefix;
@@ -45,7 +44,6 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
         public Indexer()
         {
-            
         }
 
         public Indexer(ElasticTransport transport)
@@ -113,6 +111,9 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
         private string usersIndexSettings_2pshrad_1replica = "{\"settings\":{\"number_of_shards\": 2,\"number_of_replicas\": 1},\"mappings\":{\"properties\":{\"username\":{\"type\": \"keyword\",\"index\": \"true\"},\"ava\": { \"type\": \"keyword\",\"index\": \"false\"},\"description\": {\"type\":\"text\",\"index\": \"false\"}, \"subsCount\":{\"type\":\"long\",\"index\":\"false\"}}}}";
 
         public ElasticTransport Transport { get => _transport; set => _transport = value; }
+        public bool BulkModeEnabled { get; set; }
+
+        protected string BulkString = "";
 
         protected async Task AddIndex(string indexName)
         {
@@ -139,5 +140,6 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
         }
 
         public virtual async Task RunIndexing() { await Task.CompletedTask; }
+        public virtual async Task RunIndexingInBulk() { await Task.CompletedTask; }
     }
 }

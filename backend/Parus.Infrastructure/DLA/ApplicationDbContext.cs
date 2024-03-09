@@ -16,10 +16,19 @@ namespace Parus.Infrastructure.DLA
         {
             
         }
-        
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
+
+        private string _connectionString;
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString) : base(options) 
         {
             this.options = options;
+            _connectionString = connectionString;
+
+            if (String.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException($"connectionString is null or empty.");
+            }
+
+            _connectionString = connectionString;
         }
 		#endregion
 
@@ -55,15 +64,7 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-
-            if (!optionsBuilder.IsConfigured)
-            {
-                // # Data Source - SELECT @@SERVERNAME AS 'Server Name' in sqlcmd ;)
-                string connectionString =
-                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;TrustServerCertificate=True;Integrated Security=True;";
-                //"Data Source=DESKTOP-OTM8VD2;Database=Naturistic.BL;User Id=sa;Password=!Kronos39!;";
-                optionsBuilder.UseSqlServer(connectionString);
-            }
+            optionsBuilder.UseSqlServer(_connectionString);
         }
     }
 }

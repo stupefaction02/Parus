@@ -17,14 +17,16 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
         private string password => "ZWxhc3RpYzpHUUp5YzI0U3IxdFBOdDRPc25Ccw==";
         protected string Host => "http://localhost:9200";
 
+        public bool BulkModeEnabled { get; set; }
+
         private UsersIndexer usersIndexer;
         private BroadcastsIndexer broadcastIndexer;
         private ElasticTransport _transport;
-        private readonly string cdnUrl;
+        private readonly string _cdnUrl;
 
-        public ElasticIndexingEngine(string cdnUrl)
+        public ElasticIndexingEngine(bool bulkMode)
         {
-            this.cdnUrl = cdnUrl;
+            BulkModeEnabled = bulkMode;
         }
 
         // 5 minutes
@@ -46,20 +48,13 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
                     IndexingQueue[i].Transport = _transport;
                 }
 
-                while (true)
+                if (BulkModeEnabled)
                 {
-                    for (int i = 0; i < queueLength; i++)
-                    {
-                        Indexer indexingAction = IndexingQueue[i];
-
-                        tasks[i] = indexingAction.RunIndexing();
-                    }
-
-                    Task.WaitAll(tasks);
-
-                    Thread.Sleep(interval);
-
-                    Array.Clear(tasks, 0, queueLength);
+                    RunInBulk(queueLength, tasks, _transport);
+                }
+                else
+                {
+                    RunRegular(queueLength, tasks);
                 }
             }
             catch (Exception ex)
@@ -67,6 +62,44 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
             }
             
+        }
+
+        private void RunInBulk(int queueLength, Task[] tasks, ElasticTransport transport)
+        {
+            while (true)
+            {
+                for (int i = 0; i < queueLength; i++)
+                {
+                    Indexer indexingAction = IndexingQueue[i];
+
+                    tasks[i] = indexingAction.RunIndexingInBulk();
+                }
+
+                Task.WaitAll(tasks);
+
+                Thread.Sleep(interval);
+
+                Array.Clear(tasks, 0, queueLength);
+            }
+        }
+
+        private void RunRegular(int queueLength, Task[] tasks)
+        {
+            while (true)
+            {
+                for (int i = 0; i < queueLength; i++)
+                {
+                    Indexer indexingAction = IndexingQueue[i];
+
+                    tasks[i] = indexingAction.RunIndexing();
+                }
+
+                Task.WaitAll(tasks);
+
+                Thread.Sleep(interval);
+
+                Array.Clear(tasks, 0, queueLength);
+            }
         }
 
         public void Dispose()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Core.Services.ElasticSearch;
@@ -14,7 +15,7 @@ namespace Parus.IndexingService
     public class ParusIndexingEngine : ElasticIndexingEngine
     {
         Dictionary<string, DbContext> store = new Dictionary<string, DbContext>();
-        private T ConfigureContext<T>() where T : DbContext
+        private T ConfigureContext<T>(string connectionString) where T : DbContext
         {
             Type type = typeof(T);
             string key = type.Name;
@@ -23,7 +24,7 @@ namespace Parus.IndexingService
                 var optionsBuilder = new DbContextOptionsBuilder<T>();
                 var options = optionsBuilder.Options;
 
-                ctx = (T)Activator.CreateInstance(type, options);
+                ctx = (T)Activator.CreateInstance(type, options, connectionString);
                 store.Add(key, ctx);
             }
 
@@ -37,7 +38,7 @@ namespace Parus.IndexingService
             {
                 if (users != null) return users;
 
-                var ctx = ConfigureContext<ApplicationIdentityDbContext>();
+                var ctx = ConfigureContext<ApplicationIdentityDbContext>(usersLogicConnecionString);
                 return users = new UserRepository(ctx);
             }
         }
@@ -49,7 +50,7 @@ namespace Parus.IndexingService
             {
                 if (broadcasts != null) return broadcasts;
 
-                var ctx = ConfigureContext<ApplicationDbContext>();
+                var ctx = ConfigureContext<ApplicationDbContext>(businessLogicConnecionString);
                 return broadcasts = new BroadcastInfoRepository(ctx);
             }
         }
@@ -61,13 +62,19 @@ namespace Parus.IndexingService
             {
                 if (categories != null) return categories;
 
-                var ctx = ConfigureContext<ApplicationDbContext>();
+                var ctx = ConfigureContext<ApplicationDbContext>(businessLogicConnecionString);
                 return categories = new BroadcastCategoryRepository(ctx);
             }
         }
 
-        public ParusIndexingEngine(string cdnUrl) : base(cdnUrl)
+        string businessLogicConnecionString;
+        string usersLogicConnecionString;
+        public ParusIndexingEngine(IConfiguration configuration) : base(bulkMode: false)
         {
+            businessLogicConnecionString = configuration["ConnectionStrings:BL:Default"];
+            usersLogicConnecionString = configuration["ConnectionStrings:Users:Default"];
+
+            string cdnUrl = configuration["Services:CDN:Main"];
             IndexingQueue.Add(new UsersIndexer(cdnUrl, Users));
             IndexingQueue.Add(new BroadcastsIndexer(Broadcasts));
             IndexingQueue.Add(new BroadcastsCategoryIndexer(Categories));

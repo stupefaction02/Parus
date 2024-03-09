@@ -1,4 +1,5 @@
 ﻿// using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using MimeKit.Encodings;
+using Org.BouncyCastle.Tls;
 using Parus.Core.Entities;
 
 namespace Parus.Infrastructure.Identity
@@ -32,10 +35,16 @@ namespace Parus.Infrastructure.Identity
         // Description/Comment: keys is created when user scans qr_code and send numbers to the server
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
-        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options)
+        private string _connectionString;
+        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "")
             : base(options)
         {
-            //if (Database.EnsureCreated()) Database.Migrate();
+            if (String.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException($"connectionString is null or empty.");
+            }
+
+            _connectionString = connectionString;
         }
 
         public ApplicationIdentityDbContext()
@@ -99,9 +108,7 @@ namespace Parus.Infrastructure.Identity
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            string connectionString =
-                    "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.Users;TrustServerCertificate=True;Integrated Security=True;";
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(_connectionString);
         }
     }
 }

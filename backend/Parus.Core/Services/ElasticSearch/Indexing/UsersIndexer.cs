@@ -25,7 +25,21 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
             this.repository = users;
         }
 
+        public async Task<string> RunIndexingInBulk()
+        {
+            BulkModeEnabled = true;
+            await RunIndexingInternal();
+            BulkModeEnabled = false;
+
+            return "";
+        }
+
         public override async Task RunIndexing()
+        {
+            await RunIndexingInternal();
+        }
+
+        public async Task RunIndexingInternal()
         {
             if (repository == null)
             {

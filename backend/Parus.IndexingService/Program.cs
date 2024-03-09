@@ -16,8 +16,7 @@ internal class Program
             IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile(cf);
             IConfigurationRoot configuration = builder.Build();
 
-            string cdnUrl = configuration["Services:CDN:Main"];
-            ParusIndexingEngine engine = new ParusIndexingEngine(cdnUrl);
+            ParusIndexingEngine engine = new ParusIndexingEngine(configuration);
 
             engine.Run();
         }
