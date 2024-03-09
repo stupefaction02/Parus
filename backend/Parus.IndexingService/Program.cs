@@ -10,7 +10,9 @@ internal class Program
         Console.WriteLine("Starting ElasticIndexingEngine");
 
         string cf = "appsettings.json";
-        if (File.Exists(cf))
+        string configPath = BuildConfigPath(cf);
+        Console.WriteLine($"Loading config file from {configPath}");
+        if (File.Exists(configPath))
         {
             IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile(cf);
             IConfigurationRoot configuration = builder.Build();
@@ -31,6 +33,12 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"ERROR. Coulnd't found config file {cf}.");
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        string BuildConfigPath(string cf)
+        {
+            string bin = System.Environment.CurrentDirectory;
+            return Path.Combine(bin, cf);
         }
     }
 }
