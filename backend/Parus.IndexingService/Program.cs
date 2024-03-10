@@ -21,6 +21,19 @@ internal class Program
             {
                 (new ParusIndexingEngine(configuration)).Run();
             }
+            catch (AggregateException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Exception: {ex.GetType().Name}.");
+
+                Console.WriteLine($"Inner exceptions:");
+                foreach (var sex in ex.InnerExceptions)
+                {
+                    Console.WriteLine($"Exception: {sex.GetType().Name}. Message: {sex.Message}");
+                }
+
+                Console.ForegroundColor = ConsoleColor.White;
+            }
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
