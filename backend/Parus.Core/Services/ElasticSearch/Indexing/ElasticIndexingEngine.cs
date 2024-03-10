@@ -36,32 +36,24 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 
         public void Run()
         {
-            try
+            _transport = new ElasticTransport(Host, auth: ("Basic", password));
+
+            int queueLength = IndexingQueue.Count;
+            Task[] tasks = new Task[queueLength];
+
+            for (int i = 0; i < queueLength; i++)
             {
-                _transport = new ElasticTransport(Host, auth: ("Basic", password));
-
-                int queueLength = IndexingQueue.Count;
-                Task[] tasks = new Task[queueLength];
-
-                for (int i = 0; i < queueLength; i++)
-                {
-                    IndexingQueue[i].Transport = _transport;
-                }
-
-                if (BulkModeEnabled)
-                {
-                    RunInBulk(queueLength, tasks, _transport);
-                }
-                else
-                {
-                    RunRegular(queueLength, tasks);
-                }
+                IndexingQueue[i].Transport = _transport;
             }
-            catch (Exception ex)
+
+            if (BulkModeEnabled)
             {
-
+                RunInBulk(queueLength, tasks, _transport);
             }
-            
+            else
+            {
+                RunRegular(queueLength, tasks);
+            }
         }
 
         private void RunInBulk(int queueLength, Task[] tasks, ElasticTransport transport)

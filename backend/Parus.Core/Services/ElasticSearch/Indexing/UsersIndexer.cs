@@ -49,31 +49,24 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
             int succesed = 0;
             int total = repository.Users.Count();
 
-            try
+            foreach (IUser user in repository.Users)
             {
-                foreach (IUser user in repository.Users)
+                switch (user.GetIndexingStatus())
                 {
-                    switch (user.GetIndexingStatus())
-                    {
-                        case 0:
+                    case 0:
 
-                            break;
-                        case 1:
-                            if (await ProcessAddToIndexStatus(user, repository))
-                            {
-                                succesed++;
-                            }
+                        break;
+                    case 1:
+                        if (await ProcessAddToIndexStatus(user, repository))
+                        {
+                            succesed++;
+                        }
 
-                            break;
-                    }
+                        break;
                 }
+            }
 
-                repository.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                // catch network exception
-            }
+            repository.SaveChanges();
 
             Console.WriteLine($"UsersIndexer has done its work. Changed entris: {succesed}, Total: {total}");
         }
