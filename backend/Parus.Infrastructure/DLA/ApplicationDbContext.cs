@@ -64,6 +64,7 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
             optionsBuilder.UseSqlServer(_connectionString);
         }
     }

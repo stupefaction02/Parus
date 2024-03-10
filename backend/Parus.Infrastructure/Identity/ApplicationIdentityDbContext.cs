@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using MimeKit.Encodings;
 using Org.BouncyCastle.Tls;
 using Parus.Core.Entities;
+using Parus.Infrastructure.DLA;
 
 namespace Parus.Infrastructure.Identity
 {
@@ -108,6 +109,7 @@ namespace Parus.Infrastructure.Identity
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            Console.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
             optionsBuilder.UseSqlServer(_connectionString);
         }
     }

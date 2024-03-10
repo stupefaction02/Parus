@@ -19,13 +19,22 @@ namespace Parus.IndexingService
         {
             Type type = typeof(T);
             string key = type.Name;
-            if (!store.TryGetValue(key, out DbContext ctx))
+            if (!store.TryGetValue(key, out DbContext? ctx))
             {
                 var optionsBuilder = new DbContextOptionsBuilder<T>();
                 var options = optionsBuilder.Options;
 
                 ctx = (T)Activator.CreateInstance(type, options, connectionString);
-                store.Add(key, ctx);
+
+                if (ctx != null)
+                {
+                    Console.WriteLine($"Created the instance of {type.Name}.");
+                    store.Add(key, ctx);
+                }
+                else
+                {
+                    throw new Exception($"Cound't create instance of {type.Name}.");
+                }
             }
 
             return (T)ctx;
@@ -63,6 +72,7 @@ namespace Parus.IndexingService
                 if (categories != null) return categories;
 
                 var ctx = ConfigureContext<ApplicationDbContext>(businessLogicConnecionString);
+
                 return categories = new BroadcastCategoryRepository(ctx);
             }
         }
