@@ -1,0 +1,27 @@
+Mount shared folder
+sudo mount -t vboxsf -o uid=1000,gid=1000 backend1 /sharedhost1
+
+DNS resolver, get IP from hostname
+	'host' in dnsutils package
+	taken form https://unix.stackexchange.com/questions/20784/how-can-i-resolve-a-hostname-to-an-ip-address-in-a-bash-script
+	
+https://askubuntu.com/questions/161759/how-to-access-a-shared-folder-in-virtualbox
+
+
+Connecting to MSSQL server
+	https://serverfault.com/questions/975149/how-do-i-test-connection-from-linux-to-microsoft-sql-server
+	
+	# sqlcmd
+	https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-utility?view=sql-server-ver16&tabs=go%2Cwindows&pivots=cs1-bash
+	https://learn.microsoft.com/ru-ru/sql/tools/sqlcmd/sqlcmd-connect-database-engine?view=sql-server-ver16
+	
+	https://serverfault.com/questions/975149/how-do-i-test-connection-from-linux-to-microsoft-sql-server
+	
+	nc -zv YOUR_SERVER_NAME_OR_IP 1433
+	sudo apt install mssql-tools
+	
+	# network
+	https://superuser.com/questions/857899/networkmanager-timeout-and-ip-config-unavailable-on-ethernet
+	https://rus-linux.net/MyLDP/vm/VirtualBox-networking.html
+		
+https://mycsharpdeveloper.wordpress.com/2022/11/02/how-to-reverse-proxy-net-core-6-using-nginx-on-ubuntu/

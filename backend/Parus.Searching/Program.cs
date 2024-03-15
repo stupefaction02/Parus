@@ -1,5 +1,6 @@
 using Parus.Core.Services.ElasticSearch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.HttpOverrides;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -18,10 +19,19 @@ void ConfigureElastic(IServiceCollection services, IConfiguration configuration)
 }
 
 WebApplication app = builder.Build();
+ 
+//....
+//app.UseHttpsRedirection(); //Disable Https Redirection since this example is for Http only.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.MapGet("/{q}", async (string q, int page, int size, 
+app.MapGet("/hello", () => { Console.WriteLine("Hello"); return "Hello"; });
+
+app.MapGet("/a/{q}", async (string q, int page, int size, 
     [FromServices] ElasticSearchService searchingService) =>
 {
     int start = page == 0 ? 1 : size * (page - 1);

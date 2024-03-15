@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MimeKit.Encodings;
+using Parus.Core.Exceptions;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Core.Services.ElasticSearch;
 using Parus.Core.Services.ElasticSearch.Indexing;
@@ -81,10 +83,12 @@ namespace Parus.IndexingService
         string usersLogicConnecionString;
         public ParusIndexingEngine(IConfiguration configuration) : base(bulkMode: false)
         {
-            businessLogicConnecionString = configuration["ConnectionStrings:BL:Default"];
-            usersLogicConnecionString = configuration["ConnectionStrings:Users:Default"];
+            businessLogicConnecionString = configuration["ConnectionStrings:BL:Default"] ?? throw new ConfigurationException("ConnectionStrings:BL:Default");
+            usersLogicConnecionString = configuration["ConnectionStrings:Users:Default"] ?? throw new ConfigurationException("ConnectionStrings:Users:Default");
 
-            string cdnUrl = configuration["Services:CDN:Main"];
+            Host = configuration["ElasticSearch:Host"] ?? throw new ConfigurationException("ConnectionStrings:BL:Default");
+
+            string cdnUrl = configuration["Services:CDN:Main"] ?? throw new ConfigurationException("ConnectionStrings:BL:Default");
             IndexingQueue.Add(new UsersIndexer(cdnUrl, Users));
             IndexingQueue.Add(new BroadcastsIndexer(Broadcasts));
             IndexingQueue.Add(new BroadcastsCategoryIndexer(Categories));

@@ -9,7 +9,7 @@ internal class Program
     {
         Console.WriteLine("Starting ElasticIndexingEngine");
 
-        string cf = "appsettings.json";
+        string cf = "indexing_settings.json";
         string configPath = BuildConfigPath(cf);
         Console.WriteLine($"Loading config file from {configPath}");
         if (File.Exists(configPath))
@@ -33,6 +33,10 @@ internal class Program
                 }
 
                 Console.ForegroundColor = ConsoleColor.White;
+            }
+            catch (UriFormatException)
+            {
+
             }
             catch (Exception ex)
             {

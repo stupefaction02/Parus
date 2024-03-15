@@ -1,0 +1,1 @@
+https://mycsharpdeveloper.wordpress.com/2022/11/02/how-to-reverse-proxy-net-core-6-using-nginx-on-ubuntu/

@@ -1,4 +1,5 @@
-﻿using Parus.Core.Interfaces.Repositories;
+﻿using MimeKit.Encodings;
+using Parus.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,7 +16,8 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
         // 2. encode elatic:<password from above step> with Base64
         // 3. Done! 
         private string password => "ZWxhc3RpYzpHUUp5YzI0U3IxdFBOdDRPc25Ccw==";
-        protected string Host => "http://localhost:9200";
+        //protected string Host => "http://localhost:9200";
+        public string Host { get; protected set; }
 
         public bool BulkModeEnabled { get; set; }
 
@@ -38,6 +40,15 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
         {
             _transport = new ElasticTransport(Host, auth: ("Basic", password));
 
+            if (CheckConnection(_transport))
+            {
+                //Console.WriteLine("ElasticSearch service is ready to use.");
+            }
+            else
+            {
+                throw new Exception("Error. Elastic service is not running.");
+            }
+
             int queueLength = IndexingQueue.Count;
             Task[] tasks = new Task[queueLength];
 
@@ -54,6 +65,12 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
             {
                 RunRegular(queueLength, tasks);
             }
+        }
+
+        private bool CheckConnection(ElasticTransport _transport)
+        {
+            // headering "/"
+            return _transport.Header() == System.Net.HttpStatusCode.OK;
         }
 
         private void RunInBulk(int queueLength, Task[] tasks, ElasticTransport transport)

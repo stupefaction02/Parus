@@ -115,15 +115,18 @@ namespace Parus.Core.Services.ElasticSearch
             return responseMessage.StatusCode;
         }
 
-        public async Task<HttpStatusCode> Header(string uri)
+        /// <summary>
+        /// Sends with "/" path
+        /// </summary>
+        public HttpStatusCode Header()
         {
             HttpRequestMessage request = new HttpRequestMessage
             {
-                Method = HttpMethod.Put,
-                RequestUri = new Uri(_client.BaseAddress + uri)
+                Method = HttpMethod.Head,
+                RequestUri = new Uri(_client.BaseAddress.ToString())
             };
 
-            HttpResponseMessage responseMessage = await _client.SendAsync(request);
+            HttpResponseMessage responseMessage = _client.SendAsync(request).GetAwaiter().GetResult();
 
             return responseMessage.StatusCode;
         }
