@@ -31,5 +31,10 @@ namespace Parus.Backend.Controllers
         {
             return Json(new { success = "N", error = errorMessage });
         }
+
+        protected object HandleServerError(string serviceName, string debugInfo, object param = null, string returnMessage = "")
+        {
+            return StatusCode(500);
+        }
     }
 }

@@ -67,7 +67,7 @@ namespace Parus.Backend.Controllers
                     }
                 }
 
-                return StatusCode(500);
+                return HandleServerError("", "Database saving operation error!");
             }
 
             context.TwoFactoryVerificationCodes
@@ -245,10 +245,13 @@ namespace Parus.Backend.Controllers
                         }
                     }
                 }
+
+                HttpContext.Response.StatusCode = 401;
+                return Json(new { success = "N", error = "2FA_WRONG_QR_CODE" });
             }
 
             HttpContext.Response.StatusCode = 401;
-            return Json(new { success = "N", error = "Forbidden." });
+            return Json(new { success = "N", error = "Forbidden" });
         }
 
         [HttpPut]
@@ -294,6 +297,9 @@ namespace Parus.Backend.Controllers
                         return JsonSuccess();
                     }
                 }
+
+                HttpContext.Response.StatusCode = 401;
+                return Json(new { success = "N", errorCode = "2FA_WRONG_QR_CODE" });
             }
 
             HttpContext.Response.StatusCode = 401;

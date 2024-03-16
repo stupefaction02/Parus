@@ -21,6 +21,7 @@ using Parus.WebUI.Services;
 using Parus.Core.Services.ElasticSearch.Indexing;
 using Parus.Core.Services.ElasticSearch;
 using Parus.Core.Interfaces.Services;
+using System.Diagnostics;
 
 namespace Parus.WebUI.Extensions
 {
@@ -80,12 +81,19 @@ namespace Parus.WebUI.Extensions
             string identityConenctionString = GetIdentityConnectionString();
 
             services.AddDbContext<ApplicationDbContext>(options => {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
             }, ServiceLifetime.Transient);
 
             services.AddDbContext<ApplicationIdentityDbContext>(options =>
-                options.UseSqlServer(identityConenctionString));
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+
+                options.UseSqlServer(identityConenctionString);
+                options.EnableSensitiveDataLogging();
+            });
 
             string GetCoreDbConnectionString()
             {
@@ -130,10 +138,10 @@ namespace Parus.WebUI.Extensions
 
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            //services.AddScoped<ApplicationIdentityDbContext>();
-
             services.Configure<IdentityOptions>(options =>
-                { options.SignIn.RequireConfirmedEmail = false; }
+                { 
+                    options.SignIn.RequireConfirmedEmail = false; 
+                }
             );
 
             services.AddIdentity<ApplicationUser, IdentityRole>(config =>

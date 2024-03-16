@@ -16,6 +16,7 @@ using Parus.Core.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System;
+using System.Diagnostics;
 
 
 namespace Parus.Backend.Extensions
@@ -30,12 +31,19 @@ namespace Parus.Backend.Extensions
             string identityConenctionString = GetIdentityConnectionString();
 
             services.AddDbContext<ApplicationDbContext>(options => {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
             }, ServiceLifetime.Transient);
             
             services.AddDbContext<ApplicationIdentityDbContext>(options =>
-                options.UseSqlServer(identityConenctionString));
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
+
+                options.UseSqlServer(identityConenctionString);
+                options.EnableSensitiveDataLogging();
+            });
 
             string GetCoreDbConnectionString()
             {

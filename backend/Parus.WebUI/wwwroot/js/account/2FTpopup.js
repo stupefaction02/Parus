@@ -45,7 +45,7 @@ export class TwoTFpopup {
 
         var two_fa_enable_btn = document.getElementById("2fa_enable_btn");
 
-        two_fa_enable_btn.disabled = false;
+        two_fa_enable_btn.disabled = true;
 
         var code_input = document.getElementById("code_input");
 
@@ -59,7 +59,7 @@ export class TwoTFpopup {
                 + code + "&" + "customerKey=" + self.TwoFASecretKey;
 
             var onfail = function (e) {
-                if (e.status == 400) {
+                if (e.status == 401) {
                     var json = e.responseJSON;
 
                     if (json.errorCode == "2FA_WRONG_QR_CODE") {
@@ -143,6 +143,8 @@ export class TwoTFpopup {
         var input = document.getElementById("ac_ep_email_input");
         this.ac_ep_continue_btn = document.getElementById("ac_ep_continue_btn");
 
+        ac_ep_continue_btn.disabled = true;
+
         var this1 = this;
         this.ac_ep_continue_btn.onclick = function () {
             var url = CURRENT_API_PATH + "/account/2FA/request2FAVerificationEmailCode";
@@ -221,6 +223,8 @@ export class TwoFAdisablePopup {
         var input = document.getElementById("2fa_disable_code_input");
         var btn = document.getElementById("2fa_disable_phase1_btn");
 
+        btn.disabled = true;
+
         var self = this;
 
         input.oninput = function () {
@@ -232,7 +236,7 @@ export class TwoFAdisablePopup {
         }
 
         var onfail = function (e) {
-            if (e.status == 400) {
+            if (e.status == 401) {
                 var json = e.responseJSON;
 
                 if (json.errorCode == "2FA_WRONG_QR_CODE") {
@@ -249,7 +253,7 @@ export class TwoFAdisablePopup {
     }
 
     showWrongQrCodeError() {
-        var code_error = document.getElementById("code_error");
+        var code_error = document.getElementById("2fa_disable_code_error");
 
         code_error.textContent = "Неправильный код";
 
@@ -257,6 +261,10 @@ export class TwoFAdisablePopup {
     }
 
     OnVerifyCodeSuccess() {
+        var donePhase = document.getElementById("disable_2tf_done_phase");
+
+        donePhase.style.setProperty("display", "block");
+
         if (self.onsuccess !== undefined) {
             self.onsuccess();
         }

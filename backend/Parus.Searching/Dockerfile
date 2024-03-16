@@ -10,7 +10,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Parus.Searching/Parus.Searching.csproj", "Parus.Searching/"]
 COPY ["Parus.Core/Parus.Core.csproj", "Parus.Core/"]
-COPY ["Parus.Common/Parus.Common.csproj", "Parus.Common/"]
+COPY ["/sharedhost1/Parus.Common/Parus.Common.csproj", "Parus.Common/"]
 RUN dotnet restore "./Parus.Searching/./Parus.Searching.csproj"
 COPY . .
 WORKDIR "/src/Parus.Searching"

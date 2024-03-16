@@ -18,16 +18,8 @@ namespace Parus.Infrastructure.DLA
         }
 
         private string _connectionString;
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString) : base(options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString = "") : base(options) 
         {
-            this.options = options;
-            _connectionString = connectionString;
-
-            if (String.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException($"connectionString is null or empty.");
-            }
-
             _connectionString = connectionString;
         }
 		#endregion
@@ -64,8 +56,11 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
-            optionsBuilder.UseSqlServer(_connectionString);
+            if (!String.IsNullOrEmpty(_connectionString))
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                optionsBuilder.UseSqlServer(_connectionString);
+            }
         }
     }
 }

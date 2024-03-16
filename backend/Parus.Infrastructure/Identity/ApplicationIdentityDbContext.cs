@@ -1,6 +1,7 @@
 ﻿// using System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -40,11 +41,6 @@ namespace Parus.Infrastructure.Identity
         public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "")
             : base(options)
         {
-            if (String.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException($"connectionString is null or empty.");
-            }
-
             _connectionString = connectionString;
         }
 
@@ -96,21 +92,15 @@ namespace Parus.Infrastructure.Identity
             builder.Entity<ApplicationUser>()
                 .Property(x => x.IndexingRule)
                 .HasDefaultValue(1);
-
-            //builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired();
-
-            //var testUsers = new ApplicationUser[3] {
-            //    new ApplicationUser { UserName = "Guts" },
-            //    new ApplicationUser { UserName = "Griffith" },
-            //    new ApplicationUser { UserName = "Farzana" }
-            //};
-            //builder.Entity<ApplicationUser>().HasData(testUsers);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            Console.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
-            optionsBuilder.UseSqlServer(_connectionString);
+            if (!String.IsNullOrEmpty(_connectionString))
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
+                optionsBuilder.UseSqlServer(_connectionString);
+            }
         }
     }
 }

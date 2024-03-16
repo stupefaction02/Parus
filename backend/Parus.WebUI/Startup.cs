@@ -67,8 +67,6 @@ namespace Parus.WebUI
 
             services.AddScoped<ILocalizationService, LocalizationService>();
 
-            services.AddDbContext<ApplicationDbContext>();
-
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();

@@ -34,8 +34,6 @@ namespace Parus.Backend
 
             services.ConfigureSqlDatabase(Configuration);
 
-            //services.AddDbContext<ApplicationDbContext>();
-
             services.ConfigureCors();
 
             services.ConfigureIdentity();

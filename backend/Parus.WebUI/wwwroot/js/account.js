@@ -139,13 +139,13 @@ function InitSecurityOption() {
     if (btn.id === "enable_2ft_btn") {
         InitEnable2FAButton(btn, "enable_2tf_popup");
     } else if (btn.id === "disable_2ft_btn") {
-        InitDisable2FAButton(btn, "disable_2tf_popup");
+        InitDisable2FAButton(btn, "disbale_2tf_popup");
     }
 }
 
 function InitDisable2FAButton(btn, id) {
     var popup = new TwoFAdisablePopup(id, function (btn) {
-        InitEnable2FAButton();
+        InitEnable2FAButton(btn, "enable_2tf_popup");
     });
 
     btn.onclick = function () {
@@ -155,7 +155,7 @@ function InitDisable2FAButton(btn, id) {
 
 function InitEnable2FAButton(btn, id) {
     var popup = new TwoTFpopup(id, function (btn) {
-        InitDisable2FAButton();
+        InitDisable2FAButton(btn, "disable_2tf_popup");
     });
 
     btn.onclick = function () {
