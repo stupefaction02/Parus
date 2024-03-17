@@ -15,11 +15,10 @@ var onitemclick = function (e) {
 
 switchOption("security");
 
-for (var i = 0; i < account_sidebar.children.length; i++) { //debugger
+for (var i = 0; i < account_sidebar.children.length; i++) { 
     account_sidebar.children[i].onclick = onitemclick;
 }
 
-var currentOptionElem = undefined;
 var currentOption = "security";
 function switchOption(option) {
 
@@ -28,7 +27,7 @@ function switchOption(option) {
     var selectedElem;
     switch (option) {
         case "other":
-            selectedElem = document.getElementById("setting_content_security");
+            selectedElem = document.getElementById("setting_content_other");
             break;
 
         case "security":
@@ -36,13 +35,19 @@ function switchOption(option) {
             InitSecurityOption();
             break;
     }
-    //debugger
+    
     currentOption = option;
-    selectedElem.style = "display";
 
-    if (currentOptionElem !== undefined) {
-        currentOptionElem.style = "none";
-        currentOptionElem = selectedElem;
+    selectedElem.style.setProperty("display", "block");
+    console.log(selectedElem.id, selectedElem.style.getPropertyValue("display"));
+
+    for (var i = 0; i < setting_content.children.length; i++) {
+        var child = setting_content.children[i];
+
+        if (child !== selectedElem) {
+            child.style.setProperty("display", "none");
+            console.log(child.id, child.style.getPropertyValue("display"));
+        }
     }
 }
 
@@ -68,7 +73,13 @@ function sendGet(url, onsuccess) {
     });
 };
 
+var securitySettingsInited = false;
 function InitSecurityOption() {
+
+    if (securitySettingsInited) {
+        return;
+    }
+
     var change_password_btn = document.getElementById("change_password_btn");
 
     var checkPassword = function (password, success) {
@@ -141,6 +152,8 @@ function InitSecurityOption() {
     } else if (btn.id === "disable_2ft_btn") {
         InitDisable2FAButton(btn, "disbale_2tf_popup");
     }
+
+    securitySettingsInited = true;
 }
 
 function InitDisable2FAButton(btn, id) {

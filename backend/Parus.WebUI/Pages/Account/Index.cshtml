@@ -49,33 +49,35 @@
 
     <div id="setting_content" class="setting_content">
         <div id="setting_content_security" class="setting_content_security" style="display: none">
-            <button id="change_password_btn" class="color1_btn"
-                    style="height: 38px; padding: 5px" type="button">
-                Поменять пароль
-            </button>
+            <div style="display: flex">
+                <button id="change_password_btn" class="color1_btn" 
+                        style="height: 38px; padding: 5px; margin-right: 16px;" type="button">
+                    Поменять пароль
+                </button>
 
-            @if (passwordChangedSuccess)
-            {
-                <div style="margin-top: 12px; width: 180px; height: 60px; color: white; background: green;">
-                    Вы успешно поменяли пароль
-                </div>
-            }
+                @if (passwordChangedSuccess)
+                {
+                    <div style="margin-top: 12px; width: 180px; height: 60px; color: white; background: green;">
+                        Вы успешно поменяли пароль
+                    </div>
+                }
             
-            <div id="2fa_buttons">
-                @if (user.GetTwoFactorEnabled())
-                {
-                    <button id="disable_2ft_btn" class="color1_btn"
-                            style="height: 38px; padding: 5px" type="button">
-                        Выключить двухфакторную аутенфикацию
-                    </button>
-                }
-                else
-                {
-                    <button id="enable_2ft_btn" class="color1_btn"
-                            style="height: 38px; padding: 5px" type="button">
-                        Включить двухфакторную аутенфикацию
-                    </button>
-                }
+                <div id="2fa_buttons">
+                    @if (user.GetTwoFactorEnabled())
+                    {
+                        <button id="disable_2ft_btn" class="color1_btn"
+                                style="height: 38px; padding: 5px" type="button">
+                            Выключить двухфакторную аутенфикацию
+                        </button>
+                    }
+                    else
+                    {
+                        <button id="enable_2ft_btn" class="color1_btn"
+                                style="height: 38px; padding: 5px" type="button">
+                            Включить двухфакторную аутенфикацию
+                        </button>
+                    }
+                </div>
             </div>
         </div>
 

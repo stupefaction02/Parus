@@ -7,8 +7,6 @@
 
 
 @{
-    
-
     RouteEndpoint endpoit = Context.Request.HttpContext.GetEndpoint() as RouteEndpoint;
 
     if (endpoit.RoutePattern.PathSegments.Count > 1)
