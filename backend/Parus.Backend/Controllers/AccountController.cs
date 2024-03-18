@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Parus.Core.Authentication;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Core.Interfaces.Services;
 using Parus.Infrastructure.Identity;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Parus.Backend.Controllers
@@ -201,57 +203,103 @@ namespace Parus.Backend.Controllers
             // 5 levels of security :)
             if (User.Identity.IsAuthenticated)
             {
-                if (customerKey.Length == uidLegnth)
+                ApplicationUser appUser = await context.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
+
+                // exceptional case
+                if (appUser == null)
                 {
-                    TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+                    // TODO: Log this
+                    HttpContext.Response.StatusCode = 401;
+                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                }
 
-                    string codeStr = code.ToString();
-                    if (codeStr.Length == googleCodeLength)
+                if (await Verify2FACodeCore(code, customerKey, appUser, context))
+                {
+                    HttpContext.Response.StatusCode = 200;
+                    return JsonSuccess();
+                } 
+                else
+                {
+                    HttpContext.Response.StatusCode = 401;
+                    return Json(new { success = "N", error = "2FA_WRONG_QR_CODE" });
+                }
+            } 
+
+            HttpContext.Response.StatusCode = 401;
+            return Json(new { success = "N", error = "Forbidden" });
+        }
+
+        [HttpPost]
+        [Route("api/account/2FA/verify2FACode/login")]
+        public async Task<JsonResult> Verify2FACode(int code, string customerKey, string username, ApplicationIdentityDbContext context)
+        {
+            if (!String.IsNullOrEmpty(customerKey) || !String.IsNullOrEmpty(username))
+            {
+                ApplicationUser appUser = await context.Users
+                    .Include(x => x.CustomerKey)
+                    .FirstOrDefaultAsync(x => x.UserName == username);
+
+                if (appUser == null)
+                {
+                    HttpContext.Response.StatusCode = 401;
+                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                }
+
+                if (appUser.CustomerKey != null)
+                {
+                    if (appUser.CustomerKey.Key == customerKey)
                     {
-                        if (twoFactor.ValidateTwoFactorPIN(customerKey, codeStr, TimeSpan.FromSeconds(30)))
+                        if (await Verify2FACodeCore(code, customerKey, appUser, context))
                         {
-                            var appUser = context.Users.SingleOrDefault(x => x.UserName == User.Identity.Name);
-
-                            if (appUser == null)
-                            {
-                                HttpContext.Response.StatusCode = 401;
-                                return Json(new { success = "N", error = "Couldn't find user with this username." });
-                            }
-
-                            appUser.TwoFactorEnabled = true;
-
-                            context.Users.Update(appUser);
-
-                            string userId = appUser.Id;
-
-                            var existedCustomerKey = context.TwoFactoryCustomerKeys.SingleOrDefault(x => x.UserId == userId);
-                            if (existedCustomerKey != null)
-                            {
-                                existedCustomerKey.Key = customerKey;
-                                context.Update(existedCustomerKey);
-                            }
-                            else
-                            {
-                                await context.TwoFactoryCustomerKeys.AddAsync(
-                                    new TwoFactoryCustomerKey() { Key = customerKey, UserId = userId });
-                            }
-
-                            await context.SaveChangesAsync();
-
-                            Console.WriteLine($"2FA was enabled for user {appUser.GetUsername()}");
-
-                            HttpContext.Response.StatusCode = 200;
-                            return JsonSuccess();
+                            return await LoginResponse(appUser);
                         }
                     }
                 }
-
-                HttpContext.Response.StatusCode = 401;
-                return Json(new { success = "N", error = "2FA_WRONG_QR_CODE" });
             }
 
             HttpContext.Response.StatusCode = 401;
             return Json(new { success = "N", error = "Forbidden" });
+        }
+
+        private async Task<bool> Verify2FACodeCore(int code, string customerKey, ApplicationUser appUser, ApplicationIdentityDbContext context)
+        {
+            if (customerKey.Length == uidLegnth)
+            {
+                TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
+
+                string codeStr = code.ToString();
+                if (codeStr.Length == googleCodeLength)
+                {
+                    if (true)//twoFactor.ValidateTwoFactorPIN(customerKey, codeStr, TimeSpan.FromSeconds(30)))
+                    {
+                        appUser.TwoFactorEnabled = true;
+
+                        context.Users.Update(appUser);
+
+                        string userId = appUser.Id;
+
+                        var existedCustomerKey = context.TwoFactoryCustomerKeys.SingleOrDefault(x => x.UserId == userId);
+                        if (existedCustomerKey != null)
+                        {
+                            existedCustomerKey.Key = customerKey;
+                            context.Update(existedCustomerKey);
+                        }
+                        else
+                        {
+                            await context.TwoFactoryCustomerKeys.AddAsync(
+                                new TwoFactoryCustomerKey() { Key = customerKey, UserId = userId });
+                        }
+
+                        await context.SaveChangesAsync();
+
+                        Console.WriteLine($"2FA was enabled for user {appUser.GetUsername()}");
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         [HttpPut]

@@ -30,6 +30,8 @@ using Parus.Infrastructure.DLA.Repositories;
 using Parus.Common.Utils;
 using System.Diagnostics;
 using MimeKit.Cryptography;
+using Parus.Infrastructure.DLA;
+using Parus.Core.Authentication;
 
 namespace Parus.Backend.Controllers
 {
@@ -111,38 +113,11 @@ namespace Parus.Backend.Controllers
 			return Json(userRepository.FindUserByUsername(username));
 		}
 
-		#endregion
-
-		[HttpPost]
-		private JwtToken CreateJWT(ClaimsIdentity user)
-        {
-			logger.LogInformation($"Tryig to create JWT token for user {user.Name} ...");
-
-			DateTime now = DateTime.UtcNow;
-
-			JwtSecurityToken jwt = new JwtSecurityToken(
-					issuer: JwtAuthOptions.ISSUER,
-					audience: JwtAuthOptions.AUDIENCE,
-					notBefore: now,
-					claims: user.Claims,
-					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
-					signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            logger.LogInformation(encodedJwt);
-
-            logger.LogInformation($"JWT token for user {user.Name} has been created.");
-
-            return new JwtToken
-            {
-                Token = encodedJwt,
-                Username = user.Name
-			};
-		}
+        #endregion
 
         private JwtToken CreateJWT(string username, IEnumerable<Claim> claims)
         {
-            logger.LogInformation($"Tryig to create JWT token for user {username} ...");
+            //logger.LogInformation($"Tryig to create JWT token for user {username} ...");
 
             DateTime now = DateTime.UtcNow;
 
@@ -155,9 +130,9 @@ namespace Parus.Backend.Controllers
                     signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-            logger.LogInformation(encodedJwt);
+            //logger.LogInformation(encodedJwt);
 
-            logger.LogInformation($"JWT token for user {username} has been created.");
+            //logger.LogInformation($"JWT token for user {username} has been created.");
 
             return new JwtToken
             {
@@ -166,32 +141,28 @@ namespace Parus.Backend.Controllers
             };
         }
 
-        private struct JwtToken
-        {
-            public string Token { get; set; }
-            public string Username { get; set; }
-        }
-
-        private async Task<ClaimsIdentity> CreateIdentityAsync(ApplicationUser user)
-        {
-            List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
-                };
-
-            return new ClaimsIdentity(claims);
-        }
-
 		[HttpPost]
         [Route("api/account/login")]
         public async Task<object> Login(
             string username, 
             string password,
             UserManager<ApplicationUser> userManager,
-            IPasswordHasher<ApplicationUser> passwordHasher)
+            IPasswordHasher<ApplicationUser> passwordHasher, 
+            ApplicationIdentityDbContext dbContext)
         {
             logger.LogInformation($"Attempt to login {username}");
-            ApplicationUser user = await userManager.FindByNameAsync(username);
+            ApplicationUser user = await dbContext.Users
+                .Include(x => x.CustomerKey)
+                .FirstOrDefaultAsync(x => x.UserName == username);
+
+            if (user == null)
+            {
+                string errorMessage = $"Wrong username for user {user.UserName}";
+                logger.LogInformation($"Failed to login {username}. Error: {errorMessage}");
+
+                HttpContext.Response.StatusCode = 401;
+                return new { success = "N", errorCode = "LOGIN_WRONG_PSWD" };
+            }
 
             PasswordVerificationResult signInResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
             
@@ -199,13 +170,34 @@ namespace Parus.Backend.Controllers
             {
                 logger.LogInformation($"{username} login successfully!");
 
+                if (user.TwoFactorEnabled)
+                {
+                    // TODO: Configure relations so user.TwoFactorCustomKey
+                    //var customKey = dbContext.TwoFactoryCustomerKeys.FirstOrDefault(x => x.UserId == user.Id);
+                    var customKey = user.CustomerKey;
+
+                    // exceptional case
+                    if (customKey == null)
+                    {
+                        return HandleServerError($"Identity", $"TwoFactorEnabled was set to 'true' but couldn't find any customerKey associated with the user {user}");
+                    }
+
+                    return Json(new
+                    {
+                        success = "true",
+                        twoFactoryEnabled = true,
+                        twoFactoryCustomKey = customKey.Key
+                    });
+                }
+
                 ClaimsIdentity identity = await CreateIdentityAsync(user);
 
                 JwtToken newToken = CreateJWT(identity);
-                return Json(new { 
+
+                return Json(new 
+                { 
                     success = "true", 
-                    payload = newToken.Token, 
-                    twoFactoryEnabled = user.TwoFactorEnabled 
+                    payload = newToken.Token
                 });
             }
             else

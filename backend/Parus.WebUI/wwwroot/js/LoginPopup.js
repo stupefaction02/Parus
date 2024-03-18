@@ -70,6 +70,8 @@ export class LoginPopup {
                         if (e.success == "true") {
                             if (e.twoFactoryEnabled) {
                                 self.ShowTwoFactoryForm();
+
+                                this.InitTwoFactoryForm(e, username);
                             } else {
                                 document.cookie = "JWT=" + e.payload + "; path=/";
                                 document.location.reload();
@@ -102,11 +104,10 @@ export class LoginPopup {
         loginForm.style.setProperty("display", "none");
 
         two_factory_body.style.setProperty("display", "block");
-
-        this.InitTwoFactoryForm();
     }
 
-    InitTwoFactoryForm() {
+    InitTwoFactoryForm(response, username) {
+        var self = this;
 
         var btn = document.getElementById("2fa_send_btn");
         var code_error = document.getElementById("code_error");
@@ -115,9 +116,9 @@ export class LoginPopup {
         btn.onclick = function () {
             var code = code_input.value;
 
-            var url = CURRENT_API_PATH + "/account/2FA/verify2FACode?code="
-                + code + "&" + "customerKey=" + self.TwoFASecretKey;
-
+            var url = CURRENT_API_PATH + "/account/2FA/verify2FACode/login?code="
+                + code + "&" + "customerKey=" + response.twoFactoryCustomKey + "&username=" + username;
+            console.log(url);
             var onfail = function (e) {
                 if (e.status == 401) {
                     var json = e.responseJSON;
@@ -129,12 +130,12 @@ export class LoginPopup {
             }
 
             var onsuccess = function (e) {
-                if (e.success == "Y") {
-
+                if (e.success == "true") {
                     document.cookie = "JWT=" + e.payload + "; path=/";
-                    document.location.reload();
 
                     code_success.style.setProperty("display", "block");
+
+                    document.location.reload();
                 }
             };
 
