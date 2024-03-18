@@ -113,12 +113,13 @@ namespace Parus.Core.Entities
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
+        [JsonIgnore]
         public List<BroadcastInfo> Broadcasts { get; set; }
     }
 
     public class BroadcastCategory
     {
-        [Key]
+        [Key] 
         [JsonIgnore]
         public int Id { get; set; }
 

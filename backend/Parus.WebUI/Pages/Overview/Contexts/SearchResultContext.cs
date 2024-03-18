@@ -13,9 +13,54 @@ using Parus.Core.Interfaces;
 using Parus.Core.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using System.Drawing.Printing;
+using Parus.Core.Services.ElasticSearch;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Parus.WebUI.Pages.Overview.Contexts
 {
+    public class OverviewSearchResultContext
+    {
+        public List<BroadcastInfoElasticDto> Broadcasts { get; set; }
+        public int BroadcastsCount { get; set; }
+
+        public List<BroadcastCategory> Categories { get; set; }
+        public int CategoriesCount { get; set; }
+
+        public List<UserElasticDto> Users { get; set; }
+        public int UsersCount { get; set; }
+
+        public string Query { get; set; }
+
+        public OverviewSearchResultContext(ElasticSearchService searchingService, string q)
+        {
+            Query = q;
+
+            // TODO: add ISearchTResult and conjuct MSSQsearch and ElasticDtos in one interface
+
+            Task<Result> broadcastsTask = searchingService.SearchBroadcastsByTitleTagsAsync(q, 0, 8);
+
+            Task<Result> categoriesTask = searchingService.SearchCategoriesByNameAsync(q, 0, 5);
+
+            Task<Result> usersTask = searchingService.SearchUsersByUsernameAsync(q, 0, 5);
+
+            Task.WaitAll(broadcastsTask, categoriesTask, usersTask);
+
+            Broadcasts = (List<BroadcastInfoElasticDto>)broadcastsTask.Result.Items;
+            Categories = (List<BroadcastCategory>)categoriesTask.Result.Items;
+            Users = (List<UserElasticDto>)usersTask.Result.Items;
+
+            UsersCount = Users.Count;
+            CategoriesCount = Categories.Count;
+            BroadcastsCount = Broadcasts.Count;
+        }
+
+        public bool Any()
+        {
+            return (BroadcastsCount > 0) || (CategoriesCount > 0) || (UsersCount > 0);
+        }
+    }
+
     public abstract class SearchResultContext
     {
         protected readonly string Query;

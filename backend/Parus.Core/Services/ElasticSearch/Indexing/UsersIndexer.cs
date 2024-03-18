@@ -16,8 +16,8 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
     {
         private readonly string _cdnAvasFolderPath;
         private readonly IUserRepository repository;
-        private static string _indexPrefix = "users_";
-        private FirstLetterIndexingRule _indexingRule = new FirstLetterIndexingRule(_indexPrefix);
+        private static string _indexPrefix = "users";
+        private CustomNameIndexingRule _indexingRule = new CustomNameIndexingRule(_indexPrefix);
 
         public UsersIndexer(string cdnUrl, IUserRepository users) : base()
         {

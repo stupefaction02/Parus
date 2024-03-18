@@ -6,9 +6,12 @@
 
 @using Microsoft.Extensions.Configuration;
 @using Parus.Core.Entities;
+@using Parus.Core.Services.ElasticSearch
 @using Parus.Infrastructure.Identity;
 @using Parus.WebUI.HtmlHelpers;
 @using Parus.WebUI.Pages.Overview.Contexts;
+
+@inject ElasticSearchService searchingService
 
 @section AdditionalScripts
 {
@@ -43,7 +46,7 @@
                     break;
 
                 default:
-                    <partial model=@(q) name="/Pages/Overview/SearchResults_Overview.cshtml" />
+                    <partial model=@(new OverviewSearchResultContext(searchingService, q)) name="/Pages/Overview/SearchResults_Overview.cshtml" />
                     break;
             }
         }

@@ -161,10 +161,14 @@ namespace Parus.WebUI.Extensions
 
         public static void AddElastic(this IServiceCollection services, IConfiguration configuration)
         {
-            // configuration to configure engine
-            //ElasticSearchService engine = new ElasticSearchService();
+            string basicAuthToken = configuration["Elastic:Auth:Basic"];
+            string user = configuration["Elastic:Auth:User"];
+            string host = configuration["Elastic:Host"];
 
-            //services.AddSingleton<ISearchingService>(engine);
+            ElasticTransport instance = new ElasticTransport(host, (user, basicAuthToken));
+            services.AddSingleton(instance);
+
+            services.AddScoped<ElasticSearchService>();
         }
     }
 }

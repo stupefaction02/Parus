@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -81,6 +82,8 @@ namespace Parus.Core.Services.ElasticSearch
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(_client.BaseAddress + uri)
             };
+
+            Console.WriteLine(request.RequestUri.OriginalString);
 
             HttpResponseMessage responseMessage = await _client.SendAsync(request);
 

@@ -44,7 +44,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parus.Identity", "Parus.Identity\Parus.Identity.csproj", "{5877B6C9-E97E-4884-A77F-5368BC26B132}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Identity", "Parus.Identity\Parus.Identity.csproj", "{5877B6C9-E97E-4884-A77F-5368BC26B132}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Billing", "Billing", "{0F39F1A2-DCFC-4538-8F39-DE17CEBA1A73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parus.Billing.Subscribes", "Parus.Billing.Subscribes\Parus.Billing.Subscribes.csproj", "{BD31BB8C-E1E0-42C4-9D38-190F32434459}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -108,6 +112,10 @@ Global
 		{5877B6C9-E97E-4884-A77F-5368BC26B132}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5877B6C9-E97E-4884-A77F-5368BC26B132}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5877B6C9-E97E-4884-A77F-5368BC26B132}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD31BB8C-E1E0-42C4-9D38-190F32434459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD31BB8C-E1E0-42C4-9D38-190F32434459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD31BB8C-E1E0-42C4-9D38-190F32434459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD31BB8C-E1E0-42C4-9D38-190F32434459}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -122,6 +130,7 @@ Global
 		{67FCF6BE-15EB-4ECA-8AC7-76312D9385BC} = {C5D32BD9-9F51-4316-8FA4-3C4564804CED}
 		{A6D181AC-888A-4FCE-86F9-917E4ACE1D04} = {C5D32BD9-9F51-4316-8FA4-3C4564804CED}
 		{5877B6C9-E97E-4884-A77F-5368BC26B132} = {EC398582-35D2-47AF-AC4B-F3862210C617}
+		{BD31BB8C-E1E0-42C4-9D38-190F32434459} = {0F39F1A2-DCFC-4538-8F39-DE17CEBA1A73}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD49B428-22A9-4B04-91A7-C84C58B54C78}

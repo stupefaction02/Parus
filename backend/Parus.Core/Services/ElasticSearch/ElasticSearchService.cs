@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Parus.Core.Services.ElasticSearch
 {
@@ -83,7 +84,7 @@ namespace Parus.Core.Services.ElasticSearch
                 var r = JsonSerializer.Deserialize
                     <SearchLiteResult<T>>(result.Item2);
 
-                return new Result(r.Hits.Total.Value, r.Hits.Hits.Select(x => x.Source));
+                return new Result(r.Hits.Total.Value, r.Hits.Hits.Select(x => x.Source).ToList());
             }
 
             return new Result();

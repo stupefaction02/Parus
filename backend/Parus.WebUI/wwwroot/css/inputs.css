@@ -68,6 +68,11 @@ h2 {
     width: 100%;
 }
 
+.input_success {
+    color: green;
+    width: 100%;
+}
+
 /* active state */
 .form_input:focus ~ .input_label, .form_input:valid ~ .input_label {
     top: -20px;

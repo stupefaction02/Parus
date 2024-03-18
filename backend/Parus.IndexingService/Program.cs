@@ -9,6 +9,8 @@ internal class Program
     {
         Console.WriteLine("Starting ElasticIndexingEngine");
 
+        Console.Title = "Indexing";
+
         string cf = "indexing_settings.json";
         string configPath = BuildConfigPath(cf);
         Console.WriteLine($"Loading config file from {configPath}");

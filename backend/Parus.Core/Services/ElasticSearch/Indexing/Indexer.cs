@@ -8,6 +8,21 @@ using Parus.Common.Extensions;
 
 namespace Parus.Core.Services.ElasticSearch.Indexing
 {
+    public class CustomNameIndexingRule
+    {
+        private readonly string _name;
+
+        public CustomNameIndexingRule(string name)
+        {
+            _name = name;
+        }
+
+        public string Index(string str)
+        {
+            return _name;
+        }
+    }
+
     public class FirstLetterIndexingRule
     {
         private readonly string _indexPrefix;

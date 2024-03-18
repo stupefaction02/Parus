@@ -187,7 +187,6 @@ namespace Parus.Backend.Controllers
         public async Task<object> Login(
             string username, 
             string password,
-            SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher)
         {
@@ -203,14 +202,19 @@ namespace Parus.Backend.Controllers
                 ClaimsIdentity identity = await CreateIdentityAsync(user);
 
                 JwtToken newToken = CreateJWT(identity);
-                return Json(new { success = "true", payload = newToken.Token });
+                return Json(new { 
+                    success = "true", 
+                    payload = newToken.Token, 
+                    twoFactoryEnabled = user.TwoFactorEnabled 
+                });
             }
             else
             {
                 string errorMessage = $"Wrong password for user {user.UserName}";
                 logger.LogInformation($"Failed to login {username}. Error: {errorMessage}");
 
-                return CreateJsonError(errorMessage);
+                HttpContext.Response.StatusCode = 401;
+                return new { success = "N", errorCode = "LOGIN_WRONG_PSWD" };
             }
         }
 

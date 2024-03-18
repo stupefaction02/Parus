@@ -11,9 +11,9 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
 {
     public class BroadcastsIndexer : Indexer
     {
-        private static string _indexPrefix = "broadcasts_";
+        private static string _indexPrefix = "broadcasts";
         private readonly IBroadcastInfoRepository repository;
-        private FirstLetterIndexingRule _indexingRule = new FirstLetterIndexingRule(_indexPrefix);
+        private CustomNameIndexingRule _indexingRule = new CustomNameIndexingRule(_indexPrefix);
 
         public BroadcastsIndexer(IBroadcastInfoRepository repository)
         {
