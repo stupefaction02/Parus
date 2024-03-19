@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,20 +47,52 @@ namespace Parus.WebUI.Middlewares
 		}
 	}
 
-	public class CheckingLoggingInMiddleware
+	public class IdentityHttpClient : HttpClient
+	{
+        private readonly string refreshTokenUrl = "api/account/refreshtoken";
+
+        private readonly string apiToken;
+
+        public IdentityHttpClient(string url, string apiToken)
+        {
+			BaseAddress = new Uri(url);
+            this.apiToken = apiToken;
+        }
+
+		// TODO: Result struct instead bool
+		public async Task<bool> RequestRefreshTokenAsync(string fingerprint, string refreshToken)
+		{
+			string path = $"?fingerprint={fingerprint}&refreshToken={refreshToken}";
+
+            HttpRequestMessage request = new HttpRequestMessage
+			{
+				RequestUri = new Uri(BaseAddress + refreshTokenUrl + path)
+			};
+
+			Console.WriteLine(request.RequestUri);
+
+			var response = await SendAsync(request);
+
+            Console.WriteLine(response.StatusCode);
+
+            return response.IsSuccessStatusCode;
+		}
+    }
+
+	public class AuthenticationSecondHandMiddleware
     {
         private readonly RequestDelegate _next;
 		private readonly IServiceProvider serviceProvider;
 
-		public CheckingLoggingInMiddleware(RequestDelegate next, IServiceProvider servicePRovider)
+		public AuthenticationSecondHandMiddleware(RequestDelegate next, IServiceProvider servicePRovider)
         {
             _next = next;
 			this.serviceProvider = servicePRovider;
 		}
 
-		public Task Invoke(HttpContext httpContext)
+		public async Task Invoke(HttpContext httpContext, IdentityHttpClient httpClient)
 		{
-			// If standart cookie authentcation has failed (generally due of abstance of login cookie)
+			// If standart cookie authentcation ( UseAuthentication() should be above this mw ) has failed (generally due of abstance of login cookie)
 			if (!httpContext.User.Identity.IsAuthenticated)
 			{
 				string jwtCoockie = httpContext.Request.Cookies["JWT"];
@@ -88,11 +122,29 @@ namespace Parus.WebUI.Middlewares
 						NaturisticAuthenticateFeatures authFeatures = new NaturisticAuthenticateFeatures(result);
 						httpContext.Features.Set<IHttpAuthenticationFeature>(authFeatures);
 						httpContext.Features.Set<IAuthenticateResultFeature>(authFeatures);
-					}
+					} 
+					else
+					{
+                        //result.Failure
+
+						// TODO: VS2022 doens't see public exception class
+                        //https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references
+                        //if (result.Failure is AuthenticationFailureException)
+						
+						if (result.Failure.Message.StartsWith("IDX10223"))
+						{
+							string fingerprint = httpContext.Request.Cookies["fingerprint"];
+							string refreshToken = "95d453f41f074b3b96f9a73d4e5cb5df";// httpContext.Request.Cookies["refreshToken"];
+							if (await httpClient.RequestRefreshTokenAsync(fingerprint, refreshToken))
+							{
+								Debug.WriteLine("Refresh Token request has completed!");
+							}                   
+                        }
+                    }
 				}
 			}
 
-			return _next(httpContext);
+			await _next(httpContext);
 		}
 	}
 }

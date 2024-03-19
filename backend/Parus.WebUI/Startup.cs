@@ -51,6 +51,9 @@ namespace Parus.WebUI
             {
                 BaseAddress = new Uri("https://localhost:5001/")
             });
+
+            services.ConfigureHttpClients(Configuration);
+
             services.AddScoped<IApiClient, ApiClient>();
 
             services.AddHttpContextAccessor();
@@ -90,7 +93,7 @@ namespace Parus.WebUI
 
             app.UseAuthentication();
 
-            app.UseMiddleware<CheckingLoggingInMiddleware>();
+            app.UseMiddleware<AuthenticationSecondHandMiddleware>();
 
 			app.UseSession();
 

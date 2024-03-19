@@ -22,6 +22,7 @@ using Parus.Core.Services.ElasticSearch.Indexing;
 using Parus.Core.Services.ElasticSearch;
 using Parus.Core.Interfaces.Services;
 using System.Diagnostics;
+using Parus.WebUI.Middlewares;
 
 namespace Parus.WebUI.Extensions
 {
@@ -169,6 +170,13 @@ namespace Parus.WebUI.Extensions
             services.AddSingleton(instance);
 
             services.AddScoped<ElasticSearchService>();
+        }
+
+        public static void ConfigureHttpClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            string url = configuration["IdentityServer:Url"];
+            IdentityHttpClient client = new IdentityHttpClient(url, "");
+            services.AddSingleton<IdentityHttpClient>(client);
         }
     }
 }

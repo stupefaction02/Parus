@@ -558,14 +558,15 @@ namespace Parus.Backend.Controllers
             return Ok();
         }
 
+        // private api
         [HttpGet]
         [Route("api/account/refreshtoken")]
-        public async Task<object> RefreshToken(string fingerPrint,
+        public async Task<object> RefreshToken(string fingerPrint, string refreshToken,
             [FromServices] ApplicationIdentityDbContext identityDbContext)
         {
-            string rsUuid = HttpContext.Request.Cookies["refreshToken"];
+            //string rsUuid = HttpContext.Request.Cookies["refreshToken"];
 
-            if (String.IsNullOrEmpty(rsUuid))
+            if (String.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized();
             }
@@ -573,7 +574,14 @@ namespace Parus.Backend.Controllers
             RefreshSession lastRs = identityDbContext.RefreshSessions
                 .Include(x => x.User)
                 .AsEnumerable()
-                .SingleOrDefault(x => x.Token == rsUuid);
+                .FirstOrDefault(x => x.Token == refreshToken);
+
+            // exceptiona case
+            // it means that this user has nver registered into our system
+            if (lastRs == null)
+            {
+                HandleServerError("Identity", "Detected and attempt requesting refreshToken for unregistered user");
+            }
 
             int now = DateTimeUtils.ToUnixTimeSeconds(DateTime.UtcNow);
             if (lastRs.ExpiresAt < now)

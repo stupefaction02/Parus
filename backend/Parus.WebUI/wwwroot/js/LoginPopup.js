@@ -1,4 +1,5 @@
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
+//import {  } from "./common.js";
 
 export class LoginPopup {
     constructor(popupId) { //debugger
@@ -81,15 +82,17 @@ export class LoginPopup {
                 },
                 error: (e) => {
                     if (e.status == 401) {
-                        var json = e.responseJSON;
+                        var errorCode = e.responseJSON.errorCode;
 
-                        if (json.errorCode == "LOGIN_WRONG_PSWD") {
+                        if (errorCode == "LOGIN_WRONG_PSWD") {
                             login_error_label.style.display = "block";
 
                             var password_recovery_label =
                                 document.getElementById("password_recovery_label");
 
                             password_recovery_label.style.display = "block";
+                        } else if (errorCode == "JWT_TOKEN_EXPIRED") {
+                            //var url = 
                         }
                     }
                 }

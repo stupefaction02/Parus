@@ -4,8 +4,6 @@ import { sendGetAjax } from "./network.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { LoginPopup } from "./LoginPopup.js";
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
     var header_user_settings = document.getElementById("header_user_settings");
     var confirm_account_link = document.getElementById("confirm_account_link");
