@@ -10,6 +10,7 @@ using Parus.Core.Authentication;
 using Parus.Infrastructure.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Parus.Backend.Controllers
 {
@@ -81,6 +82,7 @@ namespace Parus.Backend.Controllers
             return new ClaimsIdentity(claims);
         }
 
+        // TODO: I don't know... instead of method make a service or something 
         protected async Task<JsonResult> LoginResponse(ApplicationUser appUser)
         {
             ClaimsIdentity identity = await CreateIdentityAsync(appUser);
@@ -91,6 +93,36 @@ namespace Parus.Backend.Controllers
             {
                 success = "true",
                 payload = newToken.Token
+            });
+        }
+
+        protected async Task<JsonResult> LoginResponse(ApplicationUser user, string fingerPrint, ApplicationIdentityDbContext dbContext)
+        {
+            var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.Fingerprint == fingerPrint & x.User == user);
+
+            if (existedRt == null)
+            {
+                return Json( HandleServerError("Identity", "") );
+            }
+
+            existedRt.Token = RefreshSession.GenerateToken();
+
+            var updateRT = dbContext.Update(existedRt);
+
+            if (await dbContext.SaveChangesAsync() <= 0)
+            {
+                return Json(HandleServerError("Identity", "", "Server Error. Contact the administrator."));
+            }
+
+            ClaimsIdentity identity = await CreateIdentityAsync(user);
+
+            JwtToken newToken = CreateJWT(identity);
+
+            return Json(new
+            {
+                success = "true",
+                payload = newToken.Token,
+                refreshToken = updateRT.Entity.Token
             });
         }
     }

@@ -146,7 +146,6 @@ namespace Parus.Backend.Controllers
         public async Task<object> Login(
             string username, 
             string password,
-            UserManager<ApplicationUser> userManager,
             IPasswordHasher<ApplicationUser> passwordHasher, 
             ApplicationIdentityDbContext dbContext)
         {
@@ -190,15 +189,8 @@ namespace Parus.Backend.Controllers
                     });
                 }
 
-                ClaimsIdentity identity = await CreateIdentityAsync(user);
-
-                JwtToken newToken = CreateJWT(identity);
-
-                return Json(new 
-                { 
-                    success = "true", 
-                    payload = newToken.Token
-                });
+                string fingerPrint = HttpContext.Request.Headers.UserAgent;
+                return LoginResponse(user, fingerPrint, dbContext);
             }
             else
             {
@@ -213,7 +205,7 @@ namespace Parus.Backend.Controllers
         // TODO: reconsider gender enum type as something with less size
         [HttpPost]
         [Route("api/account/register")]
-		public object Register(
+		public async Task<object> Register(
             string username, 
             string email,
             string password, 
@@ -246,14 +238,17 @@ namespace Parus.Backend.Controllers
                 ClaimsIdentity identity = new ClaimsIdentity(claims);
 
                 JwtToken jwt = CreateJWT(identity);
-                RefreshSession refreshSession = AddRefreshToken(user, "fingerprint01", identityDbContext);
+                // TODO: checks if token is already created
+                string fingerPrint = HttpContext.Request.Headers.UserAgent;
+                RefreshSession refreshSession = RefreshSession.CreateDefault(fingerPrint, user);
 
-                logger.LogInformation("User registered successfully!");
+                await identityDbContext.RefreshSessions.AddAsync(refreshSession);
+
+                logger.LogInformation("User registered.");
 
                 // jwt expires timestamp
-                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(
-                        DateTime.Now.Add( JwtAuthOptions.Lifetime )
-                    );
+                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(DateTime.Now.Add( JwtAuthOptions.Lifetime));
+
                 var response = new
                 {
                     success = true,
@@ -261,7 +256,7 @@ namespace Parus.Backend.Controllers
                     refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
                 };
 
-                identityDbContext.SaveChanges();
+                await identityDbContext.SaveChangesAsync();
 
                 return Json(response);
 			}
@@ -280,27 +275,7 @@ namespace Parus.Backend.Controllers
                 return Json(CreateJsonError(err));
             }
 		}
-
-        // TODO: more effiecent way ot create tokens, with passwordHasher maybe ?
-        private RefreshSession AddRefreshToken(ApplicationUser user, string fingerPrint, 
-            ApplicationIdentityDbContext identityDbContext)
-        {
-            //identityDbContext.RefreshSessions.Remove();
-
-            RefreshSession rs = new RefreshSession
-            {
-                // TODO: Replace with something more efficeint
-                Token = Guid.NewGuid().ToString().Replace("-", ""),
-                Fingerprint = fingerPrint,
-                ExpiresAt = DateTimeUtils.ToUnixTimeSeconds( DateTime.Now.Add(RefreshSession.LifeTime) ),
-                User = user
-            };
-
-            identityDbContext.RefreshSessions.Add(rs);
-
-            return rs;
-        }
-
+        
         private object CreateJsonError(string message)
 		{
             return new { success = "N", message = message };
@@ -334,7 +309,7 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/requestverificationcode")]
-        public async Task<object> CreateVerificationCodeAsync(string username, bool force,
+        public async Task<object> RequestVerificationCodeAsync(string username, bool force,
             IConfrimCodesRepository confrimCodesRepository,
             IEmailService emailService,
             UserManager<ApplicationUser> userManager)
@@ -387,7 +362,7 @@ namespace Parus.Backend.Controllers
 
             if (emailResponse.Success)
             {
-				return Json(JsonSuccess());
+				return JsonSuccess();
 			}
 
 			return Json(CreateJsonError(emailResponse.Mssage));
@@ -569,6 +544,14 @@ namespace Parus.Backend.Controllers
             if (String.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized();
+            }
+
+            // if user was deleted from database but jwt cookies is still there
+            // checks if user is existed
+            if (!identityDbContext.Users.Any(x => x.UserName == User.Identity.Name))
+            {
+                //Debug.Console("User with associated with this auth token is deleted form db.");
+                return NotFound("Can't find user.");
             }
 
             RefreshSession lastRs = identityDbContext.RefreshSessions

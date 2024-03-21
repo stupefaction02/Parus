@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
@@ -12,74 +13,43 @@ using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Parus.Infrastructure.Identity;
+using Parus.Core.Network;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace Parus.WebUI.Middlewares
 {
-	public class NaturisticAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
-	{
-		private ClaimsPrincipal? _user;
-		private AuthenticateResult? _result;
+    public class NaturisticAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
+    {
+        private ClaimsPrincipal? _user;
+        private AuthenticateResult? _result;
 
-		public NaturisticAuthenticateFeatures(AuthenticateResult result)
-		{
-			AuthenticateResult = result;
-		}
-
-		public AuthenticateResult? AuthenticateResult
-		{
-			get => _result;
-			set
-			{
-				_result = value;
-				_user = _result?.Principal;
-			}
-		}
-
-		public ClaimsPrincipal? User
-		{
-			get => _user;
-			set
-			{
-				_user = value;
-				_result = null;
-			}
-		}
-	}
-
-	public class IdentityHttpClient : HttpClient
-	{
-        private readonly string refreshTokenUrl = "api/account/refreshtoken";
-
-        private readonly string apiToken;
-
-        public IdentityHttpClient(string url, string apiToken)
+        public NaturisticAuthenticateFeatures(AuthenticateResult result)
         {
-			BaseAddress = new Uri(url);
-            this.apiToken = apiToken;
+            AuthenticateResult = result;
         }
 
-		// TODO: Result struct instead bool
-		public async Task<bool> RequestRefreshTokenAsync(string fingerprint, string refreshToken)
-		{
-			string path = $"?fingerprint={fingerprint}&refreshToken={refreshToken}";
+        public AuthenticateResult? AuthenticateResult
+        {
+            get => _result;
+            set
+            {
+                _result = value;
+                _user = _result?.Principal;
+            }
+        }
 
-            HttpRequestMessage request = new HttpRequestMessage
-			{
-				RequestUri = new Uri(BaseAddress + refreshTokenUrl + path)
-			};
-
-			Console.WriteLine(request.RequestUri);
-
-			var response = await SendAsync(request);
-
-            Console.WriteLine(response.StatusCode);
-
-            return response.IsSuccessStatusCode;
-		}
+        public ClaimsPrincipal? User
+        {
+            get => _user;
+            set
+            {
+                _user = value;
+                _result = null;
+            }
+        }
     }
 
-	public class AuthenticationSecondHandMiddleware
+    public class AuthenticationSecondHandMiddleware
     {
         private readonly RequestDelegate _next;
 		private readonly IServiceProvider serviceProvider;
@@ -125,21 +95,28 @@ namespace Parus.WebUI.Middlewares
 					} 
 					else
 					{
-                        //result.Failure
-
 						// TODO: VS2022 doens't see public exception class
-                        //https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references
-                        //if (result.Failure is AuthenticationFailureException)
-						
+						//https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references
+						//if (result.Failure is AuthenticationFailureException)
 						if (result.Failure.Message.StartsWith("IDX10223"))
 						{
 							string fingerprint = httpContext.Request.Cookies["fingerprint"];
 							string refreshToken = "95d453f41f074b3b96f9a73d4e5cb5df";// httpContext.Request.Cookies["refreshToken"];
-							if (await httpClient.RequestRefreshTokenAsync(fingerprint, refreshToken))
+							RefreshTokenResult rtTokenRequestResult = await httpClient.RequestRefreshTokenAsync(fingerprint, refreshToken);
+
+							if (rtTokenRequestResult.Success)
 							{
 								Debug.WriteLine("Refresh Token request has completed!");
-							}                   
+							}
+							else
+							{
+                                httpContext.Response.Cookies.Delete("JWT");
+                            }
                         }
+						else
+						{
+							httpContext.Response.Cookies.Delete("JWT");
+						}
                     }
 				}
 			}

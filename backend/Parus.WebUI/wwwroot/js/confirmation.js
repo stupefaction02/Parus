@@ -1,5 +1,6 @@
 /*import { sendGet } from "./network";*/
 /*import { showPopup } from "./regform";*/
+import { CURRENT_API_PATH } from "./config.js";
 
 (function ($) {
     'use strict';
@@ -20,7 +21,7 @@
     }
 
     var request_verificaion_code = function (username) {
-        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username;//
+        var url = CURRENT_API_PATH + "/api/account/requestverificationcode?username=" + username;//
         console.log(url);
         sendPost(url, null);
     }
@@ -28,7 +29,7 @@
     var send_code = function (code, onsuccess) {
         //debugger
         var username = document.getElementById("nickname_input").value;
-        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&username=" + username;
+        var url = CURRENT_API_PATH + "/api/account/verifyaccount?code=" + code + "&username=" + username;
 
         console.log(url);
 

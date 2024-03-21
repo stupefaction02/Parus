@@ -294,7 +294,7 @@ namespace IdentityTest
 
                 identityController.ControllerContext.HttpContext = ctx;
 
-				var res = identityController.RefreshToken(fingerPrint, context).GetAwaiter().GetResult();
+				var res = identityController.RefreshToken(fingerPrint, "", context).GetAwaiter().GetResult();
 
 				Assert.IsNotType<UnauthorizedResult>(res);
 				Assert.IsNotType<ForbidResult>(res);

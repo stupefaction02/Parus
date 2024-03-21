@@ -1,4 +1,5 @@
 import { GetCookie } from "./common.js";
+import { CURRENT_API_PATH } from "./config.js";
 
 export class VerificationPopup {
     constructor(popupId) { //debugger
@@ -51,7 +52,7 @@ export class VerificationPopup {
     } 
 
     send_code_again_onclick(e) { 
-        debugger
+        //debugger
         if (this.canSend) {
             this.request_verificaion_code(this.username, true);
         }
@@ -75,15 +76,15 @@ export class VerificationPopup {
     }
 
     request_verificaion_code (username, forceCreate) { 
-        var url = "https://localhost:5001/api/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
+        var url = CURRENT_API_PATH + "/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
         console.log(url);
 
         var self = this;
-        debugger
+        //debugger
         this.sendPost(url, function (e) {
             if (e.success == "Y") {
                 self.ShowPopup();
-                debugger
+                //debugger
                 var spanPlaceholder = document.querySelector("#verification_info .placeholder");
 
                 spanPlaceholder.textContent = self.username;
@@ -121,7 +122,7 @@ export class VerificationPopup {
     }
 
     send_code (code, onsuccess) {
-        var url = "https://localhost:5001/api/account/verifyaccount?code=" + code + "&username=" + this.username;
+        var url = CURRENT_API_PATH + "/account/verifyaccount?code=" + code + "&username=" + this.username;
 
         this.sendPost(url, onsuccess);
     }

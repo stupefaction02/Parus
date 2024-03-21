@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Parus.Common.Utils;
 using Parus.Core.Entities;
 using Parus.Infrastructure;
 
@@ -68,5 +69,22 @@ namespace Parus.Infrastructure.Identity
         public string Fingerprint { get; set; }
 
         public int ExpiresAt { get; set; }
+
+        public static RefreshSession CreateDefault(string fingerPrint, ApplicationUser user)
+        {
+            return new RefreshSession
+            {
+                // TODO: Replace with something more efficeint
+                Token = GenerateToken(),
+                Fingerprint = fingerPrint,
+                ExpiresAt = DateTimeUtils.ToUnixTimeSeconds(DateTime.Now.Add(RefreshSession.LifeTime)),
+                User = user
+            };
+        }
+
+        public static string GenerateToken()
+        {
+            return Guid.NewGuid().ToString().Replace("-", "");
+        }
     }
 }
