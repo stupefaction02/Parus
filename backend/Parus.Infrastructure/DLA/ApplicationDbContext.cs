@@ -16,13 +16,13 @@ namespace Parus.Infrastructure.DLA
         {
             
         }
+        #endregion
 
         private string _connectionString;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString = "") : base(options) 
         {
             _connectionString = connectionString;
         }
-		#endregion
 
 		#region Tables
 

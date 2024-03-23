@@ -1,8 +1,10 @@
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var app = builder.Build();
+//builder.Services.AddDbContext();
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 

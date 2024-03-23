@@ -3,10 +3,21 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Parus.Core.Entities;
+using Parus.Core.Billing;
+using System.Collections.Generic;
 
 namespace Parus.Infrastructure.Identity
 {
-	public class ApplicationUser : IdentityUser, IUser
+    public class ParusSubscribeSession : SubscribeSession
+    {
+        // null! - required
+        // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-many#optional-one-to-many
+
+        public ApplicationUser SubjectUser { get; set; } = null!;
+        public ApplicationUser PurchaserUser { get; set; } = null!;
+    }
+
+    public class ApplicationUser : IdentityUser, IUser
     {
 		#region Broadcast/Viewer fields
 
@@ -14,6 +25,8 @@ namespace Parus.Infrastructure.Identity
 		public string AvatarPath { get; set; }
 
 		#endregion
+
+        public List<SubscribeSession> SubscribeSessions { get; set; }
 
 		public string ChatColor { get; set; }
 

@@ -23,6 +23,7 @@ using Parus.Core.Services.ElasticSearch;
 using Parus.Core.Interfaces.Services;
 using System.Diagnostics;
 using Parus.WebUI.Middlewares;
+using Parus.Core.Network;
 
 namespace Parus.WebUI.Extensions
 {
