@@ -50,7 +50,7 @@ namespace Parus.Core.Entities
         public string Title { get; set; }
 
         [JsonPropertyName("tags")]
-        public List<Tag> Tags { get; set; }
+        public List<Tag> Tags { get; set; } = new List<Tag>();
     }
 
     public class BroadcastInfo : IBroadcastsInfoSearchResult

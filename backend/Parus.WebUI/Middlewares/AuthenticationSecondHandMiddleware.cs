@@ -95,10 +95,11 @@ namespace Parus.WebUI.Middlewares
 					} 
 					else
 					{
-						// TODO: VS2022 doens't see public exception class
-						//https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references
-						//if (result.Failure is AuthenticationFailureException)
-						if (result.Failure.Message.StartsWith("IDX10223"))
+                        await _next(httpContext); return;
+                        // TODO: VS2022 doens't see public exception class
+                        //https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references
+                        //if (result.Failure is AuthenticationFailureException)
+                        if (result.Failure.Message.StartsWith("IDX10223"))
 						{
 							string fingerprint = httpContext.Request.Cookies["fingerprint"];
 							string refreshToken = "95d453f41f074b3b96f9a73d4e5cb5df";// httpContext.Request.Cookies["refreshToken"];

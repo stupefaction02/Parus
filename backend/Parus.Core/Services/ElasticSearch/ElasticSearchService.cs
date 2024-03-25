@@ -55,7 +55,7 @@ namespace Parus.Core.Services.ElasticSearch
             Json = json;
         }
 
-        public Result(int totalCount, object items) : this()
+        public Result(int totalCount, object items) : this(null)
         {
             TotalCount = totalCount;
             Items = items;
