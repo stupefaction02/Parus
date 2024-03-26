@@ -103,12 +103,12 @@
                 <div class="results_elems_categories">
                     @foreach (BroadcastCategory cat in Model.Categories)
                     {
-                        string viewsCount = cat.ViewsCount + " зрителей";
+                        string viewsCount = cat.ViewsCountString + " зрителей";
 
                         <div class="results_elems_category">
                             <div class="results_elems_category_img">
                                 <a href="#@(cat.Name)">
-                                    <img class="broadcast_block_img" src="@(imageServer)/categories/@(cat.Name).jpg" />
+                                    <img class="broadcast_block_img" src="@(imageServer)/categories/@(cat.Ref).jpg" />
                                 </a>
                             </div>
 
@@ -116,7 +116,7 @@
                                 <div class="results_elems_category_info_name">
                                     <strong>
                                         <a class="results_elems_category_info_name_a" 
-                                        href="/categories/@(cat.GetRef())">Category Name</a>
+                                        href="/categories/@(cat.Ref)">@cat.Name</a>
                                     </strong>
                                 </div>
 

@@ -66,7 +66,7 @@ namespace Parus.Core.Services.ElasticSearch
     {
         private static string searchUsernamePath = "_search?q=username:";
         private static string searchTitlePath = "_search?q=title:";
-        private static string searchCatNamePath = "_search?q=name:";
+        private static string searchCatNamePath = "categories/_search?q=name:";
 
         private readonly ElasticTransport _transport;
 
@@ -104,7 +104,7 @@ namespace Parus.Core.Services.ElasticSearch
             {            
                 return new Result( JsonToDtoJson(result.Item2) );
             }
-
+             
             return new Result();
         }
 

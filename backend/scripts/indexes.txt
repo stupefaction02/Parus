@@ -115,6 +115,7 @@ PUT localhost:9200/users
     }
 }
 
+#categories create
 {
     "settings": {
         "number_of_shards": 2,
@@ -152,6 +153,10 @@ PUT localhost:9200/users
     },
     "mappings": {
         "properties": {
+            "id": {
+                "type": "keywrod",
+                "index": "false"
+            },
             "name": {
                 "type": "text",
                 "index": "true",
@@ -159,6 +164,10 @@ PUT localhost:9200/users
             },
             "viewsCount": {
                 "type": "integer",
+                "index": "false"
+            },
+            "pictureUrl": {
+                "type": "keyword",
                 "index": "false"
             }
         }

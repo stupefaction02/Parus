@@ -126,6 +126,12 @@ namespace Parus.Core.Entities
         [JsonPropertyName("name")]
 		public string Name { get; set; }
 
+        [JsonPropertyName("id")]
+        public string Ref { get; set; }
+
+        [JsonPropertyName("viewsCount")]
+        public string ViewsCountString { get; set; }
+
         [JsonIgnore]
         public List<BroadcastInfo> Broadcasts { get; set; }
         
@@ -139,7 +145,7 @@ namespace Parus.Core.Entities
             };
         }
 
-        [JsonPropertyName("views_count")]
+        [JsonIgnore]
         public int ViewsCount { get; set; } = 0;
 
         [JsonIgnore]
