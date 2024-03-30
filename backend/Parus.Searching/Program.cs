@@ -29,9 +29,9 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 //app.UseHttpsRedirection();
 
-//app.MapGet("/hello", () => { Console.WriteLine("Hello"); return "Hello"; });
+app.MapGet("/hello", () => { Console.WriteLine("Hello"); return "Hello"; });
 
-app.MapGet("/{q}", async (string q, int page, int size, 
+app.MapGet("/a/{q}", async (string q, int page, int size, 
     [FromServices] ElasticSearchService searchingService) =>
 {
     int start = page == 0 ? 1 : size * (page - 1);

@@ -39,10 +39,10 @@
                     <partial model=@(new AllUsersSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Users.cshtml" />
                     break;
                 case "broadcasts":
-                    <partial model=@(new AllCategoiresSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
+                    <partial model=@(new AllBroadcastSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
                     break;
                 case "categories":
-                    <partial model=@(new AllBroadcastSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
+                    <partial model=@(new AllCategoiresSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
                     break;
 
                 default:

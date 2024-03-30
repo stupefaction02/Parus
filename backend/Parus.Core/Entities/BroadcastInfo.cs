@@ -126,9 +126,11 @@ namespace Parus.Core.Entities
         [JsonPropertyName("name")]
 		public string Name { get; set; }
 
+        [NotMapped]
         [JsonPropertyName("id")]
         public string Ref { get; set; }
 
+        [NotMapped]
         [JsonPropertyName("viewsCount")]
         public string ViewsCountString { get; set; }
 

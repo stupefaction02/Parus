@@ -72,7 +72,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
             this.Query = query;
         }
 
-        public abstract void Init(ISearchingService searchingService, string page);
+        public abstract void Prepare(ElasticSearchService searchingService, string page);
     }
 
     public class AllUsersSearchResultContext : SearchResultContext
@@ -83,7 +83,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
         public AllUsersSearchResultContext(string query) : base(query) { }
 
-        public override void Init(ISearchingService searchingService, string page)
+        public override void Prepare(ElasticSearchService searchingService, string page)
         {
 #if DEBUG
 
@@ -97,12 +97,10 @@ namespace Parus.WebUI.Pages.Overview.Contexts
                 pageInt32 = 1;
             }
 
-            int usersCount = searchingService.CountUsersByName(Query);
-
             int start = (pageInt32 - 1) * PAGE_SIZE;
-            this.Users = searchingService.SearchUsersByName(Query, start, PAGE_SIZE);
+            var result = searchingService.SearchUsersByUsernameAsync(Query, start, PAGE_SIZE).GetAwaiter().GetResult();
 
-            int pageCount = (usersCount / PaginationContext.PAGE_SIZE) + 1;
+            int pageCount = (result.TotalCount / PAGE_SIZE) + 1;
 
             Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 
@@ -123,7 +121,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
         {
         }
 
-        public override void Init(ISearchingService searchingService, string page)
+        public override void Prepare(ElasticSearchService searchingService, string page)
         {
 #if DEBUG
 
@@ -137,12 +135,12 @@ namespace Parus.WebUI.Pages.Overview.Contexts
                 pageInt32 = 1;
             }
 
-            int count = searchingService.CountUsersByName(Query);
-
             int start = (pageInt32 - 1) * PAGE_SIZE;
-            this.Broadcasts = searchingService.SearchBroadcastsByTitleTags(Query, PAGE_SIZE);
+            Result broadcasts = searchingService.SearchBroadcastsByTitleTagsAsync(Query, 0, 8).GetAwaiter().GetResult();
 
-            int pageCount = (count / PAGE_SIZE) + 1;
+            int pageCount = (broadcasts.TotalCount / PAGE_SIZE) + 1;
+
+            this.Broadcasts = (List<BroadcastInfoElasticDto>)broadcasts.Items;
 
             Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 
@@ -163,7 +161,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
         {
         }
 
-        public override void Init(ISearchingService searchingService, string page)
+        public override void Prepare(ElasticSearchService searchingService, string page)
         {
 #if DEBUG
 
@@ -177,12 +175,13 @@ namespace Parus.WebUI.Pages.Overview.Contexts
                 pageInt32 = 1;
             }
 
-            int usersCount = searchingService.CountUsersByName(Query);
-
             int start = (pageInt32 - 1) * PAGE_SIZE;
-            this.Categories = searchingService.SearchCategoryByName(Query, start, PAGE_SIZE);
 
-            int pageCount = (usersCount / PAGE_SIZE) + 1;
+            Result result = searchingService.SearchCategoriesByNameAsync(Query, 0, 8).GetAwaiter().GetResult();
+
+            int pageCount = (result.TotalCount / PAGE_SIZE) + 1;
+
+            this.Categories = (List<BroadcastCategory>)result.Items;
 
             Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 

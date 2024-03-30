@@ -2,6 +2,7 @@
 @using Parus.Core.Interfaces;
 @using Parus.Core.Entities;
 @using Parus.Core.Interfaces.Services;
+@using Parus.Core.Services.ElasticSearch
 @using Parus.Infrastructure.Identity;
 @using Parus.WebUI.HtmlHelpers;
 @using System.Diagnostics;
@@ -10,13 +11,13 @@
 @model AllUsersSearchResultContext
 
 @inject ILocalizationService localization
-@inject ISearchingService searchingService
+@inject ElasticSearchService searchingService
 @inject IConfiguration configuration
 
 @{
     string imageServer = configuration["ImageServer:Url"];
 
-    Model.Init(searchingService, Context.Request.Query["page"]);
+    Model.Prepare(searchingService, Context.Request.Query["page"]);
 }
 
 @if (Model.Users.Any())
