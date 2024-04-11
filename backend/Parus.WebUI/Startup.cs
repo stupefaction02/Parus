@@ -27,6 +27,11 @@ using Parus.Infrastructure.DLA.Repositories;
 using Parus.Infrastructure.DLA;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services.ElasticSearch;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using System.Security.Cryptography.X509Certificates;
+using System.IO;
+using System.Net;
 
 namespace Parus.WebUI
 {
@@ -41,8 +46,6 @@ namespace Parus.WebUI
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCookieAuthentication();
-
             services.AddRazorPages(options => {
                 options.Conventions.AuthorizeFolder("/Account");
             });
@@ -73,9 +76,10 @@ namespace Parus.WebUI
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            //services.AddTransient<ISearchingService, MSSQLSearchingService>();
 
             services.AddElastic(Configuration);
+
+            services.AddSingleton<IMQService, RabbitMQService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -85,7 +89,10 @@ namespace Parus.WebUI
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseStaticFiles();
+            //app.UseMiddleware<RestrictConnectionsMiddleware>();
+
+            // solely for .well-known/acme-challenge/{emptyExtensonFile}
+            app.UseStaticFiles( new StaticFileOptions { ServeUnknownFileTypes = true } );
 
 			app.UseRouting();
 

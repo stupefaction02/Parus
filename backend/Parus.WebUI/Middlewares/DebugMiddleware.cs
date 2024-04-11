@@ -72,12 +72,13 @@ namespace Parus.WebUI.Middlewares
 
             string time = DateTime.UtcNow.ToString("HH:mm:ss");
 
-            string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. {time}";
+            string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. {time}. Connection: {httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
 
 			Debug.WriteLine(info);
 			logger.LogInformation(info);
 
 			return _next(httpContext);
 		}
-	}
+
+    }
 }

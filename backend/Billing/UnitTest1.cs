@@ -49,11 +49,14 @@ namespace Billing
         public void Subscribe()
         {
             string userId = "";
+            string subjectId = "";
 
             using (BillingDbContext context = new BillingDbContext(null, connectionString))
             {
                 SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
                 SubscriberService subscriber = new SubscriberService(repository, cachedResults);
+
+                subscriber.SubscribeUser(userId, subjectId);
 
                 SubscribeSession expectedSession = subscriber.Session(userId);
 

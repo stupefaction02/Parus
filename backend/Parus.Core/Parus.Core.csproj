@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="Services\Chat" />
+    <Folder Include="MessageQueue\" />
   </ItemGroup>
 
   <ItemGroup>

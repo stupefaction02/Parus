@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Parus.Infrastructure.Identity;
 using Parus.Core.Network;
 using static System.Formats.Asn1.AsnWriter;
+using Parus.Core.Interfaces.Services;
 
 namespace Parus.WebUI.Middlewares
 {
@@ -60,10 +61,11 @@ namespace Parus.WebUI.Middlewares
 			this.serviceProvider = servicePRovider;
 		}
 
-		public async Task Invoke(HttpContext httpContext, IdentityHttpClient httpClient)
+		public async Task Invoke(HttpContext httpContext, IMQService mQService, IdentityHttpClient httpClient)
 		{
-			// If standart cookie authentcation ( UseAuthentication() should be above this mw ) has failed (generally due of abstance of login cookie)
-			if (!httpContext.User.Identity.IsAuthenticated)
+            mQService.Send();
+            // If standart cookie authentcation ( UseAuthentication() should be above this mw ) has failed (generally due of abstance of login cookie)
+            if (!httpContext.User.Identity.IsAuthenticated)
 			{
 				string jwtCoockie = httpContext.Request.Cookies["JWT"];
 
@@ -95,6 +97,11 @@ namespace Parus.WebUI.Middlewares
 					} 
 					else
 					{
+						//if (mQService.GetRefreshToken())
+						//{
+
+						//}
+
                         await _next(httpContext); return;
                         // TODO: VS2022 doens't see public exception class
                         //https://source.dot.net/#Microsoft.AspNetCore.Authentication.Abstractions/AuthenticationFailureException.cs,c7780b6f21f367ad,references

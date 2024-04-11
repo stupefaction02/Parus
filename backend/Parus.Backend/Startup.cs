@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Routing;
 using Parus.Backend.Middlewares;
 using System;
 using Parus.Backend.Authentication;
+using Parus.Core.Interfaces.Services;
 
 namespace Parus.Backend
 {
@@ -49,9 +50,8 @@ namespace Parus.Backend
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
 
-            
-
-           
+            var a = new RabbitMQService(Configuration);
+            services.AddSingleton<IMQService>(a);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

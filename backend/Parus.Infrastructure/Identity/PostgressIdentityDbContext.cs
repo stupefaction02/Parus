@@ -16,17 +16,16 @@ using Parus.Infrastructure.DLA;
 
 namespace Parus.Infrastructure.Identity
 {
-    public class SampleContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
+    public class SampleContextFactory1 : IDesignTimeDbContextFactory<PostgressIdentityDbContext>
     {
-        public ApplicationIdentityDbContext CreateDbContext(string[] args)
+        public PostgressIdentityDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<PostgressIdentityDbContext>();
 
-            return new ApplicationIdentityDbContext(optionsBuilder.Options);
+            return new PostgressIdentityDbContext(optionsBuilder.Options);
         }
     }
-
-    public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
+    public class PostgressIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
@@ -37,14 +36,15 @@ namespace Parus.Infrastructure.Identity
         // Description/Comment: keys is created when user scans qr_code and send numbers to the server
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
-        private string _connectionString;
-        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "")
+        //private string _connectionString = "postgresql://localhost:5432/identity";
+        private string _connectionString = "Data Source=localhost;location=identity;User ID=postgres;password=zx12";
+        public PostgressIdentityDbContext(DbContextOptions<PostgressIdentityDbContext> options, string connectionString = "")
             : base(options)
         {
             _connectionString = connectionString;
         }
 
-        public ApplicationIdentityDbContext()
+        public PostgressIdentityDbContext()
         {
             
         }
@@ -99,7 +99,7 @@ namespace Parus.Infrastructure.Identity
             if (!String.IsNullOrEmpty(_connectionString))
             {
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
-                //optionsBuilder.UseNpgsql(_connectionString);
+                optionsBuilder.UseSqlServer(_connectionString);
             }
         }
     }

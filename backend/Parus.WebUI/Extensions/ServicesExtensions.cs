@@ -122,7 +122,7 @@ namespace Parus.WebUI.Extensions
                 if (String.IsNullOrEmpty(hostingService))
                 {
                     // procedd with localhost
-                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                    return configuration["ConnectionStrings:Postgress"];
                 }
                 else
                 {
