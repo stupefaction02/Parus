@@ -63,4 +63,25 @@ namespace Parus.Infrastructure.DLA
             }
         }
     }
+
+    public abstract class DatabaseConnection
+    {
+        public abstract void Use(DbContextOptionsBuilder optionsBuilder, string connectionString);
+    }
+
+    public class MSSQLDatabaseConnection : DatabaseConnection
+    {
+        public override void Use(DbContextOptionsBuilder optionsBuilder, string connectionString)
+        {
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
+
+    public class PostgresDatabaseConnection : DatabaseConnection
+    {
+        public override void Use(DbContextOptionsBuilder optionsBuilder, string connectionString)
+        {
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+    }
 }

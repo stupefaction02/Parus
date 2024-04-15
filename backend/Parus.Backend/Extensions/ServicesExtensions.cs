@@ -70,7 +70,7 @@ namespace Parus.Backend.Extensions
                 if (String.IsNullOrEmpty(hostingService))
                 {
                     // procedd with localhost
-                    return configuration["ConnectionStrings:Postgress:Identity"];
+                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
                 }
                 else
                 {

@@ -26,7 +26,7 @@ namespace ImageServer
 
             application.UseCors(options => options.AllowAnyOrigin());
 
-            application.UseHttpsRedirection();
+            //application.UseHttpsRedirection();
             application.UseStaticFiles();
 
             application.MapPost("/upload", UploadHandler);

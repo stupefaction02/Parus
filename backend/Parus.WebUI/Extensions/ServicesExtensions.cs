@@ -102,7 +102,7 @@ namespace Parus.WebUI.Extensions
                 if (String.IsNullOrEmpty(hostingService))
                 {
                     // procedd with localhost
-                    return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
+                    return "User ID=postgres;Password=zx1;Host=localhost;Port=5432;Database=bl;Pooling=true;Connection Lifetime=0";
                 }
                 else
                 {
@@ -122,7 +122,8 @@ namespace Parus.WebUI.Extensions
                 if (String.IsNullOrEmpty(hostingService))
                 {
                     // procedd with localhost
-                    return configuration["ConnectionStrings:Postgress"];
+                    //return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
+                    return "User ID=postgres;Password=zx1;Host=localhost;Port=5432;Database=identity;Pooling=true;Connection Lifetime=0";
                 }
                 else
                 {

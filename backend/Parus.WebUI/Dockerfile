@@ -8,6 +8,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+ADD "cert.pfx" "/app/"
+COPY ["cert.pfx", "/app/"]
 COPY ["Parus.WebUI/Parus.WebUI.csproj", "Parus.WebUI/"]
 COPY ["Parus.Core/Parus.Core.csproj", "Parus.Core/"]
 COPY ["Parus.Common/Parus.Common.csproj", "Parus.Common/"]
