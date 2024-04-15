@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -27,11 +28,12 @@ namespace Parus.WebUI.Pages
         public int Page { get; set; }
 
         public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
+        public PaginationContext Pagination { get; private set; }
 
         public IActionResult OnGet([FromQuery] string page, string search,
             [FromServices] IBroadcastInfoRepository broadcastInfoRepository)
         {
-            PageCount = (broadcastInfoRepository.Count() / PaginationContext.PAGE_SIZE) + 1;
+            int pageCount = (broadcastInfoRepository.Count() / PaginationContext.PAGE_SIZE) + 1;
 
             int pageInt32;
             if (!Int32.TryParse(page, out pageInt32))
@@ -39,10 +41,10 @@ namespace Parus.WebUI.Pages
                 pageInt32 = 1;
             }
 
-            Page = pageInt32;
-
             int start = (pageInt32 - 1) * PaginationContext.PAGE_SIZE;
             Broadcasts = broadcastInfoRepository.GetInterval(start, count: PaginationContext.PAGE_SIZE);
+
+            Pagination = new PaginationContext { Page = pageInt32, PageCount = pageCount };
 
             return Page();
         }

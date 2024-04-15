@@ -9,13 +9,21 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MimeKit.Encodings;
 using Org.BouncyCastle.Tls;
 using Parus.Core.Entities;
 using Parus.Infrastructure.DLA;
+using static Parus.Infrastructure.DLA.ApplicationDbContext;
 
 namespace Parus.Infrastructure.Identity
 {
+    public enum ConnectionType
+    {
+        MSSQL,
+        Postgres
+    }
+
     public class SampleContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
     {
         public ApplicationIdentityDbContext CreateDbContext(string[] args)
@@ -28,6 +36,8 @@ namespace Parus.Infrastructure.Identity
 
     public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
     {
+        private ConnectionType _connectionType = ConnectionType.MSSQL;
+
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
         public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
@@ -38,10 +48,11 @@ namespace Parus.Infrastructure.Identity
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
         private string _connectionString;
-        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "")
+        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL)
             : base(options)
         {
             _connectionString = connectionString;
+            _connectionType = connectionType;
         }
 
         public ApplicationIdentityDbContext()
@@ -98,8 +109,21 @@ namespace Parus.Infrastructure.Identity
         {
             if (!String.IsNullOrEmpty(_connectionString))
             {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
-                //optionsBuilder.UseNpgsql(_connectionString);
+                ConfigServer(_connectionString, optionsBuilder);
+            }
+        }
+
+        public void ConfigServer(string connectionString, DbContextOptionsBuilder optionsBuilder)
+        {
+            if (_connectionType == ConnectionType.MSSQL)
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                optionsBuilder.UseSqlServer(_connectionString);
+            }
+            else if (_connectionType == ConnectionType.Postgres)
+            {
+                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                optionsBuilder.UseNpgsql(_connectionString);
             }
         }
     }

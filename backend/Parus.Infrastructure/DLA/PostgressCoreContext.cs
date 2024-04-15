@@ -1,41 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using Parus.Core.Entities;
-using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.DLA
 {
-    public class ApplicationDbContext : DbContext
+    public class PostgressCoreContext : DbContext
     {
         private readonly DbContextOptions<ApplicationDbContext> options;
         #region System
-        public ApplicationDbContext()
+        public PostgressCoreContext()
         {
-            
+
         }
         #endregion
 
         private string _connectionString;
-        private ConnectionType _connectionType;
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL) : base(options) 
+        public PostgressCoreContext(DbContextOptions<PostgressCoreContext> options, string connectionString = "") : base(options)
         {
-            _connectionString = connectionString;
-            _connectionType = connectionType;
+            _connectionString = "User ID=postgres;Password=zx1;Host=localhost;Port=5432;Database=bl;Pooling=true;Connection Lifetime=0;";
         }
 
-		#region Tables
+        #region Tables
 
-		public DbSet<BroadcastInfo> Broadcasts { get; set; }
+        public DbSet<BroadcastInfo> Broadcasts { get; set; }
 
         public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
 
         public DbSet<Tag> Tags { get; set; }
 
-		public DbSet<BroadcastCategory> Categories { get; set; }
+        public DbSet<BroadcastCategory> Categories { get; set; }
 
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -59,20 +53,8 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseNpgsql(_connectionString);
             if (!String.IsNullOrEmpty(_connectionString))
-            {
-                ConfigServer(_connectionString, optionsBuilder);
-            }
-        }
-
-        public void ConfigServer(string connectionString, DbContextOptionsBuilder optionsBuilder)
-        {
-            if (_connectionType == ConnectionType.MSSQL)
-            {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
-                optionsBuilder.UseSqlServer(_connectionString);
-            }
-            else if (_connectionType == ConnectionType.Postgres)
             {
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
                 optionsBuilder.UseNpgsql(_connectionString);

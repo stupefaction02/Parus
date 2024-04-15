@@ -33,7 +33,8 @@ namespace Parus.Backend
 
             services.AddSignalR();
 
-            services.ConfigureSqlDatabase(Configuration);
+            services.ConfigureMssqlDatabase(Configuration);
+            //services.ConfigurePostgresDatabase(Configuration);
 
             services.ConfigureCors();
 

@@ -1,52 +1,43 @@
 ﻿// using System;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
-using MimeKit.Encodings;
-using Org.BouncyCastle.Tls;
 using Parus.Core.Entities;
-using Parus.Infrastructure.DLA;
 
 namespace Parus.Infrastructure.Identity
 {
-    public class SampleContextFactory1 : IDesignTimeDbContextFactory<PostgressIdentityDbContext>
+    public class SampleContextFactory1 : IDesignTimeDbContextFactory<PostgresIdentityContext>
     {
-        public PostgressIdentityDbContext CreateDbContext(string[] args)
+        public PostgresIdentityContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<PostgressIdentityDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<PostgresIdentityContext>();
 
-            return new PostgressIdentityDbContext(optionsBuilder.Options);
+            return new PostgresIdentityContext(optionsBuilder.Options);
         }
     }
-    public class PostgressIdentityDbContext : IdentityDbContext<ApplicationUser>
+    public class PostgresIdentityContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
         public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
 
         public DbSet<TwoFactoryEmailVerificationCode> TwoFactoryVerificationCodes { get; set; }
-        
+
         // Description/Comment: keys is created when user scans qr_code and send numbers to the server
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
-        //private string _connectionString = "postgresql://localhost:5432/identity";
-        private string _connectionString = "Data Source=localhost;location=identity;User ID=postgres;password=zx12";
-        public PostgressIdentityDbContext(DbContextOptions<PostgressIdentityDbContext> options, string connectionString = "")
+        private string _connectionString;
+        public PostgresIdentityContext(DbContextOptions<PostgresIdentityContext> options, string connectionString = "")
             : base(options)
         {
-            _connectionString = connectionString;
+            _connectionString = "User ID=postgres;Password=zx1;Host=localhost;Port=5432;Database=identity;Pooling=true;Connection Lifetime=0;";
         }
 
-        public PostgressIdentityDbContext()
+        public PostgresIdentityContext()
         {
-            
+
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -96,10 +87,11 @@ namespace Parus.Infrastructure.Identity
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseNpgsql(_connectionString); return;
             if (!String.IsNullOrEmpty(_connectionString))
             {
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
-                optionsBuilder.UseSqlServer(_connectionString);
+                optionsBuilder.UseNpgsql(_connectionString);
             }
         }
     }

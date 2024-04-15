@@ -114,6 +114,13 @@ namespace Parus.Backend.Controllers
 		}
 
         [HttpGet]
+        [Route("api/hello")]
+        public object Hello()
+        {
+            return "Hello World!";
+        }
+
+        [HttpGet]
         [Route("api/test/seed1")]
         public IActionResult Seed1([FromServices] ApplicationDbContext context)
         {
@@ -139,17 +146,17 @@ namespace Parus.Backend.Controllers
 
             string[] titles = new string[20]
             {
-                "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
-                "🦐FIRST TIME INSCRYPTION!!! LEGGOOO! ❤️BLOWHOLE BLAST RESTOCKED -> !GG / !Merch 《VTuber》!socials",
-                "Weekly Dev Stream! | !merch",
-                "SPOOKTEMBER DAY 4: I'M BACK! DRAMA + SPOOKS + GAMING | !TTS !advgg | !figure |",
-                "Yay a new update in Genshin!!",
-                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad",
-				"Bondage? Gay website?",
-				"Stick your finger in my ass",
+                "Watching Birds",
+                "Birds, Birds, Birds",
+                "Cats and Dogs",
+                "Good morning, I'm back",
+                "Hello",
+                "OMG THIS IS INSANE",
+				"Look at those creatures",
+				"///0_0/////",
 				"AAAAAAAAAAAAAAAAaahhhh",
-				"Fuck you",
-				"Vse donlzhny zigovat",
+				"Watching animals",
+				"Oh my god",
 				"-_-",
 				"ayyyy lmaoo",
 				"Bratishkaaa",
@@ -163,13 +170,13 @@ namespace Parus.Backend.Controllers
 
 			string[] previews = new string[6]
 			{
-				"preview1.jpg",
-				"preview2.jpg",
-				"preview3.jpg",
-				"preview4.jpg",
-				"preview5.jpg",
-				"preview6.jpg"
-			};
+				"preview1.png",
+                "preview2.png",
+                "preview3.png",
+                "preview4.png",
+                "preview5.png",
+                "preview6.png"
+            };
 
 			var broadcasts = new List<BroadcastInfo>();
 			var keywords = new List<BroadcastInfoKeyword>();
@@ -179,9 +186,10 @@ namespace Parus.Backend.Controllers
 				int cat = (new Random()).Next(1, 5);
 				int tag = (new Random()).Next(2, 4);
 
-				int nam = (new Random()).Next(0, 5);
-				int tit = (new Random()).Next(0, 5);
-				int pre = (new Random()).Next(0, 5);
+				int nam = (new Random()).Next(0, 12);
+				int tit = (new Random()).Next(0, 20);
+				int pre = (new Random()).Next(0, 6);
+				int a = (new Random()).Next(1, 3);
 
 				string name = names[nam] + Guid.NewGuid().ToString().Substring(0, 2);
 				string title = titles[tit];
@@ -196,7 +204,7 @@ namespace Parus.Backend.Controllers
 					Preview = preview,
 					Username = name,
 					Title = title,
-					AvatarPic = "ava1.jpg",
+					AvatarPic = $"ava{a}.png",
 					Category = cat1,
 					Ref = "athleanxdotcommer14",
 					Tags = new List<Tag> { tag1, tag2 }
@@ -209,7 +217,10 @@ namespace Parus.Backend.Controllers
 
             context.BroadcastsKeywords.AddRange(keywords);
 
-            context.Broadcasts.AddRange(broadcasts);
+			if (broadcasts != null)
+			{
+				context.Broadcasts.AddRange(broadcasts);
+			}
 
 			context.SaveChanges();
 

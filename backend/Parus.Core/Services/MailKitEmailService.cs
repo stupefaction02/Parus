@@ -12,11 +12,11 @@ namespace Parus.Core.Services
 	{
 		public async Task<EmailResponse> SendEmailAsync(string email, string subject, string body)
 		{
-			return new EmailResponse { Success = true };
+			//return new EmailResponse { Success = true };
 			using var emailMessage = new MimeMessage();
 
 			emailMessage.From.Add(new MailboxAddress("Администрация сайта", "ivan.safonow2012@yandex.ru"));
-			emailMessage.To.Add(new MailboxAddress("flashdancer", email));
+			emailMessage.To.Add(new MailboxAddress(email, email));
 			emailMessage.Subject = subject;
 			emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
 			{

@@ -23,7 +23,28 @@ namespace Parus.Backend.Extensions
 {
     public static class ServicesExtensions
     {
-        public static void ConfigureSqlDatabase(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigurePostgresDatabase(this IServiceCollection services, IConfiguration configuration)
+        {
+            string coreConnectionString = configuration["ConnectionStrings:Postgres:Core"];
+            string identityConenctionString = configuration["ConnectionStrings:Postgres:Identity"];
+
+            services.AddDbContext<ApplicationDbContext>(options => {
+                Debug.WriteLine($"Seting up connection with Postgres server. Context: {nameof(ApplicationDbContext)}");
+
+                options.UseNpgsql(coreConnectionString);
+                options.EnableSensitiveDataLogging();
+            }, ServiceLifetime.Transient);
+
+            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            {
+                Debug.WriteLine($"Seting up connection with Postgres server. Context: {nameof(ApplicationIdentityDbContext)}");
+
+                options.UseNpgsql(identityConenctionString);
+                options.EnableSensitiveDataLogging();
+            });
+        }
+
+        public static void ConfigureMssqlDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             string hostingService = configuration["Hosting:Service"];
 
