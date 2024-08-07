@@ -83,18 +83,27 @@ namespace Parus.WebUI.Extensions
             string identityConenctionString = GetIdentityConnectionString();
 
             services.AddDbContext<ApplicationDbContext>(options => {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
 
                 options.UseSqlServer(connectionString);
                 options.EnableSensitiveDataLogging();
+
+                options.LogTo(x => { });
+                options.EnableDetailedErrors(true);
+                options.EnableSensitiveDataLogging(true);
+
             }, ServiceLifetime.Transient);
 
             services.AddDbContext<ApplicationIdentityDbContext>(options =>
             {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
 
                 options.UseSqlServer(identityConenctionString);
                 options.EnableSensitiveDataLogging();
+
+                options.LogTo(x => { });
+                options.EnableDetailedErrors(true);
+                options.EnableSensitiveDataLogging(true);
             });
 
             string GetCoreDbConnectionString()

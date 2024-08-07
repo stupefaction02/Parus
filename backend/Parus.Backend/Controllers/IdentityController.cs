@@ -124,10 +124,11 @@ namespace Parus.Backend.Controllers
             JwtSecurityToken jwt = new JwtSecurityToken(
                     issuer: JwtAuthOptions.ISSUER,
                     audience: JwtAuthOptions.AUDIENCE,
-                    notBefore: now,
+                    //notBefore: now,
                     claims: claims,
-                    expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
+                    expires: now.Add(new TimeSpan(168, 0, 0, 0)),
                     signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             //logger.LogInformation(encodedJwt);
@@ -190,7 +191,7 @@ namespace Parus.Backend.Controllers
                 }
 
                 string fingerPrint = HttpContext.Request.Headers.UserAgent;
-                return LoginResponse(user, fingerPrint, dbContext);
+                return await HandleLoginAsync(user, fingerPrint, dbContext);
             }
             else
             {
@@ -533,7 +534,8 @@ namespace Parus.Backend.Controllers
             return Ok();
         }
 
-        // private api
+        // TODO: make it as private api
+        // when calling this method a client must have a special private api token
         [HttpGet]
         [Route("api/account/refreshtoken")]
         public async Task<object> RefreshToken(string fingerPrint, string refreshToken,
@@ -548,11 +550,11 @@ namespace Parus.Backend.Controllers
 
             // if user was deleted from database but jwt cookies is still there
             // checks if user is existed
-            if (!identityDbContext.Users.Any(x => x.UserName == User.Identity.Name))
-            {
-                //Debug.Console("User with associated with this auth token is deleted form db.");
-                return NotFound("Can't find user.");
-            }
+            //if (!identityDbContext.Users.Any(x => x.UserName == User.Identity.Name))
+            //{
+            //    //Debug.Console("User with associated with this auth token is deleted form db.");
+            //    return NotFound("Can't find user.");
+            //}
 
             RefreshSession lastRs = identityDbContext.RefreshSessions
                 .Include(x => x.User)
@@ -563,7 +565,8 @@ namespace Parus.Backend.Controllers
             // it means that this user has nver registered into our system
             if (lastRs == null)
             {
-                HandleServerError("Identity", "Detected and attempt requesting refreshToken for unregistered user");
+                LogInfo_Debug("token havent' created before.");
+                return HandleServerError("Identity", "Detected and attempt requesting refreshToken for unregistered user");
             }
 
             int now = DateTimeUtils.ToUnixTimeSeconds(DateTime.UtcNow);
@@ -584,21 +587,17 @@ namespace Parus.Backend.Controllers
             int expTs = DateTimeUtils.ToUnixTimeSeconds(
                 DateTime.UtcNow.Add(RefreshSession.LifeTime)
             );
-            RefreshSession newRefreshSession = new RefreshSession
+
+            lastRs.Fingerprint = fingerPrint;
+            lastRs.ExpiresAt = expTs;
+            lastRs.Token = RefreshSession.GenerateToken();
+
+            identityDbContext.Update(lastRs);
+
+            if (await identityDbContext.SaveChangesAsync() < 1)
             {
-                // TODO: Replace with something more efficeint
-                Token = Guid.NewGuid().ToString().Replace("-", ""),
-                Fingerprint = fingerPrint,
-                ExpiresAt = expTs,
-                User = user
-            };
-            Console.WriteLine(newRefreshSession.Token);
 
-            identityDbContext.RefreshSessions.Remove(lastRs);
-
-            await identityDbContext.RefreshSessions.AddAsync(newRefreshSession);
-
-            await identityDbContext.SaveChangesAsync();
+            }
 
             List<Claim> claims = new List<Claim>
             {
@@ -606,9 +605,11 @@ namespace Parus.Backend.Controllers
             };
             string jwt = CreateJWT(user.GetUsername(), claims).Token;
 
-            HttpContext.Response.Headers.Append("Set-Cookie", $"refreshToken='{newRefreshSession.Token}';");
+            Console.WriteLine($"RefreshSession was updated. User: {user.UserName} , Token: {lastRs.Token}. Access Token lifetime: {JwtAuthOptions.LIFETIME} minutes");
 
-            return Json(new { accessToken = jwt, refreshToken = newRefreshSession.Token });
+            HttpContext.Response.Headers.Append("Set-Cookie", $"refreshToken='{lastRs.Token}';");
+
+            return Json(new { accessToken = jwt, refreshToken = lastRs.Token });
         }
 
         // TODO: Make this [Authorize]

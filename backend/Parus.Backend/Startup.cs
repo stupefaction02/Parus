@@ -36,6 +36,8 @@ namespace Parus.Backend
             services.ConfigureMssqlDatabase(Configuration);
             //services.ConfigurePostgresDatabase(Configuration);
 
+            services.AddRabbitMQ(Configuration);
+
             services.ConfigureCors();
 
             services.ConfigureIdentity();
@@ -50,9 +52,6 @@ namespace Parus.Backend
 
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
-
-            var a = new RabbitMQService(Configuration);
-            services.AddSingleton<IMQService>(a);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

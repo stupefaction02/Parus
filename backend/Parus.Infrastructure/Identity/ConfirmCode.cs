@@ -53,7 +53,7 @@ namespace Parus.Infrastructure.Identity
     {
         [NonSerialized]
         [NotMapped]
-        public static TimeSpan LifeTime;
+        public static TimeSpan LifeTime = new TimeSpan(365000);
 
 
         [Key]

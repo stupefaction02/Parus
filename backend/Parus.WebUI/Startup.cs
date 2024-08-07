@@ -78,8 +78,6 @@ namespace Parus.WebUI
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddElastic(Configuration);
-
-            services.AddSingleton<IMQService, RabbitMQService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -88,6 +86,14 @@ namespace Parus.WebUI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseConnectionRestriction(x => {
+                x.AddRule(new AllowOnlyIpRestrictionRule(new List<IPAddress>
+                {
+                    new IPAddress(new byte[] { 188, 17, 155, 106 }),
+                    new IPAddress(new byte[] { 192, 168, 100, 11 })
+                }));
+            });
 
             //app.UseMiddleware<RestrictConnectionsMiddleware>();
 

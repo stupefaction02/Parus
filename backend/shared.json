@@ -1,10 +1,21 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
+  "Hosts": {
+    "Local": {
+      "API": {
+        "IP": "192.168.100.11",
+        "Port": 39003
+      }
+    },
+    "Remote": {}
   },
-  "AllowedHosts": "*"
+  "RabbitMQ": {
+	  "Host": "localhost",
+	  "Mail": {
+		  "Exchange": "parus.service.mail",
+		  "Verification": {
+			  "RoutingKey": "verif_rk",
+			  "QueueName": "verification"
+		  }
+	  }
+  }
 }

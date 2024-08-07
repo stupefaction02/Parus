@@ -38,6 +38,14 @@ namespace Parus.Infrastructure.Identity
     {
         private ConnectionType _connectionType = ConnectionType.MSSQL;
 
+        #region Billing 
+
+        public DbSet<SubscribeProfile> SubscribeProfiles { get; set; }
+
+        public DbSet<SubscribeSession> SubscribeSessions { get; set; }
+
+        #endregion
+
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
         public DbSet<PasswordRecoveryToken> PasswordRecoveryTokens { get; set; }
@@ -63,6 +71,8 @@ namespace Parus.Infrastructure.Identity
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            //base.Database.
 
             builder.Entity<ApplicationUser>()
                     .HasOne(e => e.ConfirmCode)

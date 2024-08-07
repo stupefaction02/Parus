@@ -1,4 +1,5 @@
 import { GetCookie } from "./common.js";
+import { URL } from "./config.js";
 import { HLSPlayer } from "./HlsPlayer/HLSPlayer.js";
 
 var play_button = document.getElementById("play_button");
@@ -45,10 +46,12 @@ var maxMessages = 50;
 var messageCount = 0;
 var isScrolling = false;
 
+var hubUrl = URL + '/chat';
+
 if (signalR !== null) {
 
     const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("https://localhost:5001/chat")
+        .withUrl(URL + '/chat')
         .build();
 
     var sendBtn = document.getElementById("sendBtn");
@@ -63,7 +66,7 @@ if (signalR !== null) {
     messages.addEventListener("mousedown", function () { isScrolling = true; });
     messages.addEventListener("mouseup", function () { isScrolling = false; });
 
-    var chatName = location.pathname.replace('/', '');
+    var chatName = "athleanxdotcommer14";// location.pathname.replace('/', '');
     document.cookie = "chatName=" + chatName + "; path=/";
 
     if (sendBtn != null) {
@@ -84,13 +87,13 @@ if (signalR !== null) {
             if (messageCount <= maxMessages) {
                 var messageElement = CreateMessage(message, nickname, color);
 
-                messages.prepend(messageElement);
+                messages.append(messageElement);
 
                 messagesList.push(messageElement);
 
-                for (var i = 1; i < messages.childNodes.length; i++) {
-                    messages.insertBefore(messages.childNodes[i], messages.firstChild);
-                }
+                //for (var i = 1; i < messages.childNodes.length; i++) {
+                //    messages.insertBefore(messages.childNodes[i], messages.firstChild);
+                //}
             }
 
             messageCount++;  
@@ -98,6 +101,11 @@ if (signalR !== null) {
 
         hubConnection.start()
             .then(function () {
+
+                console.log("Connected to SignalR hub. Url: " + hubUrl);
+
+                //CreateSystemMessage
+
                 hubConnection.invoke("JoinChat", chatName).catch(function (err) { debugger
                     return console.error(err.toString());
                 });

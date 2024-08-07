@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Parus.Backend.Services;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
@@ -325,5 +326,26 @@ namespace Parus.Backend.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        [Route("api/test/generaterefreshtoken")]
+        public async Task<object> GenerateRefreshToken(string username, string fingerPrint, [FromServices] ApplicationIdentityDbContext identityDbContext)
+		{
+            ApplicationUser user = await identityDbContext.Users
+                .FirstOrDefaultAsync(x => x.UserName == username);
+
+            string fp = String.IsNullOrEmpty(fingerPrint) ? HttpContext.Request.Headers.UserAgent : fingerPrint;
+            RefreshSession refreshSession = RefreshSession.CreateDefault(fp, user);
+
+            await identityDbContext.RefreshSessions.AddAsync(refreshSession);
+
+			await identityDbContext.SaveChangesAsync();
+
+            return new
+            {
+                success = true,
+                refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
+            };
+        }
     }
 }

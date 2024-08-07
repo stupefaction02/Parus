@@ -17,6 +17,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text;
 using System;
 using System.Diagnostics;
+using Parus.Core.Services.MessageQueue;
+using Microsoft.CodeAnalysis;
 
 
 namespace Parus.Backend.Extensions
@@ -63,7 +65,10 @@ namespace Parus.Backend.Extensions
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
 
                 options.UseSqlServer(identityConenctionString);
-                options.EnableSensitiveDataLogging();
+
+                //options.LogTo(x => { Console.WriteLine(x); });
+                options.EnableDetailedErrors(true);
+                options.EnableSensitiveDataLogging(true);
             });
 
             string GetCoreDbConnectionString()
@@ -177,7 +182,7 @@ namespace Parus.Backend.Extensions
 
         public static void AddMail(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddTransient<IEmailService, MailKitEmailService>();
+            services.AddSingleton<IEmailService, MailKitEmailService>();
             services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         }
 
@@ -189,7 +194,17 @@ namespace Parus.Backend.Extensions
             services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
         }
 
-		public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+        public static void AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
+        {
+            string host = "localhost";
+            string exchange = "parus.service.mail";
+            QueueSettings verif = new QueueSettings { Name = "verification", RoutingKey = "verif_rk" };
+            //RabbitMQMailProducer instance = new RabbitMQMailProducer(host, exchange, verif, default);
+            //services.AddSingleton<RabbitMQMailProducer>(instance);
+        }
+
+
+        public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
 		{
             string key = configuration["Authentication:JWT:SecretKey"];
             

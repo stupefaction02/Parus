@@ -10,7 +10,23 @@ namespace Parus.Core.Services
 {
 	public class MailKitEmailService : IEmailService
 	{
-		public async Task<EmailResponse> SendEmailAsync(string email, string subject, string body)
+		string _template = "<body> {body} </body>";
+
+        public MailKitEmailService(MailSettings settings)
+        {
+            Settings = settings;
+        }
+
+        public MailSettings Settings { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="subject"></param>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public async Task<EmailResponse> SendEmailAsync(string email, string subject, string text)
 		{
 			//return new EmailResponse { Success = true };
 			using var emailMessage = new MimeMessage();
@@ -18,9 +34,10 @@ namespace Parus.Core.Services
 			emailMessage.From.Add(new MailboxAddress("Администрация сайта", "ivan.safonow2012@yandex.ru"));
 			emailMessage.To.Add(new MailboxAddress(email, email));
 			emailMessage.Subject = subject;
+			// TODO: Format with html template
 			emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
 			{
-				Text = body
+				Text = _template.Replace("{body}", text)
 			};
 
 			string reponse;

@@ -164,7 +164,7 @@ function sendGet (url, onsuccess) {
             if (e.success.toString() == "true") {
 
                 hidePopup();
-
+                debugger
                 SetCookie("JWT", e.access_token.jwt, e.access_token.expires);
                 SetCookie("refreshToken", e.refresh_token.token, e.refresh_token.expires);
 

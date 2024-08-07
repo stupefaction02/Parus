@@ -19,6 +19,11 @@ namespace Parus.Backend.Services.Chat.SignalR
             { 
                 string username = Context.User.Identity.Name;
                 Console.WriteLine("ChatHub. " + username + ": " + message);
+
+                // sources ^)
+                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/946e904ad0c29cfa.html
+                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/620f216b8183de98.html
+                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/316a8601722cf9bd.html
                 await Clients.Group(chatName).SendAsync("Receive", message, username, color);
             }
         }
@@ -50,6 +55,11 @@ namespace Parus.Backend.Services.Chat.SignalR
 
         public async Task JoinChat(string chatName)
         {
+            if (String.IsNullOrEmpty(chatName))
+            {
+                return;
+            }
+
             Console.WriteLine($"User conn.id={Context.ConnectionId} has joined {chatName} group");
             await Groups.AddToGroupAsync(Context.ConnectionId, chatName);
         }

@@ -42,7 +42,8 @@ namespace Parus.Backend.Controllers
 
         protected object HandleServerError(string serviceName, string debugInfo, object param = null, string returnMessage = "")
         {
-            return StatusCode(500);
+            HttpContext.Response.StatusCode = 500;
+            return "";
         }
 
 		// TODO: Move to Parus.Core
@@ -96,13 +97,14 @@ namespace Parus.Backend.Controllers
             });
         }
 
-        protected async Task<JsonResult> LoginResponse(ApplicationUser user, string fingerPrint, ApplicationIdentityDbContext dbContext)
+        protected async Task<object> HandleLoginAsync(ApplicationUser user, string fingerPrint, ApplicationIdentityDbContext dbContext)
         {
-            var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.Fingerprint == fingerPrint & x.User == user);
+            //var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.Fingerprint == fingerPrint && x.UserId == user.GetId());
+            var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.UserId == user.GetId());
 
             if (existedRt == null)
             {
-                return Json( HandleServerError("Identity", "") );
+                return HandleServerError("Identity", "");
             }
 
             existedRt.Token = RefreshSession.GenerateToken();
@@ -113,6 +115,8 @@ namespace Parus.Backend.Controllers
             {
                 return Json(HandleServerError("Identity", "", "Server Error. Contact the administrator."));
             }
+
+            Console.WriteLine($"RefreshSession was updated. User: {user.UserName} , Token: {existedRt.Token}");
 
             ClaimsIdentity identity = await CreateIdentityAsync(user);
 
