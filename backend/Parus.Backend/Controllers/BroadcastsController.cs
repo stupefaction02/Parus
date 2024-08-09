@@ -140,7 +140,7 @@ namespace Parus.Backend.Controllers
             [FromQuery] int catId,
             [FromQuery] int[] tags, 
 			[FromServices] ApplicationDbContext context, 
-			[FromServices] ApplicationIdentityDbContext identityDbContext, 
+			[FromServices] ParusDbContext identityDbContext, 
 			[FromServices] BroadcastControl broadcastControl)
 		{
             System.Security.Principal.IIdentity identity = User.Identity;
@@ -170,7 +170,7 @@ namespace Parus.Backend.Controllers
         public async Task<IActionResult> StopBroadcast(
 			[FromQuery] string broadcastKey,
 			[FromServices] IBroadcastInfoRepository context,
-            [FromServices] ApplicationIdentityDbContext identityDbContext,
+            [FromServices] ParusDbContext identityDbContext,
             [FromServices] BroadcastControl broadcastControl)
 		{
             System.Security.Principal.IIdentity identity = User.Identity;

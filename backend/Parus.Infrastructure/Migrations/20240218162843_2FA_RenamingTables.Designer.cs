@@ -11,7 +11,7 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationIdentityDbContext))]
+    [DbContext(typeof(ParusDbContext))]
     [Migration("20240218162843_2FA_RenamingTables")]
     partial class _2FA_RenamingTables
     {

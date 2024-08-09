@@ -16,10 +16,13 @@ EntityFrameworkCore\Add-Migrations -Project Naturistic.Infrastructure -Context N
 
 # ef cli
 dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
-dotnet ef migrations add --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+dotnet ef migrations add IndexingRule --project Parus.Infrastructure --context Parus.Infrastructure.DLA.ApplicationDbContext
 
 dotnet ef migrations add Init.BL --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
 dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
+
+dotnet ef migrations add InitBilling1 --project Parus.Infrastructure --context Parus.Infrastructure.DLA.BillingDbContext
+dotnet ef database update --project Parus.Infrastr ucture --context Parus.Infrastructure.DLA.BillingDbContext
 
 ## users database update
 dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext --startup-project Naturistic.Backend

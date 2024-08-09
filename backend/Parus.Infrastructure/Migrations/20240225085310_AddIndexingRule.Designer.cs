@@ -11,7 +11,7 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationIdentityDbContext))]
+    [DbContext(typeof(ParusDbContext))]
     [Migration("20240225085310_AddIndexingRule")]
     partial class AddIndexingRule
     {

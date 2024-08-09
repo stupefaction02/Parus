@@ -11,7 +11,7 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationIdentityDbContext))]
+    [DbContext(typeof(ParusDbContext))]
     [Migration("20240216084310_Add2FAVerifCodes01")]
     partial class Add2FAVerifCodes01
     {

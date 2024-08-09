@@ -8,12 +8,12 @@ namespace Parus.Core.Interfaces.Repositories
 {
     public interface ISubscribeSessionsRepository
     {
-        SubscribeSession OneByUserId(string userId);
+        SubscriptionSession OneByUserId(string userId);
 
-        Task AddSessionAsync(SubscribeSession s);
+        Task AddSessionAsync(SubscriptionSession s);
 
         Task<int> SaveAsync();
 
-        IEnumerable<SubscribeSession> GetExpiringSoon(long expiringDate, long clockslew);
+        IEnumerable<SubscriptionSession> GetExpiringSoon(long expiringDate, long clockslew);
     }
 }

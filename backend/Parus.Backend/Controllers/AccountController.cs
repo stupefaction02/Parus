@@ -32,7 +32,7 @@ namespace Parus.Backend.Controllers
         public async Task<object> Request2FAVerificationEmailCode(
             [FromServices] IUserRepository users,
             IEmailService emailService,
-            [FromServices] ApplicationIdentityDbContext context)
+            [FromServices] ParusDbContext context)
         {
             if (!User.Identity.IsAuthenticated)
             {
@@ -136,7 +136,7 @@ namespace Parus.Backend.Controllers
         public async Task<object> VerifyAccount(int code,
             [FromServices] IUserRepository users,
             [FromServices] ILogger<AccountController> logger,
-            [FromServices] ApplicationIdentityDbContext context,
+            [FromServices] ParusDbContext context,
             [FromServices] IConfiguration configuration)
         {
             if (!User.Identity.IsAuthenticated)
@@ -198,7 +198,7 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/2FA/verify2FACode")]
-        public async Task<JsonResult> Verify2FACode(int code, string customerKey, ApplicationIdentityDbContext context)
+        public async Task<JsonResult> Verify2FACode(int code, string customerKey, ParusDbContext context)
         {
             // 5 levels of security :)
             if (User.Identity.IsAuthenticated)
@@ -231,7 +231,7 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/2FA/verify2FACode/login")]
-        public async Task<JsonResult> Verify2FACode(int code, string customerKey, string username, ApplicationIdentityDbContext context)
+        public async Task<JsonResult> Verify2FACode(int code, string customerKey, string username, ParusDbContext context)
         {
             if (!String.IsNullOrEmpty(customerKey) || !String.IsNullOrEmpty(username))
             {
@@ -261,7 +261,7 @@ namespace Parus.Backend.Controllers
             return Json(new { success = "N", error = "Forbidden" });
         }
 
-        private async Task<bool> Verify2FACodeCore(int code, string customerKey, ApplicationUser appUser, ApplicationIdentityDbContext context)
+        private async Task<bool> Verify2FACodeCore(int code, string customerKey, ApplicationUser appUser, ParusDbContext context)
         {
             if (customerKey.Length == uidLegnth)
             {
@@ -304,7 +304,7 @@ namespace Parus.Backend.Controllers
 
         [HttpPut]
         [Route("api/account/2FA/disable")]
-        public async Task<JsonResult> Disable2FA(int code, ApplicationIdentityDbContext context)
+        public async Task<JsonResult> Disable2FA(int code, ParusDbContext context)
         {
             if (User.Identity.IsAuthenticated)
             {

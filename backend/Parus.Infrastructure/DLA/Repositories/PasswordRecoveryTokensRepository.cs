@@ -13,11 +13,11 @@ namespace Parus.Infrastructure.DLA.Repositories
 {
     public class PasswordRecoveryTokensRepository : IPasswordRecoveryTokensRepository
     {
-        private readonly ApplicationIdentityDbContext context;
+        private readonly ParusDbContext context;
 
         public IEnumerable<IPasswordRecoveryToken> Tokens => context.PasswordRecoveryTokens;
 
-        public PasswordRecoveryTokensRepository(ApplicationIdentityDbContext context)
+        public PasswordRecoveryTokensRepository(ParusDbContext context)
         {
             this.context = context;
         }

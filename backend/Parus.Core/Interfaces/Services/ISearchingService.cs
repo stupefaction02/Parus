@@ -17,7 +17,7 @@ namespace Parus.Core.Interfaces.Services
         IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int count);
         IEnumerable<BroadcastCategory> SearchCategoryByName(string q);
         IEnumerable<BroadcastCategory> SearchCategoryByName(string q, int start, int count);
-        IEnumerable<Tag> SearchTagsByName(string q, int count);
+        IEnumerable<BroadcastTag> SearchTagsByName(string q, int count);
 
         IQueryable<IUserSearchResult> SearchUsersByName(string query);
         IEnumerable<IUserSearchResult> SearchUsersByName(string query, int count);

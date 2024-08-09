@@ -8,7 +8,7 @@ namespace Billing
 {
     public class UnitTest1
     {
-        private string connectionString = "Data Source=192.168.100.11;Database=Parus.Billing;User ID=ivan;Password=zx12;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        private string connectionString = "Data Source=192.168.100.11;Database=Parus;User ID=ivan;Password=zx12;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
         BillingCachingResults cachedResults = new BillingCachingResults();
 
@@ -22,7 +22,7 @@ namespace Billing
                 SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
                 SubscriberService subscriber = new SubscriberService(repository, cachedResults);
 
-                SubscribeSession expectedSession = subscriber.Session(userId);
+                SubscriptionSession expectedSession = subscriber.Session(userId);
 
                 Assert.NotNull(expectedSession);
                 Assert.Equal(expectedSession.PurchaserUserId, userId);
@@ -39,7 +39,7 @@ namespace Billing
                 SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
                 SubscriberService subscriber = new SubscriberService(repository, cachedResults);
 
-                SubscribeSession expectedSession = subscriber.Session(userId);
+                SubscriptionSession expectedSession = subscriber.Session(userId);
 
                 Assert.Null(expectedSession);
             }
@@ -58,7 +58,7 @@ namespace Billing
 
                 subscriber.SubscribeUser(userId, subjectId);
 
-                SubscribeSession expectedSession = subscriber.Session(userId);
+                SubscriptionSession expectedSession = subscriber.Session(userId);
 
                 Assert.Null(expectedSession);
             }

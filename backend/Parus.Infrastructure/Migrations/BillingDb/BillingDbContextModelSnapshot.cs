@@ -17,73 +17,231 @@ namespace Parus.Infrastructure.Migrations.BillingDb
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Parus.Core.Entities.SubscribeProfile", b =>
+            modelBuilder.Entity("BroadcastInfoBroadcastTag", b =>
                 {
-                    b.Property<int>("Key")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("BroadcastsId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Key"));
-
-                    b.Property<int>("Duration")
+                    b.Property<int>("TagsBroadcastTagId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("BroadcastsId", "TagsBroadcastTagId");
 
-                    b.Property<int>("Price")
-                        .HasColumnType("int");
+                    b.HasIndex("TagsBroadcastTagId");
 
-                    b.HasKey("Key");
-
-                    b.ToTable("SubscribeProfiles");
+                    b.ToTable("BroadcastInfoBroadcastTag");
                 });
 
-            modelBuilder.Entity("Parus.Core.Entities.SubscribeSession", b =>
+            modelBuilder.Entity("Parus.Core.Entities.BroadcastCategory", b =>
                 {
-                    b.Property<int>("Key")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Key"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<byte>("IndexingStatus")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BroadcastCategory");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.BroadcastInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AvatarPic")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("HostUserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("IndexingStatus")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Preview")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ref")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("BroadcastInfo");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.BroadcastTag", b =>
+                {
+                    b.Property<int>("BroadcastTagId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BroadcastTagId"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
+
+                    b.HasKey("BroadcastTagId");
+
+                    b.ToTable("BroadcastTag");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.SubscriptionProfile", b =>
+                {
+                    b.Property<int>("SubscriptionProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionProfileId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DurationDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(30);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PriceUnit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("SubscriptionProfileId");
+
+                    b.HasIndex("Name");
+
+                    SqlServerIndexBuilderExtensions.IsClustered(b.HasIndex("Name"), false);
+
+                    b.ToTable("SubscriptionProfiles");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.SubscriptionSession", b =>
+                {
+                    b.Property<int>("SubscriptionSessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubscriptionSessionId"));
 
                     b.Property<bool>("Autocontinuation")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("BroadcastId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BroadcastId1")
+                        .HasColumnType("int");
 
                     b.Property<long>("ExpiresAt")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("ProfileKey")
+                    b.Property<int>("ProfileId")
                         .HasColumnType("int");
 
                     b.Property<string>("PurchaserUserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(4);
 
-                    b.Property<string>("SubjectUserId")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("SubscriptionSessionId");
 
-                    b.HasKey("Key");
+                    b.HasIndex("BroadcastId1");
 
-                    b.HasIndex("ProfileKey");
+                    b.HasIndex("ProfileId");
 
-                    b.ToTable("SubscribeSessions");
+                    b.ToTable("SubscriptionSessions");
                 });
 
-            modelBuilder.Entity("Parus.Core.Entities.SubscribeSession", b =>
+            modelBuilder.Entity("BroadcastInfoBroadcastTag", b =>
                 {
-                    b.HasOne("Parus.Core.Entities.SubscribeProfile", "Profile")
+                    b.HasOne("Parus.Core.Entities.BroadcastInfo", null)
                         .WithMany()
-                        .HasForeignKey("ProfileKey");
+                        .HasForeignKey("BroadcastsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Parus.Core.Entities.BroadcastTag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsBroadcastTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.BroadcastInfo", b =>
+                {
+                    b.HasOne("Parus.Core.Entities.BroadcastCategory", "Category")
+                        .WithMany("Broadcasts")
+                        .HasForeignKey("CategoryId");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.SubscriptionSession", b =>
+                {
+                    b.HasOne("Parus.Core.Entities.BroadcastInfo", "Broadcast")
+                        .WithMany()
+                        .HasForeignKey("BroadcastId1");
+
+                    b.HasOne("Parus.Core.Entities.SubscriptionProfile", "Profile")
+                        .WithMany("Sessions")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Broadcast");
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.BroadcastCategory", b =>
+                {
+                    b.Navigation("Broadcasts");
+                });
+
+            modelBuilder.Entity("Parus.Core.Entities.SubscriptionProfile", b =>
+                {
+                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }

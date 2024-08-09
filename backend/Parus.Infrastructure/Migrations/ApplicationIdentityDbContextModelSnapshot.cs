@@ -10,7 +10,7 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationIdentityDbContext))]
+    [DbContext(typeof(ParusDbContext))]
     partial class ApplicationIdentityDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

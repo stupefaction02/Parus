@@ -27,7 +27,7 @@ namespace Parus.Core.Entities
         string AvatarPic { get; set; }
         string Preview { get; set; }
         string Title { get; set; }
-        List<Tag> Tags { get; set; }
+        List<BroadcastTag> Tags { get; set; }
     }
 
     public class BroadcastInfoElasticDto : IBroadcastsInfoSearchResult
@@ -50,7 +50,12 @@ namespace Parus.Core.Entities
         public string Title { get; set; }
 
         [JsonPropertyName("tags")]
-        public List<Tag> Tags { get; set; } = new List<Tag>();
+        public List<BroadcastTag> Tags { get; set; } = new List<BroadcastTag>();
+    }
+
+    public class Broacaster
+    {
+        public int User { get; set; }
     }
 
     public class BroadcastInfo : IBroadcastsInfoSearchResult
@@ -76,7 +81,7 @@ namespace Parus.Core.Entities
 
         public string Title { get; set; }
 
-        public List<Tag> Tags { get; set; }
+        public List<BroadcastTag> Tags { get; set; }
 
         public BroadcastCategory Category { get; set; }
 
@@ -105,10 +110,10 @@ namespace Parus.Core.Entities
         }
     }
 
-    public class Tag
+    public class BroadcastTag
     {
         [Key]
-        public int Id { get; set; }
+        public int BroadcastTagId { get; set; }
 
         [JsonPropertyName("name")]
         public string Name { get; set; }

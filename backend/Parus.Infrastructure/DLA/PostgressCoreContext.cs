@@ -27,7 +27,7 @@ namespace Parus.Infrastructure.DLA
 
         public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
 
-        public DbSet<Tag> Tags { get; set; }
+        public DbSet<BroadcastTag> Tags { get; set; }
 
         public DbSet<BroadcastCategory> Categories { get; set; }
 

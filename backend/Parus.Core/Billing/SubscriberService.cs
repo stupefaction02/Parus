@@ -24,7 +24,7 @@ namespace Parus.Core.Billing
             _cache = cache;
         }
 
-        public SubscribeSession Session(string userId)
+        public SubscriptionSession Session(string userId)
         {
             return _context.OneByUserId(userId);
         }
@@ -38,7 +38,7 @@ namespace Parus.Core.Billing
 
         public async Task<Result> SubscribeUser(string userId, string subjectUserId)
         {
-            SubscribeProfile profile = _cache.Profiles["regular"];
+            SubscriptionProfile profile = _cache.Profiles["regular"];
 
             try
             {
@@ -60,17 +60,17 @@ namespace Parus.Core.Billing
             }
         }
 
-        private bool Purchase(SubscribeProfile profile, string userId)
+        private bool Purchase(SubscriptionProfile profile, string userId)
         {
             return true;
         }
 
-        private async Task<bool> AddSession(string userId, string subjectUserId, SubscribeProfile profile)
+        private async Task<bool> AddSession(string userId, string subjectUserId, SubscriptionProfile profile)
         {
-            SubscribeSession session = new SubscribeSession
+            SubscriptionSession session = new SubscriptionSession
             {
                 PurchaserUserId = userId,
-                SubjectUserId = subjectUserId,
+                BroadcastId = subjectUserId,
                 Profile = profile,
                 ExpiresAt = 1
             };

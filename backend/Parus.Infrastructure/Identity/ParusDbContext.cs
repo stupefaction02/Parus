@@ -24,25 +24,25 @@ namespace Parus.Infrastructure.Identity
         Postgres
     }
 
-    public class SampleContextFactory : IDesignTimeDbContextFactory<ApplicationIdentityDbContext>
+    public class SampleContextFactory : IDesignTimeDbContextFactory<ParusDbContext>
     {
-        public ApplicationIdentityDbContext CreateDbContext(string[] args)
+        public ParusDbContext CreateDbContext(string[] args)
         {
-            var optionsBuilder = new DbContextOptionsBuilder<ApplicationIdentityDbContext>();
+            var optionsBuilder = new DbContextOptionsBuilder<ParusDbContext>();
 
-            return new ApplicationIdentityDbContext(optionsBuilder.Options);
+            return new ParusDbContext(optionsBuilder.Options);
         }
     }
 
-    public class ApplicationIdentityDbContext : IdentityDbContext<ApplicationUser>
+    public class ParusDbContext : IdentityDbContext<ApplicationUser>
     {
         private ConnectionType _connectionType = ConnectionType.MSSQL;
 
         #region Billing 
 
-        public DbSet<SubscribeProfile> SubscribeProfiles { get; set; }
+        public DbSet<SubscriptionProfile> SubscribeProfiles { get; set; }
 
-        public DbSet<SubscribeSession> SubscribeSessions { get; set; }
+        public DbSet<SubscriptionSession> SubscribeSessions { get; set; }
 
         #endregion
 
@@ -56,14 +56,14 @@ namespace Parus.Infrastructure.Identity
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
         private string _connectionString;
-        public ApplicationIdentityDbContext(DbContextOptions<ApplicationIdentityDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL)
+        public ParusDbContext(DbContextOptions<ParusDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL)
             : base(options)
         {
             _connectionString = connectionString;
             _connectionType = connectionType;
         }
 
-        public ApplicationIdentityDbContext()
+        public ParusDbContext()
         {
             
         }

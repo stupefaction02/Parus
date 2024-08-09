@@ -17,11 +17,11 @@ namespace Parus.WebUI.Services
     public class MSSQLSearchingService //: ISearchingService
     {
         private readonly IBroadcastInfoRepository broadcasts;
-        private readonly ApplicationIdentityDbContext usersdentityCtx;
+        private readonly ParusDbContext usersdentityCtx;
         private readonly ApplicationDbContext data;
 
         public MSSQLSearchingService(IBroadcastInfoRepository broadcasts, 
-            ApplicationIdentityDbContext usersdentityCtx,
+            ParusDbContext usersdentityCtx,
             ApplicationDbContext data)
         {
             this.broadcasts = broadcasts;
@@ -44,7 +44,7 @@ namespace Parus.WebUI.Services
             return broadcasts.Search(q);
         }
 
-        public IEnumerable<Tag> SearchTagsByName(string q, int count)
+        public IEnumerable<BroadcastTag> SearchTagsByName(string q, int count)
         {
             return data.Tags
                 .OrderBy(x => x.Name)

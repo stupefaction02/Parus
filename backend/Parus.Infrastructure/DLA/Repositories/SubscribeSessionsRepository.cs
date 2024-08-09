@@ -18,38 +18,38 @@ namespace Parus.Infrastructure.DLA.Repositories
             _context = context;
         }
 
-        public Task AddSessionAsync(SubscribeSession s)
+        public Task AddSessionAsync(SubscriptionSession s)
         {
             return Task.CompletedTask;
         }
 
-        public IEnumerable<SubscribeSession> GetExpiringSoon(long currentDate, long clockslew)
+        public IEnumerable<SubscriptionSession> GetExpiringSoon(long currentDate, long clockslew)
         {
-            return _context.SubscribeSessions
+            return _context.SubscriptionSessions
                 .Where(where)
                 .ToList();
 
-            bool where(SubscribeSession session)
+            bool where(SubscriptionSession session)
             {
                 if (session.ExpiresAt > currentDate && currentDate > (session.ExpiresAt - clockslew))
                 {
-                    Console.WriteLine($"{session.SubjectUserId} true");
+                    Console.WriteLine($"{session.BroadcastId} true");
                     return true;
                 }
                 else if (currentDate > session.ExpiresAt)
                 {
-                    Console.WriteLine($"{session.SubjectUserId} true");
+                    Console.WriteLine($"{session.BroadcastId} true");
                     return true;
                 }
 
-                Console.WriteLine($"{session.SubjectUserId} false");
+                Console.WriteLine($"{session.BroadcastId} false");
                 return false;
             }
         }
 
-        public SubscribeSession OneByUserId(string userId)
+        public SubscriptionSession OneByUserId(string userId)
         {
-            return _context.SubscribeSessions.FirstOrDefault(x => x.PurchaserUserId == userId);
+            return _context.SubscriptionSessions.FirstOrDefault(x => x.PurchaserUserId == userId);
         }
 
         public async Task<int> SaveAsync()

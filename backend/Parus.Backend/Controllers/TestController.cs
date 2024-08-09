@@ -61,7 +61,7 @@ namespace Parus.Backend.Controllers
 				AvatarPic = "/athleanxdotcommer14.png",
 				Category = context.Categories.SingleOrDefault(x => x.Id == 4),
 				Ref = "/athleanxdotcommer14",
-				Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == 3) }
+				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 3) }
 			};
 
 			var broadcast2 = new BroadcastInfo
@@ -71,7 +71,7 @@ namespace Parus.Backend.Controllers
 				AvatarPic = "/broadcaster2.png",
 				Category = context.Categories.SingleOrDefault(x => x.Id == 1),
 				Ref = "/broadcaster2",
-				Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == 2) }
+				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 2) }
 			};
 
 			var broadcast3 = new BroadcastInfo
@@ -81,7 +81,7 @@ namespace Parus.Backend.Controllers
 				AvatarPic = "/ivan25.png",
 				Category = context.Categories.SingleOrDefault(x => x.Id == 2),
 				Ref = "/ivan25",
-				Tags = new List<Tag> { context.Tags.SingleOrDefault(x => x.Id == 1) }
+				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 1) }
 			};
 
 			BroadcastInfo[] broadcast = new BroadcastInfo[3]
@@ -196,8 +196,8 @@ namespace Parus.Backend.Controllers
 				string title = titles[tit];
 				string preview = previews[pre];
 
-				var tag1 = context.Tags.SingleOrDefault(x => x.Id == 1);
-				var tag2 = context.Tags.SingleOrDefault(x => x.Id == tag);
+				var tag1 = context.Tags.SingleOrDefault(x => x.BroadcastTagId == 1);
+				var tag2 = context.Tags.SingleOrDefault(x => x.BroadcastTagId == tag);
 				var cat1 = context.Categories.SingleOrDefault(x => x.Id == cat);
 
                 var broadcast1 = new BroadcastInfo
@@ -208,7 +208,7 @@ namespace Parus.Backend.Controllers
 					AvatarPic = $"ava{a}.png",
 					Category = cat1,
 					Ref = "athleanxdotcommer14",
-					Tags = new List<Tag> { tag1, tag2 }
+					Tags = new List<BroadcastTag> { tag1, tag2 }
 				};
 
 				broadcasts.Add(broadcast1);
@@ -280,7 +280,7 @@ namespace Parus.Backend.Controllers
         [HttpGet]
         [Route("api/test/createbroadcastes")]
         public IActionResult Seed2([FromServices] ApplicationDbContext dbContext, 
-			[FromServices] ApplicationIdentityDbContext identityDbContext,
+			[FromServices] ParusDbContext identityDbContext,
 			[FromServices] BroadcastControl broadcastControl)
 		{
 			DeleteAllBroadcasts(dbContext);
@@ -329,7 +329,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/generaterefreshtoken")]
-        public async Task<object> GenerateRefreshToken(string username, string fingerPrint, [FromServices] ApplicationIdentityDbContext identityDbContext)
+        public async Task<object> GenerateRefreshToken(string username, string fingerPrint, [FromServices] ParusDbContext identityDbContext)
 		{
             ApplicationUser user = await identityDbContext.Users
                 .FirstOrDefaultAsync(x => x.UserName == username);

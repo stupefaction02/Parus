@@ -46,7 +46,7 @@ public static class ServicesExtensions
             options.EnableSensitiveDataLogging();
         }, ServiceLifetime.Transient);
 
-        services.AddDbContext<ApplicationIdentityDbContext>(options =>
+        services.AddDbContext<ParusDbContext>(options =>
             options.UseSqlServer(identityConenctionString));
 
         string GetCoreDbConnectionString()
@@ -92,7 +92,7 @@ public static class ServicesExtensions
 
     public static void ConfigureIdentity(this IServiceCollection services)
     {
-        services.AddScoped<ApplicationIdentityDbContext>();
+        services.AddScoped<ParusDbContext>();
 
         services.Configure<IdentityOptions>(options =>
         { options.SignIn.RequireConfirmedEmail = false; }
@@ -109,7 +109,7 @@ public static class ServicesExtensions
 
             config.SignIn.RequireConfirmedEmail = false;
         })
-            .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+            .AddEntityFrameworkStores<ParusDbContext>()
             .AddDefaultTokenProviders();
     }
 

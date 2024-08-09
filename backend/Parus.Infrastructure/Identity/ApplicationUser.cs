@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Parus.Infrastructure.Identity
 {
-    public class ParusSubscribeSession : SubscribeSession
+    public class ParusSubscribeSession : SubscriptionSession
     {
         // null! - required
         // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-many#optional-one-to-many
@@ -26,7 +26,7 @@ namespace Parus.Infrastructure.Identity
 
 		#endregion
 
-        public List<SubscribeSession> SubscribeSessions { get; set; }
+        public List<SubscriptionSession> SubscribeSessions { get; set; }
 
 		public string ChatColor { get; set; }
 

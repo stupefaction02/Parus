@@ -15,7 +15,7 @@ namespace Billing
         long currenTimestamp = 1711187568;
         long clockslew = 60 * 60;
 
-        SubscribeProfile defaultProfile = new SubscribeProfile { Name = "default", Duration = 1, Price = 1 };
+        SubscriptionProfile defaultProfile = new SubscriptionProfile { Name = "default", DurationDays = 1, PriceUnit = 1 };
 
         [Fact]
         public void Get_All_Expirign_Soon_Two_And_Already_Expired()
@@ -33,7 +33,7 @@ namespace Billing
             {
                 SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
 
-                IEnumerable<SubscribeSession> results = repository.GetExpiringSoon(currentDate: currenTimestamp, clockslew: clockslew);
+                IEnumerable<SubscriptionSession> results = repository.GetExpiringSoon(currentDate: currenTimestamp, clockslew: clockslew);
 
                 Assert.NotEmpty(results);
 
@@ -41,8 +41,8 @@ namespace Billing
 
                 Assert.True(lst.Count() == 2);
 
-                Assert.Equal(lst[0].SubjectUserId, expected[0]);
-                Assert.Equal(lst[1].SubjectUserId, expected[1]);
+                Assert.Equal(lst[0].BroadcastId, expected[0]);
+                Assert.Equal(lst[1].BroadcastId, expected[1]);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Billing
             {
                 SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
 
-                IEnumerable<SubscribeSession> results = repository.GetExpiringSoon(currentDate: currenTimestamp, clockslew: clockslew);
+                IEnumerable<SubscriptionSession> results = repository.GetExpiringSoon(currentDate: currenTimestamp, clockslew: clockslew);
 
                 Assert.NotEmpty(results);
 
@@ -62,26 +62,26 @@ namespace Billing
 
                 Assert.True(lst.Count() == 2);
 
-                lst[0].Key = expected[0];
-                lst[1].Key = expected[1];
+                lst[0].SubscriptionSessionId = expected[0];
+                lst[1].SubscriptionSessionId = expected[1];
             }
         }
 
         public void Create()
         {
-            List<SubscribeSession> expectedData = new List<SubscribeSession>
+            List<SubscriptionSession> expectedData = new List<SubscriptionSession>
             {
-                new SubscribeSession
+                new SubscriptionSession
                 {
                     Profile = defaultProfile,
-                    SubjectUserId = "05e6d0ee-ee5b-4473-8592-6ca968f77ce0",
+                    BroadcastId = "05e6d0ee-ee5b-4473-8592-6ca968f77ce0",
                     PurchaserUserId = "043e3af3-b648-42f6-bce2-e680b2f5fd7f",
                     ExpiresAt = currenTimestamp + (60 * 60 * 60)
                 },
-                new SubscribeSession
+                new SubscriptionSession
                 {
                     Profile = defaultProfile,
-                    SubjectUserId = "088fbc9d-91f4-49db-9f26-d27e4bf2ff92",
+                    BroadcastId = "088fbc9d-91f4-49db-9f26-d27e4bf2ff92",
                     PurchaserUserId = "043e3af3-b648-42f6-bce2-e680b2f5fd7f",
                     ExpiresAt = currenTimestamp - (60 * 60 * 60)
                 },

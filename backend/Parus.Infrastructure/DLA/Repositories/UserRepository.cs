@@ -13,11 +13,11 @@ namespace Parus.Infrastructure.DLA.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ApplicationIdentityDbContext context;
+        private readonly ParusDbContext context;
 
 		public IEnumerable<IUser> Users => context.Users;
 
-		public UserRepository(ApplicationIdentityDbContext context)
+		public UserRepository(ParusDbContext context)
         {
             this.context = context;
         }

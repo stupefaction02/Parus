@@ -90,7 +90,7 @@ namespace Parus.Infrastructure.Identity
             optionsBuilder.UseNpgsql(_connectionString); return;
             if (!String.IsNullOrEmpty(_connectionString))
             {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
+                Debug.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
                 optionsBuilder.UseNpgsql(_connectionString);
             }
         }

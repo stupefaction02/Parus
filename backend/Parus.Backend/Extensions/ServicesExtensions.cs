@@ -37,9 +37,9 @@ namespace Parus.Backend.Extensions
                 options.EnableSensitiveDataLogging();
             }, ServiceLifetime.Transient);
 
-            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            services.AddDbContext<ParusDbContext>(options =>
             {
-                Debug.WriteLine($"Seting up connection with Postgres server. Context: {nameof(ApplicationIdentityDbContext)}");
+                Debug.WriteLine($"Seting up connection with Postgres server. Context: {nameof(ParusDbContext)}");
 
                 options.UseNpgsql(identityConenctionString);
                 options.EnableSensitiveDataLogging();
@@ -60,9 +60,9 @@ namespace Parus.Backend.Extensions
                 options.EnableSensitiveDataLogging();
             }, ServiceLifetime.Transient);
             
-            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            services.AddDbContext<ParusDbContext>(options =>
             {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationIdentityDbContext)}");
+                Debug.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
 
                 options.UseSqlServer(identityConenctionString);
 
@@ -157,7 +157,7 @@ namespace Parus.Backend.Extensions
 
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddScoped<ApplicationIdentityDbContext>();
+            services.AddScoped<ParusDbContext>();
 
             services.Configure<IdentityOptions>(options =>
                 { options.SignIn.RequireConfirmedEmail = false; }
@@ -174,7 +174,7 @@ namespace Parus.Backend.Extensions
 
                     config.SignIn.RequireConfirmedEmail = false;
                 })
-                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+                .AddEntityFrameworkStores<ParusDbContext>()
                 .AddDefaultTokenProviders();
         }
 

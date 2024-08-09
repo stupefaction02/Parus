@@ -148,7 +148,7 @@ namespace Parus.Backend.Controllers
             string username, 
             string password,
             IPasswordHasher<ApplicationUser> passwordHasher, 
-            ApplicationIdentityDbContext dbContext)
+            ParusDbContext dbContext)
         {
             logger.LogInformation($"Attempt to login {username}");
             ApplicationUser user = await dbContext.Users
@@ -214,7 +214,7 @@ namespace Parus.Backend.Controllers
             RegisterType registerType,
             [FromServices] UserManager<ApplicationUser> userManager,
             IUserRepository userRepository, 
-            ApplicationIdentityDbContext identityDbContext)
+            ParusDbContext identityDbContext)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
@@ -539,7 +539,7 @@ namespace Parus.Backend.Controllers
         [HttpGet]
         [Route("api/account/refreshtoken")]
         public async Task<object> RefreshToken(string fingerPrint, string refreshToken,
-            [FromServices] ApplicationIdentityDbContext identityDbContext)
+            [FromServices] ParusDbContext identityDbContext)
         {
             //string rsUuid = HttpContext.Request.Cookies["refreshToken"];
 

@@ -94,7 +94,7 @@ namespace Parus.WebUI.Extensions
 
             }, ServiceLifetime.Transient);
 
-            services.AddDbContext<ApplicationIdentityDbContext>(options =>
+            services.AddDbContext<ParusDbContext>(options =>
             {
                 Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
 
@@ -167,7 +167,7 @@ namespace Parus.WebUI.Extensions
 
                     config.SignIn.RequireConfirmedEmail = false;
                 })
-                .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+                .AddEntityFrameworkStores<ParusDbContext>()
                 .AddDefaultTokenProviders();
         }
 

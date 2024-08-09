@@ -9,11 +9,11 @@ namespace Parus.Infrastructure.DLA.Repositories
 {
     public class ConfrimCodesRepository : IConfrimCodesRepository
     {
-        private readonly ApplicationIdentityDbContext context;
+        private readonly ParusDbContext context;
 
         public IEnumerable<IVerificationCode> Codes => context.ConfirmCodes; 
 
-        public ConfrimCodesRepository(ApplicationIdentityDbContext context)
+        public ConfrimCodesRepository(ParusDbContext context)
         {
             this.context = context;
         }

@@ -19,7 +19,7 @@ namespace Identity
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                services.AddDbContextPool<ApplicationIdentityDbContext>(opts => 
+                services.AddDbContextPool<ParusDbContext>(opts => 
                     opts.UseSqlServer("Data Source=DESKTOP-OTM8VD2;Database=parus.tests.identity1;TrustServerCertificate=True;Integrated Security=True;"));
 
                 services.AddDbContextPool<ApplicationDbContext>(opts =>

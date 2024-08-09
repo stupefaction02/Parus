@@ -21,11 +21,11 @@ namespace Parus.Backend.Services
             ApplicationUser user,
             ApplicationDbContext dbContext)
         {
-            List<Tag> userTags = new List<Tag>();
+            List<BroadcastTag> userTags = new List<BroadcastTag>();
 
             foreach (int tag in tags)
             {
-                userTags.Add(dbContext.Tags.SingleOrDefault(x => x.Id == tag));
+                userTags.Add(dbContext.Tags.SingleOrDefault(x => x.BroadcastTagId == tag));
             }
 
             var broadcastInfo = new BroadcastInfo

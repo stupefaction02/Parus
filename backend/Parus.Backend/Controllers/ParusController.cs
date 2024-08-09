@@ -97,7 +97,7 @@ namespace Parus.Backend.Controllers
             });
         }
 
-        protected async Task<object> HandleLoginAsync(ApplicationUser user, string fingerPrint, ApplicationIdentityDbContext dbContext)
+        protected async Task<object> HandleLoginAsync(ApplicationUser user, string fingerPrint, ParusDbContext dbContext)
         {
             //var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.Fingerprint == fingerPrint && x.UserId == user.GetId());
             var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.UserId == user.GetId());

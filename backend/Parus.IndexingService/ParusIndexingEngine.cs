@@ -49,7 +49,7 @@ namespace Parus.IndexingService
             {
                 if (users != null) return users;
 
-                var ctx = ConfigureContext<ApplicationIdentityDbContext>(usersLogicConnecionString);
+                var ctx = ConfigureContext<ParusDbContext>(usersLogicConnecionString);
                 return users = new UserRepository(ctx);
             }
         }

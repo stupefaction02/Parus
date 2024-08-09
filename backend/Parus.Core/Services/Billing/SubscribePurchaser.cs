@@ -36,7 +36,7 @@ namespace Parus.Core.Services.Billing
             // 12.52 23.03.2024
             long currenTimestamp = 1711187568;
             
-            IEnumerable<SubscribeSession> expiringIn1Day = subscribeSessions.GetExpiringSoon(currenTimestamp, 60 * 60 * 24);
+            IEnumerable<SubscriptionSession> expiringIn1Day = subscribeSessions.GetExpiringSoon(currenTimestamp, 60 * 60 * 24);
 
             return Task.CompletedTask;
         }
@@ -46,7 +46,7 @@ namespace Parus.Core.Services.Billing
             // 12.52 23.03.2024
             long currenTimestamp = 1711187568;
 
-            IEnumerable<SubscribeSession> expiringSoon = subscribeSessions.GetExpiringSoon(currenTimestamp, clockslew);
+            IEnumerable<SubscriptionSession> expiringSoon = subscribeSessions.GetExpiringSoon(currenTimestamp, clockslew);
 
             return Task.CompletedTask;
         }

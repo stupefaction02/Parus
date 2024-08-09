@@ -11,7 +11,7 @@ using Parus.Infrastructure.Identity;
 
 namespace Parus.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationIdentityDbContext))]
+    [DbContext(typeof(ParusDbContext))]
     [Migration("20240218153524_Add2FA_CustomerKeys")]
     partial class Add2FA_CustomerKeys
     {
