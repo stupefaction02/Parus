@@ -16,7 +16,7 @@ namespace Parus.Core.Services.Billing
             this._connectionString = connectionString;
         }
 
-        long clockslew = 60 * 60;
+        int clockslewMinutes = 60 * 60;
 
         public void Run()
         {
@@ -34,7 +34,7 @@ namespace Parus.Core.Services.Billing
         private Task NotificateAboutExpiring(ISubscribeSessionsRepository subscribeSessions)
         {
             // 12.52 23.03.2024
-            long currenTimestamp = 1711187568;
+            DateTime currenTimestamp = DateTime.Now;
             
             IEnumerable<SubscriptionSession> expiringIn1Day = subscribeSessions.GetExpiringSoon(currenTimestamp, 60 * 60 * 24);
 
@@ -44,9 +44,9 @@ namespace Parus.Core.Services.Billing
         private Task PurchaseSubscribes(ISubscribeSessionsRepository subscribeSessions)
         {
             // 12.52 23.03.2024
-            long currenTimestamp = 1711187568;
+            DateTime currenTimestamp = DateTime.Now;
 
-            IEnumerable<SubscriptionSession> expiringSoon = subscribeSessions.GetExpiringSoon(currenTimestamp, clockslew);
+            IEnumerable<SubscriptionSession> expiringSoon = subscribeSessions.GetExpiringSoon(currenTimestamp, clockslewMinutes);
 
             return Task.CompletedTask;
         }

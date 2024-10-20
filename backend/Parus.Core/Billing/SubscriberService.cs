@@ -16,12 +16,16 @@ namespace Parus.Core.Billing
     public class SubscriberService
     {
         private readonly ISubscribeSessionsRepository _context;
+        private readonly IUserRepository _users;
         private readonly BillingCachingResults _cache;
 
-        public SubscriberService(ISubscribeSessionsRepository context, BillingCachingResults cache)
+        public SubscriberService(ISubscribeSessionsRepository context, 
+            IUserRepository users,
+            BillingCachingResults cache)
         {
             _context = context;
             _cache = cache;
+            _users = users;
         }
 
         public SubscriptionSession Session(string userId)
@@ -36,13 +40,23 @@ namespace Parus.Core.Billing
             public string Message { get; set; }
         }
 
-        public async Task<Result> SubscribeUser(string userId, string subjectUserId)
+        // Sender: 4100 1180 7534 5338
+
+        // Host: 4100 1177 2549 0560
+
+
+        public async Task<Result> SubscribeUserAsync(string userId, 
+            int subjectUserId,
+            int duration)
         {
-            SubscriptionProfile profile = _cache.Profiles["regular"];
+            int userRegion = _users.GetUserRegionId(userId);
+
+            SubscriptionProfile profile = GetProfile(userRegion, duration);
 
             try
             {
-                if (Purchase(profile, userId))
+                var purchaseResult = await PurchaseAsync(profile, userId);
+                if (purchaseResult)
                 {
                     if (await AddSession(userId, subjectUserId, profile))
                     {
@@ -60,19 +74,40 @@ namespace Parus.Core.Billing
             }
         }
 
-        private bool Purchase(SubscriptionProfile profile, string userId)
+        private SubscriptionProfile GetProfile(int userRegion, int duration)
         {
+            string profileName = "";
+            SubscriptionProfile profile;
+
+            if (userRegion == 1 & duration == 30)
+            {
+                profileName = "30_days_ANY_COUNTY_default_unit";
+            }
+
+            if (!_cache.Profiles.TryGetValue(profileName, out profile))
+            {
+                throw new Exception($"Couldn't find profile with name {profileName}");
+            }
+
+            return profile;
+        }
+
+        private async Task<bool> PurchaseAsync(SubscriptionProfile profile, string userId)
+        {
+
+
             return true;
         }
 
-        private async Task<bool> AddSession(string userId, string subjectUserId, SubscriptionProfile profile)
+        private async Task<bool> AddSession(string userId, int subjectUserId, SubscriptionProfile profile)
         {
             SubscriptionSession session = new SubscriptionSession
             {
-                PurchaserUserId = userId,
-                BroadcastId = subjectUserId,
+                //PurchaserUserId = userId,
+                
+                //BroadcastId = subjectUserId,
                 Profile = profile,
-                ExpiresAt = 1
+                //ExpiresAt = 
             };
 
             await _context.AddSessionAsync(session);

@@ -11,7 +11,7 @@ namespace Parus.Core.Entities
     {
         public string Keyword { get; set; }
 
-        public BroadcastInfo BroadcastInfo { get; set; }
+        public Broadcast BroadcastInfo { get; set; }
         public int BroadcastInfoId { get; set; }
 
         [Key]
@@ -53,12 +53,8 @@ namespace Parus.Core.Entities
         public List<BroadcastTag> Tags { get; set; } = new List<BroadcastTag>();
     }
 
-    public class Broacaster
-    {
-        public int User { get; set; }
-    }
 
-    public class BroadcastInfo : IBroadcastsInfoSearchResult
+    public class Broadcast : IBroadcastsInfoSearchResult
     {
         /// <summary>
         /// ref: <see cref="Parus.Core.Entities.IndexingRule"/>
@@ -119,7 +115,7 @@ namespace Parus.Core.Entities
         public string Name { get; set; }
 
         [JsonIgnore]
-        public List<BroadcastInfo> Broadcasts { get; set; }
+        public List<Broadcast> Broadcasts { get; set; }
     }
 
     public class BroadcastCategory
@@ -140,7 +136,7 @@ namespace Parus.Core.Entities
         public string ViewsCountString { get; set; }
 
         [JsonIgnore]
-        public List<BroadcastInfo> Broadcasts { get; set; }
+        public List<Broadcast> Broadcasts { get; set; }
         
         public string GetRef() { return Name.ToLower(); }
 

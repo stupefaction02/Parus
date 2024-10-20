@@ -29,17 +29,17 @@ namespace Parus.WebUI.Services
             this.data = data;
         }
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string query, int start, int count)
+        public IEnumerable<Broadcast> SearchBroadcastsByTitleTags(string query, int start, int count)
         {
             return null;
         }
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q, int count)
+        public IEnumerable<Broadcast> SearchBroadcastsByTitleTags(string q, int count)
         {
             return broadcasts.Search(q).Take(count);
         }
 
-        public IEnumerable<BroadcastInfo> SearchBroadcastsByTitleTags(string q)
+        public IEnumerable<Broadcast> SearchBroadcastsByTitleTags(string q)
         {
             return broadcasts.Search(q);
         }

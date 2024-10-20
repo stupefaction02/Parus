@@ -54,7 +54,7 @@ namespace Parus.Infrastructure.DLA.Repositories
             return this.context.Broadcasts.Count();
         }
 
-        public IEnumerable<BroadcastInfo> GetInterval(int start, int count)
+        public IEnumerable<Broadcast> GetInterval(int start, int count)
         {
             return this.context.Broadcasts
                 .Include(x => x.Category)
@@ -62,14 +62,14 @@ namespace Parus.Infrastructure.DLA.Repositories
                 .Skip(start).Take(count);
         }
 
-        public BroadcastInfo One(Func<BroadcastInfo, bool> predicate)
+        public Broadcast One(Func<Broadcast, bool> predicate)
         {
             return context.Broadcasts.Include(x => x.Category)
                 .Include(x => x.Tags)
                 .AsEnumerable().SingleOrDefault(predicate);
         }
 
-        public BroadcastInfo OneLazy(Func<BroadcastInfo, bool> predicate)
+        public Broadcast OneLazy(Func<Broadcast, bool> predicate)
         {
             return context.Broadcasts
                 .AsEnumerable().SingleOrDefault(predicate);
@@ -81,7 +81,7 @@ namespace Parus.Infrastructure.DLA.Repositories
         /// <param name="userId"></param>
         public void RemoveOne(string userId)
         {
-            BroadcastInfo target = OneLazy(x => x.HostUserId == userId);
+            Broadcast target = OneLazy(x => x.HostUserId == userId);
 
             if (target != null)
             {
@@ -91,7 +91,7 @@ namespace Parus.Infrastructure.DLA.Repositories
             }
         }
 
-        public void Add(BroadcastInfo broadcast)
+        public void Add(Broadcast broadcast)
         {
             context.Add(broadcast);
 
@@ -100,10 +100,10 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         const string titleProp = nameof(BroadcastInfoKeyword.Keyword);
 
-        public IEnumerable<BroadcastInfo> Broadcasts { get => this.context.Broadcasts.Include(x => x.Category).Include(x => x.Tags); }
+        public IEnumerable<Broadcast> Broadcasts { get => this.context.Broadcasts.Include(x => x.Category).Include(x => x.Tags); }
 
         //[Benchmark(Description = "BroadcastInfoRepository.Search")]
-        public IEnumerable<BroadcastInfo> Search(string query)
+        public IEnumerable<Broadcast> Search(string query)
         {
             return context.BroadcastsKeywords
                 .Include(x => x.BroadcastInfo)
@@ -114,7 +114,7 @@ namespace Parus.Infrastructure.DLA.Repositories
                 .Select(x => x.BroadcastInfo);
         }
 
-        public void UpdateWithoutContextSave(BroadcastInfo user)
+        public void UpdateWithoutContextSave(Broadcast user)
         {
             context.Broadcasts.Update(user);
         }

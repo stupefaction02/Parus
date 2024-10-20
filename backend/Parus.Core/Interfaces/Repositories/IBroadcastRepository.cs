@@ -9,14 +9,14 @@ namespace Parus.Core.Interfaces.Repositories
     {
 		int Count();
 
-        IEnumerable<BroadcastInfo> Broadcasts { get; }
+        IEnumerable<Broadcast> Broadcasts { get; }
 
-        IEnumerable<BroadcastInfo> GetInterval(int start, int count);
-        BroadcastInfo One(Func<BroadcastInfo, bool> predicate);
-        BroadcastInfo OneLazy(Func<BroadcastInfo, bool> predicate);
+        IEnumerable<Broadcast> GetInterval(int start, int count);
+        Broadcast One(Func<Broadcast, bool> predicate);
+        Broadcast OneLazy(Func<Broadcast, bool> predicate);
         void RemoveOne(string userId);
-        IEnumerable<BroadcastInfo> Search(string query);
-        void UpdateWithoutContextSave(BroadcastInfo user);
+        IEnumerable<Broadcast> Search(string query);
+        void UpdateWithoutContextSave(Broadcast user);
         int SaveChanges();
     }
 

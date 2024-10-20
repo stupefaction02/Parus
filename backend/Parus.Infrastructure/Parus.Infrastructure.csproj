@@ -5,15 +5,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Identity\CassandraDbIdentityContext.cs" />
-    <Compile Remove="Identity\LiteDbIdentityContext.cs" />
-    <Compile Remove="Identity\LiteDbOptions.cs" />
-    <Compile Remove="Migrations\20240218133823_Add2FA_CustomerKeys.cs" />
+    <Compile Remove="Databases\**" />
+    <EmbeddedResource Remove="Databases\**" />
+    <None Remove="Databases\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Identity\CassandraDbIdentityContext.cs" />
+    <Compile Remove="Identity\LiteDbIdentityContext.cs" />
+    <Compile Remove="Identity\LiteDbOptions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

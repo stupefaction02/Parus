@@ -54,7 +54,7 @@ namespace Parus.Backend.Controllers
 
 			//context.SaveChanges();
 
-			var broadcast1 = new BroadcastInfo
+			var broadcast1 = new Broadcast
 			{
 				Username = "athleanxdotcommer14",
 				Title = "Gym, Connecticut",
@@ -64,7 +64,7 @@ namespace Parus.Backend.Controllers
 				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 3) }
 			};
 
-			var broadcast2 = new BroadcastInfo
+			var broadcast2 = new Broadcast
 			{
 				Username = "broadcaster2",
 				Title = "Those loevely birds!",
@@ -74,7 +74,7 @@ namespace Parus.Backend.Controllers
 				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 2) }
 			};
 
-			var broadcast3 = new BroadcastInfo
+			var broadcast3 = new Broadcast
 			{
 				Username = "ivan25",
 				Title = "Winter!",
@@ -84,7 +84,7 @@ namespace Parus.Backend.Controllers
 				Tags = new List<BroadcastTag> { context.Tags.SingleOrDefault(x => x.BroadcastTagId == 1) }
 			};
 
-			BroadcastInfo[] broadcast = new BroadcastInfo[3]
+			Broadcast[] broadcast = new Broadcast[3]
 			{
 				broadcast1,
 				broadcast2,
@@ -179,7 +179,7 @@ namespace Parus.Backend.Controllers
                 "preview6.png"
             };
 
-			var broadcasts = new List<BroadcastInfo>();
+			var broadcasts = new List<Broadcast>();
 			var keywords = new List<BroadcastInfoKeyword>();
 
 			for (int i = 1; i < 15000; i++)
@@ -200,7 +200,7 @@ namespace Parus.Backend.Controllers
 				var tag2 = context.Tags.SingleOrDefault(x => x.BroadcastTagId == tag);
 				var cat1 = context.Categories.SingleOrDefault(x => x.Id == cat);
 
-                var broadcast1 = new BroadcastInfo
+                var broadcast1 = new Broadcast
 				{
 					Preview = preview,
 					Username = name,

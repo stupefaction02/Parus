@@ -28,7 +28,7 @@ namespace Parus.Backend.Services
                 userTags.Add(dbContext.Tags.SingleOrDefault(x => x.BroadcastTagId == tag));
             }
 
-            var broadcastInfo = new BroadcastInfo
+            var broadcastInfo = new Broadcast
             {
                 HostUserId = user.GetId(),
                 AvatarPic = user.AvatarPath,

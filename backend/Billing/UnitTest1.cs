@@ -19,7 +19,7 @@ namespace Billing
         {
             using (BillingDbContext context = new BillingDbContext(null, connectionString))
             {
-                SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
+                DapperSubscriptionSessionsRepository repository = new DapperSubscriptionSessionsRepository(context);
                 SubscriberService subscriber = new SubscriberService(repository, cachedResults);
 
                 SubscriptionSession expectedSession = subscriber.Session(userId);
@@ -36,7 +36,7 @@ namespace Billing
 
             using (BillingDbContext context = new BillingDbContext(null, connectionString))
             {
-                SubscribeSessionsRepository repository = new SubscribeSessionsRepository(context);
+                DapperSubscriptionSessionsRepository repository = new DapperSubscriptionSessionsRepository(context);
                 SubscriberService subscriber = new SubscriberService(repository, cachedResults);
 
                 SubscriptionSession expectedSession = subscriber.Session(userId);

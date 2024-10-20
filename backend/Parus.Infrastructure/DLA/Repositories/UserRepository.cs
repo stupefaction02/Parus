@@ -99,5 +99,10 @@ namespace Parus.Infrastructure.DLA.Repositories
         {
 			context.ChangeTracker.Clear();
 		}
-	}
+
+        public int GetUserRegionId(string userId)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -25,7 +25,7 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
             int changed = 0;
             int total = repository.Broadcasts.Count();
 
-            foreach (BroadcastInfo broadcast in repository.Broadcasts)
+            foreach (Broadcast broadcast in repository.Broadcasts)
             {
                 switch (broadcast.IndexingStatus)
                 {
@@ -47,7 +47,7 @@ namespace Parus.Core.Services.ElasticSearch.Indexing
             Console.WriteLine($"BroadcastsIndexer has done its work. Changed entries: {changed}, Total: {total}");
         }
 
-        private async Task<bool> ProcessAddToIndexStatus(BroadcastInfo broadcast, IBroadcastInfoRepository repository)
+        private async Task<bool> ProcessAddToIndexStatus(Broadcast broadcast, IBroadcastInfoRepository repository)
         {
             string title = broadcast.Title;
 

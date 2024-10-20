@@ -25,3 +25,205 @@ Connecting to MSSQL server
 	https://rus-linux.net/MyLDP/vm/VirtualBox-networking.html
 		
 https://mycsharpdeveloper.wordpress.com/2022/11/02/how-to-reverse-proxy-net-core-6-using-nginx-on-ubuntu/
+
+--- USERS AND ROLES ---
+# Adding user
+sudo adduser username
+
+#change password
+
+passwd
+
+# show all users
+awk -F: '{ print $1}' /etc/passwd
+cat /etc/passwd
+
+
+--- SSH ---
+
+#evrify password
+
+# show recent Accepted request
+journalctl -r -u ssh | grep Accepted
+
+
+
+--- OPENSSL ---
+
+#generating password 
+openssl rand -base64 128
+
+
+
+-files
+---- FILES ----
+
+# unzip
+sudo apt-get install unzip
+
+# watch file updates, watch log file live for example
+tail -f 
+
+--- NETWORK ---
+
+# Show all opened ports
+	sudo netstat -tulpn | grep LISTEN
+
+#list all active connections
+
+netstat -tuap
+sudo netstat -nlp - show processes
+
+
+#how to kill tcp connection
+
+Comment:
+You can't kill a single connection of a process.
+But you could block it with iptables. So the connection can't provide or receive data and the client will run in a timeout.
+
+# set interface down/up
+ip link set wg0 up
+ip link set wg0 down
+
+iptables 
+
+#iptables
+https://vasilisc.com/21-examples-iptables
+https://www.opennet.ru/docs/RUS/iptables/
+
+# show rules
+iptables -L INPUT -n -v
+iptables -L INPUT -n --line-numbers
+
+# simple ip restrict
+iptables -A INPUT -s 202.54.1.2 -j DROP
+-A --append
+-I --insert
+-D --delete
+-s --source 
+
+# open port
+
+# delete ip restrict rule
+iptables -D INPUT -s 202.54.1.1 -j DROP
+
+# or delete rule by number
+
+
+## routing
+
+# delete route
+route del -net 10.1.0.0 gw 31.13.248.1 netmask 255.255.255.255 dev eth0
+
+
+
+
+# ???
+iptables -A FORWARD -i wg0 -j ACCEPT;
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# default rules
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+::1 - ipv6 localhost
+::: - ipv6 0.0.0.0
+
+--- SYSTEMD ---
+
+# lisl all services
+systemctl
+systemctl list-units --type=service
+systemctl --type=service
+
+# journal for service 
+journalctl -u <servicename>
+
+#set logging level
+
+# Check memory usage
+install Ncdu
+ncdu /
+
+--- SYSTEM ---
+
+# show all process
+
+ps -A
+
+
+
+# usefull 
+
+iptables -L INPUT -n -v && iptables -t nat -L --line-numbers
+iptables -L -n -v && iptables -t nat -L --line-numbers
+
+iptables -t nat -X
+iptables -F FORWARD
+
+iptables -t filter -A FORWARD -i tun0 -o eth0 -j ACCEPT
+
+sudo nano /usr/local/etc/xray/config.json
+
+
+--- CURL ---
+# download file
+sudo curl -O https://github.com/EvgenyNerush/easy-xray/archive/refs/heads/main.zip
+
+-O means output here
+
+-DNS
+---- DNS ----
+
+Showing what DNS I use
+	cat /etc/resolv.conf 
+
+#Рекурсивный вс итеративный 
+
+При рекурсивном запросе Вы просто обращаетесь к серверу, 
+а он, если не найдет у себя нужной записи, идет к другим серверам и спрашивает у них. 
+Нерекурсивный dns сервер в данном случае просто говорит - "я не знаю, но спроси у этого сервера". И клиент будет слать ещё один запрос. 
+Понятное дело, что при медленном интернете первый вариант лучше.
+
+Почитать еще можно тут: https://hackware.ru/?p=9374
+
+
+---- GUIDES ----
+
+1. setting up SSH 
+https://selectel.ru/blog/ssh-ubuntu-setup/
+
+2. Backuping 
+
+Let the file-hierarchy(7) man page guide you. If this hierarchy is followed, all the settings should be under /etc/. On the other hand, you should never need to backup anything under, e.g., the section "vendor-supplied operating system resources" (/usr/ & /lib/) as they can be reinstalled, nor the section "virtual kernel and API file systems" (/dev/, /proc/ & /sys/).
+https://manpages.ubuntu.com/manpages/jammy/man7/file-hierarchy.7.html
+
+#soft
+rsnapshot
+	https://hmarketing.ru/blog/server/rsnapshot-v-linux/
+etckeeper 
+	https://ivirt-it.ru/etckeeper-and-git/
+rclone
+	- downloading
+		curl -O https://rclone.org/install.sh
+		bash install.sh
+	- fix drive auth porblem
+		
+	
+3. Delete all trash
+
+apt-get autoremove
+
+4. Good 
+
+5. Setting DNS up
+https://gist.github.com/mrpeardotnet/3f423a5efd86b87b0cf0d07220aca5cb
+
+---- Scrits ----
+
+1. Install on server
+
+apt-get install ncdu
+
+

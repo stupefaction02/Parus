@@ -20,6 +20,7 @@ namespace Parus.Core.Interfaces.Repositories
 		void ClearTracking();
         void UpdateWithoutContextSave(IUser user);
         int SaveChanges();
+        int GetUserRegionId(string userId);
     }
 
     public interface IConfrimCodesRepository

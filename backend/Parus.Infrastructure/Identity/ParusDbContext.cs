@@ -40,11 +40,27 @@ namespace Parus.Infrastructure.Identity
 
         #region Billing 
 
-        public DbSet<SubscriptionProfile> SubscribeProfiles { get; set; }
+        public DbSet<SubscriptionProfile> SubscriptionProfiles { get; set; }
 
-        public DbSet<SubscriptionSession> SubscribeSessions { get; set; }
+        public DbSet<SubscriptionSession> SubscriptionSessions { get; set; }
 
         #endregion
+
+        #region Broadcasts
+
+        public DbSet<Broadcaster> Broacasters { get; set; }
+
+        public DbSet<Broadcast> Broadcasts { get; set; }
+
+        public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
+
+        public DbSet<BroadcastTag> Tags { get; set; }
+
+        public DbSet<BroadcastCategory> Categories { get; set; }
+
+        #endregion
+
+        #region Identity
 
         public DbSet<RefreshSession> RefreshSessions { get; set; }
         public DbSet<ConfirmCode> ConfirmCodes { get; set; }
@@ -55,12 +71,19 @@ namespace Parus.Infrastructure.Identity
         // Description/Comment: keys is created when user scans qr_code and send numbers to the server
         public DbSet<TwoFactoryCustomerKey> TwoFactoryCustomerKeys { get; set; }
 
-        private string _connectionString;
+        private string _connectionString = "Data Source=192.168.100.11;Database=Parus;User ID=ivan;Password=zx12;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public ParusDbContext(DbContextOptions<ParusDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL)
             : base(options)
         {
             _connectionString = connectionString;
             _connectionType = connectionType;
+        }
+
+        #endregion
+
+        public ParusDbContext(DbContextOptions<ParusDbContext> options) : base(options)
+        {
+
         }
 
         public ParusDbContext()
@@ -72,7 +95,86 @@ namespace Parus.Infrastructure.Identity
         {
             base.OnModelCreating(builder);
 
-            //base.Database.
+            builder.Entity<Broadcast>()
+                .Property(x => x.IndexingStatus)
+                .HasDefaultValue(1);
+
+            builder.Entity<BroadcastCategory>()
+                .Property(x => x.IndexingStatus)
+                .HasDefaultValue(1);
+
+
+
+
+            builder.Entity<SubscriptionProfile>()
+                .HasMany(x => x.Sessions)
+                .WithOne(x => x.Profile);
+
+            builder.Entity<SubscriptionProfile>()
+                .HasIndex(x => x.Name)
+                .IsClustered(false);
+
+            builder.Entity<SubscriptionProfile>()
+                .Property(x => x.Name)
+                .IsRequired(true);
+
+            builder.Entity<SubscriptionProfile>()
+                .Property(x => x.PriceUnit)
+                .HasDefaultValue(1);
+
+            builder.Entity<SubscriptionProfile>()
+                .Property(x => x.DurationDays)
+                .HasDefaultValue(30);
+
+            builder.Entity<SubscriptionProfile>()
+                .HasKey(x => x.SubscriptionProfileId);
+
+
+
+            builder.Entity<SubscriptionSession>()
+                .HasKey(x => x.SubscriptionSessionId);
+
+            builder.Entity<SubscriptionSession>()
+                .Property(x => x.Status)
+                .HasDefaultValue(SubscriptionSessionStatus.NonActive);
+
+            builder.Entity<SubscriptionSession>()
+                .Property(x => x.ProfileId)
+                .IsRequired();
+
+            builder.Entity<SubscriptionSession>()
+                .Property(x => x.Autocontinuation)
+                .HasDefaultValue(false);
+
+            builder.Entity<SubscriptionSession>()
+                .Property(x => x.BroadcasterId)
+                .IsRequired();
+
+            builder.Entity<SubscriptionSession>()
+                .Property(x => x.ProfileId)
+                .IsRequired();
+
+
+            builder.Entity<Broadcaster>()
+                .HasKey(x => x.BroadcasterId);
+
+            builder.Entity<ApplicationUser>()
+                .HasOne(x => x.Broadcaster)
+                .WithOne(x => x.Owner)
+                .HasForeignKey<Broadcaster>(x => x.OwnerId);
+
+            //builder.Entity<Broadcaster>()
+            //    .HasOne(x => x.Owner)
+            //    .WithOne(x => x.Broadcaster);
+            //.HasForeignKey<ApplicationUser>(x => x.);
+
+            builder.Entity<ParusSubscriptionSession>()
+                .HasOne(x => x.Broacaster)
+                .WithMany(x => x.SubscriptionSessionsAsSubject)
+                .HasForeignKey(x => x.BroadcasterId);
+
+
+
 
             builder.Entity<ApplicationUser>()
                     .HasOne(e => e.ConfirmCode)
@@ -97,7 +199,7 @@ namespace Parus.Infrastructure.Identity
                     .Property(x => x.AvatarPath)
                     .HasDefaultValue("defaults/ava1.jpg");
 
-            builder.Entity<BroadcastInfo>()
+            builder.Entity<Broadcast>()
                     .Property(x => x.Preview)
                     .HasDefaultValue("defaults/preview_bright.jpg");
 

@@ -23,7 +23,7 @@ namespace Parus.Infrastructure.DLA
 
         #region Tables
 
-        public DbSet<BroadcastInfo> Broadcasts { get; set; }
+        public DbSet<Broadcast> Broadcasts { get; set; }
 
         public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
 
@@ -42,7 +42,7 @@ namespace Parus.Infrastructure.DLA
             //int titeLength = 250;
             //modelBuilder.Entity<BroadcastInfo>().Property(x => x.Title).IsRequired().HasMaxLength(titeLength);
 
-            builder.Entity<BroadcastInfo>()
+            builder.Entity<Broadcast>()
                 .Property(x => x.IndexingStatus)
                 .HasDefaultValue(1);
 

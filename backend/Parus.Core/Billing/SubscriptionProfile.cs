@@ -61,19 +61,15 @@ namespace Parus.Core.Entities
 
         public SubscriptionSessionStatus Status { get; set; }
 
-        public long ExpiresAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
 
         public string PurchaserUserId { get; set; }
-        public string BroadcastId { get; set; }
 
-        public BroadcastInfo Broadcast { get; set; }
-
-        public virtual IUser GetSubject() { return default; }
-        public virtual IUser GetPurchaser() { return default; }
+        public int BroadcasterId { get; set; }
 
         public override string ToString()
         {
-            return "March 24";
+            return $"{PurchaserUserId} {BroadcasterId} {ExpiresAt}";
         }
     }
 }

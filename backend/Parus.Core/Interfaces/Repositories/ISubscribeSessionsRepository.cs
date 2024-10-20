@@ -14,6 +14,6 @@ namespace Parus.Core.Interfaces.Repositories
 
         Task<int> SaveAsync();
 
-        IEnumerable<SubscriptionSession> GetExpiringSoon(long expiringDate, long clockslew);
+        IEnumerable<SubscriptionSession> GetExpiringSoon(DateTime expiringDate, int clockslew);
     }
 }

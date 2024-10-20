@@ -17,7 +17,7 @@ namespace Parus.Infrastructure.DLA
 			this.context = context;
 		}
 
-		public Task<IEnumerable<BroadcastInfo>> GetAllAsync()
+		public Task<IEnumerable<Broadcast>> GetAllAsync()
 		{
 			throw new NotImplementedException();
 		}

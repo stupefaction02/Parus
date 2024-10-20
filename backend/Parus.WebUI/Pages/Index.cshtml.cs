@@ -27,7 +27,7 @@ namespace Parus.WebUI.Pages
 
         public int Page { get; set; }
 
-        public IEnumerable<BroadcastInfo> Broadcasts { get; set; }
+        public IEnumerable<Broadcast> Broadcasts { get; set; }
         public PaginationContext Pagination { get; private set; }
 
         public IActionResult OnGet([FromQuery] string page, string search,

@@ -67,7 +67,7 @@ namespace Parus.Infrastructure.Identity
                     .Property(x => x.AvatarPath)
                     .HasDefaultValue("defaults/ava1.jpg");
 
-            builder.Entity<BroadcastInfo>()
+            builder.Entity<Broadcast>()
                     .Property(x => x.Preview)
                     .HasDefaultValue("defaults/preview_bright.jpg");
 

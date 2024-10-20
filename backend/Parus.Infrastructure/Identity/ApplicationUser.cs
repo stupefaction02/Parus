@@ -8,13 +8,26 @@ using System.Collections.Generic;
 
 namespace Parus.Infrastructure.Identity
 {
-    public class ParusSubscribeSession : SubscriptionSession
+    public class ParusSubscriptionSession : SubscriptionSession
     {
         // null! - required
         // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-many#optional-one-to-many
 
-        public ApplicationUser SubjectUser { get; set; } = null!;
         public ApplicationUser PurchaserUser { get; set; } = null!;
+
+        public Broadcaster Broacaster { get; set; } = null!;
+    }
+
+
+    public class Broadcaster
+    {
+        public int BroadcasterId { get; set; }
+
+        public string OwnerId { get; set; }
+
+        public ApplicationUser Owner { get; set; }
+
+        public List<ParusSubscriptionSession> SubscriptionSessionsAsSubject { get; set; }
     }
 
     public class ApplicationUser : IdentityUser, IUser
@@ -55,6 +68,8 @@ namespace Parus.Infrastructure.Identity
         /// ref: <see cref="IndexingRule"/>
         /// </summary>
         public byte IndexingRule { get; set; }
+
+        public Broadcaster Broadcaster { get; set; }
 
         public void SetIndexingRule(IndexingRule rule)
         {
