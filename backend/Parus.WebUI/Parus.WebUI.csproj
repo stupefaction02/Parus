@@ -17,22 +17,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Placeholder\**" />
     <Compile Remove="wwwroot\lib\hls.js\**" />
     <Compile Remove="wwwroot\node_modules\**" />
+    <Content Remove="Pages\Placeholder\**" />
     <Content Remove="wwwroot\lib\hls.js\**" />
     <Content Remove="wwwroot\node_modules\**" />
+    <EmbeddedResource Remove="Pages\Placeholder\**" />
     <EmbeddedResource Remove="wwwroot\lib\hls.js\**" />
     <EmbeddedResource Remove="wwwroot\node_modules\**" />
+    <None Remove="Pages\Placeholder\**" />
     <None Remove="wwwroot\lib\hls.js\**" />
     <None Remove="wwwroot\node_modules\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Remove="wwwroot\js\account.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="cert.pfx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,9 +60,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="cert.pfx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="localization\ru.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -70,10 +67,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\js\account.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\.well-known\acme-challenge\" />
   </ItemGroup>
 
   

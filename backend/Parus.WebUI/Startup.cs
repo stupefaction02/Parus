@@ -32,6 +32,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Parus.WebUI
 {
@@ -48,6 +49,7 @@ namespace Parus.WebUI
         {
             services.AddRazorPages(options => {
                 options.Conventions.AuthorizeFolder("/Account");
+                //options.RootDirectory = "/Placeholder";
             });
 
             services.AddSingleton(new HttpClient
@@ -84,18 +86,8 @@ namespace Parus.WebUI
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                
             }
-
-            app.UseConnectionRestriction(x => {
-                x.AddRule(new AllowOnlyIpRestrictionRule(new List<IPAddress>
-                {
-                    new IPAddress(new byte[] { 188, 17, 155, 106 }),
-                    new IPAddress(new byte[] { 192, 168, 100, 11 })
-                }));
-            });
-
-            //app.UseMiddleware<RestrictConnectionsMiddleware>();
 
             // solely for .well-known/acme-challenge/{emptyExtensonFile}
             app.UseStaticFiles( new StaticFileOptions { ServeUnknownFileTypes = true } );

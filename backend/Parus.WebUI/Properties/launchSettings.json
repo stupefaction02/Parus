@@ -6,34 +6,21 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Parus.WebUI": {
+    "Development.Outer": {
+      "Description":  "For accessing from internet",
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Stage"
       },
-      "applicationUrl": "https://localhost:39002;http://localhost:38002"
+      "applicationUrl": "https://192.168.100.11:443;http://192.168.100.11:80"
     },
-    "WSL": {
-      "commandName": "WSL2",
-      "launchUrl": "https://localhost:5002",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "https://localhost:5002;http://localhost:5003"
-      },
-      "distributionName": ""
-    },
-    "Stage": {
+    "Development.Localhost": {
+      "Description": "For localhost",
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
       },
-      "applicationUrl": "https://192.168.100.11:39000;http://192.168.100.11:38000"
-    },
-    "Stage_Default": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "applicationUrl": "https://loc.myowntwich;http://loc.myowntwich"
     },
     "Docker": {
       "commandName": "Docker",
@@ -43,14 +30,6 @@
       },
       "publishAllPorts": true,
       "useSSL": true
-    }
-  },
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:49743/",
-      "sslPort": 44356
     }
   }
 }

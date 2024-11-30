@@ -39,6 +39,11 @@ awk -F: '{ print $1}' /etc/passwd
 cat /etc/passwd
 
 
+--- NGINX ---
+
+# allow only those IP
+
+
 --- SSH ---
 
 #evrify password
@@ -58,11 +63,41 @@ openssl rand -base64 128
 -files
 ---- FILES ----
 
+# where and how to put your scrits
+
+right place: $HOME/.local/share
+echo export PATH=$PATH:$HOME/.local/share >> ~/.bashrc && source ~/.bashrc
+
+
+# show directory files with size
+ls -lha
+
 # unzip
 sudo apt-get install unzip
 
 # watch file updates, watch log file live for example
 tail -f 
+
+--- SECURITY ---
+
+# see open ports
+https://www.cyberciti.biz/faq/how-to-check-open-ports-in-linux-using-the-cli/
+
+nmap -sS -p1-65535 31.13.248.18 -v
+
+22/tcp  open     ssh
+23/tcp  filtered telnet
+25/tcp  open     smtp
+53/tcp  open     domain
+80/tcp  open     http
+110/tcp open     pop3
+143/tcp open     imap
+179/tcp filtered bgp
+443/tcp open     https
+465/tcp open     smtps
+587/tcp open     submission
+993/tcp open     imaps
+995/tcp open     pop3s
 
 --- NETWORK ---
 
@@ -101,6 +136,10 @@ iptables -A INPUT -s 202.54.1.2 -j DROP
 -I --insert
 -D --delete
 -s --source 
+
+# Дать доступ на порт с опрделененого адреса
+/sbin/iptables -A INPUT -p tcp -s 188.17.155.106 --dport 39391 -j ACCEPT
+
 
 # open port
 
@@ -146,7 +185,28 @@ journalctl -u <servicename>
 install Ncdu
 ncdu /
 
+-LOGGING
+# jounralctl
+	Retain only the past two days:
+	journalctl --vacuum-time=2d
+
+	Retain only the past 500 MB:
+	journalctl --vacuum-size=500M
+
+-PACKAGES
+	# remove all packages related to mysql
+	apt-get remove --purge 'mysql-.*'
+
 --- SYSTEM ---
+
+# show kernel version
+cat /etc/os-release
+
+# set variable in single bash session
+PATH=$PATH:~/folder
+PATH=$PATH:~/sbin/
+
+
 
 # show all process
 
@@ -171,12 +231,21 @@ sudo nano /usr/local/etc/xray/config.json
 # download file
 sudo curl -O https://github.com/EvgenyNerush/easy-xray/archive/refs/heads/main.zip
 
+2. send with headers
+	curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://hostname/resource
+
+account-info operation-history operation-details payment payment-p2p money-source
+scope=payment%20money-source("wallet","card")%20account-info%20operation-history%20operation-details
+curl -i -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/json" https://yoomoney.com/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=account-info operation-history operation-details payment payment-p2p money-source&instance_name=myowntwich
+curl -i -H "Content-Type: application/x-www-form-urlencoded" https://yoomoney.ru/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=account-info%20operation-history%20operation-details%20payment%20payment-p2p%20money-source&instance_name=myowntwich
+https://yoomoney.ru/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=payment.to-account("4100118608260786")%20money-source("wallet","card")&instance_name=myowntwich
+
 -O means output here
 
 -DNS
 ---- DNS ----
 
-Showing what DNS I use
+# showing what DNS I use
 	cat /etc/resolv.conf 
 
 #Рекурсивный вс итеративный 
@@ -188,7 +257,55 @@ Showing what DNS I use
 
 Почитать еще можно тут: https://hackware.ru/?p=9374
 
+# BIND9
 
+-BIND9 logging: https://kb.isc.org/docs/aa-01526
+
+# see bind9 cache
+/sbin/rndc dumpdb -cache
+nano /var/cache/bind/named_dump.db
+
+
+# DNS articles
+https://habr.com/ru/companies/oleg-bunin/articles/350550/#bind
+
+
+-DOCKER
+
+# Stop all the containers
+docker stop $(docker ps -a -q)
+
+# Remove all the containers
+docker rm $(docker ps -a -q)
+
+-FAIL2BAN
+
+# create your own rule
+
+nano /etc/fail2ban/jail.local 
+и пиши тут правила, например правила бана посл второго трая для почтовых портов
+[sasl]
+enabled = true
+port = smtp,ssmtp,submission,imap2,imap3,imaps,pop3,pop3s
+filter = sasl
+findtime = 20800
+maxretry = 2
+bantime = -1
+action = route
+
+-POSTFIX
+#защита 
+	https://www.linux.org.ru/forum/admin/13305896
+	Создать правило в fail2ban по почтовым портам
+
+# 465 vs 587
+	465 - smtp для приема почты от клиентов, завернутый в чистый SSL (smtps)
+	587 - smtp для приема почты от клиентов (submission)
+	разница только в том, что на 587 диалог начинается открытым текстом, а на 465 - сразу SSL 
+	По 465 порту соединение сразу должно открываться по TLS/SSL. С 587 работают как с 25: соединение в открытом виде, 
+	а для включения шифрования подаётся команда STARTTLS, если сервер заявил о такой возможности в ответ на EHLO от клиента.
+	smtps (465 порт) фича более старая, starttls - более новая и, понятно, более гибкая: можно не выделять новый порт на сервере
+	
 ---- GUIDES ----
 
 1. setting up SSH 
@@ -209,7 +326,7 @@ rclone
 		curl -O https://rclone.org/install.sh
 		bash install.sh
 	- fix drive auth porblem
-		
+		https://forum.rclone.org/t/google-drive-error-400-invalid-request-v1-63-1/40624/2
 	
 3. Delete all trash
 
@@ -220,10 +337,28 @@ apt-get autoremove
 5. Setting DNS up
 https://gist.github.com/mrpeardotnet/3f423a5efd86b87b0cf0d07220aca5cb
 
+5. Settings up Zabbix
+
+https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/kak-ustanovit-zabbix-na-ubuntu-i-debian#1
+mysql -uzabbix -p zabbix < schema.sql
+schema.sql в 
+
 ---- Scrits ----
 
 1. Install on server
 
 apt-get install ncdu
 
+
+5. Installing Zabbix
+
+https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/kak-ustanovit-zabbix-na-ubuntu-i-debian#2
+
+wget https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_7.2-0.1%2Bdebian11_all.deb
+
+apt install zabbix-server-mysql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt install zabbix-server-mysql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent
+
+/sbin/iptables -A INPUT -p tcp -s 188.17.155.106 --dport 39391 -j ACCEPT
 
