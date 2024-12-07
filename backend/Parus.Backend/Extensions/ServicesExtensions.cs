@@ -191,7 +191,7 @@ namespace Parus.Backend.Extensions
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IConfrimCodesRepository, ConfrimCodesRepository>();
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
-            services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
+            services.AddTransient<IBroadcastInfoRepository, BroadcastsRepository>();
         }
 
         public static void AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)

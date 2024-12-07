@@ -17,6 +17,7 @@ using Parus.Core.Network;
 using static System.Formats.Asn1.AsnWriter;
 using Parus.Core.Interfaces.Services;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace Parus.WebUI.Middlewares
 {
@@ -55,12 +56,15 @@ namespace Parus.WebUI.Middlewares
     {
         private readonly RequestDelegate _next;
 		private readonly IServiceProvider serviceProvider;
+        private readonly bool useRefreshTokens;
 
-		public AuthenticationSecondHandMiddleware(RequestDelegate next, IServiceProvider servicePRovider)
+        public AuthenticationSecondHandMiddleware(RequestDelegate next, IServiceProvider servicePRovider, IConfiguration configuration)
         {
             _next = next;
 			this.serviceProvider = servicePRovider;
-		}
+
+            this.useRefreshTokens = Convert.ToBoolean(configuration["Identity:UseRefreshTokens"]);
+        }
 
 		public async Task Invoke(HttpContext httpContext, IdentityHttpClient httpClient)
 		{

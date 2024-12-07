@@ -46,7 +46,7 @@ namespace Parus.Core.Network
             BaseAddress = new Uri(url);
             this.apiToken = apiToken;
 
-            BaseAddress = new Uri("https://paruseatingnuts.duckdns.org:39003");
+            //BaseAddress = new Uri("https://paruseatingnuts.duckdns.org:39003");
         }
 
         public async Task<RefreshTokenResult> RequestRefreshTokenAsync(string fingerprint, string refreshToken)

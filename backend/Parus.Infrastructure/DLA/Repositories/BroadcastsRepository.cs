@@ -17,9 +17,9 @@ namespace Parus.Infrastructure.DLA.Repositories
     {
         public IEnumerable<BroadcastCategory> Categories { get => context.Categories; }
 
-        private readonly ApplicationDbContext context;
+        private readonly ParusDbContext context;
 
-        public BroadcastCategoryRepository(ApplicationDbContext context)
+        public BroadcastCategoryRepository(ParusDbContext context)
         {
             this.context = context;
         }
@@ -40,11 +40,11 @@ namespace Parus.Infrastructure.DLA.Repositories
         }
     }
 
-    public class BroadcastInfoRepository : IBroadcastInfoRepository
+    public class BroadcastsRepository : IBroadcastInfoRepository
     {
-        private readonly ApplicationDbContext context;
+        private readonly ParusDbContext context;
 
-        public BroadcastInfoRepository(ApplicationDbContext context)
+        public BroadcastsRepository(ParusDbContext context)
         {
             this.context = context;
         }

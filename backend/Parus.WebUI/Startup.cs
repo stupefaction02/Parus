@@ -76,7 +76,7 @@ namespace Parus.WebUI
             services.AddScoped<ILocalizationService, LocalizationService>();
 
             services.AddTransient<IPasswordRecoveryTokensRepository, PasswordRecoveryTokensRepository>();
-            services.AddTransient<IBroadcastInfoRepository, BroadcastInfoRepository>();
+            services.AddTransient<IBroadcastInfoRepository, BroadcastsRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddElastic(Configuration);

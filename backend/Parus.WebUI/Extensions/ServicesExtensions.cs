@@ -77,75 +77,17 @@ namespace Parus.WebUI.Extensions
 
         public static void ConfigureSqlDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            string hostingService = configuration["Hosting:Service"];
-
-            string connectionString = GetCoreDbConnectionString();
-            string identityConenctionString = GetIdentityConnectionString();
-
-            services.AddDbContext<ApplicationDbContext>(options => {
-                Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
-
-                options.UseSqlServer(connectionString);
-                options.EnableSensitiveDataLogging();
-
-                options.LogTo(x => { });
-                options.EnableDetailedErrors(true);
-                options.EnableSensitiveDataLogging(true);
-
-            }, ServiceLifetime.Transient);
-
             services.AddDbContext<ParusDbContext>(options =>
             {
                 Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
 
-                options.UseSqlServer(identityConenctionString);
+                options.UseSqlServer(configuration["ConnectionStrings:SQLServer"]);
                 options.EnableSensitiveDataLogging();
 
                 options.LogTo(x => { });
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
             });
-
-            string GetCoreDbConnectionString()
-            {
-                if (String.IsNullOrEmpty(hostingService))
-                {
-                    // procedd with localhost
-                    return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-                }
-                else
-                {
-                    if (hostingService == "somee")
-                    {
-                        return configuration["ConnectionStrings:Somee:Default"];
-                    }
-                    else
-                    {
-                        return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-                    }
-                }
-            }
-
-            string GetIdentityConnectionString()
-            {
-                if (String.IsNullOrEmpty(hostingService))
-                {
-                    // procedd with localhost
-                    //return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-                }
-                else
-                {
-                    if (hostingService == "somee")
-                    {
-                        return configuration["ConnectionStrings:Somee:Identity"];
-                    }
-                    else
-                    {
-                        return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-                    }
-                }
-            }
         }
 
         public static void ConfigureIdentity(this IServiceCollection services)
@@ -185,7 +127,13 @@ namespace Parus.WebUI.Extensions
 
         public static void ConfigureHttpClients(this IServiceCollection services, IConfiguration configuration)
         {
-            string url = configuration["IdentityServer:Url"];
+            string url = configuration["Services:Identity"];
+
+            if (String.IsNullOrEmpty(url))
+            {
+                //throw new ConfigurationException($"Services:Identity is set to null.");
+            }
+
             IdentityHttpClient client = new IdentityHttpClient(url, "");
             services.AddSingleton<IdentityHttpClient>(client);
         }

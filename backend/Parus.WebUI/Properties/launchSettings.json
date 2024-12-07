@@ -7,19 +7,19 @@
       }
     },
     "Development.Outer": {
-      "Description":  "For accessing from internet",
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Stage"
+        "ASPNETCORE_ENVIRONMENT": "Development_Outer"
       },
+      "Description": "For accessing from internet",
       "applicationUrl": "https://192.168.100.11:443;http://192.168.100.11:80"
     },
     "Development.Localhost": {
-      "Description": "For localhost",
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
       },
+      "Description": "For localhost",
       "applicationUrl": "https://loc.myowntwich;http://loc.myowntwich"
     },
     "Docker": {
@@ -30,6 +30,14 @@
       },
       "publishAllPorts": true,
       "useSSL": true
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:4576/",
+      "sslPort": 44346
     }
   }
 }

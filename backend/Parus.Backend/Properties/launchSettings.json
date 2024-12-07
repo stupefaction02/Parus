@@ -15,13 +15,21 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Parus.Backend": {
+    "Development.Outer": {
       "commandName": "Project",
-      "launchBrowser": false,
-      "applicationUrl": "https://localhost:39003",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development_current"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Stage"
+      },
+      "Description": "For accessing from internet",
+      "applicationUrl": "https://192.168.100.11:39000;http://192.168.100.11:39000"
+    },
+    "Development.Localhost": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
+      },
+      "Description": "For localhost",
+      "applicationUrl": "https://api.loc.myowntwich;http://api.loc.myowntwich"
     }
   }
 }
