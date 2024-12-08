@@ -29,7 +29,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
       },
       "Description": "For localhost",
-      "applicationUrl": "https://api.loc.myowntwich;http://api.loc.myowntwich"
+      "applicationUrl": "http://127.0.0.3:39000;https://127.0.0.3:38000"
     }
   }
 }

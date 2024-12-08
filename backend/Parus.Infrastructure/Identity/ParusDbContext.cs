@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -215,6 +216,11 @@ namespace Parus.Infrastructure.Identity
             builder.Entity<ApplicationUser>()
                 .Property(x => x.IndexingRule)
                 .HasDefaultValue(1);
+
+            // Schems 
+
+            builder.Entity<ApplicationUser>()
+                .ToTable("AspNetUsers", "Identity");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

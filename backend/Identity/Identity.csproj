@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Parus.Backend\Parus.Backend.csproj" />
+    <ProjectReference Include="..\Parus.Backend\Parus.API.csproj" />
   </ItemGroup>
 
 </Project>

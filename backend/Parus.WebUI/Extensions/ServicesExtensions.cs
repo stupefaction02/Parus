@@ -79,7 +79,7 @@ namespace Parus.WebUI.Extensions
         {
             services.AddDbContext<ParusDbContext>(options =>
             {
-                Console.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
+                Console.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
 
                 options.UseSqlServer(configuration["ConnectionStrings:SQLServer"]);
                 options.EnableSensitiveDataLogging();

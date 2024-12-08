@@ -1,11 +1,11 @@
 ﻿@page "/"
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Parus";
 }
 
 @{
-    Layout = "./Shared/_Layout1.cshtml";
+    Layout = "./Shared/_Layout.cshtml";
 }
 
 @using Microsoft.Extensions.Configuration;
@@ -15,11 +15,11 @@
 
 @section AdditionalScripts
 {
-    @* <script type="module" src="~/js/common.js"></script> *@
-   @*  <script type="module" src="~/js/editpassword.js"></script> *@
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/editpassword.js"></script>
 }
 
-@* @section AdditionalStyles
+@section AdditionalStyles
 {
     <link href="~/css/overview.css" rel="stylesheet" media="all">
     <link href="~/css/inputs.css" rel="stylesheet" media="all">
@@ -65,4 +65,4 @@
 </div>
 
 <partial model=@(Model.Pagination) name="/Pages/Shared/Pagination.cshtml" />
- *@
+

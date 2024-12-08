@@ -33,6 +33,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.IO;
 using System.Net;
 using System.Text;
+using MimeKit.Cryptography;
 
 namespace Parus.WebUI
 {
@@ -80,14 +81,20 @@ namespace Parus.WebUI
             services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddElastic(Configuration);
+
+            //ConfigureConfigFiles();
+
+            
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration)
         {
             if (env.IsDevelopment())
             {
                 
             }
+
+            ConfigurateJsConfig(env, configuration);
 
             // solely for .well-known/acme-challenge/{emptyExtensonFile}
             app.UseStaticFiles( new StaticFileOptions { ServeUnknownFileTypes = true } );
@@ -112,6 +119,30 @@ namespace Parus.WebUI
             {
                 endpoints.MapRazorPages();
             });
+        }
+
+        private void ConfigurateJsConfig(IWebHostEnvironment env, IConfiguration configuration)
+        {
+            string configJs = Path.Combine(env.WebRootPath, "js", "config.js");
+
+            if (File.Exists(configJs))
+            {
+                File.Delete(configJs);
+            }
+
+            FileStream fs = File.Open(configJs, FileMode.Create);
+
+            StreamWriter writer = new StreamWriter(fs);
+
+            string apiUrl = configuration["Services:API"];
+            writer.WriteLine("export const JWT_ACCESS_TOKEN_NAME = \"jwt.accessToken\";");
+            writer.WriteLine($"export const CURRENT_API_PATH = {apiUrl};");
+
+            Console.WriteLine($"SET CURRENT_API_PATH = {apiUrl};");
+
+            writer.Flush();
+
+            writer.Dispose();
         }
     }
 }

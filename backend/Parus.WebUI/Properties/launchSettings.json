@@ -20,7 +20,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
       },
       "Description": "For localhost",
-      "applicationUrl": "https://loc.myowntwich;http://loc.myowntwich"
+      "applicationUrl": "https://127.0.0.2;http://127.0.0.2"
     },
     "Docker": {
       "commandName": "Docker",

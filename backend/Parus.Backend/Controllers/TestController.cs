@@ -100,7 +100,7 @@ namespace Parus.Backend.Controllers
 
         [HttpDelete]
         [Route("api/test/purgebroadcasts")]
-        public IActionResult Purge([FromServices] ApplicationDbContext context)
+        public IActionResult Purge([FromServices] ParusDbContext context)
 		{
             DeleteAllBroadcasts(context);
 
@@ -123,7 +123,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/seed1")]
-        public IActionResult Seed1([FromServices] ApplicationDbContext context)
+        public IActionResult Seed1([FromServices] ParusDbContext context)
         {
 			DeleteAllBroadcasts(context);
 
@@ -228,7 +228,7 @@ namespace Parus.Backend.Controllers
 			return Ok("Seeding is done!");
         }
 
-        private void DeleteAllBroadcasts(ApplicationDbContext context)
+        private void DeleteAllBroadcasts(ParusDbContext context)
         {
             foreach (var item in context.Broadcasts)
             {
@@ -243,7 +243,7 @@ namespace Parus.Backend.Controllers
 		[AllowAnonymous]
         [HttpDelete]
         [Route("api/test/purgeallbroadcasts")]
-        public async Task<IActionResult> PurgeBroadcasts([FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um, [FromServices] ApplicationDbContext dbContext)
+        public async Task<IActionResult> PurgeBroadcasts([FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um, [FromServices] ParusDbContext dbContext)
 		{
             ApplicationUser usr = users.One(x => x.GetUsername() == User.Identity.Name) as ApplicationUser;
 
@@ -279,12 +279,14 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/createbroadcastes")]
-        public IActionResult Seed2([FromServices] ApplicationDbContext dbContext, 
-			[FromServices] ParusDbContext identityDbContext,
+        public async Task<IActionResult> Seed2([FromServices] ParusDbContext dbContext, 
 			[FromServices] BroadcastControl broadcastControl)
 		{
 			DeleteAllBroadcasts(dbContext);
-			
+
+            //dbContext.Database.CloseConnection();
+
+            //return default;
             string[] titles = new string[6]
             {
                 "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
@@ -305,7 +307,7 @@ namespace Parus.Backend.Controllers
                 "preview6.jpg"
             };
 
-			foreach (ApplicationUser user in identityDbContext.Users)
+			foreach (ApplicationUser user in dbContext.Users.Take(1))
 			{
 				int cat = (new Random()).Next(1, 5);
 				int tag = (new Random()).Next(2, 4);
@@ -315,7 +317,7 @@ namespace Parus.Backend.Controllers
 
 				string title = titles[tit];
 
-				broadcastControl.StartBroadcastAsync(cat, new int[] { 1, tag }, title, user, dbContext);
+				await broadcastControl.StartBroadcastAsync(1, new int[] { 1 }, title, user, dbContext);
 
                 Console.WriteLine($"{user.UserName} has started a new broadcast!");
             }

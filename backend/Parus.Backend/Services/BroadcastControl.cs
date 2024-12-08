@@ -19,7 +19,7 @@ namespace Parus.Backend.Services
         public async Task StartBroadcastAsync(
             int category, int[] tags, string title,
             ApplicationUser user,
-            ApplicationDbContext dbContext)
+            ParusDbContext dbContext)
         {
             List<BroadcastTag> userTags = new List<BroadcastTag>();
 
@@ -44,7 +44,7 @@ namespace Parus.Backend.Services
 
             // Updating players
 
-            dbContext.Broadcasts.Add(broadcastInfo);
+            await dbContext.Broadcasts.AddAsync(broadcastInfo);
 
             await dbContext.SaveChangesAsync();
         }

@@ -68,7 +68,10 @@ namespace Parus.Backend
 
             app.UseWebSockets();
 
-            app.UseHttpsRedirection();
+            if (!env.IsEnvironment("Development_Localhost"))
+            {
+                app.UseHttpsRedirection();
+            }
             
             app.UseRouting();
             

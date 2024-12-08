@@ -139,8 +139,7 @@ namespace Parus.Backend.Controllers
 			[FromQuery] string title,
             [FromQuery] int catId,
             [FromQuery] int[] tags, 
-			[FromServices] ApplicationDbContext context, 
-			[FromServices] ParusDbContext identityDbContext, 
+			[FromServices] ParusDbContext context,
 			[FromServices] BroadcastControl broadcastControl)
 		{
             System.Security.Principal.IIdentity identity = User.Identity;
@@ -150,7 +149,7 @@ namespace Parus.Backend.Controllers
 				return Unauthorized();
 			}
 
-            ApplicationUser user = identityDbContext.Users
+            ApplicationUser user = context.Users
                 .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Name);
 
             if (user == null || !user.EmailConfirmed)

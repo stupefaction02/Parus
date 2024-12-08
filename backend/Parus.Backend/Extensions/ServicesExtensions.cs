@@ -48,84 +48,19 @@ namespace Parus.Backend.Extensions
 
         public static void ConfigureMssqlDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            string hostingService = configuration["Hosting:Service"];
-
-            string connectionString = GetCoreDbConnectionString();
-            string identityConenctionString = GetIdentityConnectionString();
-
-            services.AddDbContext<ApplicationDbContext>(options => {
-                Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
-
-                options.UseSqlServer(connectionString);
-                options.EnableSensitiveDataLogging();
-            }, ServiceLifetime.Transient);
-            
             services.AddDbContext<ParusDbContext>(options =>
             {
-                Debug.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
+                Console.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
 
-                options.UseSqlServer(identityConenctionString);
+                options.UseSqlServer(configuration["ConnectionStrings:SQLServer"]);
+                options.EnableSensitiveDataLogging();
 
                 //options.LogTo(x => { Console.WriteLine(x); });
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
             });
-
-            string GetCoreDbConnectionString()
-            {
-                if (String.IsNullOrEmpty(hostingService))
-                {
-                    // procedd with localhost
-                    return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-                }
-                else
-                {
-                    if (hostingService == "somee")
-                    {
-                        return configuration["ConnectionStrings:Somee:Default"];
-                    }
-                    else
-                    {
-                        return configuration["ConnectionStrings:DefaultLocalStreamingConnection"];
-                    }
-                }
-            }
-
-            string GetIdentityConnectionString()
-            {
-                if (String.IsNullOrEmpty(hostingService))
-                {
-                    // procedd with localhost
-                    return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-                }
-                else
-                {
-                    if (hostingService == "somee")
-                    {
-                        return configuration["ConnectionStrings:Somee:Identity"];
-                    }
-                    else
-                    {
-                        return configuration["ConnectionStrings:DefaultLocalIdentityConnection"];
-                    }
-                }
-            }
         }
-        
-        public static void ConfigureLiteDbDatabase(this IServiceCollection services, IConfiguration configuration)
-        {
-            //services.Configure<LiteDbOptions>(configuration.GetSection("Options.IdentityLiteDbOptions"));
-            
-            ////services.AddSingleton<LiteDbIdentityContext>();
-
-            //string identityString = configuration.GetConnectionString("ConnectionStrings.LiteDbIdentity");
-            
-            //services.AddDbContext<LiteDbIdentityContext>(options =>
-            //{
-            //    options.UseLiteDB(identityString);
-            //});
-        }
-        
+     
         public static void ConfigureCassandraDb(this IServiceCollection services, IConfiguration configuration)
         {
             //services.Configure<LiteDbOptions>(configuration.GetSection("Options.IdentityLiteDbOptions"));
