@@ -16,7 +16,7 @@ namespace Parus.Backend.Services
 {
     public class BroadcastControl
     {
-        public async Task StartBroadcastAsync(
+        public async Task<int> StartBroadcastAsync(
             int category, int[] tags, string title,
             ApplicationUser user,
             ParusDbContext dbContext)
@@ -47,6 +47,8 @@ namespace Parus.Backend.Services
             await dbContext.Broadcasts.AddAsync(broadcastInfo);
 
             await dbContext.SaveChangesAsync();
+
+            return 1;
         }
 
         public async Task StopBroadcastAsync(ApplicationUser hostUser, Core.Interfaces.Repositories.IBroadcastInfoRepository context)

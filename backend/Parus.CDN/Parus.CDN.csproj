@@ -28,5 +28,7 @@
     <Folder Include="Data\avas\defaults\" />
     <Folder Include="Data\previews\defaults\" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
   
 </Project>

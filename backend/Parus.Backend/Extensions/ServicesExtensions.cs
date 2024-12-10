@@ -58,7 +58,7 @@ namespace Parus.Backend.Extensions
                 //options.LogTo(x => { Console.WriteLine(x); });
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
-            });
+            }, ServiceLifetime.Scoped);
         }
      
         public static void ConfigureCassandraDb(this IServiceCollection services, IConfiguration configuration)

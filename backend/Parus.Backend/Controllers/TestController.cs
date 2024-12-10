@@ -287,14 +287,18 @@ namespace Parus.Backend.Controllers
             //dbContext.Database.CloseConnection();
 
             //return default;
-            string[] titles = new string[6]
+            string[] titles = new string[10]
             {
                 "Collab? 💖 BOYFU VIBES AND HIP SWAY 💖   !gg !bodypillow",
                 "🦐FIRST TIME INSCRYPTION!!! LEGGOOO! ❤️BLOWHOLE BLAST RESTOCKED -> !GG / !Merch 《VTuber》!socials",
                 "Weekly Dev Stream! | !merch",
                 "SPOOKTEMBER DAY 4: I'M BACK! DRAMA + SPOOKS + GAMING | !TTS !advgg | !figure |",
                 "Yay a new update in Genshin!!",
-                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad"
+                "✨ ☄️ ⋆ Cozy Monday Zatsudan! ⋆ ☄️ ✨ !merch !discord !socials !box !mousepad", 
+				"Title #1",
+                "Title #2",
+                "My stream",
+				"Cool stream"
             };
 
             string[] previews = new string[6]
@@ -307,7 +311,9 @@ namespace Parus.Backend.Controllers
                 "preview6.jpg"
             };
 
-			foreach (ApplicationUser user in dbContext.Users.Take(1))
+			var users = dbContext.Users.ToList();
+
+            foreach (ApplicationUser user in users)
 			{
 				int cat = (new Random()).Next(1, 5);
 				int tag = (new Random()).Next(2, 4);

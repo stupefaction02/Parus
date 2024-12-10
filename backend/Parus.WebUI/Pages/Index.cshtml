@@ -27,7 +27,7 @@
 
 <div class="broadcast_block_container">
     @{
-        string imageServer = configuration["ImageServer:Url"];
+        string imageServer = configuration["Services:ImageServer"];
 
         foreach (var broadcast in Model.Broadcasts)
         {
