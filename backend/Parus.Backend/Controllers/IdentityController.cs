@@ -310,14 +310,14 @@ namespace Parus.Backend.Controllers
 
         [HttpPost]
         [Route("api/account/requestverificationcode")]
-        public async Task<object> RequestVerificationCodeAsync(string username, bool force,
-            IConfrimCodesRepository confrimCodesRepository,
-            IEmailService emailService,
-            UserManager<ApplicationUser> userManager)
+        public async Task<object> RequestVerificationCodeAsync(string username, bool forceCreate,
+            [FromServices] IConfrimCodesRepository confrimCodesRepository,
+            [FromServices] IEmailService emailService,
+            [FromServices] UserManager<ApplicationUser> userManager)
         {
             var user = await userManager.FindByNameAsync(username);
 
-            if (force) goto CreateNew;
+            if (forceCreate) goto CreateNew;
 
             ConfirmCode addedCode = (ConfirmCode)confrimCodesRepository.OneByUser(user.GetId());
 
@@ -340,7 +340,7 @@ namespace Parus.Backend.Controllers
             }
 
             CreateNew:
-            // Too overheading but more random
+            // Too overhead but more random
             string a = random.Next(1, 10).ToString();
 			string b = random.Next(0, 10).ToString();
 			string c = random.Next(0, 10).ToString();
@@ -363,7 +363,7 @@ namespace Parus.Backend.Controllers
 
             if (emailResponse.Success)
             {
-				return JsonSuccess();
+				return Json(new { success = "true" });
 			}
 
 			return Json(CreateJsonError(emailResponse.Mssage));

@@ -80,9 +80,9 @@ export class VerificationPopup {
         console.log(url);
 
         var self = this;
-        //debugger
+        debugger
         this.sendPost(url, function (e) {
-            if (e.success == "Y") {
+            if (e.success == "true") {
                 self.ShowPopup();
                 //debugger
                 var spanPlaceholder = document.querySelector("#verification_info .placeholder");
@@ -140,7 +140,7 @@ export class VerificationPopup {
     }
 
     RequestCode() {
-        this.request_verificaion_code(this.username);
+        this.request_verificaion_code(this.username, false);
         
         this.canSend = false;
         
@@ -163,7 +163,11 @@ export class VerificationPopup {
         $.ajax({
             url: url,
             method: 'post',
-            success: onsuccess
+            success: onsuccess, 
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
         });
     }
 }

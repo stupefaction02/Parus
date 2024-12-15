@@ -3,26 +3,50 @@
 import { GetCookie } from "./common.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { VerificationPopup } from "./EmailVerificationPopup.js";
-function sendPost (url, onsuccess) {
+
+function show_nickname_error (message) {
+    nickname_input_error.style.display = "block";
+    nickname_input_error.innerText = message;
+}
+
+function show_email_error (message) {
+    email_input_error.style.display = "block";
+    email_input_error.innerText = message;
+}
+
+function sendPost(url, onsuccess) {
+    console.log("debug: sending API request. Url: " + url);
+
     $.ajax({
         url: url,
         method: 'post',
         //dataType: 'html',          
         //data: { text: 'Текст' },     
-        success: onsuccess
+        success: onsuccess,
+
+        error: function (error) {
+            var status = error.status;
+            debugger
+            if (status != 200 || status > 500) {
+                // todo: proper debug log
+                console.log("debug: " + CURRENT_API_PATH + " is down!");
+            }
+        },
     });
 }
 
-function sendGet (url, onsuccess) {
+function sendGet(url, onsuccess, error) {
+    console.log("debug: sending API request. Url: " + url);
+
     $.ajax({
         url: url,
         method: 'get',
+        error: error,
         //dataType: 'html',          
         //data: { text: 'Текст' },     
         success: onsuccess
     });
 }
-
 
 (function ($) {
     'use strict';
@@ -42,24 +66,36 @@ function sendGet (url, onsuccess) {
     var header_register_btn = document.getElementById("header_register_btn"); 
     var close_popup_bn = document.getElementById("registration_close_popup");
 
-
-    var send_check_if_nickname_exists_handler = function (e) {
-        //debugger
-
-        if (e == "N") {
-            nicknameFormHasError = false;
-            nickname_input_error.style.display = "none";
-        } else {
-            nicknameFormHasError = true;
-            nickname_input_error.style.display = "block";
-        }
-    }
+    // pull from localization file
+    var nickname_input_error_text = "Username is already taken";
+    var email_input_error_text = "Email is already taken";
 
     var send_check_if_nickname_exists = function (nickname) {
         //debugger
         var url = CURRENT_API_PATH + "/account/checkifnicknameexists?nickname=" + nickname;
 
-        sendGet(url, send_check_if_nickname_exists_handler);
+        var send_check_if_nickname_exists_handler = function (e, nickname) {
+            //debugger
+
+            // TODO: proper error handling
+            if (e == "N") {
+                nicknameFormHasError = false;
+                
+            } else {
+                nicknameFormHasError = true;
+
+                console.log("debug: nickname " + " " + nickname + " is already taken!");
+
+                show_nickname_error(nickname_input_error_text);
+            }
+        }
+
+        sendGet(url,
+            (e) => send_check_if_nickname_exists_handler(e, nickname),
+            () => {
+                show_email_error("Server error! Come back later.");
+            }
+        );
     }
 
     var nickname_input_oninput = function (e) {
@@ -72,21 +108,26 @@ function sendGet (url, onsuccess) {
 
     send_check_if_nickname_exists(nickname_input.value);
 
-
-    var send_check_if_email_exists_handler = function (e) { //debugger
-        if (e == "N") {
-            emailFormHasError = false;
-            email_input_error.style.display = "none";
-        } else {
-            emailFormHasError = true;
-            email_input_error.style.display = "block";
-        }
-    }
-
     var send_check_if_email_exists = function (email) {
         var url = CURRENT_API_PATH + "/account/checkifemailexists?email=" + email;
-        //debugger
-        sendGet(url, send_check_if_email_exists_handler);
+
+        var send_check_if_email_exists_handler = function (e, email) { //debugger
+            if (e == "N") {
+                emailFormHasError = false;
+                email_input_error.style.display = "none";
+            } else {
+                emailFormHasError = true;
+                
+                show_email_error(email_input_error_text);
+                console.log("debug: email " + " " + email + " is already taken!");
+            }
+        }
+
+        sendGet(url,
+            (e) => send_check_if_email_exists_handler(e, email),
+            () => {
+                show_email_error("Server error! Come back later.");
+            });
     }
 
     var reg_email_input_oninput = function (e) { //debugger
@@ -160,11 +201,11 @@ function sendGet (url, onsuccess) {
             reg_loading_gif.style.display = "none";
 
             //requestJwtToken(nickname);
-            debugger
+            //debugger
             if (e.success.toString() == "true") {
 
                 hidePopup();
-                debugger
+                //debugger
                 SetCookie("JWT", e.access_token.jwt, e.access_token.expires);
                 SetCookie("refreshToken", e.refresh_token.token, e.refresh_token.expires);
 
