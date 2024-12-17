@@ -1,35 +1,35 @@
 /*import { sendPost } from "./network";*/
 
-import { GetCookie } from "./common.js";
+import { GetCookie, IsStringEmpty } from "./common.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { VerificationPopup } from "./EmailVerificationPopup.js";
+import { ShowPopupError } from "./site.js";
 
-function show_nickname_error (message) {
-    nickname_input_error.style.display = "block";
-    nickname_input_error.innerText = message;
-}
 
-function show_email_error (message) {
-    email_input_error.style.display = "block";
-    email_input_error.innerText = message;
-}
-
-function sendPost(url, onsuccess) {
+function sendPost(url, onsuccess, onerror) {
     console.log("debug: sending API request. Url: " + url);
 
     $.ajax({
         url: url,
         method: 'post',
+        //error: error,
         //dataType: 'html',          
         //data: { text: 'Текст' },     
         success: onsuccess,
 
-        error: function (error) {
-            var status = error.status;
-            debugger
-            if (status != 200 || status > 500) {
-                // todo: proper debug log
+        error: function (jqXHR, textStatus, errorThrown) {
+            var status = jqXHR.status;
+            //debugger
+
+            if (status == 500) {
                 console.log("debug: " + CURRENT_API_PATH + " is down!");
+                ShowPopupError(CURRENT_API_HOST + " is down! Error 500");
+            } else if (status == 0) {
+                console.log("debug: " + "CORS Error. Status Code: " + status);
+                ShowPopupError("CORS Error. Status Code: " + status);
+            } else if (status != 200) {
+                // todo: proper debug log
+                console.log("debug: " + " Error. Status code: " + status);
             }
         },
     });
@@ -60,32 +60,60 @@ function sendGet(url, onsuccess, error) {
 
     var regform_submit = document.getElementById("regform_submit"); 
 
-    var nickname_input_error = document.getElementById("nickname_input_error");
-    var email_input_error = document.getElementById("email_input_error"); 
+    //var nickname_input_error = document.getElementById("nickname_input_error");
+    //var email_input_error = document.getElementById("email_input_error"); 
 
     var header_register_btn = document.getElementById("header_register_btn"); 
     var close_popup_bn = document.getElementById("registration_close_popup");
 
+    var firstNameInput = document.getElementById("firstname");
+    var firstNameInputError = document.getElementById("firstname_input_error");
+
+    var lastnameInput = document.getElementById("lastname");
+    var lastnameInputError = document.getElementById("lastname_input_error");
+
+    var usernameInput = document.getElementById("nickname_input");
+    var nickname_input_error = document.getElementById("nickname_input_error");
+
+    var emailInput = document.getElementById("reg_email_input");
+    var email_input_error = document.getElementById("email_input_error");
+
+    var passwordInput = document.getElementById("password_input");
+    var passwordInputError = document.getElementById("password_input_error");
+
     // pull from localization file
     var nickname_input_error_text = "Username is already taken";
     var email_input_error_text = "Email is already taken";
+    var notEmptyText = "Fill it up!";
 
+    function show_nickname_error(message) {
+        nickname_input_error.style.display = "block";
+        nickname_input_error.innerText = message;
+    }
+
+    function hide_username_error() { nickname_input_error.style.display = "none"; }
+    function hide_email_error() { email_input_error.style.display = "none"; }
+
+    function show_email_error(message) {
+        email_input_error.style.display = "block";
+        email_input_error.innerText = message;
+    }
+
+    // nickname = username -_-
     var send_check_if_nickname_exists = function (nickname) {
         //debugger
-        var url = CURRENT_API_PATH + "/account/checkifnicknameexists?nickname=" + nickname;
+        var url = CURRENT_API_PATH + "/account/isusernametaken?username=" + nickname;
 
-        var send_check_if_nickname_exists_handler = function (e, nickname) {
+        var send_check_if_nickname_exists_handler = function (response, nickname) {
             //debugger
 
             // TODO: proper error handling
-            if (e == "N") {
+            if (response.taken == "false") {
                 nicknameFormHasError = false;
-                
+                hide_username_error();
             } else {
                 nicknameFormHasError = true;
-
                 console.log("debug: nickname " + " " + nickname + " is already taken!");
-
                 show_nickname_error(nickname_input_error_text);
             }
         }
@@ -93,31 +121,32 @@ function sendGet(url, onsuccess, error) {
         sendGet(url,
             (e) => send_check_if_nickname_exists_handler(e, nickname),
             () => {
-                show_email_error("Server error! Come back later.");
+                //ShowPopupError("Server Error 500!");
             }
         );
     }
 
-    var nickname_input_oninput = function (e) {
-        //debugger
-        send_check_if_nickname_exists(e.originalTarget.value);
+    usernameInput.oninput = function (e) {
+        var input = e.originalTarget.value;
+
+        if (!IsStringEmpty(input)) {
+            send_check_if_nickname_exists(input);
+        }
+    };
+
+    if (!IsStringEmpty(usernameInput.value)) {
+        send_check_if_nickname_exists(usernameInput.value);
     }
 
-    var nickname_input = document.getElementById("nickname_input");
-    nickname_input.oninput = nickname_input_oninput;
-
-    send_check_if_nickname_exists(nickname_input.value);
-
     var send_check_if_email_exists = function (email) {
-        var url = CURRENT_API_PATH + "/account/checkifemailexists?email=" + email;
+        var url = CURRENT_API_PATH + "/account/isemailtaken?email=" + email;
 
-        var send_check_if_email_exists_handler = function (e, email) { //debugger
-            if (e == "N") {
+        var send_check_if_email_exists_handler = function (response, email) { //debugger
+            if (response.taken == "false") {
                 emailFormHasError = false;
-                email_input_error.style.display = "none";
+                hide_email_error();
             } else {
                 emailFormHasError = true;
-                
                 show_email_error(email_input_error_text);
                 console.log("debug: email " + " " + email + " is already taken!");
             }
@@ -126,18 +155,23 @@ function sendGet(url, onsuccess, error) {
         sendGet(url,
             (e) => send_check_if_email_exists_handler(e, email),
             () => {
-                show_email_error("Server error! Come back later.");
+                //ShowPopupError("Server Error 500!");
             });
     }
 
-    var reg_email_input_oninput = function (e) { //debugger
-        send_check_if_email_exists(e.originalTarget.value);
+    emailInput.oninput = function (e) { 
+        var input = e.originalTarget.value;
+
+        if (!IsStringEmpty(input)) {
+            send_check_if_email_exists(input);
+        }
+    };
+
+    if (!IsStringEmpty(emailInput.value)) {
+        send_check_if_email_exists(emailInput.value);
     }
 
-    var email_input = document.getElementById("reg_email_input");
-    email_input.oninput = reg_email_input_oninput;
 
-    send_check_if_email_exists(email_input.value);
 
     var popup = document.getElementById("registration_popup");
 
@@ -159,26 +193,6 @@ function sendGet(url, onsuccess, error) {
         }
     }
 
-    var request_verificaion_code = function (username, onsuccess) {
-        var url = CURRENT_API_PATH + "/account/requestverificationcode?username=" + username;//
-        /*console.log(url);*/
-        sendPost(url, onsuccess);
-    }
-
-    var requestJwtToken = function (username) {
-        var url = CURRENT_API_PATH + "/account/jwt/login?username=" + username;
-
-        var onsuccess = function (data) { 
-            sessionStorage.setItem(JWT_ACCESS_TOKEN_NAME, data.access_token);
-            document.cookie = "JWT=" + data.access_token + "; path=/";
-            console.log(sessionStorage.getItem(JWT_ACCESS_TOKEN_NAME));
-        }
-
-        sendPost(url, onsuccess);
-    }
-
-    
-
     var regform_submit_onsubmit = function (e) {
         /*debugger*/
 
@@ -189,13 +203,52 @@ function sendGet(url, onsuccess, error) {
         reg_loading_gif.style.display = "display";
 
 
-        var firstname = document.getElementById("firstname").value;
-        var lastname = document.getElementById("lastname").value;
-        var username = document.getElementById("nickname_input").value;
-        var email = document.getElementById("reg_email_input").value;
-        var password = document.getElementById("password_input").value;
-        //debugger
+        var firstname = firstNameInput.value;
+        var lastname = lastnameInput.value;
+        var username = usernameInput.value;
+        var email = emailInput.value;
+        var password = passwordInput.value;
+       // debugger
         var genders = document.querySelectorAll('input[type=radio]:checked');
+
+        var validateSuccess = true;
+
+        // TODO: Change it to a loop
+
+        if (IsStringEmpty(firstname)) {
+            firstNameInputError.innerText = notEmptyText;
+            firstNameInputError.style.display = "block";
+            validateSuccess = false;
+        }
+
+        if (IsStringEmpty(lastname)) {
+            lastnameInputError.innerText = notEmptyText;
+            lastnameInputError.style.display = "block";
+            validateSuccess = false;
+        }
+
+        if (IsStringEmpty(username)) {
+            nickname_input_error.innerText = notEmptyText;
+            nickname_input_error.style.display = "block";
+            validateSuccess = false;
+        }
+
+        if (IsStringEmpty(email)) {
+            email_input_error.innerText = notEmptyText;
+            email_input_error.style.display = "block";
+            validateSuccess = false;
+        }
+
+        if (IsStringEmpty(password)) {
+            passwordInputError.innerText = notEmptyText;
+            passwordInputError.style.display = "block";
+            validateSuccess = false;
+        }
+
+        if (!validateSuccess) {
+            setTimeout(cleanInputErrors, 2000);
+            return;
+        } 
 
         var onsuccess = function (e) {
             reg_loading_gif.style.display = "none";
@@ -222,15 +275,22 @@ function sendGet(url, onsuccess, error) {
             }
         }
 
-        // for genders enum see documentation 
         var gender = 3;
         if (genders.length > 0) {
             gender = genders[0].value;
         }
 
         var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + username + "&email=" + email + "&password=" + password + "&gender=" + gender;
-        console.log(url);
-        sendPost(url, onsuccess);
+
+        sendPost(url, onsuccess, () => ShowPopupError("Server Error 500!"));
+    }
+
+    function cleanInputErrors() {
+        firstNameInputError.style.display = "none";
+        lastnameInputError.style.display = "none";
+        nickname_input_error.style.display = "none";
+        email_input_error.style.display = "none";
+        passwordInputError.style.display = "none";
     }
 
     function SetCookie(cookie, cookieValue, expireUnix) {
@@ -271,34 +331,4 @@ function sendGet(url, onsuccess, error) {
     show_hide_btn.onclick = function (e) {
         switchPasswordIcon();
     }
-
-    var sendPost1 = function (url, onsuccess) {
-        var httpRequest = false;
-        //debugger
-        if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-            httpRequest = new XMLHttpRequest();
-            if (httpRequest.overrideMimeType) {
-                httpRequest.overrideMimeType('text/xml');
-                // Читайте ниже об этой строке
-            }
-        } else if (window.ActiveXObject) { // IE
-            try {
-                httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch (e) {
-                try {
-                    httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-                } catch (e) { }
-            }
-        }
-
-        if (!httpRequest) {
-            console.log('Не вышло :( Невозможно создать экземпляр класса XMLHTTP ');
-            return false;
-        }
-
-        httpRequest.onreadystatechange = onsuccess;
-        httpRequest.open('POST', url, true);
-        httpRequest.send(null);
-    }
-
 })(jQuery);

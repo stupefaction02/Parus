@@ -15,6 +15,7 @@ using Parus.Backend.Middlewares;
 using System;
 using Parus.Backend.Authentication;
 using Parus.Core.Interfaces.Services;
+using Parus.Core.Services;
 
 namespace Parus.Backend
 {
@@ -49,7 +50,18 @@ namespace Parus.Backend
 
             services.AddJwtAuthentication(Configuration);
 
-            services.AddMail(Configuration);
+            if (env.IsEnvironment("Development"))
+            {
+                services.AddMail(Configuration);
+            } 
+            else if (env.IsEnvironment("Development"))
+            {
+                services.AddSingleton<IEmailService, DummyEmailService>();
+            }
+            else
+            {
+                services.AddSingleton<IEmailService, DummyEmailService>();
+            }
 
             services.AddResponseCompression();
 

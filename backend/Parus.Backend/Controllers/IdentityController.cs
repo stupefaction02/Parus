@@ -435,32 +435,14 @@ namespace Parus.Backend.Controllers
         }
 
         [HttpGet]
-        [Route("api/account/checkifemailexists")]
-        public async Task<object> CheckIfEmailExists(string email, IUserRepository userRepository)
-        {
-            if (userRepository.CheckIfEmailExists(email))
-            {
-                return Ok("Y");
-            }
-            else
-            {
-                return Ok("N");
-            }
-        }
+        [Route("api/account/isemailtaken")]
+        public async Task<object> IsEmailTaken(string email, IUserRepository userRepository) 
+            => userRepository.IsEmailTaken(email) ? Json(new { taken = "true" }) : (object)Json(new { taken = "false" });
 
         [HttpGet]
-        [Route("api/account/checkifnicknameexists")]
-        public async Task<object> CheckIfNicknameExists(string nickname, IUserRepository userRepository)
-        {
-            if (userRepository.CheckIfNicknameExists(nickname))
-            {
-                return Ok("Y");
-            }
-            else
-            {
-                return Ok("N");
-            }
-        }
+        [Route("api/account/isusernametaken")]
+        public async Task<object> IsUsernameTaken(string username, IUserRepository userRepository) 
+            => userRepository.IsUsernameTaken(username) ? Json(new { taken = "true" }) : (object)Json(new { taken = "false" });
 
         private string RECOVERY_MAIL1 => "RECOVERY_MAIL1";
 

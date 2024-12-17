@@ -27,12 +27,12 @@ namespace Parus.Infrastructure.DLA.Repositories
             return context.Users.ToList();
         }
 
-        public bool CheckIfEmailExists(string email)
+        public bool IsEmailTaken(string email)
         {
             return context.Users.Count(user => user.Email == email) > 0;
         }
 
-        public bool CheckIfNicknameExists(string nickname)
+        public bool IsUsernameTaken(string nickname)
         {
             return context.Users.Count(user => user.UserName == nickname) > 0;
         }

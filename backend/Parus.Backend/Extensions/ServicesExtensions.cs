@@ -58,7 +58,7 @@ namespace Parus.Backend.Extensions
                 //options.LogTo(x => { Console.WriteLine(x); });
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
-            }, ServiceLifetime.Scoped);
+            }, ServiceLifetime.Transient);
         }
      
         public static void ConfigureCassandraDb(this IServiceCollection services, IConfiguration configuration)
@@ -112,8 +112,6 @@ namespace Parus.Backend.Extensions
                 .AddEntityFrameworkStores<ParusDbContext>()
                 .AddDefaultTokenProviders();
         }
-
-        
 
         public static void AddMail(this IServiceCollection services, IConfiguration configuration)
         {

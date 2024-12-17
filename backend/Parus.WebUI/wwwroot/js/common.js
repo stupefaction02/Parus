@@ -24,6 +24,10 @@ function setCookie(key, value, expireDays, expireHours, expireMinutes, expireSec
         ";expires=" + expireDate.toUTCString();
 }
 
+export function IsStringEmpty(str) {
+    return (!str || str.length === 0);
+}
+
 export function DeleteCookie1(name) {
     setCookie(name, "", null, null, null, 1);
 }

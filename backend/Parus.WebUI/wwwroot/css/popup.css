@@ -64,3 +64,24 @@
 #registration_popup .card-4 {
     height: auto;
 }
+
+.error_tl_popup {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+    .error_tl_popup .error_tl_popup_content {
+        color: white !important;
+        width: 260px;
+        height: 46px;
+        background: red;
+        background-color: red;
+        /*margin: 10% auto auto 10%;*/
+        top: 15px;
+        left: 15px;
+        position: absolute;
+    }
+
+        .error_tl_popup .error_tl_popup_content span {
+            margin: 8px 0px 0px 5px;
+            position: absolute;
+        }

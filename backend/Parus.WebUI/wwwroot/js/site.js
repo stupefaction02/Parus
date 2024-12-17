@@ -4,6 +4,60 @@ import { sendGetAjax } from "./network.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { LoginPopup } from "./LoginPopup.js";
 
+// Network
+// todo: move it to network.js
+
+export  function AjaxPost(url, onsuccess, onerror) {
+    console.log("debug: sending API request. Url: " + url);
+
+    $.ajax({
+        url: url,
+        method: 'post',
+        //error: error,
+        //dataType: 'html',          
+        //data: { text: 'Текст' },     
+        success: onsuccess,
+
+        error: function (jqXHR, textStatus, errorThrown) {
+            var status = jqXHR.status;
+            //debugger
+
+            if (status == 500) {
+                console.log("debug: " + CURRENT_API_PATH + " is down!");
+                ShowPopupError(CURRENT_API_HOST + " is down! Error 500");
+            } else if (status == 0) {
+                console.log("debug: " + "CORS Error. Status Code: " + status);
+                ShowPopupError("CORS Error. Status Code: " + status);
+            } else if (status != 200) {
+                // todo: proper debug log
+                console.log("debug: " + " Error. Status code: " + status);
+            }
+
+            //onerror(jf);
+        },
+    });
+}
+
+var leftTopPopup;
+var leftTopPopupText;
+
+var hidePopupError = function () {
+    leftTopPopup.style.display = "none";
+}
+
+export function ShowPopupError(message) {
+    //debugger
+    //var leftTopPopup = document.getElementById("error_popup");
+
+    if (leftTopPopup !== null) {
+        leftTopPopup.style.display = "block";
+
+        leftTopPopupText.innerText = message;
+
+        setTimeout(hidePopupError, 2000);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     var header_user_settings = document.getElementById("header_user_settings");
     var confirm_account_link = document.getElementById("confirm_account_link");
@@ -91,5 +145,8 @@ document.addEventListener('DOMContentLoaded', function () {
             loginPopup.ShowPopup();
         }
     }
+
+    leftTopPopup = document.getElementById("error_popup");
+    leftTopPopupText = document.querySelector(".error_tl_popup .error_tl_popup_content span");
 
 }, false);

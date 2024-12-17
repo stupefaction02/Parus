@@ -87,7 +87,7 @@ namespace Parus.WebUI.Extensions
                 options.LogTo(x => { });
                 options.EnableDetailedErrors(true);
                 options.EnableSensitiveDataLogging(true);
-            });
+            }, ServiceLifetime.Transient);
         }
 
         public static void ConfigureIdentity(this IServiceCollection services)

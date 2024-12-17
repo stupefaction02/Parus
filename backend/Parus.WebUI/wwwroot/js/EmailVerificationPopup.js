@@ -1,5 +1,6 @@
 import { GetCookie } from "./common.js";
 import { CURRENT_API_PATH } from "./config.js";
+import { AjaxPost, ShowPopupError } from "./site.js";
 
 export class VerificationPopup {
     constructor(popupId) { //debugger
@@ -77,19 +78,25 @@ export class VerificationPopup {
 
     request_verificaion_code (username, forceCreate) { 
         var url = CURRENT_API_PATH + "/account/requestverificationcode?username=" + username + "&forceCreate=" + forceCreate;
-        console.log(url);
+        //console.log("debug: API request " + url);
 
         var self = this;
-        debugger
-        this.sendPost(url, function (e) {
+        //debugger
+        var success = function (e) {
             if (e.success == "true") {
                 self.ShowPopup();
+
+                // debug only
+                //ShowPopupError("");
+
                 //debugger
                 var spanPlaceholder = document.querySelector("#verification_info .placeholder");
 
                 spanPlaceholder.textContent = self.username;
             }
-        });
+        };
+
+        AjaxPost(url, success);
     }
 
     updateValue(e) {
@@ -116,7 +123,7 @@ export class VerificationPopup {
                 var inputNode = this.inputs[i];
                 code += inputNode.value;
             }
-
+            debugger
             self.send_code(code, function (e) { self.send_code_handler(e); });
         }
     }
@@ -124,7 +131,8 @@ export class VerificationPopup {
     send_code (code, onsuccess) {
         var url = CURRENT_API_PATH + "/account/verifyaccount?code=" + code + "&username=" + this.username;
 
-        this.sendPost(url, onsuccess);
+        //this.sendPost(url, onsuccess);
+        AjaxPost(url, onsuccess);
     }
 
     send_code_handler(e) {

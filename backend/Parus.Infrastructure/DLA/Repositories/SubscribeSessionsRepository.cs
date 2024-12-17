@@ -25,12 +25,12 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         public IEnumerable<Core.Entities.IUser> Users { get; }
 
-        public bool CheckIfEmailExists(string email)
+        public bool IsEmailTaken(string email)
         {
             throw new NotImplementedException();
         }
 
-        public bool CheckIfNicknameExists(string nickname)
+        public bool IsUsernameTaken(string nickname)
         {
             throw new NotImplementedException();
         }

@@ -8,8 +8,8 @@ namespace Parus.Core.Interfaces.Repositories
     public interface IUserRepository
     {
 		IEnumerable<IUser> Users { get; }
-		bool CheckIfEmailExists(string email);
-        bool CheckIfNicknameExists(string nickname);
+		bool IsEmailTaken(string email);
+        bool IsUsernameTaken(string nickname);
 		bool Contains(Func<IUser, bool> predicate);
 		void RemoveOne(string username);
 		IUser FindUserByEmail(string email);

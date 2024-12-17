@@ -53,4 +53,12 @@ namespace Parus.Core.Services
 			return new EmailResponse { Success = true };
 		}
 	}
+
+	public class DummyEmailService : IEmailService
+	{
+        public Task<EmailResponse> SendEmailAsync(string email, string subject, string body)
+        {
+            return Task.FromResult<EmailResponse>(new EmailResponse { Success = true, Mssage = "Dummy result." });
+        }
+    }
 }
