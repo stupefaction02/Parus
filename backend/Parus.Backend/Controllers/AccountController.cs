@@ -39,7 +39,7 @@ namespace Parus.Backend.Controllers
                 return Unauthorized(new { message = "Forbidden." });
             }
 
-            ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == User.Identity.Name);
+            ParusUser user = (ParusUser)users.One(x => x.GetUsername() == User.Identity.Name);
 
             TwoFactoryEmailVerificationCode addedCode = context
                 .TwoFactoryVerificationCodes
@@ -88,14 +88,14 @@ namespace Parus.Backend.Controllers
             return Json(CreateJsonError(emailResponse.Mssage));
         }
 
-        private async Task<EmailResponse> SendVerificationEmail(IEmailService emailService, ApplicationUser user)
+        private async Task<EmailResponse> SendVerificationEmail(IEmailService emailService, ParusUser user)
         {
             string emailBody = "";
             return await emailService.SendEmailAsync(user.Email, "Email Verification", emailBody);
         }
 
         [NonAction]
-        public JsonResult GetTwoFactorAuthenticationData(string applicationName, ApplicationUser user)
+        public JsonResult GetTwoFactorAuthenticationData(string applicationName, ParusUser user)
         {
             // we literally pull the whole user to solely get email
             // We could manually send command (select email from users) and that's it
@@ -170,7 +170,7 @@ namespace Parus.Backend.Controllers
 
             if (exprectedCode == code)
             {
-                ApplicationUser appUser = (ApplicationUser)user;
+                ParusUser appUser = (ParusUser)user;
 
                 context.TwoFactoryVerificationCodes.Remove(codeEntry);
 
@@ -203,7 +203,7 @@ namespace Parus.Backend.Controllers
             // 5 levels of security :)
             if (User.Identity.IsAuthenticated)
             {
-                ApplicationUser appUser = await context.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
+                ParusUser appUser = await context.Users.FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
 
                 // exceptional case
                 if (appUser == null)
@@ -235,7 +235,7 @@ namespace Parus.Backend.Controllers
         {
             if (!String.IsNullOrEmpty(customerKey) || !String.IsNullOrEmpty(username))
             {
-                ApplicationUser appUser = await context.Users
+                ParusUser appUser = await context.Users
                     .Include(x => x.CustomerKey)
                     .FirstOrDefaultAsync(x => x.UserName == username);
 
@@ -261,7 +261,7 @@ namespace Parus.Backend.Controllers
             return Json(new { success = "N", error = "Forbidden" });
         }
 
-        private async Task<bool> Verify2FACodeCore(int code, string customerKey, ApplicationUser appUser, ParusDbContext context)
+        private async Task<bool> Verify2FACodeCore(int code, string customerKey, ParusUser appUser, ParusDbContext context)
         {
             if (customerKey.Length == uidLegnth)
             {

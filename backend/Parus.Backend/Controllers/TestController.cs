@@ -243,9 +243,9 @@ namespace Parus.Backend.Controllers
 		[AllowAnonymous]
         [HttpDelete]
         [Route("api/test/purgeallbroadcasts")]
-        public async Task<IActionResult> PurgeBroadcasts([FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um, [FromServices] ParusDbContext dbContext)
+        public async Task<IActionResult> PurgeBroadcasts([FromServices] IUserRepository users, [FromServices] UserManager<ParusUser> um, [FromServices] ParusDbContext dbContext)
 		{
-            ApplicationUser usr = users.One(x => x.GetUsername() == User.Identity.Name) as ApplicationUser;
+            ParusUser usr = users.One(x => x.GetUsername() == User.Identity.Name) as ParusUser;
 
 			if (usr == null)
 			{
@@ -265,9 +265,9 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/grantrole")]
-        public IActionResult GrantAdminRoles(string username, string role, [FromServices] IUserRepository users, [FromServices] UserManager<ApplicationUser> um)
+        public IActionResult GrantAdminRoles(string username, string role, [FromServices] IUserRepository users, [FromServices] UserManager<ParusUser> um)
         {
-			ApplicationUser usr = users.One(x => x.GetUsername() == username) as ApplicationUser;
+			ParusUser usr = users.One(x => x.GetUsername() == username) as ParusUser;
 
 			if (usr != null)
 			{
@@ -313,7 +313,7 @@ namespace Parus.Backend.Controllers
 
 			var users = dbContext.Users.ToList();
 
-            foreach (ApplicationUser user in users)
+            foreach (ParusUser user in users)
 			{
 				int cat = (new Random()).Next(1, 5);
 				int tag = (new Random()).Next(2, 4);
@@ -339,7 +339,7 @@ namespace Parus.Backend.Controllers
         [Route("api/test/generaterefreshtoken")]
         public async Task<object> GenerateRefreshToken(string username, string fingerPrint, [FromServices] ParusDbContext identityDbContext)
 		{
-            ApplicationUser user = await identityDbContext.Users
+            ParusUser user = await identityDbContext.Users
                 .FirstOrDefaultAsync(x => x.UserName == username);
 
             string fp = String.IsNullOrEmpty(fingerPrint) ? HttpContext.Request.Headers.UserAgent : fingerPrint;

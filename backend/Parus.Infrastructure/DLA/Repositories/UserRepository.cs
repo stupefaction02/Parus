@@ -22,7 +22,7 @@ namespace Parus.Infrastructure.DLA.Repositories
             this.context = context;
         }
 
-        public IEnumerable<ApplicationUser> GetUsers()
+        public IEnumerable<ParusUser> GetUsers()
         {
             return context.Users.ToList();
         }
@@ -58,7 +58,7 @@ namespace Parus.Infrastructure.DLA.Repositories
         {
             IUser target = One(x => x.GetUsername() == username);
 
-            context.Users.Remove((ApplicationUser)target);
+            context.Users.Remove((ParusUser)target);
 
 			context.SaveChanges();
 		}
@@ -80,14 +80,14 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         public bool Update(IUser user)
         {
-            context.Users.Update((ApplicationUser)user);
+            context.Users.Update((ParusUser)user);
 
             return context.SaveChanges() > 0;
 		}
 
         public void UpdateWithoutContextSave(IUser user)
         {
-            context.Users.Update((ApplicationUser)user);
+            context.Users.Update((ParusUser)user);
         }
 
         public int SaveChanges()

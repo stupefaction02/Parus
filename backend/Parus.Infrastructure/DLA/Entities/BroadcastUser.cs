@@ -9,6 +9,6 @@ namespace Parus.Infrastructure.DLA.Entities
 {
 	public class BroadcastUser : Parus.Core.Entities.BroadcastUser
 	{
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
     }
 }

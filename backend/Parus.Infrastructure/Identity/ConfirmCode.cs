@@ -17,7 +17,7 @@ namespace Parus.Infrastructure.Identity
         [Key]
         public int ConfirmCodeId { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
 
         [Column(TypeName = "nvarchar(450)")]
         public string UserId { get; set; }
@@ -30,7 +30,7 @@ namespace Parus.Infrastructure.Identity
         [Key]
         public int ConfirmCodeId { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
 
         [Column(TypeName = "nvarchar(450)")]
         public string UserId { get; set; }
@@ -43,7 +43,7 @@ namespace Parus.Infrastructure.Identity
         [Key]
         public string UserId { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
 
         [Column(TypeName = "nvarchar(72)")]
         public string Key { get; set; }
@@ -59,7 +59,7 @@ namespace Parus.Infrastructure.Identity
         [Key]
         public int RefreshTokenId { get; set; }
 
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
 
         [Column(TypeName = "nvarchar(450)")]
         public string UserId { get; set; }
@@ -70,7 +70,7 @@ namespace Parus.Infrastructure.Identity
 
         public int ExpiresAt { get; set; }
 
-        public static RefreshSession CreateDefault(string fingerPrint, ApplicationUser user)
+        public static RefreshSession CreateDefault(string fingerPrint, ParusUser user)
         {
             return new RefreshSession
             {

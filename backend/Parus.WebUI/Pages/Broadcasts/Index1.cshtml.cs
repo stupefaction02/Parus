@@ -36,7 +36,7 @@ namespace Parus.WebUI.Pages.Broadcasts
         public PageResult OnGet()
         {
             string usernmae = User.Identity.Name;
-			ApplicationUser usr = userRepository.One(x => x.GetUsername() == usernmae) as ApplicationUser;
+			ParusUser usr = userRepository.One(x => x.GetUsername() == usernmae) as ParusUser;
 
             if (usr != null)
             {

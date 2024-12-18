@@ -94,7 +94,7 @@ namespace Parus.Backend.Controllers
         {
             return Json(userRepository.Users.Where(x => x.EmailConfirmed).Select(x =>
             {
-                ApplicationUser usr = (ApplicationUser)x;
+                ParusUser usr = (ParusUser)x;
 
                 return new { 
                     id = usr.Id, 
@@ -147,11 +147,11 @@ namespace Parus.Backend.Controllers
         public async Task<object> Login(
             string username, 
             string password,
-            IPasswordHasher<ApplicationUser> passwordHasher, 
+            IPasswordHasher<ParusUser> passwordHasher, 
             ParusDbContext dbContext)
         {
             logger.LogInformation($"Attempt to login {username}");
-            ApplicationUser user = await dbContext.Users
+            ParusUser user = await dbContext.Users
                 .Include(x => x.CustomerKey)
                 .FirstOrDefaultAsync(x => x.UserName == username);
 
@@ -212,13 +212,13 @@ namespace Parus.Backend.Controllers
             string password, 
             Gender gender, 
             RegisterType registerType,
-            [FromServices] UserManager<ApplicationUser> userManager,
+            [FromServices] UserManager<ParusUser> userManager,
             IUserRepository userRepository, 
             ParusDbContext identityDbContext)
 		{
 			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
             
-            var user = new ApplicationUser
+            var user = new ParusUser
             {
                 UserName = username,
                 Email = email
@@ -313,7 +313,7 @@ namespace Parus.Backend.Controllers
         public async Task<object> RequestVerificationCodeAsync(string username, bool forceCreate,
             [FromServices] IConfrimCodesRepository confrimCodesRepository,
             [FromServices] IEmailService emailService,
-            [FromServices] UserManager<ApplicationUser> userManager)
+            [FromServices] UserManager<ParusUser> userManager)
         {
             var user = await userManager.FindByNameAsync(username);
 
@@ -390,7 +390,7 @@ namespace Parus.Backend.Controllers
 
             if (exprectedCode == code)
             {
-				ApplicationUser appUser = (ApplicationUser)user;
+				ParusUser appUser = (ParusUser)user;
 
 				appUser.EmailConfirmed = true;
 
@@ -422,7 +422,7 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/users")]
-        public object GetUsers(UserManager<ApplicationUser> userManager)
+        public object GetUsers(UserManager<ParusUser> userManager)
         {
             return Ok(userManager.Users);
         }
@@ -451,10 +451,10 @@ namespace Parus.Backend.Controllers
         [Route("api/account/sendrecoveryemail")]
 		public async Task<object> SendRecoveryEmail(string username, string email, string locale,
             IPasswordRecoveryTokensRepository passwordRecoveryTokens,
-            IPasswordHasher<ApplicationUser> passwordHasher,
+            IPasswordHasher<ParusUser> passwordHasher,
             [FromServices] IServer server, 
             [FromServices] ILocalizationService localization,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ParusUser> userManager)
         {
             // TODO: Add protection from the case when user can 
             // request a recovery code multiple times for different mails and thus 
@@ -463,7 +463,7 @@ namespace Parus.Backend.Controllers
             // 2. usual request count limitations
             // 3. point 2 but add IP checking as well
 
-            ApplicationUser user = await userManager.FindByNameAsync(username);
+            ParusUser user = await userManager.FindByNameAsync(username);
 
             if (user == null)
             {
@@ -564,7 +564,7 @@ namespace Parus.Backend.Controllers
                 return Forbid();
             }
 
-            ApplicationUser user = lastRs.User;
+            ParusUser user = lastRs.User;
 
             int expTs = DateTimeUtils.ToUnixTimeSeconds(
                 DateTime.UtcNow.Add(RefreshSession.LifeTime)
@@ -599,7 +599,7 @@ namespace Parus.Backend.Controllers
         [HttpGet]
         [Route("api/account/checkPassword")]
         public async Task<object> CheckPassword(string password,
-            [FromServices] SignInManager<ApplicationUser> signInManager,
+            [FromServices] SignInManager<ParusUser> signInManager,
             [FromServices] IUserRepository users)
         {
             // since we require authorization we alread have username from token
@@ -607,7 +607,7 @@ namespace Parus.Backend.Controllers
             string username = User.Identity.Name;
             IUser user = users.One(x => x.GetUsername() == username);
 
-            var result = await signInManager.PasswordSignInAsync((ApplicationUser)user, password, false, false);
+            var result = await signInManager.PasswordSignInAsync((ParusUser)user, password, false, false);
 
             if (result.Succeeded)
             {
@@ -624,7 +624,7 @@ namespace Parus.Backend.Controllers
         [HttpPost]
         [Route("api/account/editPassword")]
         public async Task<object> EditPassword(string newPassword,
-            [FromServices] IPasswordHasher<ApplicationUser> passwordHasher,
+            [FromServices] IPasswordHasher<ParusUser> passwordHasher,
             [FromServices] IUserRepository users)
         {
             // since we require authorization we alread have username from token
@@ -637,7 +637,7 @@ namespace Parus.Backend.Controllers
         [HttpPost]
         [Route("api/account/recoverPassword")]
         public async Task<object> RecoverPassword(string token, string newPassword,
-            [FromServices] IPasswordHasher<ApplicationUser> passwordHasher,
+            [FromServices] IPasswordHasher<ParusUser> passwordHasher,
             [FromServices] IUserRepository users,
             [FromServices] IPasswordRecoveryTokensRepository tokens)
         {
@@ -659,9 +659,9 @@ namespace Parus.Backend.Controllers
             return Unauthorized(new { message = "Token is outdated" });
         }
 
-        private JsonResult EditPasswordCore(string username, string newPassword, IPasswordHasher<ApplicationUser> passwordHasher, IUserRepository users)
+        private JsonResult EditPasswordCore(string username, string newPassword, IPasswordHasher<ParusUser> passwordHasher, IUserRepository users)
         {
-            ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == username);
+            ParusUser user = (ParusUser)users.One(x => x.GetUsername() == username);
 
             if (user == null)
             {

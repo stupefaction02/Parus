@@ -35,7 +35,7 @@ namespace Parus.Infrastructure.Identity
         }
     }
 
-    public class ParusDbContext : IdentityDbContext<ApplicationUser>
+    public class ParusDbContext : IdentityDbContext<ParusUser>
     {
         private ConnectionType _connectionType = ConnectionType.MSSQL;
 
@@ -159,7 +159,7 @@ namespace Parus.Infrastructure.Identity
             builder.Entity<Broadcaster>()
                 .HasKey(x => x.BroadcasterId);
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                 .HasOne(x => x.Broadcaster)
                 .WithOne(x => x.Owner)
                 .HasForeignKey<Broadcaster>(x => x.OwnerId);
@@ -177,13 +177,13 @@ namespace Parus.Infrastructure.Identity
 
 
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                     .HasOne(e => e.ConfirmCode)
                     .WithOne(e => e.User)
                     .HasForeignKey<ConfirmCode>(e => e.UserId)
                     .IsRequired();
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                     .HasOne(e => e.TwoFAEmailVerificationCode)
                     .WithOne(e => e.User)
                     .HasForeignKey<TwoFactoryEmailVerificationCode>(e => e.UserId)
@@ -191,12 +191,12 @@ namespace Parus.Infrastructure.Identity
 
             //builder.Entity<TwoFactoryCustomerKey>().Property(x => x.UserId);
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                     .HasOne(e => e.CustomerKey)
                     .WithOne(e => e.User)
                     .HasForeignKey<TwoFactoryCustomerKey>(e => e.UserId);
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                     .Property(x => x.AvatarPath)
                     .HasDefaultValue("defaults/ava1.jpg");
 
@@ -204,22 +204,22 @@ namespace Parus.Infrastructure.Identity
                     .Property(x => x.Preview)
                     .HasDefaultValue("defaults/preview_bright.jpg");
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                     .HasOne(e => e.PasswordRecoveryToken)
                     .WithOne(e => e.User)
                     .HasForeignKey<PasswordRecoveryToken>(e => e.UserId)
                     .IsRequired();
 
-            builder.Entity<ApplicationUser>().Property(x => x.UserName).IsRequired(true);
+            builder.Entity<ParusUser>().Property(x => x.UserName).IsRequired(true);
             builder.Entity<ConfirmCode>().Property(x => x.UserId).IsRequired(true);
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                 .Property(x => x.IndexingRule)
                 .HasDefaultValue(1);
 
             // Schems 
 
-            builder.Entity<ApplicationUser>()
+            builder.Entity<ParusUser>()
                 .ToTable("AspNetUsers", "Identity");
         }
 

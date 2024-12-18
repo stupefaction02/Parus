@@ -73,7 +73,7 @@ namespace Parus.Backend.Controllers
 			};
 		}
 
-        protected async Task<ClaimsIdentity> CreateIdentityAsync(ApplicationUser user)
+        protected async Task<ClaimsIdentity> CreateIdentityAsync(ParusUser user)
         {
             List<Claim> claims = new List<Claim>
                 {
@@ -84,7 +84,7 @@ namespace Parus.Backend.Controllers
         }
 
         // TODO: I don't know... instead of method make a service or something 
-        protected async Task<JsonResult> LoginResponse(ApplicationUser appUser)
+        protected async Task<JsonResult> LoginResponse(ParusUser appUser)
         {
             ClaimsIdentity identity = await CreateIdentityAsync(appUser);
 
@@ -97,7 +97,7 @@ namespace Parus.Backend.Controllers
             });
         }
 
-        protected async Task<object> HandleLoginAsync(ApplicationUser user, string fingerPrint, ParusDbContext dbContext)
+        protected async Task<object> HandleLoginAsync(ParusUser user, string fingerPrint, ParusDbContext dbContext)
         {
             //var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.Fingerprint == fingerPrint && x.UserId == user.GetId());
             var existedRt = dbContext.RefreshSessions.FirstOrDefault(x => x.UserId == user.GetId());

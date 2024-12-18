@@ -149,7 +149,7 @@ namespace Parus.Backend.Controllers
 				return Unauthorized();
 			}
 
-            ApplicationUser user = context.Users
+            ParusUser user = context.Users
                 .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Name);
 
             if (user == null || !user.EmailConfirmed)
@@ -179,7 +179,7 @@ namespace Parus.Backend.Controllers
                 return Unauthorized();
             }
 
-            ApplicationUser user = identityDbContext.Users
+            ParusUser user = identityDbContext.Users
                 .AsEnumerable().SingleOrDefault(x => x.GetUsername() == identity.Name);
 
             if (user == null || !user.EmailConfirmed)

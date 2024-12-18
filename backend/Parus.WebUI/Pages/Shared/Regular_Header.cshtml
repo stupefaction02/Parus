@@ -3,7 +3,7 @@
 @using Microsoft.Extensions.Logging;
 @using Parus.Infrastructure.Identity;
 
-@inject UserManager<ApplicationUser> userManager;
+@inject UserManager<ParusUser> userManager;
 @inject IConfiguration configuration;
 
 @{
@@ -24,7 +24,7 @@
 
         @if (User.Identity.IsAuthenticated)
         {
-            ApplicationUser usr = await userManager.FindByNameAsync(User.Identity.Name);
+            ParusUser usr = await userManager.FindByNameAsync(User.Identity.Name);
             bool isUserEmailConfirmed = await userManager.IsEmailConfirmedAsync(usr);
 
             <ul style="align-items: center;" class="navbar-nav flex-grow-1 hidden d-flex justify-content-end">

@@ -13,7 +13,7 @@ namespace Parus.Infrastructure.Identity
         // null! - required
         // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-many#optional-one-to-many
 
-        public ApplicationUser PurchaserUser { get; set; } = null!;
+        public ParusUser PurchaserUser { get; set; } = null!;
 
         public Broadcaster Broacaster { get; set; } = null!;
     }
@@ -25,12 +25,12 @@ namespace Parus.Infrastructure.Identity
 
         public string OwnerId { get; set; }
 
-        public ApplicationUser Owner { get; set; }
+        public ParusUser Owner { get; set; }
 
         public List<ParusSubscriptionSession> SubscriptionSessionsAsSubject { get; set; }
     }
 
-    public class ApplicationUser : IdentityUser, IUser
+    public class ParusUser : IdentityUser, IUser
     {
 		#region Broadcast/Viewer fields
 

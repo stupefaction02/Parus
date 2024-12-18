@@ -98,7 +98,7 @@ namespace Parus.WebUI.Extensions
                 }
             );
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            services.AddIdentity<ParusUser, IdentityRole>(config =>
                 {
                     //config.SignIn.RequireConfirmedAccount = true;
                     config.Password.RequiredLength = 3;

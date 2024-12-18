@@ -11,7 +11,7 @@ namespace Parus.Backend.Extensions
 {
     public static class IdentityExtensions
     {
-        public static ApplicationUser FindUserByEmail(this UserManager<ApplicationUser> userManager, string email)
+        public static ParusUser FindUserByEmail(this UserManager<ParusUser> userManager, string email)
         {
             return userManager.Users.SingleOrDefault(x => x.Email == email);
         }

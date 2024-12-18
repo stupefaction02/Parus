@@ -18,7 +18,7 @@ namespace Parus.Backend.Services
     {
         public async Task<int> StartBroadcastAsync(
             int category, int[] tags, string title,
-            ApplicationUser user,
+            ParusUser user,
             ParusDbContext dbContext)
         {
             List<BroadcastTag> userTags = new List<BroadcastTag>();
@@ -51,7 +51,7 @@ namespace Parus.Backend.Services
             return 1;
         }
 
-        public async Task StopBroadcastAsync(ApplicationUser hostUser, Core.Interfaces.Repositories.IBroadcastInfoRepository context)
+        public async Task StopBroadcastAsync(ParusUser hostUser, Core.Interfaces.Repositories.IBroadcastInfoRepository context)
         {
             context.RemoveOne(hostUser.Id);
         }

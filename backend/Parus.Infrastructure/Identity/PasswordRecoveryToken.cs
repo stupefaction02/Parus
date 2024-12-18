@@ -14,7 +14,7 @@ namespace Parus.Infrastructure.Identity
 
         [Required]
         public string UserId { get; set; }
-        public ApplicationUser User { get; set; }
+        public ParusUser User { get; set; }
 
         [Key]
         public int Id { get; set; }

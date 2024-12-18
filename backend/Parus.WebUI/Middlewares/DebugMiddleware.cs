@@ -35,7 +35,7 @@ namespace Parus.WebUI.Middlewares
             ClaimsPrincipal user = httpContext.User;
 			bool authenticated = user.Identity.IsAuthenticated;
 
-            UserManager<ApplicationUser> userManager = default(UserManager<ApplicationUser>);
+            UserManager<ParusUser> userManager = default(UserManager<ParusUser>);
 
             string userInfo = "none";
             string rolesInfo = "none";
@@ -44,14 +44,14 @@ namespace Parus.WebUI.Middlewares
                 userInfo = user.Identity.Name;
                 using (var scope = serviceProvider.CreateScope())
                 {
-                    userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                    userManager = scope.ServiceProvider.GetRequiredService<UserManager<ParusUser>>();
 
                     if (userManager == null)
                     {
                         throw new Exception("UserManger is not set.");
                     }
 
-                    ApplicationUser user1 = Task.Run<ApplicationUser>
+                    ParusUser user1 = Task.Run<ParusUser>
                         (async () => await userManager.FindByNameAsync(user.Identity.Name)).Result;
 
                     if (user1 != null)

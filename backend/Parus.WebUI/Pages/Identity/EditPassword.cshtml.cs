@@ -36,14 +36,14 @@ namespace Parus.WebUI.Pages.Identity
 		private readonly IUserRepository users;
 		private readonly ILocalizationService localizationService;
 		private readonly IPasswordRecoveryTokensRepository tokens;
-		private readonly UserManager<ApplicationUser> userManager;
-		private readonly IPasswordHasher<ApplicationUser> passwordHasher;
+		private readonly UserManager<ParusUser> userManager;
+		private readonly IPasswordHasher<ParusUser> passwordHasher;
 
 		public EditPasswordModel(IUserRepository users,
             ILocalizationService localizationService,
 			IPasswordRecoveryTokensRepository passwordRecoveryTokensRepository,
-			UserManager<ApplicationUser> userManager,
-            IPasswordHasher<ApplicationUser> passwordHasher,
+			UserManager<ParusUser> userManager,
+            IPasswordHasher<ParusUser> passwordHasher,
 			ILogger<EditPasswordModel> logger)
         {
 			this.users = users;
@@ -103,7 +103,7 @@ namespace Parus.WebUI.Pages.Identity
 			Response.Cookies.Delete("JWT");
 			Response.Cookies.Delete("identity.username");
 
-			ApplicationUser user = (ApplicationUser)users.One(x => x.GetUsername() == username);
+			ParusUser user = (ParusUser)users.One(x => x.GetUsername() == username);
 
             if (user == null)
             {
