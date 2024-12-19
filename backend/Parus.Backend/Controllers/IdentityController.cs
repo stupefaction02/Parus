@@ -32,6 +32,8 @@ using System.Diagnostics;
 using MimeKit.Cryptography;
 using Parus.Infrastructure.DLA;
 using Parus.Core.Authentication;
+using Microsoft.Extensions.Hosting;
+using System.Text.Json.Serialization;
 
 namespace Parus.Backend.Controllers
 {
@@ -51,10 +53,12 @@ namespace Parus.Backend.Controllers
         }
 
         private readonly ILogger<IdentityController> logger;
+        private readonly IHostEnvironment environment;
 
-        public IdentityController(ILogger<IdentityController> logger)
+        public IdentityController(ILogger<IdentityController> logger, IHostEnvironment environment)
         {
             this.logger = logger;
+            this.environment = environment;
         }
 
         #region Testing
@@ -142,6 +146,11 @@ namespace Parus.Backend.Controllers
             };
         }
 
+        public static class APIErrorCodes
+        {
+            public static readonly string LOGIN_WRONG_PSWD = "Login.WrongPassword";
+        }
+
 		[HttpPost]
         [Route("api/account/login")]
         public async Task<object> Login(
@@ -157,11 +166,16 @@ namespace Parus.Backend.Controllers
 
             if (user == null)
             {
-                string errorMessage = $"Wrong username for user {user.UserName}";
+                string errorMessage = $"Wrong username for user {username}";
                 logger.LogInformation($"Failed to login {username}. Error: {errorMessage}");
 
                 HttpContext.Response.StatusCode = 401;
-                return new { success = "N", errorCode = "LOGIN_WRONG_PSWD" };
+                // TODO: enum for error codes
+                return new { 
+                    success = "false", 
+                    //message = "Wrong username for user {user.UserName}", 
+                    errorCode = APIErrorCodes.LOGIN_WRONG_PSWD
+                };
             }
 
             PasswordVerificationResult signInResult = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password);
@@ -282,16 +296,6 @@ namespace Parus.Backend.Controllers
             return new { success = "N", message = message };
 		}
 
-		private object CreateJsonSuccess(string message)
-		{
-			return new { success = "Y", message = message };
-		}
-
-        private object CreateJsonSuccess(object additionalParameter)
-        {
-            return new { success = "Y", payload = additionalParameter };
-        }
-
         private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
         private ClaimsPrincipal user;
@@ -306,6 +310,19 @@ namespace Parus.Backend.Controllers
             }
 
             return -1;
+        }
+
+        public class CustomModel
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/test/modelbinding")]
+        public object BindModel([FromBody] CustomModel model)
+        {
+            return 1;
         }
 
         [HttpPost]
@@ -346,16 +363,17 @@ namespace Parus.Backend.Controllers
 			string c = random.Next(0, 10).ToString();
 			string d = random.Next(0, 10).ToString();
 			string f = random.Next(0, 10).ToString();
-			int confirmNumber = Int32.Parse(a + b + c + d + f);
+
+			int verificationCode = Int32.Parse(a + b + c + d + f);
 
             if (user == null)
             {
                 return CreateJsonError($"Can't find user {username}.");
             }
 
-			confrimCodesRepository.Add(new ConfirmCode { Code = confirmNumber, User = user, UserId = user.Id });
+			confrimCodesRepository.Add(new ConfirmCode { Code = verificationCode, User = user, UserId = user.Id });
 
-			logger.LogInformation($"Creating confirmation code with numbers {confirmNumber} for user: {username}");
+			logger.LogInformation($"Creating confirmation code with numbers {verificationCode} for user: {username}");
 
             string emailBody = "";
 
@@ -363,7 +381,14 @@ namespace Parus.Backend.Controllers
 
             if (emailResponse.Success)
             {
-				return Json(new { success = "true" });
+                if (environment.IsAnyDevelopment())
+                {
+                    return Json(new { success = "true", code = verificationCode });
+                }
+                else
+                {
+                    return Json(new { success = "true" });
+                }
 			}
 
 			return Json(CreateJsonError(emailResponse.Mssage));
@@ -436,12 +461,12 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/account/isemailtaken")]
-        public async Task<object> IsEmailTaken(string email, IUserRepository userRepository) 
+        public object IsEmailTaken(string email, IUserRepository userRepository)
             => userRepository.IsEmailTaken(email) ? Json(new { taken = "true" }) : (object)Json(new { taken = "false" });
 
         [HttpGet]
         [Route("api/account/isusernametaken")]
-        public async Task<object> IsUsernameTaken(string username, IUserRepository userRepository) 
+        public object IsUsernameTaken(string username, IUserRepository userRepository)
             => userRepository.IsUsernameTaken(username) ? Json(new { taken = "true" }) : (object)Json(new { taken = "false" });
 
         private string RECOVERY_MAIL1 => "RECOVERY_MAIL1";

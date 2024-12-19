@@ -1,5 +1,6 @@
 import { CURRENT_API_PATH } from "../config.js";
 import { GetCookie } from "../common.js";
+import { ApiPostRequest } from "../site.js";
 
 export class TwoFAEmailVerificationPopup {
     constructor() { //debugger
@@ -112,24 +113,31 @@ export class TwoFAEmailVerificationPopup {
                 code += inputNode.value;
             }
 
-            var onfail = function (e, a, b) {
-                if (e.status == 400) {
-                    if (e.responseJSON.success = "N") {
-                        var errorCode = e.responseJSON.error;
+            self.sendCode(code);
+        }
+    }
 
-                        // TODO: Pull MAIL_VERIF_WRONG_CODE from serverResponseCodes.js
-                        if (errorCode === "MAIL_VERIF_WRONG_CODE") {
-                            self.showError(errorCode);
-                        }
+    sendCode(code) {
+        var url = "/account/2FA/verify?code=" + code;
+
+        var self = this;
+
+        ApiPostRequest(url, {
+            success: function (e) {
+                // calling callback
+                self.OnSuccessCallback(e);
+            },
+            status400: function (xhr) { debugger
+                if (xhr.responseJSON.success = "false") {
+                    var errorCode = xhr.responseJSON.errorCode;
+
+                    // TODO: Pull MAIL_VERIF_WRONG_CODE from serverResponseCodes.js
+                    if (errorCode === "MAIL_VERIF_WRONG_CODE") {
+                        self.showError(errorCode);
                     }
                 }
-            };
-            self.send_code(code, function (e)
-            {
-                // calling callback
-                self.onsuccess(e);
-            }, onfail);
-        }
+            }
+        });
     }
 
     showError(errorCode) {

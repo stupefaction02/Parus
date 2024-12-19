@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 
 using Parus.WebUI.Services;
 using Parus.Infrastructure.Identity;
+using System.Net.NetworkInformation;
+using System.Net;
 
 namespace Parus.WebUI.Pages.Account
 {

@@ -1,6 +1,7 @@
 import { CURRENT_API_PATH } from "../config.js";
 import { ValidateEmail } from "../common.js";
 import { TwoFAEmailVerificationPopup } from "./2FAEmailVerificationPopup.js";
+import { ShowErrorPopup, ApiPostRequest } from "../site.js"
 
 export class TwoTFpopup {
     constructor(popopElemId, onsuccess) {
@@ -122,16 +123,14 @@ export class TwoTFpopup {
 
         this.verificationCodePopup = new TwoFAEmailVerificationPopup();
 
-        this.verificationCodePopup.onsuccess = function (e) {
+        this.verificationCodePopup.OnSuccessCallback = function (e) {
             this1.switchToPhase3();
 
-            if (e.success == "Y") {
-                image.setAttribute("src", e.qr_image);
+            image.setAttribute("src", e.qr_image);
 
-                // browser stores it until page is reloaded
-                // much security!
-                this1.TwoFASecretKey = e.customer_key;            
-            }
+            // browser stores it until page is reloaded
+            // much security!
+            this1.TwoFASecretKey = e.customer_key; 
         };
 
         this.phase2_inited = true;
@@ -147,12 +146,15 @@ export class TwoTFpopup {
 
         var this1 = this;
         this.ac_ep_continue_btn.onclick = function () {
-            var url = CURRENT_API_PATH + "/account/2FA/request2FAVerificationEmailCode";
+            //var url = CURRENT_API_PATH + "/account/2FA/request2FAVerificationEmailCode";
+            var url = "/account/2FA/request2FAVerificationEmailCode";
 
-            this1.sendPost(url, function (e) {
-                console.log(e.payload);
-                this1.switchToPhase2();
-            });
+            //this1.sendPost(url, function (e) {
+            //    console.log(e.payload);
+            //    this1.switchToPhase2();
+            //});
+
+            ApiPostRequest(url, { success: function () { this1.switchToPhase2(); } });
         }
 
         input.oninput = function (e) {

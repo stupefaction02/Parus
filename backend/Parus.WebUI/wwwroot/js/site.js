@@ -1,5 +1,5 @@
 ﻿import { VerificationPopup } from "./EmailVerificationPopup.js";
-import { DeleteCookie, GetCookie } from "./common.js";
+import { DeleteCookie, GetCookie, IsStringEmpty } from "./common.js";
 import { sendGetAjax } from "./network.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { LoginPopup } from "./LoginPopup.js";
@@ -7,7 +7,7 @@ import { LoginPopup } from "./LoginPopup.js";
 // Network
 // todo: move it to network.js
 
-export  function AjaxPost(url, onsuccess, onerror) {
+export function AjaxPost(url, onsuccess, onerror) {
     console.log("debug: sending API request. Url: " + url);
 
     $.ajax({
@@ -24,10 +24,10 @@ export  function AjaxPost(url, onsuccess, onerror) {
 
             if (status == 500) {
                 console.log("debug: " + CURRENT_API_PATH + " is down!");
-                ShowPopupError(CURRENT_API_HOST + " is down! Error 500");
+                ShowErrorPopup(CURRENT_API_HOST + " is down! Error 500");
             } else if (status == 0) {
                 console.log("debug: " + "CORS Error. Status Code: " + status);
-                ShowPopupError("CORS Error. Status Code: " + status);
+                ShowErrorPopup("CORS Error. Status Code: " + status);
             } else if (status != 200) {
                 // todo: proper debug log
                 console.log("debug: " + " Error. Status code: " + status);
@@ -36,26 +36,6 @@ export  function AjaxPost(url, onsuccess, onerror) {
             //onerror(jf);
         },
     });
-}
-
-var leftTopPopup;
-var leftTopPopupText;
-
-var hidePopupError = function () {
-    leftTopPopup.style.display = "none";
-}
-
-export function ShowPopupError(message) {
-    //debugger
-    //var leftTopPopup = document.getElementById("error_popup");
-
-    if (leftTopPopup !== null) {
-        leftTopPopup.style.display = "block";
-
-        leftTopPopupText.innerText = message;
-
-        setTimeout(hidePopupError, 2000);
-    }
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -146,7 +126,104 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    leftTopPopup = document.getElementById("error_popup");
-    leftTopPopupText = document.querySelector(".error_tl_popup .error_tl_popup_content span");
+    sideErrorPopup = document.getElementById("side_popup");
+    sideErrorPopupText = document.querySelector(".side_popup .side_popup_content span");
+
+    sideDebugPopup = document.getElementById("debug_popup");
+    sideDebugPopupText = document.querySelector("#debug_popup .side_popup_content span");
+
+    /*ShowDebugPopup("Alooo");*/
 
 }, false);
+
+
+var sideErrorPopup;
+var sideErrorPopupText;
+
+var sideDebugPopup;
+var sideDebugPopupText;
+
+var hidePopup = function (popup) {
+    popup.style.display = "none";
+}
+
+// TODO: there is need to be a collections of popups, when a one popup is created by the template and disposed right after being shown
+export function ShowErrorPopup(message, type) {
+    //debugger
+    //var leftTopPopup = document.getElementById("error_popup");
+
+    if (sideErrorPopup !== null) {
+        sideErrorPopup.style.display = "block";
+
+        sideErrorPopupText.innerText = message;
+
+        setTimeout(() => hidePopup(sideErrorPopup), 5000);
+    }
+}
+
+export function ShowDebugPopup(message) {
+    //debugger
+    //var leftTopPopup = document.getElementById("error_popup");
+
+    if (sideDebugPopup !== null) {
+        sideDebugPopup.style.display = "block";
+
+        sideDebugPopupText.innerText = message;
+
+        setTimeout(() => hidePopup(sideDebugPopup), 1000000);
+    }
+}
+
+// dummy raw implementation
+export function ValidatePassword(password) { debugger
+    var isValid = true;
+    var errorMessages = [];
+
+    if (password.length < 4) {
+        errorMessages.push("Password must be more than 4 characters!");
+        isValid = false;
+    }
+
+    return {
+        isValid: isValid,
+        errorMessages: errorMessages,
+    }
+
+}
+
+export function ApiPostRequest(path, handlers) {
+    //debugger
+    var url = CURRENT_API_PATH + path;
+
+    console.log("debug: sending API request. Url: " + url);
+
+    var ajax = {
+        url: url,
+        method: 'post',
+        success: (e, a, b) => {
+            if (b.status >= 200 && b.status < 300) {
+                if (e.success == "true") {
+                    handlers.success(e, a, b);
+                }
+            }
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status == 401) {
+                handlers.status401(jqXHR, textStatus, errorThrown);
+            } else if (jqXHR.status == 500 || jqXHR.status == 0) {
+                handlers.status500(jqXHR, textStatus, errorThrown);
+            }
+        }
+    };
+    
+    var jwt = GetCookie("JWT");
+    if (!IsStringEmpty(jwt)) {
+        ajax.headers = {
+            "Authorization": "Bearer " + jwt
+        };
+    }
+
+    $.ajax(ajax);
+}
+
+

@@ -1,5 +1,6 @@
+import { IsStringEmpty } from "./common.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
-//import {  } from "./common.js";
+import { ShowErrorPopup, ApiPostRequest } from "./site.js"
 
 export class LoginPopup {
     constructor(popupId) { //debugger
@@ -10,7 +11,13 @@ export class LoginPopup {
         var self = this;
 
         var inputs = [];
-       
+
+        this.nickname_input_empty_error_text = "Fill it up!";
+        this.password_input_empty_error_text = "Fill it up!";
+        
+        this.nickname_input_error = document.getElementById("username_error");
+        this.password_input_error = document.getElementById("password_error");
+
         var usernameInput = document.getElementById("login_usernameInput");
         var passwordInput = document.getElementById("password_Input");
         var sendbuton = document.getElementById("login_sendbutton");
@@ -55,50 +62,73 @@ export class LoginPopup {
         this.inputs = inputs;
     }
 
+    cleanInputErrors() {
+        this.nickname_input_error.style.display = "none";
+        this.password_input_error.style.display = "none";
+    }
+
+    showUsernameError(text) {
+        this.nickname_input_error.innerText = text;
+        this.nickname_input_error.style.display = "block";
+    }
+
     HandleButtonClick(username, password) {
         //debugger
 
+        var anyErrors = false;
+
+        if (IsStringEmpty(username)) {
+            this.showUsernameError(this.nickname_input_empty_error_text);
+            anyErrors = true;
+        }
+
+        if (IsStringEmpty(password)) {
+            this.password_input_error.innerText = this.password_input_empty_error_text;
+            this.password_input_error.style.display = "block";
+            anyErrors = true;
+        }
+
         var self = this;
 
-        if (username !== null && username !== "" && password !== null && password !== "") {
-            var url = CURRENT_API_PATH + "/account/login?username=" + username + "&password=" + password;
+        if (anyErrors) {
+            setTimeout(() => self.cleanInputErrors(), 4000);
+        } else {
+            var url = "/account/login?username=" + username + "&password=" + password;
 
-            $.ajax({
-                url: url,
-                method: 'post',
+            ApiPostRequest(url, {
                 success: (e, a, b) => {
-                    if (b.status == 200) {
-                        if (e.success == "true") {
-                            if (e.twoFactoryEnabled) {
-                                self.ShowTwoFactoryForm();
+                    if (e.twoFactoryEnabled) {
+                        self.ShowTwoFactoryForm();
 
-                                this.InitTwoFactoryForm(e, username);
-                            } else {
-                                document.cookie = "JWT=" + e.payload + "; path=/";
-                                document.location.reload();
-                            }
-                        }
+                        this.InitTwoFactoryForm(e, username);
+                    } else {
+                        document.cookie = "JWT=" + e.payload + "; path=/";
+                        document.location.reload();
                     }
                 },
-                error: (e) => {
-                    if (e.status == 401) {
-                        var errorCode = e.responseJSON.errorCode;
+                status401: (jqXHR, a, b) => {
+                    //debugger
+                    var errorCode = jqXHR.responseJSON.errorCode;
 
-                        if (errorCode == "LOGIN_WRONG_PSWD") {
-                            login_error_label.style.display = "block";
+                    if (errorCode == "Login.WrongPassword") {
+                        login_error_label.style.display = "block";
 
-                            var password_recovery_label =
-                                document.getElementById("password_recovery_label");
+                        var password_recovery_label =
+                            document.getElementById("password_recovery_label");
 
-                            password_recovery_label.style.display = "block";
-                        } else if (errorCode == "JWT_TOKEN_EXPIRED") {
-                            //var url = 
-                        }
+                        password_recovery_label.style.display = "block";
+                    } else if (errorCode == "JWT_TOKEN_EXPIRED") {
+                        //var url = 
                     }
+                },
+                status500: (e, a, b) => { //debugger
+                    ShowErrorPopup("Server is down! Status Code 500");
                 }
             });
         }
     }
+
+    
 
     ShowTwoFactoryForm() {
         var loginForm = document.getElementById("login_body");

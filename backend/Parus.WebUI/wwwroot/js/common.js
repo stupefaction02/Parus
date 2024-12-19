@@ -32,12 +32,12 @@ export function DeleteCookie1(name) {
     setCookie(name, "", null, null, null, 1);
 }
 
+const emailValidationPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 export function ValidateEmail(email) {
-    return String(email)
-        .toLowerCase()
-        .match(
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        );
+    var matches = String(email).toLowerCase().match(emailValidationPattern);
+    return {
+        isValid: matches !== null
+    };
 }
 
 export function RedirectToIndex() {

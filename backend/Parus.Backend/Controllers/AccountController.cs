@@ -65,7 +65,11 @@ namespace Parus.Backend.Controllers
                     if (emailResponse.Success)
                     {
                         Console.WriteLine($"{user.UserName} already has a token. Updating existing code... code={code}");
-                        return Accepted($"{user.UserName} already has a token.");
+                        //return Accepted( $"{user.UserName} already has a token.");
+
+                        // Accepted
+                        HttpContext.Response.StatusCode = 202;                     
+                        return Json( new { success = "true", message = $"{user.UserName} already has a token." } );
                     }
                 }
 
@@ -75,14 +79,16 @@ namespace Parus.Backend.Controllers
             context.TwoFactoryVerificationCodes
                 .Add(new TwoFactoryEmailVerificationCode { Code = code, User = user, UserId = user.Id });
 
-            Console.WriteLine($"Creating confirmation code with numbers {code} for user: {User.Identity.Name}");
+            Console.WriteLine($"Creating verification code with numbers {code} for user: {User.Identity.Name}");
 
             emailResponse = await SendVerificationEmail(emailService, user);
             if (emailResponse.Success)
             {
                 context.SaveChanges();
 
-                return Json(JsonSuccess());
+                // created
+                HttpContext.Response.StatusCode = 201;
+                return Json(new { success = "true", message = $"Created token for user {user.UserName}" });
             }
 
             return Json(CreateJsonError(emailResponse.Mssage));
@@ -120,7 +126,7 @@ namespace Parus.Backend.Controllers
 
             return Json(new
             {
-                success = "Y",
+                success = "true",
                 str_key = setupInfo.ManualEntryKey,
                 qr_image = setupInfo.QrCodeSetupImageUrl,
                 customer_key = customerSecretKey

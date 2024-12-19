@@ -1,6 +1,6 @@
 import { GetCookie } from "./common.js";
 import { CURRENT_API_PATH } from "./config.js";
-import { AjaxPost, ShowPopupError } from "./site.js";
+import { AjaxPost, ShowDebugPopup, ShowErrorPopup } from "./site.js";
 
 export class VerificationPopup {
     constructor(popupId) { //debugger
@@ -86,8 +86,11 @@ export class VerificationPopup {
             if (e.success == "true") {
                 self.ShowPopup();
 
-                // debug only
-                //ShowPopupError("");
+                // development only
+                // if (ENV_VAR == "Development_Localhost" || ENV_VAR == "Development") // from config.js
+                // or
+                // if (IsAnyDevelopment()) // from common.js
+                ShowDebugPopup("debug: verification code = " + e.code);
 
                 //debugger
                 var spanPlaceholder = document.querySelector("#verification_info .placeholder");
@@ -123,7 +126,7 @@ export class VerificationPopup {
                 var inputNode = this.inputs[i];
                 code += inputNode.value;
             }
-            debugger
+            //debugger
             self.send_code(code, function (e) { self.send_code_handler(e); });
         }
     }

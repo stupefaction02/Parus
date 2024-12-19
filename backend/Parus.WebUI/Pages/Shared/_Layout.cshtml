@@ -89,19 +89,20 @@
         </div>
     </div>
 
-    <div id="error_popup" class="b-popup error_tl_popup" style="display: none">
-        <div class="error_tl_popup_content">
+    <div id="side_popup" class="b-popup side_popup" style="display: none">
+        <div class="side_popup_content">
+            <span>Error!</span>
+        </div>
+    </div>
+
+    <div id="debug_popup" class="b-popup side_popup" style="display: none">
+        <div class="side_popup_content debug_side_popup_content">
             <span>Error!</span>
         </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="~/js/common.js" type="module"></script>
-    <script src="~/js/EmailVerificationPopup.js" type="module"></script>
-    <script src="~/js/site.js" type="module" asp-append-version="true"></script>
-    <script src="~/js/regform.js" type="module" asp-append-version="true"></script>
 
 	@RenderSection("AdditionalScripts", required: false)
     @RenderSection("Scripts", required: false)

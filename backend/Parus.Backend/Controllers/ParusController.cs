@@ -11,6 +11,8 @@ using Parus.Infrastructure.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Parus.Backend.Controllers
 {
@@ -128,6 +130,23 @@ namespace Parus.Backend.Controllers
                 payload = newToken.Token,
                 refreshToken = updateRT.Entity.Token
             });
+        }
+    }
+
+    public static class HostingExtensions
+    {
+        public static bool IsAnyDevelopment(this IHostEnvironment env)
+        {
+            if (env.IsEnvironment("Development_Localhost"))
+            {
+                return true;
+            }
+            else if (env.IsDevelopment())
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

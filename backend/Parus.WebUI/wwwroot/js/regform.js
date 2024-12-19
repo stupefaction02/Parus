@@ -1,10 +1,9 @@
 /*import { sendPost } from "./network";*/
 
-import { GetCookie, IsStringEmpty } from "./common.js";
+import { GetCookie, IsStringEmpty, ValidateEmail } from "./common.js";
 import { CURRENT_API_PATH, JWT_ACCESS_TOKEN_NAME } from "./config.js";
 import { VerificationPopup } from "./EmailVerificationPopup.js";
-import { ShowPopupError } from "./site.js";
-
+import { ShowErrorPopup, ValidatePassword } from "./site.js";
 
 function sendPost(url, onsuccess, onerror) {
     console.log("debug: sending API request. Url: " + url);
@@ -23,10 +22,10 @@ function sendPost(url, onsuccess, onerror) {
 
             if (status == 500) {
                 console.log("debug: " + CURRENT_API_PATH + " is down!");
-                ShowPopupError(CURRENT_API_HOST + " is down! Error 500");
+                ShowErrorPopup(CURRENT_API_HOST + " is down! Error 500");
             } else if (status == 0) {
                 console.log("debug: " + "CORS Error. Status Code: " + status);
-                ShowPopupError("CORS Error. Status Code: " + status);
+                ShowErrorPopup("CORS Error. Status Code: " + status);
             } else if (status != 200) {
                 // todo: proper debug log
                 console.log("debug: " + " Error. Status code: " + status);
@@ -50,7 +49,7 @@ function sendGet(url, onsuccess, error) {
 
 (function ($) {
     'use strict';
-  
+
     var authCookie = GetCookie("JWT");
     var authenticated = authCookie !== undefined;
     if (authenticated) { return; }
@@ -85,6 +84,9 @@ function sendGet(url, onsuccess, error) {
     var nickname_input_error_text = "Username is already taken";
     var email_input_error_text = "Email is already taken";
     var notEmptyText = "Fill it up!";
+
+    var invalidEmailText = "Invalid email!";
+    var invalidPasswordText = "Password must be at least 4 characters";
 
     function show_nickname_error(message) {
         nickname_input_error.style.display = "block";
@@ -236,17 +238,30 @@ function sendGet(url, onsuccess, error) {
         if (IsStringEmpty(email)) {
             email_input_error.innerText = notEmptyText;
             email_input_error.style.display = "block";
-            validateSuccess = false;
+        } else {
+            var valResult = ValidateEmail(email);
+            //debugger
+            if (!valResult.isValid) {
+                validateSuccess = false;
+                show_email_error(invalidEmailText);
+            }
         }
 
         if (IsStringEmpty(password)) {
             passwordInputError.innerText = notEmptyText;
             passwordInputError.style.display = "block";
             validateSuccess = false;
+        } else {
+            var valResult = ValidatePassword(password);
+            //debugger
+            if (!valResult.isValid) {
+                validateSuccess = false;
+                show_email_error(valResult.errorMessages.pop());
+            }
         }
 
         if (!validateSuccess) {
-            setTimeout(cleanInputErrors, 2000);
+            setTimeout(cleanInputErrors, 5000);
             return;
         } 
 
@@ -282,7 +297,7 @@ function sendGet(url, onsuccess, error) {
 
         var url = CURRENT_API_PATH + "/account/register?firstname=" + firstname + "&lastname=" + lastname + "&username=" + username + "&email=" + email + "&password=" + password + "&gender=" + gender;
 
-        sendPost(url, onsuccess, () => ShowPopupError("Server Error 500!"));
+        sendPost(url, onsuccess, () => ShowErrorPopup("Server Error 500!"));
     }
 
     function cleanInputErrors() {
