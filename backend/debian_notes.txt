@@ -272,11 +272,26 @@ https://habr.com/ru/companies/oleg-bunin/articles/350550/#bind
 
 -DOCKER
 
+# installation on Debian
+	https://docs.docker.com/engine/install/debian/
+
 # Stop all the containers
 docker stop $(docker ps -a -q)
 
 # Remove all the containers
 docker rm $(docker ps -a -q)
+
+# remove all images 
+docker image prune --all --force
+
+-VIRTUALISATION
+# fix Copy and paste
+# set up shared folder 
+	https://askubuntu.com/questions/161759/how-to-access-a-shared-folder-in-virtualbox
+
+-OTHERS
+# purge gnome
+	sudo apt autoremove --purge gnome-session 
 
 -FAIL2BAN
 

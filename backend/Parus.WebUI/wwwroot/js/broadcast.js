@@ -1,17 +1,18 @@
-import { GetCookie } from "./common.js";
-import { URL } from "./config.js";
+import { GetCookie, IsStringEmpty } from "./common.js";
+import { CHAT_API_PATH, VIDEO_EDGE_PATH } from "./config.js";
 import { HLSPlayer } from "./HlsPlayer/HLSPlayer.js";
+import { ApiPostRequest } from "./site.js";
 
 var play_button = document.getElementById("play_button");
 var plays = true;
 
-var hlsServiceUrl = "https://localhost:2020";
+var hlsServiceUrl = VIDEO_EDGE_PATH;
 
 var video = document.getElementById('video');
 
 var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 
-var url = "https://localhost:2020/live/desh02/1_dash.mpd";
+var url = VIDEO_EDGE_PATH + "/live/desh02/1_dash.mpd";
 var player = dashjs.MediaPlayer().create();
 
 //player.updateSettings({
@@ -22,108 +23,154 @@ var player = dashjs.MediaPlayer().create();
 
 player.initialize(video, url, true);
 
-function switch_play() {
-    if (plays) {
-        plays = false;
 
-        pause();
-    } else {
-        plays = true;
 
-        play();
-    }
-}
+//var maxMessages = 50;
+//var messageCount = 0;
+//var isScrolling = false;
 
-function play() {
+//if (signalR !== null) {
 
-}
+//    const hubConnection = new signalR.HubConnectionBuilder()
+//        .withUrl(CHAT_API_PATH)
+//        .build();
 
-function pause() {
+//    var sendBtn = document.getElementById("sendBtn");
 
-}
+//    var messages = document.getElementById("messages");
+//    var chat_input = document.getElementById("chat_input");
 
-var maxMessages = 50;
-var messageCount = 0;
-var isScrolling = false;
+//    var sys_con_txt = document.getElementById("sys_con_txt").innerText;
+//    var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
+//    var color = document.getElementById("user_color").innerText;
 
-var hubUrl = URL + '/chat';
+//    messages.addEventListener("mousedown", function () { isScrolling = true; });
+//    messages.addEventListener("mouseup", function () { isScrolling = false; });
 
-if (signalR !== null) {
+//    var chatId = GetCookie("chatid");
+//    var authenticationValue = GetCookie("JWT");
 
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl(URL + '/chat')
-        .build();
+//    console.log("debug: chatid=" + chatId);
 
-    var sendBtn = document.getElementById("sendBtn");
+//    if (sendBtn != null) {
 
-    var messages = document.getElementById("messages");
-    var chat_input = document.getElementById("chat_input");
+        
+//    }
 
-    var sys_con_txt = document.getElementById("sys_con_txt").innerText;
-    var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
-    var color = document.getElementById("user_color").innerText;
+//    function OnSendingMessage() {
+//        let message = chat_input.value;
 
-    messages.addEventListener("mousedown", function () { isScrolling = true; });
-    messages.addEventListener("mouseup", function () { isScrolling = false; });
+//        hubConnection.invoke("Send", message, color, chatId)
+//            .catch(function (err) {
+//                return console.error(err.toString());
+//            });
 
-    var chatName = "athleanxdotcommer14";// location.pathname.replace('/', '');
-    document.cookie = "chatName=" + chatName + "; path=/";
+//        chat_input.value = "";
+//    }
 
-    if (sendBtn != null) {
-        sendBtn.addEventListener("click", function () { //debugger
-            let message = chat_input.value;
-
-            hubConnection.invoke("Send", message, color, chatName)
-                .catch(function (err) {
-                    return console.error(err.toString());
-                });
-
-            chat_input.value = "";
-        });
-
-        var messagesList = [];
-
-        hubConnection.on("Receive", function (message, nickname, color) {
-            if (messageCount <= maxMessages) {
-                var messageElement = CreateMessage(message, nickname, color);
-
-                messages.append(messageElement);
-
-                messagesList.push(messageElement);
-
-                //for (var i = 1; i < messages.childNodes.length; i++) {
-                //    messages.insertBefore(messages.childNodes[i], messages.firstChild);
-                //}
-            }
-
-            messageCount++;  
-        });
-
-        hubConnection.start()
-            .then(function () {
-
-                console.log("Connected to SignalR hub. Url: " + hubUrl);
-
-                //CreateSystemMessage
-
-                hubConnection.invoke("JoinChat", chatName).catch(function (err) { debugger
-                    return console.error(err.toString());
-                });
-            })
-            .catch(function (err) {
-                //return console.error(err.toString());
-            });
-    }
-
-    function handleScrollbarChange() {
     
-        //for (var i in messagesList) {
-        //    var element = 
-        //}
 
+//    function HandleErrors(response) {
+//        debugger
+//    }
+
+//    function OnStartSucceded(response, hubConnection, chatId, authenticationValue) {
+//        console.log("Connected to SignalR hub. Url: " + CHAT_API_PATH);
+//        debugger
+//        hubConnection.invoke("JoinChat", chatId, authenticationValue).catch(function (err) { //debugger
+//            return console.error(err.toString());
+//        });
+//    }
+
+//    function OnStartFailed(error) {
+//        debugger
+//    }
+//}
+
+class SignalRChat {
+    constructor(signalR) {
+        //debugger
+        this.messages = document.getElementById("messages");
+        this.chatInput = document.getElementById("chat_input");
+
+        this.sys_con_txt = document.getElementById("sys_con_txt").innerText;
+        this.sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
+
+        // TODO: this can be fetch from server, in OnStartSucceded there could be a needed value in response
+        this.usernameColor = document.getElementById("user_color").innerText;
+
+        this.messages.addEventListener("mousedown", function () { isScrolling = true; });
+        this.messages.addEventListener("mouseup", function () { isScrolling = false; });
+
+        this.chatId = GetCookie("chatid");
+        this.authenticationValue = GetCookie("JWT");
+        this.messagesList = [];
+        this.maxMessages = 50;
+        this.messageCount = 0;
+        this.isScrolling = false;
+
+        console.log("debug: chatid=" + this.chatId);
+
+        this.hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl(CHAT_API_PATH)
+            .build();
+
+        document.getElementById("sendBtn").addEventListener("click", () => this.OnSendingMessage(this.chatInput));
+
+        this.hubConnection.on("Receive", (message, nickname, color) => this.OnReceive(message, nickname, color));
+        this.hubConnection.on("HandleErrors", (response) => this.HandleErrors(response));
+
+        this.hubConnection.start()
+            .then((response) => this.OnStartSucceded(response))
+            .catch((response) => this.OnStartFailed(response));
     }
 
-    function CreateMessage(message, nickname, color) {
+    OnStartSucceded(response) {
+        console.log("Connected to SignalR hub. Url: " + CHAT_API_PATH);
+        
+        this.hubConnection.invoke("JoinChat", this.chatId, this.authenticationValue).catch(this.OnError);
+    }
+
+    OnError(error) {
+        debugger
+    }
+
+    OnStartFailed(error) {
+        debugger
+    }
+
+    OnReceive(message, nickname, color) {
+
+        if (this.messageCount <= this.maxMessages) {
+            var messageElement = this.CreateMessage(message, nickname, color);
+
+            this.messages.append(messageElement);
+
+            this.messagesList.push(messageElement);
+
+            //for (var i = 1; i < messages.childNodes.length; i++) {
+            //    messages.insertBefore(messages.childNodes[i], messages.firstChild);
+            //}
+        }
+
+        this.messageCount++;
+    }
+
+    OnSendingMessage(chatInput) {
+        var message = chatInput.value;
+
+        if (IsStringEmpty(message)) return;
+
+        this.hubConnection.invoke("Send", message, this.usernameColor, this.chatId).catch(this.OnSendingError);
+
+        this.chatInput.value = "";
+    }
+
+    OnSendingError(response) {
+        console.error(err.toString());
+    }
+
+    CreateMessage(message, nickname, color) {
         var chat_message = document.createElement("div");
         chat_message.classList.add("chat_message");
 
@@ -142,7 +189,7 @@ if (signalR !== null) {
         return chat_message;
     }
 
-    function CreateSystemMessage(message) {
+    CreateSystemMessage(message) {
         var chat_message = document.createElement("div");
         chat_message.classList.add("chat_message");
         chat_message.classList.add("chat_system_message");
@@ -155,4 +202,8 @@ if (signalR !== null) {
 
         return chat_message;
     }
+}
+
+if (signalR !== null) {
+    var chat = new SignalRChat(signalR);
 }

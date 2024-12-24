@@ -22,6 +22,13 @@ namespace Parus.Backend.Controllers
         #region Testing
 
         [HttpGet]
+        [Route("api/hello")]
+        public string HelloWorld()
+        {
+            return "Hello World!";
+        }
+
+        [HttpGet]
 		[Authorize]
         [Route("api/test/auth")]
         public string Test()
@@ -353,6 +360,22 @@ namespace Parus.Backend.Controllers
             {
                 success = true,
                 refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
+            };
+        }
+
+        [HttpGet]
+        [Route("api/test/addsample01")]
+        public async Task<object> AddSample01([FromServices] BroadcastControl broadcastControl, 
+			[FromServices] ParusDbContext parusDbIndex)
+		{
+            ParusUser user = await parusDbIndex.Users
+				.FirstOrDefaultAsync(x => x.UserName == "broadcasteroff");
+
+            await broadcastControl.StartBroadcastAsync(1, new int[] { 1 }, "Broadcasteroff is alive!", user, parusDbIndex);
+
+            return new
+            {
+                success = true
             };
         }
     }

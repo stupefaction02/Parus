@@ -3,26 +3,26 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 80
+EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Parus.WebUI/Parus.WebUI.csproj", "Parus.WebUI/"]
-COPY ["Parus.Core/Parus.Core.csproj", "Parus.Core/"]
+COPY ["Parus.Backend/Parus.API.csproj", "Parus.Backend/"]
 COPY ["Parus.Common/Parus.Common.csproj", "Parus.Common/"]
+COPY ["Parus.Core/Parus.Core.csproj", "Parus.Core/"]
 COPY ["Parus.Infrastructure/Parus.Infrastructure.csproj", "Parus.Infrastructure/"]
-RUN dotnet restore "./Parus.WebUI/./Parus.WebUI.csproj"
+RUN dotnet restore "./Parus.Backend/./Parus.API.csproj"
 COPY . .
-WORKDIR "/src/Parus.WebUI"
-RUN dotnet build "./Parus.WebUI.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Parus.Backend"
+RUN dotnet build "./Parus.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Parus.WebUI.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Parus.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Parus.WebUI.dll"]
+ENTRYPOINT ["dotnet", "Parus.API.dll"]

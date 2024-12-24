@@ -48,6 +48,8 @@ namespace Parus.Backend.Services
 
             await dbContext.SaveChangesAsync();
 
+            Console.WriteLine($"{user.UserName} has started a broadcast.");
+
             return 1;
         }
 

@@ -11,6 +11,7 @@ using Parus.Infrastructure.Identity;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Parus.Core.Interfaces.Repositories;
+using Parus.Core.Interfaces;
 
 namespace Parus.WebUI.Pages.Broadcasts
 {
@@ -19,22 +20,44 @@ namespace Parus.WebUI.Pages.Broadcasts
         private readonly ILogger<IndexModel> logger;
 
 		private readonly IUserRepository userRepository;
+        private readonly ILocalizationService localization;
 
-		[BindProperty(SupportsGet = true)]
+        [BindProperty(SupportsGet = true)]
         public string BroadcastName { get; set; }
 
         public string UserColor { get; set; }
 
         public bool IsUserEmailConfirmed { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger, IUserRepository userRepository)
+        public IndexModel(ILogger<IndexModel> logger, 
+            IUserRepository userRepository, 
+            ILocalizationService localization)
         {
             this.logger = logger;
 			this.userRepository = userRepository;
-		}
+            this.localization = localization;
+        }
 
         public PageResult OnGet()
         {
+            var broadcaster = userRepository.One(x => x.GetUsername() == BroadcastName);
+
+            if (broadcaster != null)
+            {
+                // If we want to bind a chat entity with other than broadcaster's username (uid for example)
+                // or if username in url is not what we want to bind chat entity with
+                // here we got all the information about broadcaster
+                //this.HttpContext.Response.Cookies.Append("chatname", broadcaster.GetId());
+                this.HttpContext.Response.Cookies.Append("chatid", broadcaster.GetUsername());
+
+                string locale = this.HttpContext.Request.Cookies["locale"];
+                localization.SetLocale(locale);
+            }
+            else
+            {
+                // TODO: redirect to "This broadcaster doesn't exist" page
+            }
+
             string usernmae = User.Identity.Name;
 			ParusUser usr = userRepository.One(x => x.GetUsername() == usernmae) as ParusUser;
 
@@ -53,7 +76,7 @@ namespace Parus.WebUI.Pages.Broadcasts
 				this.Response.Cookies.Append("username", User.Identity.Name);
 			}
 
-			return Page();
+            return Page();
         }
     }
 }

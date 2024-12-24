@@ -31,9 +31,6 @@
 
 @{
     bool authenticated = User.Identity.IsAuthenticated;
-
-    string locale = this.HttpContext.Request.Cookies["locale"];
-    localization.SetLocale(locale);
 }
 
 @*<video id="video" class="player_video" controls ></video>
@@ -119,7 +116,7 @@
     </div>
     <div class="chat_controls">
         <div class="input_box">
-            <input id="chat_input" placeholder="Отправить сообщение" />
+            <input id="chat_input" autocomplete="false" placeholder="Отправить сообщение" />
         </div>
         <div class="chat_buttons">
             
