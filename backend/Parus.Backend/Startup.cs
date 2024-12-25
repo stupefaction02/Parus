@@ -16,6 +16,8 @@ using System;
 using Parus.Backend.Authentication;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services;
+using Parus.API.Services;
+using System.Collections.Concurrent;
 
 namespace Parus.Backend
 {
@@ -67,6 +69,7 @@ namespace Parus.Backend
 
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
+            services.AddSingleton<SharedChatAuthenticatedUsers>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

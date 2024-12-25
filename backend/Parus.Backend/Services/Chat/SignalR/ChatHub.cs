@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Authentication;
@@ -9,7 +10,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Primitives;
 using Parus.API;
+using Parus.API.Services;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.Identity;
 using static Parus.API.CustomHttpContexts;
@@ -21,29 +24,35 @@ namespace Parus.Backend.Services.Chat.SignalR
         private readonly IAuthenticationService authenticationService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUserRepository users;
+        private readonly SharedChatAuthenticatedUsers sharedAuthenticatedUsers;
 
         public ChatHub(IAuthenticationService authenticationService, 
             IHttpContextAccessor httpContextAccessor,
-            IUserRepository users)
+            IUserRepository users,
+            SharedChatAuthenticatedUsers sharedAuthenticatedUsers)
         {
             this.authenticationService = authenticationService;
             this.httpContextAccessor = httpContextAccessor;
             this.users = users;
+            this.sharedAuthenticatedUsers = sharedAuthenticatedUsers;
         }
 
         public async Task Send(string message, string color, string chatName)
         {
-            if (Context.User.Identity.IsAuthenticated)
-            { 
-                string username = Context.User.Identity.Name;
-                Console.WriteLine("ChatHub. " + username + ": " + message);
+            string connString = Context.ConnectionId;
 
-                // sources ^)
-                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/946e904ad0c29cfa.html
-                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/620f216b8183de98.html
-                //https://source.dot.net/Microsoft.AspNetCore.SignalR.Core/R/316a8601722cf9bd.html
-                await Clients.Group(chatName).SendAsync("Receive", message, username, color);
+            ParusUser user;
+            // checks if the user forgot to call JoinChat method
+            // sort of a mean of defense :P
+            if (!sharedAuthenticatedUsers.TryGet(connString, out user))
+            {
+                await SendErrorUnicast("USER_NOT_FOUND", "500");
+                return;
             }
+            
+            string username = user.UserName;
+            Console.WriteLine($"ChatHub. {username} sent in chat {chatName} the message: \"{message}\"");
+            await Clients.Group(chatName).SendAsync("Receive", message, username, color);
         }
 
         public async Task SendWithChatRecord(string message, string color)
@@ -55,7 +64,7 @@ namespace Parus.Backend.Services.Chat.SignalR
             // sort of a mean of defense :P
             if (!connectionsUsers.TryGetValue(connString, out user))
             {
-                await SendUserNotFoundUnicast();
+                //await SendUserNotFoundUnicast();
                 return;
             }
 
@@ -67,67 +76,80 @@ namespace Parus.Backend.Services.Chat.SignalR
             }
         }
 
-        private async Task SendUserNotFoundUnicast()
+        public override async Task OnConnectedAsync()
         {
-            var userNotFound = new { success = "false", errorCode = "USER_NOT_FOUND", statusCode = "404" };
-            await Clients.Client(Context.ConnectionId).SendAsync("HandleErrors", userNotFound);
+            string connString = Context.ConnectionId;
+
+            HttpContext context = Context.GetHttpContext() ?? httpContextAccessor.HttpContext;
+
+            if (context.Request.Query.TryGetValue("access_token", out StringValues accessToken))
+            {
+                string jwt = accessToken[0];
+
+                context.Request.Headers.Authorization = jwt;
+
+                var authResult = await authenticationService.AuthenticateAsync(context, JwtBearerDefaults.AuthenticationScheme);
+
+                if (authResult.Succeeded)
+                {
+                    ParusUser connectedUser = users.One(x => x.GetUsername() == authResult.Principal.Identity.Name) as ParusUser;
+
+                    if (connectedUser != null)
+                    {
+                        sharedAuthenticatedUsers.Set(Context.ConnectionId, connectedUser);
+                        Console.WriteLine($"ChatHub. User with conn.id={Context.ConnectionId} and username={connectedUser.UserName} connected to the hub.");
+                    }
+                }
+            }
+
+            Console.WriteLine($"ChatHub. User with conn.id={Context.ConnectionId} connected to the hub.");
+
+            await base.OnConnectedAsync();
         }
 
-        private async Task SendServerErrorUnicast()
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var userNotFound = new { success = "false", errorCode = "SERVER_ERROR", statusCode = "500" };
-            await Clients.Client(Context.ConnectionId).SendAsync("HandleErrors", userNotFound);
+            string connString = Context.ConnectionId;
+
+            ParusUser disconnectedUser;
+            sharedAuthenticatedUsers.Unset(connString, out ParusUser user);
+
+            base.OnDisconnectedAsync(exception);
         }
 
-        public override Task OnConnectedAsync()
+        private async Task SendErrorUnicast(string errorCode, string statusCode, string message = "")
         {
-            //string chatName = Context.GetHttpContext().Request.Cookies["chatName"];
-            //Console.WriteLine(Context.ConnectionId);
-            //Groups.AddToGroupAsync(Context.ConnectionId, chatName);
-            
-            return base.OnConnectedAsync();
-        }
-
-        public override Task OnDisconnectedAsync(Exception exception)
-        {
-
-            return base.OnDisconnectedAsync(exception);
+            var error = new { success = "false", errorCode = errorCode, statusCode = statusCode };
+            await Clients.Client(Context.ConnectionId).SendAsync("HandleErrors", error);
         }
 
         private readonly Dictionary<string, ParusUser> connectionsUsers = new Dictionary<string, ParusUser>();
 
-        public async Task JoinChat(string chatName, string authenticationValue)
+        public async Task JoinChat(string chatName)
         {
             // first level of defense
-            if (String.IsNullOrEmpty(chatName) && String.IsNullOrEmpty(authenticationValue))
+            if (String.IsNullOrEmpty(chatName))
             {
+                await SendErrorUnicast("BAD_REQUEST", "403");
                 return;
             }
 
-            HttpContext context = Context.GetHttpContext() ?? httpContextAccessor.HttpContext;
-            context.Request.Headers.Authorization = $"Bearer {authenticationValue}";
+            string connString = Context.ConnectionId;
 
-            // second level of defense
-            var authResult = await authenticationService.AuthenticateAsync(context, JwtBearerDefaults.AuthenticationScheme);
-
-            if (!authResult.Succeeded)
+#if DEBUG
+            ParusUser connectedUser;
+            if (sharedAuthenticatedUsers.TryGet(connString, out connectedUser))
             {
-                return;
-            }
-
-            var connectedUser = users.One(x => x.GetUsername() == authResult.Principal.Identity.Name);
-
-            // third level of defense
-            if (connectedUser == null)
+                Console.WriteLine($"ChatHub. User conn.id={Context.ConnectionId}, username={connectedUser.UserName} has joined {chatName} group");
+            } 
+            else 
             {
-                await SendUserNotFoundUnicast();
-                return;
+                Console.WriteLine($"ChatHub. User conn.id={Context.ConnectionId} has joined {chatName} group");
             }
-
-            connectionsUsers.Add(Context.ConnectionId, (ParusUser)connectedUser);
-
-            Console.WriteLine($"User conn.id={Context.ConnectionId} has joined {chatName} group");
-
+            
+#else
+            Console.WriteLine($"ChatHub. User conn.id={Context.ConnectionId} has joined {chatName} group");
+#endif
             await Groups.AddToGroupAsync(Context.ConnectionId, chatName);
         }
     }

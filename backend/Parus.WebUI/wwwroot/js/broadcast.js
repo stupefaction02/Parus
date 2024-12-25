@@ -15,78 +15,6 @@ var manifestUrl = `${hlsServiceUrl}/live/123456/master_playlist.m3u8`;
 var url = VIDEO_EDGE_PATH + "/live/desh02/1_dash.mpd";
 var player = dashjs.MediaPlayer().create();
 
-//player.updateSettings({
-//    'debug': {
-//        'logLevel': dashjs.Debug.LOG_LEVEL_INFO
-//    }
-//});
-
-player.initialize(video, url, true);
-
-
-
-//var maxMessages = 50;
-//var messageCount = 0;
-//var isScrolling = false;
-
-//if (signalR !== null) {
-
-//    const hubConnection = new signalR.HubConnectionBuilder()
-//        .withUrl(CHAT_API_PATH)
-//        .build();
-
-//    var sendBtn = document.getElementById("sendBtn");
-
-//    var messages = document.getElementById("messages");
-//    var chat_input = document.getElementById("chat_input");
-
-//    var sys_con_txt = document.getElementById("sys_con_txt").innerText;
-//    var sys_discon_txt = document.getElementById("sys_discon_txt").innerText;
-//    var color = document.getElementById("user_color").innerText;
-
-//    messages.addEventListener("mousedown", function () { isScrolling = true; });
-//    messages.addEventListener("mouseup", function () { isScrolling = false; });
-
-//    var chatId = GetCookie("chatid");
-//    var authenticationValue = GetCookie("JWT");
-
-//    console.log("debug: chatid=" + chatId);
-
-//    if (sendBtn != null) {
-
-        
-//    }
-
-//    function OnSendingMessage() {
-//        let message = chat_input.value;
-
-//        hubConnection.invoke("Send", message, color, chatId)
-//            .catch(function (err) {
-//                return console.error(err.toString());
-//            });
-
-//        chat_input.value = "";
-//    }
-
-    
-
-//    function HandleErrors(response) {
-//        debugger
-//    }
-
-//    function OnStartSucceded(response, hubConnection, chatId, authenticationValue) {
-//        console.log("Connected to SignalR hub. Url: " + CHAT_API_PATH);
-//        debugger
-//        hubConnection.invoke("JoinChat", chatId, authenticationValue).catch(function (err) { //debugger
-//            return console.error(err.toString());
-//        });
-//    }
-
-//    function OnStartFailed(error) {
-//        debugger
-//    }
-//}
-
 class SignalRChat {
     constructor(signalR) {
         //debugger
@@ -112,7 +40,12 @@ class SignalRChat {
         console.log("debug: chatid=" + this.chatId);
 
         this.hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl(CHAT_API_PATH)
+            .withUrl(CHAT_API_PATH, {
+                headers: { "Authentication": "Bearer " + this.authenticationValue },
+                accessTokenFactory: () => {
+                    return "Bearer " + this.authenticationValue;
+                }
+            })
             .build();
 
         document.getElementById("sendBtn").addEventListener("click", () => this.OnSendingMessage(this.chatInput));
@@ -128,15 +61,15 @@ class SignalRChat {
     OnStartSucceded(response) {
         console.log("Connected to SignalR hub. Url: " + CHAT_API_PATH);
         
-        this.hubConnection.invoke("JoinChat", this.chatId, this.authenticationValue).catch(this.OnError);
+        this.hubConnection.invoke("JoinChat", this.chatId).catch(this.OnError);
     }
 
     OnError(error) {
-        debugger
+        console.log(error);
     }
 
     OnStartFailed(error) {
-        debugger
+        console.log(error);
     }
 
     OnReceive(message, nickname, color) {
@@ -161,7 +94,7 @@ class SignalRChat {
 
         if (IsStringEmpty(message)) return;
 
-        this.hubConnection.invoke("Send", message, this.usernameColor, this.chatId).catch(this.OnSendingError);
+        this.hubConnection.invoke("Send", message, "red", this.chatId).catch(this.OnSendingError);
 
         this.chatInput.value = "";
     }
