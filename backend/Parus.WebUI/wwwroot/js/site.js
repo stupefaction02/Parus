@@ -191,6 +191,41 @@ export function ValidatePassword(password) { debugger
 
 }
 
+export function ApiPutRequest(path, handlers) {
+    //debugger
+    var url = CURRENT_API_PATH + path;
+
+    console.log("debug: sending API put request. Url: " + url);
+
+    var ajax = {
+        url: url,
+        method: 'put',
+        success: (e, a, b) => {
+            if (b.status >= 200 && b.status < 300) {
+                if (e.success == "true") {
+                    handlers.success(e, a, b);
+                }
+            }
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            if (jqXHR.status == 401) {
+                handlers.status401(jqXHR, textStatus, errorThrown);
+            } else if (jqXHR.status == 500 || jqXHR.status == 0) {
+                handlers.status500(jqXHR, textStatus, errorThrown);
+            }
+        }
+    };
+
+    var jwt = GetCookie("JWT");
+    if (!IsStringEmpty(jwt)) {
+        ajax.headers = {
+            "Authorization": "Bearer " + jwt
+        };
+    }
+
+    $.ajax(ajax);
+}
+
 export function ApiPostRequest(path, handlers) {
     //debugger
     var url = CURRENT_API_PATH + path;
@@ -211,7 +246,11 @@ export function ApiPostRequest(path, handlers) {
             if (jqXHR.status == 401) {
                 handlers.status401(jqXHR, textStatus, errorThrown);
             } else if (jqXHR.status == 500 || jqXHR.status == 0) {
-                handlers.status500(jqXHR, textStatus, errorThrown);
+                if (handlers.status500 != null) {
+                    handlers.status500(jqXHR, textStatus, errorThrown);
+                }
+            } else if (jqXHR.status == 400) {
+                handlers.status400(jqXHR, textStatus, errorThrown);
             }
         }
     };

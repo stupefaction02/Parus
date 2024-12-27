@@ -128,8 +128,6 @@ export class LoginPopup {
         }
     }
 
-    
-
     ShowTwoFactoryForm() {
         var loginForm = document.getElementById("login_body");
         var two_factory_body = document.getElementById("two_factory_body");
@@ -151,7 +149,7 @@ export class LoginPopup {
 
             var url = CURRENT_API_PATH + "/account/2FA/verify2FACode/login?code="
                 + code + "&" + "customerKey=" + response.twoFactoryCustomKey + "&username=" + username;
-            console.log(url);
+            //console.log(url);
             var onfail = function (e) {
                 if (e.status == 401) {
                     var json = e.responseJSON;
@@ -177,8 +175,34 @@ export class LoginPopup {
     }
 
     onclick(e) {
+        var code = code_input.value;
 
-        
+        var url = CURRENT_API_PATH + "/account/2FA/verify2FACode/login?code="
+            + code + "&" + "customerKey=" + response.twoFactoryCustomKey + "&username=" + username;
+        //console.log(url);
+        var onfail = function (e) {
+            if (e.status == 401) {
+                var json = e.responseJSON;
+
+                if (json.errorCode == "2FA.WrongCode") {
+                    code_error.style.setProperty("display", "block");
+                }
+            }
+        }
+
+        var onsuccess = function (e) {
+            if (e.success == "true") {
+                document.cookie = "JWT=" + e.payload + "; path=/";
+
+                code_success.style.setProperty("display", "block");
+
+                document.location.reload();
+            }
+        };
+
+        self.sendPost(url, onsuccess, onfail);
+
+        ApiPostRequest();
     }
 
     ShowPopup () {

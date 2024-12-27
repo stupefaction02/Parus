@@ -1,7 +1,7 @@
 import { CURRENT_API_PATH } from "../config.js";
 import { ValidateEmail } from "../common.js";
 import { TwoFAEmailVerificationPopup } from "./2FAEmailVerificationPopup.js";
-import { ShowErrorPopup, ApiPostRequest } from "../site.js"
+import { ShowErrorPopup, ApiPostRequest, ApiPutRequest } from "../site.js"
 
 export class TwoTFpopup {
     constructor(popopElemId, onsuccess) {
@@ -52,27 +52,13 @@ export class TwoTFpopup {
 
         var self = this;
         two_fa_enable_btn.onclick = function () {
-            //debugger
-
             var code = code_input.value;
 
-            var url = CURRENT_API_PATH + "/account/2FA/verify2FACode?code="
+            var url = "/account/2FA/verify2FACode?code="
                 + code + "&" + "customerKey=" + self.TwoFASecretKey;
 
-            var onfail = function (e) {
-                if (e.status == 401) {
-                    var json = e.responseJSON;
-
-                    if (json.errorCode == "2FA.WrongCode") {
-                        self.showWrongQrCodeError(json.errorCode);
-                    }
-                }
-            }
-
-            self.sendPost(url, function (e) {
-                //debugger
-
-                if (e.success == "Y") {
+            ApiPostRequest(url, {
+                success: (e, a, b) => {
                     var done_phase = document.getElementById("done_phase");
 
                     self.phase3panel.style.setProperty("display", "none");
@@ -82,12 +68,23 @@ export class TwoTFpopup {
                     if (self.onsuccess !== undefined) {
                         self.onsuccess(two_fa_enable_btn);
                     }
-                } else {
+                },
+                status400: () => {
                     var code_error = document.getElementById("code_error");
 
-                    code_error.style.setProperty("display", "block");
+                    code_error.style.setProperty("display", "block");       
+                },
+                status401: (jqXHR, a, b) => {
+                    var json = jqXHR.responseJSON;
+
+                    if (json.errorCode == "2FA.WrongCode") {
+                        self.showWrongQrCodeError(json.errorCode);
+                    }
+                },
+                status500: (e, a, b) => { //debugger
+                    ShowErrorPopup("Server is down! Status Code 500");
                 }
-            }, onfail);
+            });
         }
 
         code_input.oninput = function () {
@@ -237,20 +234,31 @@ export class TwoFAdisablePopup {
             }
         }
 
-        var onfail = function (e) {
-            if (e.status == 401) {
-                var json = e.responseJSON;
-
-                if (json.errorCode == "2FA.WrongCode") {
-                    self.showWrongQrCodeError(json.errorCode);
-                }
-            }
-        }
-
         btn.onclick = function () {
-            var url = CURRENT_API_PATH + "/account/2FA/disable?code=" + input.value;
+            var url = "/account/2FA/disable?code=" + input.value;
 
             self.sendPut(url, self.OnVerifyCodeSuccess, onfail);
+
+            ApiPutRequest(url, {
+                success: (e, a, b) => {
+                    if (e.success) {
+                        self.OnVerifyCodeSuccess
+                    } else {
+                        document.cookie = "JWT=" + e.payload + "; path=/";
+                        document.location.reload();
+                    }
+                },
+                status401: (jqXHR, a, b) => {
+                    var json = e.responseJSON;
+
+                    if (json.errorCode == "2FA.WrongCode") {
+                        self.showWrongQrCodeError(json.errorCode);
+                    }
+                },
+                status500: (e, a, b) => { //debugger
+                    ShowErrorPopup("Server is down! Status Code 500");
+                }
+            });
         }
     }
 
@@ -284,15 +292,6 @@ export class TwoFAdisablePopup {
         } else {
             this.phase2panel.style.setProperty("display", "block");
         }
-    }
-
-    sendPost(url, onsuccess) {
-        $.ajax({
-            url: url,
-            method: 'post',
-            success: onsuccess,
-            xhrFields: { withCredentials: true }
-        });
     }
 
     sendPut(url, onsuccess, onfail) {

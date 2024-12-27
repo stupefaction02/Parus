@@ -227,12 +227,12 @@ namespace Parus.Backend.Controllers
                 if (await Verify2FACodeCore(code, customerKey, appUser, context))
                 {
                     HttpContext.Response.StatusCode = 200;
-                    return JsonSuccess();
+                    return Json(new { success = "true" });
                 } 
                 else
                 {
                     HttpContext.Response.StatusCode = 401;
-                    return Json(new { success = "false", error = APIErrorCodes.TWO_FA_WRONG_QR_CODE });
+                    return Json(new { success = "false", errorCode = APIErrorCodes.TWO_FA_WRONG_QR_CODE });
                 }
             } 
 
@@ -253,7 +253,8 @@ namespace Parus.Backend.Controllers
                 if (appUser == null)
                 {
                     HttpContext.Response.StatusCode = 401;
-                    return Json(new { success = "false", error = "Couldn't find user with this username." });
+                    //return Json(new { success = "false", error = "Couldn't find user with this username." });
+                    return Json(new { success = "false" });
                 }
 
                 if (appUser.CustomerKey != null)
@@ -263,6 +264,10 @@ namespace Parus.Backend.Controllers
                         if (await Verify2FACodeCore(code, customerKey, appUser, context))
                         {
                             return await LoginResponse(appUser);
+                        }
+                        else
+                        {
+                            return Json(new { success = "false", errorCode = APIErrorCodes.TWO_FA_WRONG_QR_CODE });
                         }
                     }
                 }
@@ -281,7 +286,7 @@ namespace Parus.Backend.Controllers
                 string codeStr = code.ToString();
                 if (codeStr.Length == googleCodeLength)
                 {
-                    if (true)//twoFactor.ValidateTwoFactorPIN(customerKey, codeStr, TimeSpan.FromSeconds(30)))
+                    if (twoFactor.ValidateTwoFactorPIN(customerKey, codeStr, TimeSpan.FromSeconds(30)))
                     {
                         appUser.TwoFactorEnabled = true;
 
@@ -353,7 +358,7 @@ namespace Parus.Backend.Controllers
                         await context.SaveChangesAsync();
 
                         HttpContext.Response.StatusCode = 200;
-                        return JsonSuccess();
+                        return Json(new { success = "true" });
                     }
                 }
 
