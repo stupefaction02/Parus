@@ -16,6 +16,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static Parus.Backend.Controllers.IdentityController;
 
 namespace Parus.Backend.Controllers
 {
@@ -216,7 +217,11 @@ namespace Parus.Backend.Controllers
                 {
                     // TODO: Log this
                     HttpContext.Response.StatusCode = 401;
-                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                    return Json(new 
+                    { 
+                        success = "false", 
+                        message = "Couldn't find user with this username.",
+                    });
                 }
 
                 if (await Verify2FACodeCore(code, customerKey, appUser, context))
@@ -227,12 +232,12 @@ namespace Parus.Backend.Controllers
                 else
                 {
                     HttpContext.Response.StatusCode = 401;
-                    return Json(new { success = "N", error = "2FA_WRONG_QR_CODE" });
+                    return Json(new { success = "false", error = APIErrorCodes.TWO_FA_WRONG_QR_CODE });
                 }
             } 
 
             HttpContext.Response.StatusCode = 401;
-            return Json(new { success = "N", error = "Forbidden" });
+            return Json(new { success = "false", message = "Forbidden." });
         }
 
         [HttpPost]
@@ -248,7 +253,7 @@ namespace Parus.Backend.Controllers
                 if (appUser == null)
                 {
                     HttpContext.Response.StatusCode = 401;
-                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                    return Json(new { success = "false", error = "Couldn't find user with this username." });
                 }
 
                 if (appUser.CustomerKey != null)
@@ -264,7 +269,7 @@ namespace Parus.Backend.Controllers
             }
 
             HttpContext.Response.StatusCode = 401;
-            return Json(new { success = "N", error = "Forbidden" });
+            return Json(new { success = "false", message = "Forbidden." });
         }
 
         private async Task<bool> Verify2FACodeCore(int code, string customerKey, ParusUser appUser, ParusDbContext context)
@@ -322,14 +327,14 @@ namespace Parus.Backend.Controllers
                 if (appUser == null)
                 {
                     HttpContext.Response.StatusCode = 404;
-                    return Json(new { success = "N", error = "Couldn't find user with this username." });
+                    return Json(new { success = "false", message = "Couldn't find user with this username." });
                 }
 
                 var customerKey = appUser.CustomerKey;
                 if (customerKey == null)
                 {
                     HttpContext.Response.StatusCode = 500;
-                    return Json(new { success = "N", error = "Server Error. Contact the Webmaster." });
+                    return Json(new { success = "false", message = "Server Error. Contact the Webmaster." });
                 }
 
                 TwoFactorAuthenticator twoFactor = new TwoFactorAuthenticator();
@@ -353,11 +358,11 @@ namespace Parus.Backend.Controllers
                 }
 
                 HttpContext.Response.StatusCode = 401;
-                return Json(new { success = "N", errorCode = "2FA_WRONG_QR_CODE" });
+                return Json(new { success = "false", errorCode = APIErrorCodes.TWO_FA_WRONG_QR_CODE });
             }
 
             HttpContext.Response.StatusCode = 401;
-            return Json(new { success = "N", error = "Forbidden." });
+            return Json(new { success = "false", error = "Forbidden." });
         }
     }
 }

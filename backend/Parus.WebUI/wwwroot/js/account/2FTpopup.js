@@ -63,7 +63,7 @@ export class TwoTFpopup {
                 if (e.status == 401) {
                     var json = e.responseJSON;
 
-                    if (json.errorCode == "2FA_WRONG_QR_CODE") {
+                    if (json.errorCode == "2FA.WrongCode") {
                         self.showWrongQrCodeError(json.errorCode);
                     }
                 }
@@ -241,7 +241,7 @@ export class TwoFAdisablePopup {
             if (e.status == 401) {
                 var json = e.responseJSON;
 
-                if (json.errorCode == "2FA_WRONG_QR_CODE") {
+                if (json.errorCode == "2FA.WrongCode") {
                     self.showWrongQrCodeError(json.errorCode);
                 }
             }

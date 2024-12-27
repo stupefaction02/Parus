@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RabbitMQ", "TestProject1\Ra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Identity\Identity.csproj", "{E64450A3-5B9E-42B5-9FFA-9A051B858490}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectPanel", "ProjectPanel\ProjectPanel.csproj", "{136A37E8-4AF7-4B08-8534-1F5C05C838EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectPanel", "ProjectPanel\ProjectPanel.csproj", "{136A37E8-4AF7-4B08-8534-1F5C05C838EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -156,7 +156,7 @@ export class LoginPopup {
                 if (e.status == 401) {
                     var json = e.responseJSON;
 
-                    if (json.errorCode == "2FA_WRONG_QR_CODE") {
+                    if (json.errorCode == "2FA.WrongCode") {
                         code_error.style.setProperty("display", "block");
                     }
                 }

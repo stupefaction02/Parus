@@ -149,6 +149,7 @@ namespace Parus.Backend.Controllers
         public static class APIErrorCodes
         {
             public static readonly string LOGIN_WRONG_PSWD = "Login.WrongPassword";
+            internal static readonly object TWO_FA_WRONG_QR_CODE = "2FA.WrongCode";
         }
 
 		[HttpPost]
@@ -213,7 +214,7 @@ namespace Parus.Backend.Controllers
                 logger.LogInformation($"Failed to login {username}. Error: {errorMessage}");
 
                 HttpContext.Response.StatusCode = 401;
-                return new { success = "N", errorCode = "LOGIN_WRONG_PSWD" };
+                return new { errorCode = APIErrorCodes.LOGIN_WRONG_PSWD };
             }
         }
 
