@@ -23,11 +23,6 @@ namespace Parus.Backend.Controllers
     [ApiController]
 	public class AccountController : ParusController
 	{
-        private object CreateJsonError(string message)
-        {
-            return new { success = "N", message = message };
-        }
-
         [HttpPost]
         [Route("api/account/2FA/request2FAVerificationEmailCode")]
         public async Task<object> Request2FAVerificationEmailCode(
@@ -92,7 +87,8 @@ namespace Parus.Backend.Controllers
                 return Json(new { success = "true", message = $"Created token for user {user.UserName}" });
             }
 
-            return Json(CreateJsonError(emailResponse.Mssage));
+            HttpContext.Response.StatusCode = 500;
+            return Json(new { success = "false" });
         }
 
         private async Task<EmailResponse> SendVerificationEmail(IEmailService emailService, ParusUser user)
@@ -134,10 +130,6 @@ namespace Parus.Backend.Controllers
             });
         }
 
-        // var requestHandleTask = HandleRequestAsync(params);
-        // doing things
-        // var requestHandleTaskResult = requestHandleTask.Wait().Result;
-
         [HttpPost]
         [Route("api/account/2FA/verify")]
         public async Task<object> VerifyAccount(int code,
@@ -161,7 +153,12 @@ namespace Parus.Backend.Controllers
 
                 logger.LogInformation(errorInfo);
 
-                return Json( CreateJsonError(errorInfo) );
+                HttpContext.Response.StatusCode = 401;
+                return Json(new
+                {
+                    success = "false",
+                    message = "Couldn't find user with this username.",
+                });
             }
 
             var codeEntry = context.TwoFactoryVerificationCodes.SingleOrDefault
@@ -193,7 +190,7 @@ namespace Parus.Backend.Controllers
                 string errorCode = $"MAIL_VERIF_WRONG_CODE";
 
                 HttpContext.Response.StatusCode = 400;
-                return JsonFail(errorCode);
+                return Json(new { success = "false", error = "Code is expired." });
             }
         }
 

@@ -9,6 +9,11 @@ using Parus.Infrastructure.Identity;
 
 namespace Identity
 {
+    public class Confiuguration
+    {
+        public const string DbConnectionString = "Data Source=DESKTOP-OTM8VD2;Database=Parus.Test;TrustServerCertificate=True;Integrated Security=True;Encryption=false";
+    }
+
     public class BackendAppFactory : WebApplicationFactory<Parus.Backend.Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
