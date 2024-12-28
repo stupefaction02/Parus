@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 
-namespace Parus.Hsl
+namespace Parus.VideoEdge
 {
     public class Program
     {
@@ -25,7 +25,7 @@ namespace Parus.Hsl
 
         public static void Main(string[] args)
         {
-            Console.Title = "Hsl";
+            Console.Title = "VideoEdge";
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(
                 new WebApplicationOptions { WebRootPath = "Data" });
@@ -33,15 +33,19 @@ namespace Parus.Hsl
             builder.Services.AddCors();
             
             WebApplication application = builder.Build();
-
+            
             builder.ConfigureKestrel();
 
-            application.UseCors(builder => builder.AllowAnyOrigin()
-                .WithOrigins("https://localhost:5002").WithOrigins("http://127.0.0.1:8080"));
+            //application.UseCors(builder => builder.AllowAnyOrigin()
+            //    .WithOrigins("https://localhost:5002").WithOrigins("http://127.0.0.1:8080"));
 
-            application.UseHttpsRedirection();
+            application.UseCors(builder => builder.AllowAnyOrigin());
 
-            application.UseHslStaticFiles();
+            //application.UseHttpsRedirection();
+
+            //application.UseHslStaticFiles();
+
+            application.UseStaticFiles(new StaticFileOptions { ServeUnknownFileTypes = true });
 
             string endPlaylistLine = "#EXT-X-ENDLIST";
             string liveDirName = "live";
@@ -50,6 +54,8 @@ namespace Parus.Hsl
             IWebHostEnvironment webHostEnvironment = application.Environment;
             string contentRoot = webHostEnvironment.WebRootPath;
             string liveDir = Path.Combine(contentRoot, liveDirName);
+
+            application.MapGet("/hello", HelloWorld);
 
             application.MapPost("/uploadManifest", async (IFormFile file, string usrDirectory) => { 
 
@@ -172,6 +178,8 @@ namespace Parus.Hsl
         {
             return Path.Combine(a, b);
         }
+
+        public static string HelloWorld() => "Hello World!";
     }
 
     public static class WebApplicationExtensions

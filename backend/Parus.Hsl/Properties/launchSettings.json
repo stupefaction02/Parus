@@ -9,13 +9,13 @@
     }
   },
   "profiles": {
-    "Parus.Hsl": {
+    "Development.Localhost": {
       "commandName": "Project",
-      "launchBrowser": false,
-      "applicationUrl": "https://localhost:2020;http://localhost:2021",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development_Localhost"
+      },
+      "Description": "For localhost",
+      "applicationUrl": "https://127.0.0.5:38002;http://127.0.0.5:39002"
     }
   }
 }

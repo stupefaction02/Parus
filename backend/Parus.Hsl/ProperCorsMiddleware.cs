@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Parus.Hsl
+namespace Parus.VideoEdge
 {
     public class ProperCorsMiddleware
     {

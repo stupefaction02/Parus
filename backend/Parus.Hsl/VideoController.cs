@@ -7,7 +7,7 @@ using Parus.Hsl.Services;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 
-namespace Parus.Hsl
+namespace Parus.VideoEdge
 {
     [ApiController]
 	public class VideoController : Controller

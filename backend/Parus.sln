@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.WebUI", "Parus.WebUI\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.API", "Parus.Backend\Parus.API.csproj", "{240AAFCB-51E1-4C89-9FEF-CB3332E861F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.Hsl", "Parus.Hsl\Parus.Hsl.csproj", "{FAD307D8-E834-4ABC-9C23-6F8FB154C5B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.VideoEdge", "Parus.Hsl\Parus.VideoEdge.csproj", "{FAD307D8-E834-4ABC-9C23-6F8FB154C5B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DummyPublisher", "DummyPublisher\DummyPublisher.csproj", "{C594498C-78A6-4049-9FDA-701DA6B1445B}"
 EndProject
