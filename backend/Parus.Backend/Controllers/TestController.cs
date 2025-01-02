@@ -122,10 +122,10 @@ namespace Parus.Backend.Controllers
 		}
 
         [HttpGet]
-        [Route("api/hello")]
-        public object Hello()
+        [Route("api/hellojson")]
+        public async Task<object> HelloJson()
         {
-            return "Hello World!";
+            return Json(new { success = "true", message = "Hello World!" });
         }
 
         [HttpGet]

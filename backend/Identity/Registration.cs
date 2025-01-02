@@ -6,49 +6,138 @@ using Microsoft.Extensions.DependencyInjection;
 using Parus.Infrastructure.DLA;
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.Identity;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
+using Parus.Backend.Controllers;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace Identity
 {
-    public class Confiuguration
+    public class Configuration
     {
-        public const string DbConnectionString = "Data Source=DESKTOP-OTM8VD2;Database=Parus.Test;TrustServerCertificate=True;Integrated Security=True;Encryption=false";
+        public const string DbConnectionString = "Data Source=192.168.100.11;Database=Parus.tests;User ID=ivan_admin;Password=zx12;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        public const string ApiHttpUrl = "http://127.0.1.1:39000";
     }
 
-    public class BackendAppFactory : WebApplicationFactory<Parus.Backend.Program>
+    public class DatabaseSeeder
+    {
+        private ParusDbContext _context;
+        private readonly ServiceProvider serviceProvider;
+
+        public DatabaseSeeder(ServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
+        }
+
+        public void PurgeAndSeed()
+        {
+            if (_context == null)
+            {
+                _context = serviceProvider.GetRequiredService<ParusDbContext>();
+            }
+
+            var y1 = _context.Database.GetConnectionString();
+            var y = _context.Database.GetDbConnection();
+
+            Purge(_context);
+
+            Seed(_context);
+            
+            _context.SaveChanges();
+        }
+
+        protected void Seed(ParusDbContext context)
+        {
+        }
+
+        protected void Purge(ParusDbContext context)
+        {
+            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[RefreshSessions]");
+            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[Broadcasts]");
+            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[Broadcasters]");
+            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[Identity].[AspNetUsers]");
+        }
+
+        public void Purge()
+        {
+
+        }
+    }
+
+    public class BackendApiFactory : WebApplicationFactory<Parus.Backend.Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseTestServer();
+            // set ASPNETCORE_ENVIROMENT
+            builder.UseEnvironment("Development_Localhost");
+            
+            //builder.UseUrls(new string[1] { Configuration.ApiHttpUrl });
+
             builder.ConfigureTestServices(services =>
             {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ParusDbContext>));
                 if (descriptor != null)
                     services.Remove(descriptor);
 
-                services.AddDbContextPool<ParusDbContext>(opts => 
-                    opts.UseSqlServer("Data Source=DESKTOP-OTM8VD2;Database=parus.tests.identity1;TrustServerCertificate=True;Integrated Security=True;"));
+                services.AddDbContext<ParusDbContext>(opts => 
+                    opts.UseSqlServer(Configuration.DbConnectionString));
 
-                services.AddDbContextPool<ApplicationDbContext>(opts =>
-                    opts.UseSqlServer("Data Source=DESKTOP-OTM8VD2;Database=parus.tests.core1;TrustServerCertificate=True;Integrated Security=True;"));
+                var serviceProvider = services.BuildServiceProvider();
 
-                //var serviceProvider = services.BuildServiceProvider();
-                //using var scope = serviceProvider.CreateScope();
-                //var scopedServices = scope.ServiceProvider;
-                //ApplicationIdentityDbContext context = scopedServices.GetRequiredService<ApplicationIdentityDbContext>();
-                //context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
+                services.AddSingleton<DatabaseSeeder>(new DatabaseSeeder(serviceProvider));
+            });
+
+            base.ConfigureWebHost(builder);
+            return;
+
+            builder.Configure(app => 
+            {
+                var seeder = app.ApplicationServices.GetService<DatabaseSeeder>();
+
+                if (seeder == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                app.UseRouting();
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+
+                    endpoints.MapGet("/helloworld", async (HttpContext ctx) =>
+                    {
+                        ctx.Response.ContentType = "application/json";
+                        await ctx.Response.WriteAsJsonAsync(new { success = "true", message = "Hello World!" });
+                    });
+                });
+
             });
         }
     }
 
-    public class TestsFixture : IDisposable
+    public class ApiResponseJson
     {
-        private BackendAppFactory factory = new();
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
+
+        [JsonPropertyName("success")]
+        public string Success { get; set; }
+    }
+
+    public class BackendApiTestsFixture : IDisposable
+    {
+        private BackendApiFactory factory = new();
 
         // Setup
-        public TestsFixture()
+        public BackendApiTestsFixture()
         {
             Scope = factory.Services.CreateScope();
-            //_context = _scope.ServiceProvider.GetRequiredService<DataContext>();
             Client = factory.CreateClient();
         }
 
@@ -61,19 +150,68 @@ namespace Identity
             Scope.Dispose();
             Client.Dispose();
         }
+
+        public void ResetDatabase()
+        {
+            DatabaseSeeder db = Scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+
+            db.PurgeAndSeed();
+        }
     }
 
-    public class Registration : IClassFixture<TestsFixture>
+    public class Registration : IClassFixture<BackendApiTestsFixture>
     {
-        public Registration(TestsFixture fixture)
+        private readonly string usersApiPath = "api/account";
+        private readonly BackendApiTestsFixture _fixture;
+
+        public Registration(BackendApiTestsFixture fixture)
         {
-            
+            _fixture = fixture;
         }
 
         [Fact]
-        public void Test1()
+        public async Task Ensure_Server_Controllers_Routing_Is_Ok()
         {
+            var response = await _fixture.Client.GetAsync("api/hellojson");
 
+            Assert.True(response.IsSuccessStatusCode);
+            Assert.NotNull(response.Content);
+
+            var responseJson = await response.FromJsonAsync<ApiResponseJson>();
+
+            Assert.NotNull(responseJson);
+            Assert.True(responseJson.Message == "Hello World!");
+            Assert.True(responseJson.Success == "true");
+        }
+
+        [Fact]
+        public async Task Register_User()
+        {
+            _fixture.ResetDatabase();
+
+            string a = Guid.NewGuid().ToString().Substring(0, 8);
+            string username = "test_ivan73_" + a;
+            string email = "testivan73" + a + "@gmail.com";
+            string password = "zx1";
+
+            string url = usersApiPath + $"/register?username={username}&email={email}&password={password}&gender=1";
+
+            var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
+
+            Assert.True(response.IsSuccessStatusCode);
+            Assert.NotNull(response.Content);
+
+            var responseJson = await response.FromJsonAsync<ApiResponseJson>();
+
+            Assert.True(responseJson.Success == "true");
+        }
+    }
+
+    public static class HttpResponseExtensions
+    {
+        public static async Task<T> FromJsonAsync<T>(this HttpResponseMessage response)
+        {
+            return await response.Content.ReadFromJsonAsync<T>();
         }
     }
 }

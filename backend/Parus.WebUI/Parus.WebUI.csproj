@@ -18,15 +18,19 @@
 
   <ItemGroup>
     <Compile Remove="Pages\Placeholder\**" />
+    <Compile Remove="wwwroot\lib\dash.js\**" />
     <Compile Remove="wwwroot\lib\hls.js\**" />
     <Compile Remove="wwwroot\node_modules\**" />
     <Content Remove="Pages\Placeholder\**" />
+    <Content Remove="wwwroot\lib\dash.js\**" />
     <Content Remove="wwwroot\lib\hls.js\**" />
     <Content Remove="wwwroot\node_modules\**" />
     <EmbeddedResource Remove="Pages\Placeholder\**" />
+    <EmbeddedResource Remove="wwwroot\lib\dash.js\**" />
     <EmbeddedResource Remove="wwwroot\lib\hls.js\**" />
     <EmbeddedResource Remove="wwwroot\node_modules\**" />
     <None Remove="Pages\Placeholder\**" />
+    <None Remove="wwwroot\lib\dash.js\**" />
     <None Remove="wwwroot\lib\hls.js\**" />
     <None Remove="wwwroot\node_modules\**" />
   </ItemGroup>

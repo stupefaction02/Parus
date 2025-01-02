@@ -37,6 +37,7 @@ using System.Text.Json.Serialization;
 
 namespace Parus.Backend.Controllers
 {
+    // TODO: Rename to UserController
     [ApiController]
     public class IdentityController : ParusController
     {
@@ -267,7 +268,7 @@ namespace Parus.Backend.Controllers
 
                 var response = new
                 {
-                    success = true,
+                    success = "true",
                     access_token = new { jwt = jwt.Token, expires = jwtExpires }, 
                     refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
                 };

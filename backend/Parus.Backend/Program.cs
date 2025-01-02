@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Parus.Backend
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -31,4 +31,6 @@ namespace Parus.Backend
                     webBuilder.UseStartup<Startup>();
                 });
     }
+
+    public partial class Program { }
 }

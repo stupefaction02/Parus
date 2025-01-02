@@ -83,7 +83,7 @@ namespace Parus.Backend
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
+            
             app.UseWebSockets();
 
             if (!env.IsEnvironment("Development_Localhost"))

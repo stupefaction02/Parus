@@ -12,7 +12,9 @@
 @section AdditionalScripts
 {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
-    <script src="lib/dash.js/dist/dash.all.min.js"></script>
+    @* <script src="lib/_dash.js/dist/dash.all.min.js"></script> *@
+    <script src="http://cdn.dashjs.org/latest/dash.all.debug.js"></script>
+
 
    @* <script src="~/../node_modules/hls.js/src/hls.js"></script>*@
 
@@ -58,61 +60,14 @@
             <div class="player_controls_left"></div>
         </div>
 
-        <video id="video" class="player_video" muted="muted" controls />
+        @* preload - Loading video along with page *@
+        <video id="video" preload="auto" autoplay="" class="player_video" muted="muted" controls="true" />
     </div>
 </div>
 <div class="chat">
     <div class="chat_messages_container">
         <div id="messages" class="chat_messages" style="min-height: 100%;">
-            @*<div class="chat_message">
-                <span style="color: red" class="message_sender">Flash_Dancer</span><p class="message_body">: Сижу сейчас, попиваю мультиягодный смузи за 700 EUR , на улице стоит моя Bugatti Veyron Grand Sport за 1.7 млн $, ах забыл, нахожусь я в городе Палермо , Италия в вилле за 30 000 000 евро, Скоро мой шеф повар приготовит Florentiniс pizza c золотой стружкой за 1400 EUR и порцию элитных мандаришек с финиками за 300 EUR, но на сабку не хватило, подарите</p>
-            </div>*@
-            @*<div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-            <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-    <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red"  class="message_sender"></span><p class="message_body"></p>
-            </div>
-            <div class="chat_message" style="height: 0px !important;">
-                <span style="color: red" class="message_sender"></span><p class="message_body"></p>
-            </div>
-*@
+            
         </div>
     </div>
     <div class="chat_controls">
