@@ -1,21 +1,16 @@
-
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Parus.Infrastructure.DLA;
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
 using Parus.Backend.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
+using Parus.Core;
 
-namespace Identity
+namespace Parus.API.Tests
 {
     public class Configuration
     {
@@ -23,12 +18,12 @@ namespace Identity
         public const string ApiHttpUrl = "http://127.0.1.1:39000";
     }
 
-    public class DatabaseSeeder
+    public class ParusDbContextSeeder
     {
         private ParusDbContext _context;
         private readonly ServiceProvider serviceProvider;
 
-        public DatabaseSeeder(ServiceProvider serviceProvider)
+        public ParusDbContextSeeder(ServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
         }
@@ -39,9 +34,6 @@ namespace Identity
             {
                 _context = serviceProvider.GetRequiredService<ParusDbContext>();
             }
-
-            var y1 = _context.Database.GetConnectionString();
-            var y = _context.Database.GetDbConnection();
 
             Purge(_context);
 
@@ -68,68 +60,6 @@ namespace Identity
         }
     }
 
-    public class BackendApiFactory : WebApplicationFactory<Parus.Backend.Program>
-    {
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
-        {
-            builder.UseTestServer();
-            // set ASPNETCORE_ENVIROMENT
-            builder.UseEnvironment("Development_Localhost");
-            
-            //builder.UseUrls(new string[1] { Configuration.ApiHttpUrl });
-
-            builder.ConfigureTestServices(services =>
-            {
-                var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<ParusDbContext>));
-                if (descriptor != null)
-                    services.Remove(descriptor);
-
-                services.AddDbContext<ParusDbContext>(opts => 
-                    opts.UseSqlServer(Configuration.DbConnectionString));
-
-                var serviceProvider = services.BuildServiceProvider();
-
-                services.AddSingleton<DatabaseSeeder>(new DatabaseSeeder(serviceProvider));
-            });
-
-            base.ConfigureWebHost(builder);
-            return;
-
-            builder.Configure(app => 
-            {
-                var seeder = app.ApplicationServices.GetService<DatabaseSeeder>();
-
-                if (seeder == null)
-                {
-                    throw new NullReferenceException();
-                }
-
-                app.UseRouting();
-
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-
-                    endpoints.MapGet("/helloworld", async (HttpContext ctx) =>
-                    {
-                        ctx.Response.ContentType = "application/json";
-                        await ctx.Response.WriteAsJsonAsync(new { success = "true", message = "Hello World!" });
-                    });
-                });
-
-            });
-        }
-    }
-
-    public class ApiResponseJson
-    {
-        [JsonPropertyName("message")]
-        public string Message { get; set; }
-
-        [JsonPropertyName("success")]
-        public string Success { get; set; }
-    }
-
     public class BackendApiTestsFixture : IDisposable
     {
         private BackendApiFactory factory = new();
@@ -151,9 +81,19 @@ namespace Identity
             Client.Dispose();
         }
 
+        private ParusDbContext database;
+
+        public ParusDbContext Database
+        {
+            get
+            { 
+                return database ?? (database = Scope.ServiceProvider.GetRequiredService<ParusDbContext>()); 
+            }
+        }
+
         public void ResetDatabase()
         {
-            DatabaseSeeder db = Scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+            ParusDbContextSeeder db = Scope.ServiceProvider.GetRequiredService<ParusDbContextSeeder>();
 
             db.PurgeAndSeed();
         }
@@ -186,6 +126,35 @@ namespace Identity
 
         [Fact]
         public async Task Register_User()
+        {
+            _fixture.ResetDatabase();
+
+            // Arrange
+            string a = Guid.NewGuid().ToString().Substring(0, 8);
+            string username = "test_ivan73_" + a;
+            string email = "testivan73" + a + "@gmail.com";
+            string password = "zx1";
+
+            // Action
+            string url = usersApiPath + $"/register?username={username}&email={email}&password={password}&gender=1";
+
+            var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
+
+            // Validation
+            Assert.True(response.IsSuccessStatusCode);
+            Assert.NotNull(response.Content);
+
+            var responseJson = await response.FromJsonAsync<ApiResponseJson>();
+
+            Assert.True(responseJson.Success == "true");
+
+            var newUser = _fixture.Database.Users.SingleOrDefaultAsync(x => x.UserName == username);
+
+            Assert.NotNull(newUser);
+        }
+
+        [Fact]
+        public async Task Change_Password()
         {
             _fixture.ResetDatabase();
 

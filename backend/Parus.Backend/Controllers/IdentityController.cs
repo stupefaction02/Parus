@@ -39,7 +39,7 @@ namespace Parus.Backend.Controllers
 {
     // TODO: Rename to UserController
     [ApiController]
-    public class IdentityController : ParusController
+    public partial class IdentityController : ParusController
     {
         public new ClaimsPrincipal User
         {
@@ -55,11 +55,15 @@ namespace Parus.Backend.Controllers
 
         private readonly ILogger<IdentityController> logger;
         private readonly IHostEnvironment environment;
+        private readonly ParusUserIdentityService identityService;
 
-        public IdentityController(ILogger<IdentityController> logger, IHostEnvironment environment)
+        public IdentityController(ILogger<IdentityController> logger, 
+            IHostEnvironment environment, 
+            ParusUserIdentityService identityService)
         {
             this.logger = logger;
             this.environment = environment;
+            this.identityService = identityService;
         }
 
         #region Testing
@@ -81,18 +85,6 @@ namespace Parus.Backend.Controllers
             return Json(userRepository.Users);
         }
 
-        private string GetJWT(string username)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, username)
-            };
-
-            ClaimsIdentity identity = new ClaimsIdentity(claims);
-
-            return CreateJWT(identity).Token;
-        }
-
         [HttpGet]
         [Route("api/test/userslimited")]
         public object UsersLimited(IUserRepository userRepository)
@@ -106,7 +98,7 @@ namespace Parus.Backend.Controllers
                     username = usr.UserName, 
                     email = usr.Email, 
                     emailConfirmed = usr.EmailConfirmed,
-                    jwt = GetJWT(usr.UserName)
+                    jwt = GenerateJwtForUser(usr.UserName)
                 };
             }));
         }
@@ -127,12 +119,12 @@ namespace Parus.Backend.Controllers
             DateTime now = DateTime.UtcNow;
 
             JwtSecurityToken jwt = new JwtSecurityToken(
-                    issuer: JwtAuthOptions.ISSUER,
-                    audience: JwtAuthOptions.AUDIENCE,
+                    issuer: JwtAuthOptions1.ISSUER,
+                    audience: JwtAuthOptions1.AUDIENCE,
                     //notBefore: now,
                     claims: claims,
                     expires: now.Add(new TimeSpan(168, 0, 0, 0)),
-                    signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+                    signingCredentials: new SigningCredentials(JwtAuthOptions1.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
             var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
@@ -222,83 +214,29 @@ namespace Parus.Backend.Controllers
         // TODO: reconsider gender enum type as something with less size
         [HttpPost]
         [Route("api/account/register")]
-		public async Task<object> Register(
-            string username, 
-            string email,
-            string password, 
-            Gender gender, 
-            RegisterType registerType,
-            [FromServices] UserManager<ParusUser> userManager,
-            IUserRepository userRepository, 
-            ParusDbContext identityDbContext)
+		public async Task<object> Register(string username, string email, string password, Gender gender)
 		{
-			logger.LogInformation($"User to register: {email}. Register type: {registerType}");
-            
-            var user = new ParusUser
+            // TODO: Add here a proper json binding. Js side have to send json too
+            // the parameters must be dto
+            var dto = new ParusUserRegistrationJsonDTO
             {
-                UserName = username,
-                Email = email
+                Username = username,
+                Email = email,
+                Password = password,
+                Gender = gender
             };
 
-            var created = userManager.CreateAsync(user, password).GetAwaiter().GetResult();
+            var res = await identityService.RegiserAsync(dto);
 
-            if (created.Succeeded)
-            {
-                var createdUsr = userRepository.FindUserByUsername(username);
-                logger.LogInformation(createdUsr.GetUsername());
-
-                List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
-                };
-
-                ClaimsIdentity identity = new ClaimsIdentity(claims);
-
-                JwtToken jwt = CreateJWT(identity);
-                // TODO: checks if token is already created
-                string fingerPrint = HttpContext.Request.Headers.UserAgent;
-                RefreshSession refreshSession = RefreshSession.CreateDefault(fingerPrint, user);
-
-                await identityDbContext.RefreshSessions.AddAsync(refreshSession);
-
-                logger.LogInformation("User registered.");
-
-                // jwt expires timestamp
-                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(DateTime.Now.Add( JwtAuthOptions.Lifetime));
-
-                var response = new
-                {
-                    success = "true",
-                    access_token = new { jwt = jwt.Token, expires = jwtExpires }, 
-                    refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
-                };
-
-                await identityDbContext.SaveChangesAsync();
-
-                return Json(response);
-			}
-            else
-            {
-                string errors = "\t" + Environment.NewLine;
-                foreach (var e in created.Errors)
-                {
-                    errors += e.Description + Environment.NewLine;
-                }
-
-                string err = $"Unable to create user: {user}. Errors: {errors}";
-
-				logger.LogError(err);
-
-                return Json(CreateJsonError(err));
-            }
-		}
+            HttpContext.Response.StatusCode = res.StatusCode;
+            return Json(res.JsonResponse);
+        }
         
         private object CreateJsonError(string message)
 		{
             return new { success = "N", message = message };
 		}
 
-        private Dictionary<string, int> confirmatonsTable = new Dictionary<string, int>();
         private Random random = new Random();
         private ClaimsPrincipal user;
 
@@ -614,7 +552,7 @@ namespace Parus.Backend.Controllers
             };
             string jwt = CreateJWT(user.GetUsername(), claims).Token;
 
-            Console.WriteLine($"RefreshSession was updated. User: {user.UserName} , Token: {lastRs.Token}. Access Token lifetime: {JwtAuthOptions.LIFETIME} minutes");
+            Console.WriteLine($"RefreshSession was updated. User: {user.UserName} , Token: {lastRs.Token}. Access Token lifetime: {JwtAuthOptions1.LIFETIME} minutes");
 
             HttpContext.Response.Headers.Append("Set-Cookie", $"refreshToken='{lastRs.Token}';");
 
@@ -704,12 +642,6 @@ namespace Parus.Backend.Controllers
             LogInfo_Debug($"Password of {user} has been changed.");
 
             return Json(new { success = "true" });
-        }
-
-        public enum RegisterType : sbyte
-        {
-            ViewerUser = 2,
-            BroadcastUser = 1
         }
     }
 }

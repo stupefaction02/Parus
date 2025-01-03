@@ -17,7 +17,7 @@ using Parus.Infrastructure.Identity;
 namespace Parus.Backend.Controllers
 {
 	[ApiController]
-	public class TestController : Controller
+	public class TestController : ParusController
 	{
         #region Testing
 
@@ -377,6 +377,50 @@ namespace Parus.Backend.Controllers
             {
                 success = true
             };
+        }
+
+		/// <summary>
+		/// Get special users used on pluto server, e.g. imitate highload on chat module
+		/// </summary>
+		/// <param name="userRepository"></param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("api/test/seedplutousers")]
+		public object SeedPlutoUsers([FromServices] ParusUserIdentityService identityService)
+		{
+
+
+			return 1;
+		}
+
+		/// <summary>
+		/// Get special users used on pluto server, e.g. imitate highload on chat module
+		/// </summary>
+		/// <param name="userRepository"></param>
+		/// <returns></returns>
+        [HttpGet]
+        [Route("api/test/plutousers")]
+        public object PlutoUsers(IUserRepository userRepository)
+        {
+            return Json(
+				userRepository
+				.Users
+				.Where(x => x.GetUsername()
+				.StartsWith("Pluto_"))
+				.Select(x =>
+				{
+					ParusUser usr = (ParusUser)x;
+
+					return new
+					{
+						id = usr.Id,
+						username = usr.UserName,
+						email = usr.Email,
+						emailConfirmed = usr.EmailConfirmed,
+						jwt = GenerateJwtForUser(usr.UserName)
+					};
+				})
+			);
         }
     }
 }

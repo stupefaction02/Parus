@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
 
 namespace Parus.Backend.Controllers
 {
@@ -56,12 +57,12 @@ namespace Parus.Backend.Controllers
 			DateTime now = DateTime.UtcNow;
 
 			JwtSecurityToken jwt = new JwtSecurityToken(
-					issuer: JwtAuthOptions.ISSUER,
-					audience: JwtAuthOptions.AUDIENCE,
+					issuer: JwtAuthOptions1.ISSUER,
+					audience: JwtAuthOptions1.AUDIENCE,
 					notBefore: now,
 					claims: user.Claims,
-					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions.LIFETIME)),
-					signingCredentials: new SigningCredentials(JwtAuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
+					expires: now.Add(TimeSpan.FromMinutes(JwtAuthOptions1.LIFETIME)),
+					signingCredentials: new SigningCredentials(JwtAuthOptions1.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
             string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             //logger.LogInformation(encodedJwt);
@@ -85,7 +86,7 @@ namespace Parus.Backend.Controllers
             return new ClaimsIdentity(claims);
         }
 
-        // TODO: I don't know... instead of method make a service or something 
+        // TODO: I don't know... instead of method, make a service or something 
         protected async Task<JsonResult> LoginResponse(ParusUser appUser)
         {
             ClaimsIdentity identity = await CreateIdentityAsync(appUser);
@@ -130,6 +131,18 @@ namespace Parus.Backend.Controllers
                 payload = newToken.Token,
                 refreshToken = updateRT.Entity.Token
             });
+        }
+
+        protected string GenerateJwtForUser(string username)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, username)
+            };
+
+            ClaimsIdentity identity = new ClaimsIdentity(claims);
+
+            return CreateJWT(identity).Token;
         }
     }
 

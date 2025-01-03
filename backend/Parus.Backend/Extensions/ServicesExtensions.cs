@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using Parus.Core.Services.MessageQueue;
 using Microsoft.CodeAnalysis;
+using Parus.Infrastructure.Services;
 
 
 namespace Parus.Backend.Extensions
@@ -115,7 +116,7 @@ namespace Parus.Backend.Extensions
 
         public static void AddMail(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IEmailService, MailKitEmailService>();
+            services.AddSingleton<IEmailService, ParusMailKitEmailService>();
             services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         }
 
@@ -136,14 +137,8 @@ namespace Parus.Backend.Extensions
             //services.AddSingleton<RabbitMQMailProducer>(instance);
         }
 
-
-        public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
-		{
-            string key = configuration["Authentication:JWT:SecretKey"];
-            
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                    .AddJwtBearer(AddJwtBearer);
-
+        public static void AddRefreshTokens(this IServiceCollection services, IConfiguration configuration)
+        {
             int refreshSessionLifetime;
             if (Int32.TryParse(
                 configuration["Authentication:RefreshSession:LifeTime"],
@@ -156,6 +151,14 @@ namespace Parus.Backend.Extensions
             {
                 RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
             }
+        }
+
+        public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+		{
+            string key = configuration["Authentication:JWT:SecretKey"];
+            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(AddJwtBearer);
 
             int accessTokenLifetime;
             if (Int32.TryParse(
@@ -163,12 +166,15 @@ namespace Parus.Backend.Extensions
                 out accessTokenLifetime
             ))
             {
-                JwtAuthOptions.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
+                JwtAuthOptions1.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
             }
             else
             {
-                JwtAuthOptions.Lifetime = new TimeSpan(0, 15, 0);
+                JwtAuthOptions1.Lifetime = new TimeSpan(0, 15, 0);
             }
+
+            var authSection = configuration.GetSection("Authentication:JWT");
+            services.Configure<JwtAuthOptions>(authSection);
 
             void AddJwtBearer(JwtBearerOptions options)
             {

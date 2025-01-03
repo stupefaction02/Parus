@@ -7,7 +7,7 @@ namespace Parus.Core
 {
 
 	[Serializable]
-	public class JwtToken
+	public class JwtTokenJsonDTO
 	{
 		[JsonPropertyName("access_token")]
 		public string AccessToken { get; set; }

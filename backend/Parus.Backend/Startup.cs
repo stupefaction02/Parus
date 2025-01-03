@@ -18,6 +18,7 @@ using Parus.Core.Interfaces.Services;
 using Parus.Core.Services;
 using Parus.API.Services;
 using System.Collections.Concurrent;
+using Parus.Backend.Controllers;
 
 namespace Parus.Backend
 {
@@ -56,7 +57,7 @@ namespace Parus.Backend
             {
                 services.AddMail(Configuration);
             } 
-            else if (env.IsEnvironment("Development"))
+            else if (env.IsEnvironment("Development_Localhost"))
             {
                 services.AddSingleton<IEmailService, DummyEmailService>();
             }
@@ -70,6 +71,7 @@ namespace Parus.Backend
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
             services.AddSingleton<SharedChatAuthenticatedUsers>();
+            services.AddSingleton<ParusUserIdentityService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -88,7 +90,7 @@ namespace Parus.Backend
 
             if (!env.IsEnvironment("Development_Localhost"))
             {
-                app.UseHttpsRedirection();
+                //app.UseHttpsRedirection();
             }
             
             app.UseRouting();

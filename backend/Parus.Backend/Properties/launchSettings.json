@@ -9,10 +9,10 @@
     "Development": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Stage"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "Description": "For accessing from internet",
-      "applicationUrl": "https://192.168.100.11:39000;http://192.168.100.11:39000"
+      "applicationUrl": "https://192.168.100.11:38000;http://192.168.100.11:39000"
     },
     "Development.Localhost": {
       "commandName": "Project",

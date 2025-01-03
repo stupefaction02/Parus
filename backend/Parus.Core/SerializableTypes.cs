@@ -53,5 +53,8 @@ namespace Parus.Core
     {
         [JsonPropertyName("success")]
         public string Success { get; set; }
+
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
     }
 }
