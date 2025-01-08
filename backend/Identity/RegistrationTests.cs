@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Net.Http.Json;
 using Parus.Core;
+using Parus.Core.Identity;
+using Parus.Infrastructure.Identity;
+using Parus.Infrastructure.Extensions;
 
 namespace Parus.API.Tests
 {
@@ -25,8 +28,6 @@ namespace Parus.API.Tests
         [Fact]
         public async Task Seed_Database()
         {
-            _fixture.ResetDatabase();
-
             Action addUserWhoWantsChangeHisPasswordVeryBadly01 = new Action(async () => {
                 string username = "UserWhoWantsChangeHisPasswordVeryBadly01";
                 string email = "UserWhoWantsChangeHisPasswordVeryBadly01@gmail.com".ToLower();
@@ -37,9 +38,42 @@ namespace Parus.API.Tests
                 var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
             });
 
-            addUserWhoWantsChangeHisPasswordVeryBadly01.Invoke();
+            //Task addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne = Task.Run(async () => {
+                
+            //});
 
-            _fixture.AddSeederActions(addUserWhoWantsChangeHisPasswordVeryBadly01);
+            try
+            {
+                //addUserWhoWantsChangeHisPasswordVeryBadly01.Invoke();
+                //await addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne;
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            await addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne();
+
+            async Task addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne()
+            {
+                string username = "addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne";
+                string email = $"{username}@gmail.com".ToLower();
+                string oldPassword = "zx1";
+
+                string url = usersApiPath + $"/register?username={username}&email={email}&password={oldPassword}&gender=1";
+
+                var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
+
+                var newUser = await _fixture.Database.Users.SingleOrDefaultAsync(x => x.UserName == username);
+                Assert.NotNull(newUser);
+
+                _fixture.Seeder.InMemoryTestUser["addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne"] = newUser;
+            }
+
+            _fixture.AddSeederActions(new Action<Task>(addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne));
+            //_fixture.AddSeederActions(addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne);
+
+            _fixture.ResetDatabase();
         }
 
         [Fact]
@@ -111,16 +145,14 @@ namespace Parus.API.Tests
         }
 
         [Fact]
-        public async Task Login_With_RefreshToken_Fail_And_Request_Another_AccessToken()
+        public async Task Try_To_Login_With_Expire_AccessToken_Fail_And_Request_Another_One()
         {
-            _fixture.ResetDatabase();
+            //_fixture.ResetDatabase();
 
-            string a = Guid.NewGuid().ToString().Substring(0, 8);
-            string username = "test_ivan73_" + a;
-            string email = "testivan73" + a + "@gmail.com";
-            string password = "zx1";
+            var ourUser = _fixture.Seeder.InMemoryTestUser["addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne"];
+            string expiredJwtToken = CreateExpiredJwtToken(ourUser);
 
-            string url = usersApiPath + $"/register?username={username}&email={email}&password={password}&gender=1";
+            string url = usersApiPath + $"/login?username={ourUser.UserName}&password=zx12";
 
             var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
 
@@ -130,6 +162,19 @@ namespace Parus.API.Tests
             var responseJson = await response.FromJsonAsync<ApiResponseJson>();
 
             Assert.True(responseJson.Success == "true");
+        }
+
+        private string CreateExpiredJwtToken(ParusUser ourUser)
+        {
+            var options = new JwtAuthOptions
+            {
+                Audience = "AMOGUS",
+                Issuer = "AMOGUS",
+                SecretKey = "AMOGUS",
+                LifetimeMinutes = -100
+            };
+
+            return ourUser.JwtTokenFromUser(options).Token;
         }
     }
 

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Parus.Core;
 using Parus.Core.Authentication;
+using Parus.Core.Identity;
 using Parus.Infrastructure.Identity;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,42 +11,7 @@ using System.Text;
 
 namespace Parus.Backend.Authentication
 {
-	public class JwtAuthOptions
-	{
-        public string SecretKey { get; set; } = "<!{_Secr-<>-etKey!{_>";
-
-        public string Issuer { get; set; }
-
-        public string Audience { get; set; }
-
-        public int LifetimeMinutes { get; set; } 
-    }
-
-	public static class JwtAuthUtils
-	{
-		public static JwtToken One(ClaimsIdentity user, JwtAuthOptions options)
-        {
-            DateTime now = DateTime.UtcNow;
-
-            // options.PrivateKey is "" by default, so no null exceptions here
-            var securityKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(options.SecretKey));
-
-            JwtSecurityToken jwt = new JwtSecurityToken(
-                    issuer: options.Issuer,
-                    audience: options.Audience,
-                    notBefore: now,
-                    claims: user.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(options.LifetimeMinutes)),
-                    signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256));
-            string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
-            return new JwtToken
-            {
-                Token = encodedJwt,
-                Username = user.Name
-            };
-        }
-	}
+	
 
     public class JwtAuthOptions1
 	{

@@ -14,6 +14,8 @@ using Parus.Core.Authentication;
 using Org.BouncyCastle.Ocsp;
 using static Parus.Backend.Controllers.IdentityController;
 using Microsoft.Extensions.Options;
+using Parus.Core.Identity;
+using Parus.Infrastructure.Extensions;
 
 namespace Parus.Backend.Controllers
 {
@@ -74,17 +76,19 @@ namespace Parus.Backend.Controllers
 
             if (created.Succeeded)
             {
-                var createdUsr = userRepository.FindUserByUsername(model.Username);
+                ParusUser createdUsr = (ParusUser)userRepository.FindUserByUsername(model.Username);
                 logger.LogInformation(createdUsr.GetUsername());
 
-                List<Claim> claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
-                };
+                //List<Claim> claims = new List<Claim>
+                //{
+                //    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
+                //};
 
-                ClaimsIdentity identity = new ClaimsIdentity(claims);
+                JwtToken jwt = createdUsr.JwtTokenFromUser(authOptions.Value);
 
-                JwtToken jwt = JwtAuthUtils.One(identity, authOptions.Value);
+                //ClaimsIdentity identity = new ClaimsIdentity(claims);
+
+                //JwtToken jwt = JwtAuthUtils.CreateDefault(identity, authOptions.Value);
                 // TODO: checks if token is already created
                 string fingerPrint = HttpContext.Request.Headers.UserAgent;
                 RefreshSession refreshSession = RefreshSession.CreateDefault(fingerPrint, user);
@@ -108,7 +112,7 @@ namespace Parus.Backend.Controllers
                 return new ParusUserIdentityServiceResult
                 {
                     JsonResponse = jsonResponse,
-                    RegisteredUsers = new ParusUser[1] { (ParusUser)createdUsr },
+                    RegisteredUsers = new ParusUser[1] { createdUsr },
                     StatusCode = StatusCodes.Status200OK
                 };
             }

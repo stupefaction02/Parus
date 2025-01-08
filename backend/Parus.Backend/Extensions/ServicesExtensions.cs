@@ -20,6 +20,7 @@ using System.Diagnostics;
 using Parus.Core.Services.MessageQueue;
 using Microsoft.CodeAnalysis;
 using Parus.Infrastructure.Services;
+using Parus.Core.Identity;
 
 
 namespace Parus.Backend.Extensions
@@ -189,7 +190,7 @@ namespace Parus.Backend.Extensions
 
                     ValidAudience = configuration["Authentication:JWT:ValidAudience"],
                     ValidateLifetime = true,
-
+                    
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(key)),
 
                     ValidateIssuerSigningKey = true,

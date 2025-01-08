@@ -5,8 +5,19 @@ using System.Text;
 
 namespace Parus.Core.Identity
 {
-    // TODO: Set up from configs
     public class JwtAuthOptions
+    {
+        public string SecretKey { get; set; } = "<!{_Secr-<>-etKey!{_>";
+
+        public string Issuer { get; set; }
+
+        public string Audience { get; set; }
+
+        public int LifetimeMinutes { get; set; }
+    }
+
+    // TODO: Set up from configs
+    public class JwtAuthOptions2
     {
         public const string ISSUER = "https://localhost:5002";
         public const string AUDIENCE = "https://localhost:5002";

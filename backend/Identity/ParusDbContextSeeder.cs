@@ -2,15 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Parus.API.Tests
 {
     public class ParusDbContextSeeder
     {
+        public Dictionary<string, ParusUser> InMemoryTestUser = new();
+
         private ParusDbContext _context;
         private readonly ServiceProvider serviceProvider;
 
-        public List<Action> SeedActions { get; internal set; } = new();
+        public List<Action<Task>> SeedActions { get; internal set; } = new();
 
         public ParusDbContextSeeder(ServiceProvider serviceProvider)
         {

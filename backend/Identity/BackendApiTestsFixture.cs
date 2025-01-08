@@ -51,7 +51,7 @@ namespace Parus.API.Tests
             seeder.PurgeAndSeed();
         }
 
-        public void AddSeederActions(Action action)
+        public void AddSeederActions(Action<Task> action)
         {
             Seeder.SeedActions.Add(action);
         }
