@@ -621,7 +621,7 @@ namespace Parus.Backend.Controllers
                 return EditPasswordCore(user.GetUsername(), newPassword, passwordHasher, users);
             }
 
-            return Unauthorized(new { message = "Token is outdated" });
+            return Unauthorized(new { message = "Token is outdated." });
         }
 
         private JsonResult EditPasswordCore(string username, string newPassword, IPasswordHasher<ParusUser> passwordHasher, IUserRepository users)

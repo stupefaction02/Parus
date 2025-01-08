@@ -1,7 +1,5 @@
-using Microsoft.Extensions.DependencyInjection;
 using Parus.Infrastructure.DLA;
 using Microsoft.EntityFrameworkCore;
-using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Parus.Backend.Controllers;
 using Microsoft.Extensions.Configuration;
@@ -12,101 +10,36 @@ using Parus.Core;
 
 namespace Parus.API.Tests
 {
-    public class Configuration
-    {
-        public const string DbConnectionString = "Data Source=192.168.100.11;Database=Parus.tests;User ID=ivan_admin;Password=zx12;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
-        public const string ApiHttpUrl = "http://127.0.1.1:39000";
-    }
 
-    public class ParusDbContextSeeder
-    {
-        private ParusDbContext _context;
-        private readonly ServiceProvider serviceProvider;
-
-        public ParusDbContextSeeder(ServiceProvider serviceProvider)
-        {
-            this.serviceProvider = serviceProvider;
-        }
-
-        public void PurgeAndSeed()
-        {
-            if (_context == null)
-            {
-                _context = serviceProvider.GetRequiredService<ParusDbContext>();
-            }
-
-            Purge(_context);
-
-            Seed(_context);
-            
-            _context.SaveChanges();
-        }
-
-        protected void Seed(ParusDbContext context)
-        {
-        }
-
-        protected void Purge(ParusDbContext context)
-        {
-            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[RefreshSessions]");
-            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[Broadcasts]");
-            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[dbo].[Broadcasters]");
-            context.Database.ExecuteSqlRaw($"DELETE FROM [Parus.tests].[Identity].[AspNetUsers]");
-        }
-
-        public void Purge()
-        {
-
-        }
-    }
-
-    public class BackendApiTestsFixture : IDisposable
-    {
-        private BackendApiFactory factory = new();
-
-        // Setup
-        public BackendApiTestsFixture()
-        {
-            Scope = factory.Services.CreateScope();
-            Client = factory.CreateClient();
-        }
-
-        public IServiceScope Scope { get; }
-        public HttpClient Client { get; private set; }
-
-        // Teardown
-        public void Dispose()
-        {
-            Scope.Dispose();
-            Client.Dispose();
-        }
-
-        private ParusDbContext database;
-
-        public ParusDbContext Database
-        {
-            get
-            { 
-                return database ?? (database = Scope.ServiceProvider.GetRequiredService<ParusDbContext>()); 
-            }
-        }
-
-        public void ResetDatabase()
-        {
-            ParusDbContextSeeder db = Scope.ServiceProvider.GetRequiredService<ParusDbContextSeeder>();
-
-            db.PurgeAndSeed();
-        }
-    }
-
-    public class Registration : IClassFixture<BackendApiTestsFixture>
+    public class RegistrationTests : IClassFixture<BackendApiTestsFixture>
     {
         private readonly string usersApiPath = "api/account";
         private readonly BackendApiTestsFixture _fixture;
 
-        public Registration(BackendApiTestsFixture fixture)
+        public RegistrationTests(BackendApiTestsFixture fixture)
         {
             _fixture = fixture;
+        }
+
+        // Form of seeding AND test at the same time :P
+        [Fact]
+        public async Task Seed_Database()
+        {
+            _fixture.ResetDatabase();
+
+            Action addUserWhoWantsChangeHisPasswordVeryBadly01 = new Action(async () => {
+                string username = "UserWhoWantsChangeHisPasswordVeryBadly01";
+                string email = "UserWhoWantsChangeHisPasswordVeryBadly01@gmail.com".ToLower();
+                string oldPassword = "zx1";
+
+                string url = usersApiPath + $"/register?username={username}&email={email}&password={oldPassword}&gender=1";
+
+                var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
+            });
+
+            addUserWhoWantsChangeHisPasswordVeryBadly01.Invoke();
+
+            _fixture.AddSeederActions(addUserWhoWantsChangeHisPasswordVeryBadly01);
         }
 
         [Fact]
@@ -155,6 +88,30 @@ namespace Parus.API.Tests
 
         [Fact]
         public async Task Change_Password()
+        {
+            // Arangre
+            _fixture.ResetDatabase();
+
+            string username = "UserWhoWantsChangeHisPasswordVeryBadly01";
+            var userWhoWantsToChangePassword = _fixture.Database.Users.SingleOrDefault(x => x.UserName == username);
+
+            string newPassword = "zx12";
+
+            // Arangre
+            //string url = usersApiPath + $"/register?username={username}&email={email}&password={password}&gender=1";
+
+            //var response = await _fixture.Client.PostAsync(url, new StringContent("c"));
+
+            //Assert.True(response.IsSuccessStatusCode);
+            //Assert.NotNull(response.Content);
+
+            //var responseJson = await response.FromJsonAsync<ApiResponseJson>();
+
+            //Assert.True(responseJson.Success == "true");
+        }
+
+        [Fact]
+        public async Task Login_With_RefreshToken_Fail_And_Request_Another_AccessToken()
         {
             _fixture.ResetDatabase();
 
