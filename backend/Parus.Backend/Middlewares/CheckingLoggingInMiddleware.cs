@@ -122,7 +122,10 @@ namespace Parus.Backend.Middlewares
             }
             else
             {
-                string error = result.Failure.Message;
+                if (result.Failure != null)
+                {
+                    string error = result.Failure.Message;
+                }
                 //logger.LogError(error);
             }
         }

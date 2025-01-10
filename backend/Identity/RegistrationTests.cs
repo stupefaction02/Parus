@@ -70,7 +70,7 @@ namespace Parus.API.Tests
                 _fixture.Seeder.InMemoryTestUser["addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne"] = newUser;
             }
 
-            _fixture.AddSeederActions(new Action<Task>(addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne));
+            //_fixture.AddSeederActions(new Action<Task>(addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne));
             //_fixture.AddSeederActions(addUserWhoTriesToLoginWithExpiredAccessTokenFailAndRequestAnotherOne);
 
             _fixture.ResetDatabase();

@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using BenchmarkDotNet.Loggers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Parus.Backend.Services;
 using Parus.Core.Entities;
+using Parus.Core.Identity;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.Extensions;
 using Parus.Infrastructure.Identity;
+using static Parus.Backend.Controllers.IdentityController;
 
 namespace Parus.Backend.Controllers
 {
@@ -125,6 +132,14 @@ namespace Parus.Backend.Controllers
         [Route("api/hellojson")]
         public async Task<object> HelloJson()
         {
+            return Json(new { success = "true", message = "Hello World!" });
+        }
+
+        [HttpGet]
+        [Route("api/test/hellojson")]
+        public async Task<object> HelloJson1([FromServices] ILogger<TestController> logger)
+        {
+			logger.Log(LogLevel.Information, "Boobies!");
             return Json(new { success = "true", message = "Hello World!" });
         }
 
@@ -272,16 +287,18 @@ namespace Parus.Backend.Controllers
 
         [HttpGet]
         [Route("api/test/grantrole")]
-        public IActionResult GrantAdminRoles(string username, string role, [FromServices] IUserRepository users, [FromServices] UserManager<ParusUser> um)
+        public object GrantAdminRoles(string username, string role, [FromServices] IUserRepository users, [FromServices] UserManager<ParusUser> um)
         {
 			ParusUser usr = users.One(x => x.GetUsername() == username) as ParusUser;
 
 			if (usr != null)
 			{
 				um.AddToRoleAsync(usr, role);
+
+				return new { success = true };
 			}
 
-            return null;    
+            return new { success = false };
         }
 
         [HttpGet]
@@ -379,6 +396,25 @@ namespace Parus.Backend.Controllers
             };
         }
 
+		[HttpGet]
+		[Route("api/test/registerdeveloperuser")]
+		public async Task<object> RegisterDevelopers([FromServices] ParusUserIdentityService identityService)
+		{
+            var random = new Random();
+            var username = "deveoper_" + random.Next(0, 10000) + "_" + Guid.NewGuid().ToString().Substring(0, 3);
+            var usr = new ParusUserRegistrationJsonDTO
+            {
+                Username = username,
+                Email = $"{username}@mail.ru",
+                Password = "zx1",
+                Gender = Gender.Male
+            };
+
+            var a = await identityService.RegiserAsync(usr, new string[1] { "Developer" });
+
+			return Json(a.JsonResponse);
+        }
+
 		/// <summary>
 		/// Get special users used on pluto server, e.g. imitate highload on chat module
 		/// </summary>
@@ -386,11 +422,33 @@ namespace Parus.Backend.Controllers
 		/// <returns></returns>
 		[HttpGet]
 		[Route("api/test/seedplutousers")]
-		public object SeedPlutoUsers([FromServices] ParusUserIdentityService identityService)
+		public async Task<object> SeedPlutoUsers([FromServices] ParusUserIdentityService identityService)
 		{
+			var random = new Random();
+			int count = 0;
+			for (int i = 0; i < 10; i++)
+			{
+				var username = "PlutoUser_" + random.Next(0, 10000) + "_" + Guid.NewGuid().ToString().Substring(0, 3);
 
+                var usr = new ParusUserRegistrationJsonDTO
+				{
+					Username = username,
+					Email = $"{username}@mail.ru",
+					Password = "zx1",
+					Gender = Gender.Male
+                };
 
-			return 1;
+                var result = await identityService.RegiserAsync(usr, new string[1] { "TestUsers.Pluto" });
+
+				if (result.StatusCode == (int)HttpStatusCode.OK && result.RegisteredUsers != null)
+				{
+                    count++;
+
+                    Console.WriteLine($"SeedPlutoUsers: registered user {result.RegisteredUsers.ToArray()[0].UserName}");
+				}
+            }
+
+            return new { success = "true", users = count };
 		}
 
 		/// <summary>
@@ -400,27 +458,26 @@ namespace Parus.Backend.Controllers
 		/// <returns></returns>
         [HttpGet]
         [Route("api/test/plutousers")]
-        public object PlutoUsers(IUserRepository userRepository)
+        public async Task<object> PlutoUsers(
+			[FromServices] IOptions<JwtAuthOptions> authOptions,
+            [FromServices] UserManager<ParusUser> userManager)
         {
-            return Json(
-				userRepository
-				.Users
-				.Where(x => x.GetUsername()
-				.StartsWith("Pluto_"))
-				.Select(x =>
-				{
-					ParusUser usr = (ParusUser)x;
+			var plutoUsers = await userManager.GetUsersInRoleAsync("TestUsers.Pluto");
 
-					return new
-					{
-						id = usr.Id,
-						username = usr.UserName,
-						email = usr.Email,
-						emailConfirmed = usr.EmailConfirmed,
-						jwt = GenerateJwtForUser(usr.UserName)
-					};
-				})
-			);
+			var plutoUsersRet = plutoUsers.Select(x => {
+                ParusUser usr = (ParusUser)x;
+
+                return new
+                {
+                    id = usr.Id,
+                    username = usr.UserName,
+                    email = usr.Email,
+                    emailConfirmed = usr.EmailConfirmed,
+                    jwt = usr.JwtTokenFromUser(authOptions.Value)
+                };
+            });
+
+            return new { success = "true", count = plutoUsers.Count, users = plutoUsersRet };
         }
     }
 }

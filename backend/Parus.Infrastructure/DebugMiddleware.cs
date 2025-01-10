@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Parus.Infrastructure.Identity;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace Parus.Backend.Middlewares
+namespace Parus.Infrastructure.Middlewares
 {
 	public class DebugMiddleware
     {
@@ -30,17 +30,17 @@ namespace Parus.Backend.Middlewares
             this.logger = logger;
         }
 
-        public Task Invoke(HttpContext httpContext)
-        {
+		public Task Invoke(HttpContext httpContext)
+		{
             ClaimsPrincipal user = httpContext.User;
-            bool authenticated = user.Identity.IsAuthenticated;
+			bool authenticated = user.Identity.IsAuthenticated;
 
             UserManager<ParusUser> userManager = default(UserManager<ParusUser>);
 
             string userInfo = "none";
             string rolesInfo = "none";
             if (user.Identity.IsAuthenticated)
-            {
+			{
                 userInfo = user.Identity.Name;
                 using (var scope = serviceProvider.CreateScope())
                 {
@@ -74,10 +74,10 @@ namespace Parus.Backend.Middlewares
 
             string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. {time}. Connection: {httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
 
-            Debug.WriteLine(info);
-            logger.LogInformation(info);
+			Debug.WriteLine(info);
+			logger.LogInformation(info);
 
-            return _next(httpContext);
-        }
+			return _next(httpContext);
+		}
     }
 }

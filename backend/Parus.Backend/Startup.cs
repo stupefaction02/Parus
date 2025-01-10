@@ -71,7 +71,7 @@ namespace Parus.Backend
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
             services.AddSingleton<SharedChatAuthenticatedUsers>();
-            services.AddSingleton<ParusUserIdentityService>();
+            services.AddScoped<ParusUserIdentityService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

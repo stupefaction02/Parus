@@ -64,7 +64,7 @@ namespace Parus.Backend.Controllers
             }
         }
 
-        public async Task<ParusUserIdentityServiceResult> RegiserAsync(ParusUserRegistrationJsonDTO model)
+        public async Task<ParusUserIdentityServiceResult> RegiserAsync(ParusUserRegistrationJsonDTO model, string[] roles = null)
         {
             ParusUser user = new ParusUser
             {
@@ -72,8 +72,8 @@ namespace Parus.Backend.Controllers
                 Email = model.Email
             };
 
-            var created = userManager.CreateAsync(user, model.Password).GetAwaiter().GetResult();
-
+            var created = await userManager.CreateAsync(user, model.Password);
+            
             if (created.Succeeded)
             {
                 ParusUser createdUsr = (ParusUser)userRepository.FindUserByUsername(model.Username);
@@ -95,10 +95,24 @@ namespace Parus.Backend.Controllers
 
                 await identityDbContext.RefreshSessions.AddAsync(refreshSession);
 
-                logger.LogInformation($"User {model.Username}:{model.Email} has been registered. JWT token: {jwt.Token}, RS token: {refreshSession.Token}");
-
                 // jwt expires timestamp
                 int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(DateTime.Now.Add(JwtAuthOptions1.Lifetime));
+
+                string logRoles = "no roles";
+                if (roles != null)
+                {
+                    foreach (var role in roles)
+                    {
+                        var rar = await userManager.AddToRoleAsync(createdUsr, role);
+
+                        if (rar.Succeeded)
+                        {
+                            logRoles += $"{role} ";
+                        }
+                    }
+                }
+
+                logger.LogInformation($"User {model.Username}:{model.Email} has been registered. JWT token: {jwt.Token}, RS token: {refreshSession.Token}, Roles: {logRoles.TrimEnd()}");
 
                 var jsonResponse = new
                 {
@@ -118,7 +132,7 @@ namespace Parus.Backend.Controllers
             }
             else
             {
-                string errors = "\t" + Environment.NewLine;
+                string errors = Environment.NewLine + "\t";
                 foreach (var e in created.Errors)
                 {
                     errors += e.Description + Environment.NewLine;

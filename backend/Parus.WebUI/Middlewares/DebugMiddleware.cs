@@ -79,6 +79,5 @@ namespace Parus.WebUI.Middlewares
 
 			return _next(httpContext);
 		}
-
     }
 }
