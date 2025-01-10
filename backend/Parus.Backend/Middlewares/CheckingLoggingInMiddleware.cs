@@ -63,14 +63,22 @@ namespace Parus.Backend.Middlewares
 			// If standart cookie authentcation has failed (generally due of abstance of login cookie)
 			if (!httpContext.User.Identity.IsAuthenticated)
 			{
+                var headers = httpContext.Request.Headers;
                 StringValues token;
-                if (!httpContext.Request.Headers.TryGetValue("Authorization", out token))
+                if (!headers.TryGetValue("Authorization", out token))
                 {
                     string jwtCoockie = httpContext.Request.Cookies["JWT"];
 
                     if (!String.IsNullOrEmpty(jwtCoockie))
                     {
-                        httpContext.Request.Headers.Add("Authorization", "Bearer " + jwtCoockie);
+                        if (headers.ContainsKey("Authorization"))
+                        {
+                            headers["Authorization"] = "Bearer " + jwtCoockie;
+                        }
+                        else
+                        {
+                            headers.Add("Authorization", "Bearer " + jwtCoockie);
+                        }
 
                         Authenticate(httpContext);
                     }
@@ -87,7 +95,14 @@ namespace Parus.Backend.Middlewares
 
                         if (!String.IsNullOrEmpty(jwtCoockie))
                         {
-                            httpContext.Request.Headers.Add("Authorization", "Bearer " + jwtCoockie);
+                            if (headers.ContainsKey("Authorization"))
+                            {
+                                headers["Authorization"] = "Bearer " + jwtCoockie;
+                            }
+                            else
+                            {
+                                headers.Add("Authorization", "Bearer " + jwtCoockie);
+                            }
 
                             Authenticate(httpContext);
                         }

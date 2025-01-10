@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Parus.WebUI.Middlewares;
+using Parus.Infrastructure.Middlewares;
 
 namespace Parus.WebUI.Extensions
 {

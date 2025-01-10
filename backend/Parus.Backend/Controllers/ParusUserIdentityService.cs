@@ -64,7 +64,7 @@ namespace Parus.Backend.Controllers
             }
         }
 
-        public async Task<ParusUserIdentityServiceResult> RegiserAsync(ParusUserRegistrationJsonDTO model, string[] roles = null)
+        public async Task<ParusUserIdentityServiceResult> RegisterAsync(ParusUserRegistrationJsonDTO model, string[] roles = null)
         {
             ParusUser user = new ParusUser
             {

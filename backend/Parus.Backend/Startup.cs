@@ -19,6 +19,7 @@ using Parus.Core.Services;
 using Parus.API.Services;
 using System.Collections.Concurrent;
 using Parus.Backend.Controllers;
+using Parus.Infrastructure.Middlewares;
 
 namespace Parus.Backend
 {

@@ -6,7 +6,6 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
-//using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -17,30 +16,30 @@ using static System.Formats.Asn1.AsnWriter;
 
 namespace Parus.Infrastructure.Middlewares
 {
-	public class DebugMiddleware
+    public class DebugMiddleware
     {
         private readonly RequestDelegate _next;
-		private readonly IServiceProvider serviceProvider;
+        private readonly IServiceProvider serviceProvider;
         private readonly ILogger<DebugMiddleware> logger;
 
         public DebugMiddleware(RequestDelegate next, IServiceProvider serviceProvider, ILogger<DebugMiddleware> logger)
         {
             _next = next;
-			this.serviceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider;
             this.logger = logger;
         }
 
-		public Task Invoke(HttpContext httpContext)
-		{
+        public async Task Invoke(HttpContext httpContext)
+        {
             ClaimsPrincipal user = httpContext.User;
-			bool authenticated = user.Identity.IsAuthenticated;
+            bool authenticated = user.Identity.IsAuthenticated;
 
             UserManager<ParusUser> userManager = default(UserManager<ParusUser>);
 
             string userInfo = "none";
             string rolesInfo = "none";
             if (user.Identity.IsAuthenticated)
-			{
+            {
                 userInfo = user.Identity.Name;
                 using (var scope = serviceProvider.CreateScope())
                 {
@@ -51,20 +50,21 @@ namespace Parus.Infrastructure.Middlewares
                         throw new Exception("UserManger is not set.");
                     }
 
-                    ParusUser user1 = Task.Run<ParusUser>
-                        (async () => await userManager.FindByNameAsync(user.Identity.Name)).Result;
+                    ParusUser parusUser = await userManager.FindByNameAsync(user.Identity.Name);
 
-                    if (user1 != null)
+                    if (user != null)
                     {
-                        IList<string> roles = Task.Run<IList<string>>
-                        (async () => await userManager.GetRolesAsync(user1)).Result;
+                        IList<string> roles = await userManager.GetRolesAsync(parusUser);
 
                         if (roles.Count > 0)
                         {
+                            rolesInfo = "";
                             foreach (var role in roles)
                             {
                                 rolesInfo += role + " ";
                             }
+
+                            rolesInfo.TrimEnd();
                         }
                     }
                 }
@@ -72,12 +72,12 @@ namespace Parus.Infrastructure.Middlewares
 
             string time = DateTime.UtcNow.ToString("HH:mm:ss");
 
-            string info = $"User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. {time}. Connection: {httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
+            string info = $"[{time}] User: {userInfo}, Authenticated: {authenticated}, Roles: {rolesInfo}. Path: {httpContext.Request.Path}. Connection: {httpContext.Connection.RemoteIpAddress}:{httpContext.Connection.RemotePort}";
 
-			Debug.WriteLine(info);
-			logger.LogInformation(info);
+            Debug.WriteLine(info);
+            logger.LogInformation(info);
 
-			return _next(httpContext);
-		}
+            await _next(httpContext);
+        }
     }
 }

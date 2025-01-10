@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using BenchmarkDotNet.Environments;
+using BenchmarkDotNet.Loggers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Diagnostics.Runtime;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using Parus.API;
 using Parus.API.Services;
@@ -24,13 +28,16 @@ namespace Parus.Backend.Services.Chat.SignalR
         private readonly IAuthenticationService authenticationService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUserRepository users;
+        private readonly ILogger<ChatHub> logger;
         private readonly SharedChatAuthenticatedUsers sharedAuthenticatedUsers;
 
         public ChatHub(IAuthenticationService authenticationService, 
             IHttpContextAccessor httpContextAccessor,
             IUserRepository users,
-            SharedChatAuthenticatedUsers sharedAuthenticatedUsers)
+            SharedChatAuthenticatedUsers sharedAuthenticatedUsers, 
+            ILogger<ChatHub> logger)
         {
+            this.logger = logger;
             this.authenticationService = authenticationService;
             this.httpContextAccessor = httpContextAccessor;
             this.users = users;
@@ -51,7 +58,7 @@ namespace Parus.Backend.Services.Chat.SignalR
             }
             
             string username = user.UserName;
-            Console.WriteLine($"ChatHub. {username} sent in chat {chatName} the message: \"{message}\"");
+            logger.LogInformation($"ChatHub. {username} sent in chat {chatName} the message: \"{message}\"");
             await Clients.Group(chatName).SendAsync("Receive", message, username, color);
         }
 
@@ -82,27 +89,35 @@ namespace Parus.Backend.Services.Chat.SignalR
 
             HttpContext context = Context.GetHttpContext() ?? httpContextAccessor.HttpContext;
 
+            string authValue = "";
             if (context.Request.Query.TryGetValue("access_token", out StringValues accessToken))
             {
-                string jwt = accessToken[0];
-
-                context.Request.Headers.Authorization = jwt;
-
-                var authResult = await authenticationService.AuthenticateAsync(context, JwtBearerDefaults.AuthenticationScheme);
-
-                if (authResult.Succeeded)
+                authValue = accessToken[0];
+            }
+            else if (context.Request.Headers.TryGetValue("Authorization", out StringValues token))
+            {
+                if (token.Count > 0)
                 {
-                    ParusUser connectedUser = users.One(x => x.GetUsername() == authResult.Principal.Identity.Name) as ParusUser;
-
-                    if (connectedUser != null)
-                    {
-                        sharedAuthenticatedUsers.Set(Context.ConnectionId, connectedUser);
-                        Console.WriteLine($"ChatHub. User with conn.id={Context.ConnectionId} and username={connectedUser.UserName} connected to the hub.");
-                    }
+                    authValue = token[0];
                 }
             }
 
-            Console.WriteLine($"ChatHub. User with conn.id={Context.ConnectionId} connected to the hub.");
+            context.Request.Headers.Authorization = authValue;
+
+            var authResult = await authenticationService.AuthenticateAsync(context, JwtBearerDefaults.AuthenticationScheme);
+
+            if (authResult.Succeeded)
+            {
+                ParusUser connectedUser = users.One(x => x.GetUsername() == authResult.Principal.Identity.Name) as ParusUser;
+
+                if (connectedUser != null)
+                {
+                    sharedAuthenticatedUsers.Set(Context.ConnectionId, connectedUser);
+                    logger.LogInformation($"ChatHub. User with conn.id={Context.ConnectionId} and username={connectedUser.UserName} connected to the hub.");
+                }
+            }
+
+            logger.LogInformation($"ChatHub. User with conn.id={Context.ConnectionId} connected to the hub.");
 
             await base.OnConnectedAsync();
         }
@@ -140,11 +155,11 @@ namespace Parus.Backend.Services.Chat.SignalR
             ParusUser connectedUser;
             if (sharedAuthenticatedUsers.TryGet(connString, out connectedUser))
             {
-                Console.WriteLine($"ChatHub. User conn.id={Context.ConnectionId}, username={connectedUser.UserName} has joined {chatName} group");
+                logger.LogInformation($"ChatHub. User conn.id={Context.ConnectionId}, username={connectedUser.UserName} has joined {chatName} group");
             } 
             else 
             {
-                Console.WriteLine($"ChatHub. User conn.id={Context.ConnectionId} has joined {chatName} group");
+                logger.LogInformation($"ChatHub. User conn.id={Context.ConnectionId} has joined {chatName} group");
             }
             
 #else

@@ -226,7 +226,7 @@ namespace Parus.Backend.Controllers
                 Gender = gender
             };
 
-            var res = await identityService.RegiserAsync(dto);
+            var res = await identityService.RegisterAsync(dto);
 
             HttpContext.Response.StatusCode = res.StatusCode;
             return Json(res.JsonResponse);

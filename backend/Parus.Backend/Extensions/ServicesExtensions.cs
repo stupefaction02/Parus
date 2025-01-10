@@ -55,11 +55,11 @@ namespace Parus.Backend.Extensions
                 Console.WriteLine($"Seting up connection string for {nameof(ParusDbContext)}");
 
                 options.UseSqlServer(configuration["ConnectionStrings:SQLServer"]);
-                options.EnableSensitiveDataLogging();
+                //options.EnableSensitiveDataLogging();
 
                 //options.LogTo(x => { Console.WriteLine(x); });
-                options.EnableDetailedErrors(true);
-                options.EnableSensitiveDataLogging(true);
+                //options.EnableDetailedErrors(true);
+                //options.EnableSensitiveDataLogging(true);
             }, ServiceLifetime.Transient);
         }
      

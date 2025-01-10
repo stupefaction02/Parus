@@ -26,11 +26,18 @@ namespace Parus.Backend
                     //config.AddJsonFile("appsettings.json");
                     config.AddJsonFile("shared.json");
                 })
+                .ConfigureLogging(loggerBuilder => {
+                    loggerBuilder.AddSimpleConsole(formaterOptions =>
+                    {
+                        formaterOptions.SingleLine = true;
+                    });
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
     }
 
+    // for test factory, don't delete
     public partial class Program { }
 }

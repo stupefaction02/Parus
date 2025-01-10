@@ -6,10 +6,10 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Development.Outer": {
+    "Development": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development_Outer"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "Description": "For accessing from internet",
       "applicationUrl": "https://192.168.100.11:443;http://192.168.100.11:80"

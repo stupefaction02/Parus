@@ -398,7 +398,8 @@ namespace Parus.Backend.Controllers
 
 		[HttpGet]
 		[Route("api/test/registerdeveloperuser")]
-		public async Task<object> RegisterDevelopers([FromServices] ParusUserIdentityService identityService)
+		public async Task<object> RegisterDevelopers([FromServices] ParusUserIdentityService identityService,
+			[FromServices] ParusDbContext users)
 		{
             var random = new Random();
             var username = "deveoper_" + random.Next(0, 10000) + "_" + Guid.NewGuid().ToString().Substring(0, 3);
@@ -410,17 +411,54 @@ namespace Parus.Backend.Controllers
                 Gender = Gender.Male
             };
 
-            var a = await identityService.RegiserAsync(usr, new string[1] { "Developer" });
+            var result = await identityService.RegisterAsync(usr, new string[1] { "Developer" });
 
-			return Json(a.JsonResponse);
+			foreach (var user in result.RegisteredUsers)
+			{
+				user.EmailConfirmed = true;
+				users.Update(user);
+            }
+
+			await users.SaveChangesAsync();
+
+            return Json(result.JsonResponse);
         }
 
-		/// <summary>
-		/// Get special users used on pluto server, e.g. imitate highload on chat module
-		/// </summary>
-		/// <param name="userRepository"></param>
-		/// <returns></returns>
-		[HttpGet]
+        [HttpGet]
+        [Route("api/test/registeruser")]
+        public async Task<object> RegisterUser(string username, 
+			[FromServices] ParusUserIdentityService identityService,
+            [FromServices] ParusDbContext users)
+        {
+            var usr = new ParusUserRegistrationJsonDTO
+            {
+                Username = username,
+                Email = $"{username}@mail.ru",
+                Password = "zx1",
+                Gender = Gender.Male
+            };
+
+            var result = await identityService.RegisterAsync(usr);
+
+			//if (resultюЫ)
+
+            foreach (var user in result.RegisteredUsers)
+            {
+                user.EmailConfirmed = true;
+                users.Update(user);
+            }
+
+            await users.SaveChangesAsync();
+
+            return Json(result.JsonResponse);
+        }
+
+        /// <summary>
+        /// Get special users used on pluto server, e.g. imitate highload on chat module
+        /// </summary>
+        /// <param name="userRepository"></param>
+        /// <returns></returns>
+        [HttpGet]
 		[Route("api/test/seedplutousers")]
 		public async Task<object> SeedPlutoUsers([FromServices] ParusUserIdentityService identityService)
 		{
@@ -438,7 +476,7 @@ namespace Parus.Backend.Controllers
 					Gender = Gender.Male
                 };
 
-                var result = await identityService.RegiserAsync(usr, new string[1] { "TestUsers.Pluto" });
+                var result = await identityService.RegisterAsync(usr, new string[1] { "TestUsers.Pluto" });
 
 				if (result.StatusCode == (int)HttpStatusCode.OK && result.RegisteredUsers != null)
 				{
