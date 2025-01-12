@@ -12,17 +12,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
+using Microsoft.IdentityModel.Tokens;
 using Parus.Infrastructure.Identity;
+using Parus.Infrastructure.Services;
 using static System.Formats.Asn1.AsnWriter;
 
 namespace Parus.Backend.Middlewares
 {
-	public class NaturisticAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
+	public class ParusAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
 	{
 		private ClaimsPrincipal? _user;
 		private AuthenticateResult? _result;
 
-		public NaturisticAuthenticateFeatures(AuthenticateResult result)
+		public ParusAuthenticateFeatures(AuthenticateResult result)
 		{
 			AuthenticateResult = result;
 		}
@@ -48,17 +50,19 @@ namespace Parus.Backend.Middlewares
 		}
 	}
 
-	public class CheckingLoggingInMiddleware
+	public class ParusAuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<CheckingLoggingInMiddleware> logger;
+        private readonly RefreshTokensService refreshTokens;
+        private readonly ILogger<ParusAuthenticationMiddleware> logger;
 
-        public CheckingLoggingInMiddleware(RequestDelegate next)
+        public ParusAuthenticationMiddleware(RequestDelegate next, RefreshTokensService refreshTokens)
         {
             _next = next;
+            this.refreshTokens = refreshTokens;
         }
 
-		public Task Invoke(HttpContext httpContext)
+		public async Task Invoke(HttpContext httpContext)
 		{
 			// If standart cookie authentcation has failed (generally due of abstance of login cookie)
 			if (!httpContext.User.Identity.IsAuthenticated)
@@ -80,14 +84,14 @@ namespace Parus.Backend.Middlewares
                             headers.Add("Authorization", "Bearer " + jwtCoockie);
                         }
 
-                        Authenticate(httpContext);
+                        await Authenticate(httpContext);
                     }
                 }
                 else
                 {
                     if (token.Count > 0)
                     {
-                        Authenticate(httpContext);
+                        await Authenticate(httpContext);
                     }
                     else
                     {
@@ -104,18 +108,18 @@ namespace Parus.Backend.Middlewares
                                 headers.Add("Authorization", "Bearer " + jwtCoockie);
                             }
 
-                            Authenticate(httpContext);
+                            await Authenticate(httpContext);
                         }
                     }
                 }
             }
 
-			return _next(httpContext);
+			await _next(httpContext);
 		}
 
-        private void Authenticate(HttpContext httpContext)
+        private async Task Authenticate(HttpContext httpContext)
         {
-            AuthenticateResult result = (httpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme)).Result;
+            AuthenticateResult result = await httpContext.AuthenticateAsync(JwtBearerDefaults.AuthenticationScheme);
 
             if (result.Succeeded)
             {
@@ -131,7 +135,7 @@ namespace Parus.Backend.Middlewares
 
                 httpContext.User = result.Principal;
 
-                NaturisticAuthenticateFeatures authFeatures = new NaturisticAuthenticateFeatures(result);
+                ParusAuthenticateFeatures authFeatures = new ParusAuthenticateFeatures(result);
                 httpContext.Features.Set<IHttpAuthenticationFeature>(authFeatures);
                 httpContext.Features.Set<IAuthenticateResultFeature>(authFeatures);
             }
@@ -140,6 +144,15 @@ namespace Parus.Backend.Middlewares
                 if (result.Failure != null)
                 {
                     string error = result.Failure.Message;
+
+                    // token is expired
+                    if (result.Failure is SecurityTokenSignatureKeyNotFoundException)
+                    {
+                        string fingerPrint = httpContext.Request.Cookies["fingerprint"];
+                        //refreshTokens.GetSession(fingerPrint);
+
+                        httpContext.Response.Headers.Append("Set-Cookie", $"JWT='123';");
+                    }
                 }
                 //logger.LogError(error);
             }

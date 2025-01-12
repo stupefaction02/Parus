@@ -367,3 +367,6 @@ backend/Naturistic.Hsl/bin/Debug/netcoreapp3.1/video_temp
 data/
 resources/
 backup/
+./IdentityTest
+./IdentityTests
+

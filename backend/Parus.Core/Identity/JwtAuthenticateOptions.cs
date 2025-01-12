@@ -5,6 +5,11 @@ using System.Text;
 
 namespace Parus.Core.Identity
 {
+    public class RefreshTokenOptions
+    {
+        public int LifetimeHours { get; set; }
+    }
+
     public class JwtAuthOptions
     {
         public string SecretKey { get; set; } = "<!{_Secr-<>-etKey!{_>";

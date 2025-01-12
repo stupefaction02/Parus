@@ -84,7 +84,7 @@ namespace Parus.WebUI
 
             //ConfigureConfigFiles();
 
-            
+            services.AddTransient<ISearchingService, DummySearchingService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConfiguration configuration)

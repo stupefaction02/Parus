@@ -116,8 +116,10 @@ namespace Parus.Backend.Services.Chat.SignalR
                     logger.LogInformation($"ChatHub. User with conn.id={Context.ConnectionId} and username={connectedUser.UserName} connected to the hub.");
                 }
             }
-
-            logger.LogInformation($"ChatHub. User with conn.id={Context.ConnectionId} connected to the hub.");
+            else
+            {
+                logger.LogInformation($"ChatHub. User with conn.id={Context.ConnectionId} connected to the hub.");
+            }
 
             await base.OnConnectedAsync();
         }
@@ -127,9 +129,9 @@ namespace Parus.Backend.Services.Chat.SignalR
             string connString = Context.ConnectionId;
 
             ParusUser disconnectedUser;
-            sharedAuthenticatedUsers.Unset(connString, out ParusUser user);
+            sharedAuthenticatedUsers.Unset(connString, out disconnectedUser);
 
-            base.OnDisconnectedAsync(exception);
+            await base.OnDisconnectedAsync(exception);
         }
 
         private async Task SendErrorUnicast(string errorCode, string statusCode, string message = "")

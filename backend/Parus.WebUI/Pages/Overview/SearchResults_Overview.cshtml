@@ -18,6 +18,8 @@
 
 @if (Model.Any())
 {
+    <p>Результаты по запросу @Model.Query</p>
+
     @if (Model.BroadcastsCount > 0)
     {
         <article class="results_block" style="min-height: 224px; max-height: 1029.2px;">

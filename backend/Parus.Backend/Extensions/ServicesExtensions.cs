@@ -60,7 +60,7 @@ namespace Parus.Backend.Extensions
                 //options.LogTo(x => { Console.WriteLine(x); });
                 //options.EnableDetailedErrors(true);
                 //options.EnableSensitiveDataLogging(true);
-            }, ServiceLifetime.Transient);
+            }, ServiceLifetime.Singleton);
         }
      
         public static void ConfigureCassandraDb(this IServiceCollection services, IConfiguration configuration)
@@ -140,18 +140,9 @@ namespace Parus.Backend.Extensions
 
         public static void AddRefreshTokens(this IServiceCollection services, IConfiguration configuration)
         {
-            int refreshSessionLifetime;
-            if (Int32.TryParse(
-                configuration["Authentication:RefreshSession:LifeTime"],
-                out refreshSessionLifetime
-            ))
-            {
-                RefreshSession.LifeTime = new TimeSpan(refreshSessionLifetime, 0, 0);
-            }
-            else
-            {
-                RefreshSession.LifeTime = new TimeSpan(24 * 60, 0, 0);
-            }
+            services.AddScoped<RefreshTokensService>();
+            var section = configuration.GetSection("Authentication:RefreshToken");
+            services.Configure<RefreshTokenOptions>(section);
         }
 
         public static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -160,19 +151,6 @@ namespace Parus.Backend.Extensions
             
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(AddJwtBearer);
-
-            int accessTokenLifetime;
-            if (Int32.TryParse(
-                configuration["Authentication:JWT:LifeTime_minutes"],
-                out accessTokenLifetime
-            ))
-            {
-                JwtAuthOptions1.Lifetime = new TimeSpan(accessTokenLifetime, 0, 0);
-            }
-            else
-            {
-                JwtAuthOptions1.Lifetime = new TimeSpan(0, 15, 0);
-            }
 
             var authSection = configuration.GetSection("Authentication:JWT");
             services.Configure<JwtAuthOptions>(authSection);

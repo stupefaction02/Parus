@@ -398,7 +398,7 @@ namespace Parus.Backend.Controllers
 
 		[HttpGet]
 		[Route("api/test/registerdeveloperuser")]
-		public async Task<object> RegisterDevelopers([FromServices] ParusUserIdentityService identityService,
+		public async Task<object> RegisterDevelopers([FromServices] ParusUserRegisterService identityService,
 			[FromServices] ParusDbContext users)
 		{
             var random = new Random();
@@ -427,7 +427,7 @@ namespace Parus.Backend.Controllers
         [HttpGet]
         [Route("api/test/registeruser")]
         public async Task<object> RegisterUser(string username, 
-			[FromServices] ParusUserIdentityService identityService,
+			[FromServices] ParusUserRegisterService identityService,
             [FromServices] ParusDbContext users)
         {
             var usr = new ParusUserRegistrationJsonDTO
@@ -440,15 +440,14 @@ namespace Parus.Backend.Controllers
 
             var result = await identityService.RegisterAsync(usr);
 
-			//if (resultюЫ)
-
-            foreach (var user in result.RegisteredUsers)
-            {
-                user.EmailConfirmed = true;
-                users.Update(user);
-            }
-
-            await users.SaveChangesAsync();
+			if (result.RegisteredUsers != null)
+			{
+				foreach (var user in result.RegisteredUsers)
+				{
+					user.EmailConfirmed = true;
+					users.Update(user);
+				}
+			}
 
             return Json(result.JsonResponse);
         }
@@ -460,7 +459,7 @@ namespace Parus.Backend.Controllers
         /// <returns></returns>
         [HttpGet]
 		[Route("api/test/seedplutousers")]
-		public async Task<object> SeedPlutoUsers([FromServices] ParusUserIdentityService identityService)
+		public async Task<object> SeedPlutoUsers([FromServices] ParusUserRegisterService identityService)
 		{
 			var random = new Random();
 			int count = 0;

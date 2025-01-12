@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections;
 
 namespace Parus.Core.Services.ElasticSearch
 {
@@ -27,7 +28,7 @@ namespace Parus.Core.Services.ElasticSearch
             public SearchLiteResultHitsTotal Total { get; set; }
 
             [JsonPropertyName("hits")]
-            public IEnumerable<SearchResultHit<T>> Hits { get; set; }
+            public List<SearchResultHit<T>> Hits { get; set; }
         }
 
         public class SearchResultHit<T>
@@ -44,25 +45,29 @@ namespace Parus.Core.Services.ElasticSearch
         }
     }
 
-    public struct Result 
+    public class SearchResult
     {
-        public object Items;
-        public string Json;
-        public int TotalCount;
-
-        public Result(string json) : this()
-        {
-            Json = json;
-        }
-
-        public Result(int totalCount, object items) : this(null)
-        {
-            TotalCount = totalCount;
-            Items = items;
-        }
+        // json, text
+        public string Raw { get; set; } = "";
+        public int TotalCount { get; set; }
     }
 
-    public partial class ElasticSearchService
+    public class BroadcastsSearchResult : SearchResult
+    {
+        public IEnumerable<BroadcastInfoElasticDto> Items { get; set; }
+    }
+
+    public class UsersSearchResult : SearchResult
+    {
+        public IEnumerable<UserElasticDto> Items { get; set; }
+    }
+
+    public class BroadcastCategorySearchResult : SearchResult
+    {
+        public IEnumerable<BroadcastCategory> Items { get; set; }
+    }
+
+    public partial class ElasticSearchService : ISearchingService
     {
         private static string searchUsernamePath = "_search?q=username:";
         private static string searchTitlePath = "_search?q=title:";
@@ -75,19 +80,16 @@ namespace Parus.Core.Services.ElasticSearch
             this._transport = transport;
         }
 
-        public async Task<Result> LiteSearch<T>(string url)
+        public async Task<SearchLiteResult<T>> LiteSearch<T>(string url)
         {
             (HttpStatusCode, string) result = await _transport.GetStringAsync(url);
 
             if (result.Item1 == HttpStatusCode.OK)
             {
-                var r = JsonSerializer.Deserialize
-                    <SearchLiteResult<T>>(result.Item2);
-
-                return new Result(r.Hits.Total.Value, r.Hits.Hits.Select(x => x.Source).ToList());
+                return JsonSerializer.Deserialize<SearchLiteResult<T>>(result.Item2);
             }
 
-            return new Result();
+            return new SearchLiteResult<T>();
         }
 
         // ElasticSearch json to out json
@@ -96,42 +98,57 @@ namespace Parus.Core.Services.ElasticSearch
             return JsonUtils.FormatElasticSearchResultJson(json);
         }
 
-        public async Task<Result> LiteSearchJson(string url)
+        public async Task<SearchResult> LiteSearchJson(string url)
         {
             (HttpStatusCode, string) result = await _transport.GetStringAsync(url);
 
             if (result.Item1 == HttpStatusCode.OK)
             {            
-                return new Result( JsonToDtoJson(result.Item2) );
+                return new SearchResult { Raw = JsonToDtoJson(result.Item2) };
             }
              
-            return new Result();
+            return new SearchResult();
         }
 
-        public async Task<Result> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
+        public async Task<BroadcastsSearchResult> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
         {
             // TODO: Caching :<
             string url = searchTitlePath + query + $"&size={count}&from={start}";
 
-            return await LiteSearch<BroadcastInfoElasticDto>(url);
+            var raw = (await LiteSearch<BroadcastInfoElasticDto>(url));
+
+            return new BroadcastsSearchResult
+            {
+                Items = raw.Hits.Hits.Select(x => x.Source)
+            };
         }
 
-        public async Task<Result> SearchUsersByUsernameAsync(string query, int start, int count)
+        public async Task<UsersSearchResult> SearchUsersByUsernameAsync(string query, int start, int count)
         {
             string url = searchUsernamePath + query + $"&size={count}&from={start}";
 
-            return await LiteSearch<UserElasticDto>(url);
+            var raw = (await LiteSearch<UserElasticDto>(url));
+
+            return new UsersSearchResult
+            {
+                Items = raw.Hits.Hits.Select(x => x.Source)
+            };
         }
 
-        public async Task<Result> SearchCategoriesByNameAsync(string query, int start, int count)
+        public async Task<BroadcastCategorySearchResult> SearchCategoriesByNameAsync(string query, int start, int count)
         {
             string url = searchCatNamePath + query + $"&size={count}&from={start}";
 
-            return await LiteSearch<BroadcastCategory>(url);
+            var raw = (await LiteSearch<BroadcastCategory>(url));
+
+            return new BroadcastCategorySearchResult
+            {
+                Items = raw.Hits.Hits.Select(x => x.Source)
+            };
         }
 
 
-        public async Task<Result> SearchBroadcastsByTitleTagsJsonAsync(string query, int start, int count)
+        public async Task<SearchResult> SearchBroadcastsByTitleTagsJsonAsync(string query, int start, int count)
         {
             // TODO: Caching :<
             string url = searchTitlePath + query + $"&size={count}&from={start}";
@@ -139,14 +156,14 @@ namespace Parus.Core.Services.ElasticSearch
             return await LiteSearchJson(url);
         }
 
-        public async Task<Result> SearchUsersByUsernameJsonAsync(string query, int start, int count)
+        public async Task<SearchResult> SearchUsersByUsernameJsonAsync(string query, int start, int count)
         {
             string url = searchUsernamePath + query + $"&size={count}&from={start}";
 
             return await LiteSearchJson(url);
         }
 
-        public async Task<Result> SearchCategoriesByNameJsonAsync(string query, int start, int count)
+        public async Task<SearchResult> SearchCategoriesByNameJsonAsync(string query, int start, int count)
         {
             string url = searchCatNamePath + query + $"&size={count}&from={start}";
 

@@ -16,6 +16,7 @@ using static Parus.Backend.Controllers.IdentityController;
 using Microsoft.Extensions.Options;
 using Parus.Core.Identity;
 using Parus.Infrastructure.Extensions;
+using Parus.Infrastructure.Services;
 
 namespace Parus.Backend.Controllers
 {
@@ -31,22 +32,24 @@ namespace Parus.Backend.Controllers
         public int StatusCode { get; set; }
     }
 
-    public class ParusUserIdentityService
+    public class ParusUserRegisterService
     {
         private readonly UserManager<ParusUser> userManager;
         private readonly IUserRepository userRepository;
         private readonly ParusDbContext identityDbContext;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IOptions<JwtAuthOptions> authOptions;
-        private readonly ILogger<ParusUserIdentityService> logger;
+        private readonly ILogger<ParusUserRegisterService> logger;
+        private readonly RefreshTokensService refreshTokensService;
 
-        public ParusUserIdentityService(
+        public ParusUserRegisterService(
             UserManager<ParusUser> userManager,
             IUserRepository userRepository,
             ParusDbContext identityDbContext, 
             IHttpContextAccessor httpContextAccessor, 
             IOptions<JwtAuthOptions> authOptions,
-            ILogger<ParusUserIdentityService> logger)
+            ILogger<ParusUserRegisterService> logger,
+            RefreshTokensService refreshTokensService)
         {
             this.userManager = userManager;
             this.userRepository = userRepository;
@@ -54,6 +57,7 @@ namespace Parus.Backend.Controllers
             this.httpContextAccessor = httpContextAccessor;
             this.authOptions = authOptions;
             this.logger = logger;
+            this.refreshTokensService = refreshTokensService;
         }
 
         protected HttpContext HttpContext
@@ -77,26 +81,17 @@ namespace Parus.Backend.Controllers
             if (created.Succeeded)
             {
                 ParusUser createdUsr = (ParusUser)userRepository.FindUserByUsername(model.Username);
-                logger.LogInformation(createdUsr.GetUsername());
-
-                //List<Claim> claims = new List<Claim>
-                //{
-                //    new Claim(ClaimsIdentity.DefaultNameClaimType, user.GetUsername())
-                //};
 
                 JwtToken jwt = createdUsr.JwtTokenFromUser(authOptions.Value);
 
-                //ClaimsIdentity identity = new ClaimsIdentity(claims);
-
-                //JwtToken jwt = JwtAuthUtils.CreateDefault(identity, authOptions.Value);
-                // TODO: checks if token is already created
-                string fingerPrint = HttpContext.Request.Headers.UserAgent;
-                RefreshSession refreshSession = RefreshSession.CreateDefault(fingerPrint, user);
-
-                await identityDbContext.RefreshSessions.AddAsync(refreshSession);
+                var refreshSession = await refreshTokensService.AddUpdateSessionAsync(HttpContext, user);
 
                 // jwt expires timestamp
-                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(DateTime.Now.Add(JwtAuthOptions1.Lifetime));
+                int jwtExpires = DateTimeUtils.ToUnixTimeSeconds(
+                    DateTime.Now.Add(
+                        new TimeSpan(0, authOptions.Value.LifetimeMinutes, 0)
+                    )
+                );
 
                 string logRoles = "no roles";
                 if (roles != null)
@@ -118,7 +113,7 @@ namespace Parus.Backend.Controllers
                 {
                     success = "true",
                     access_token = new { jwt = jwt.Token, expires = jwtExpires },
-                    refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
+                    //refresh_token = new { token = refreshSession.Token, expires = refreshSession.ExpiresAt }
                 };
 
                 await identityDbContext.SaveChangesAsync();

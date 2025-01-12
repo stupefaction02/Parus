@@ -28,7 +28,7 @@ namespace Parus.Infrastructure.Identity
                     audience: options.Audience,
                     notBefore: now,
                     claims: user.Claims,
-                    expires: now.Add(TimeSpan.FromMinutes(options.LifetimeMinutes)),
+                    expires: now.Add(TimeSpan.FromMinutes(1)),
                     signingCredentials: new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256));
             string encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 

@@ -6,12 +6,13 @@
 
 @using Microsoft.Extensions.Configuration;
 @using Parus.Core.Entities;
+@using Parus.Core.Interfaces.Services
 @using Parus.Core.Services.ElasticSearch
 @using Parus.Infrastructure.Identity;
 @using Parus.WebUI.HtmlHelpers;
 @using Parus.WebUI.Pages.Overview.Contexts;
 
-@inject ElasticSearchService searchingService
+@inject ISearchingService searchingService
 
 @section AdditionalScripts
 {

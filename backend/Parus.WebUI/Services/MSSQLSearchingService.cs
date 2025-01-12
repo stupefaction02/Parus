@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Core.Interfaces.Services;
 using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Org.BouncyCastle.Bcpg.OpenPgp;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Parus.WebUI.Services
 {
-    public class MSSQLSearchingService //: ISearchingService
+    public class MSSQLSearchingService// : ISearchingService
     {
         private readonly IBroadcastInfoRepository broadcasts;
         private readonly ParusDbContext usersdentityCtx;

@@ -55,11 +55,11 @@ namespace Parus.Backend.Controllers
 
         private readonly ILogger<IdentityController> logger;
         private readonly IHostEnvironment environment;
-        private readonly ParusUserIdentityService identityService;
+        private readonly ParusUserRegisterService identityService;
 
         public IdentityController(ILogger<IdentityController> logger, 
             IHostEnvironment environment, 
-            ParusUserIdentityService identityService)
+            ParusUserRegisterService identityService)
         {
             this.logger = logger;
             this.environment = environment;

@@ -21,38 +21,38 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 {
     public class OverviewSearchResultContext
     {
-        public List<BroadcastInfoElasticDto> Broadcasts { get; set; }
+        public IEnumerable<BroadcastInfoElasticDto> Broadcasts { get; set; }
         public int BroadcastsCount { get; set; }
 
-        public List<BroadcastCategory> Categories { get; set; }
+        public IEnumerable<BroadcastCategory> Categories { get; set; }
         public int CategoriesCount { get; set; }
 
-        public List<UserElasticDto> Users { get; set; }
+        public IEnumerable<UserElasticDto> Users { get; set; }
         public int UsersCount { get; set; }
 
         public string Query { get; set; }
 
-        public OverviewSearchResultContext(ElasticSearchService searchingService, string q)
+        public OverviewSearchResultContext(ISearchingService searchingService, string q)
         {
             Query = q;
 
             // TODO: add ISearchTResult and conjuct MSSQsearch and ElasticDtos in one interface
 
-            Task<Result> broadcastsTask = searchingService.SearchBroadcastsByTitleTagsAsync(q, 0, 8);
+            Task<BroadcastsSearchResult> broadcastsTask = searchingService.SearchBroadcastsByTitleTagsAsync(q, 0, 8);
 
-            Task<Result> categoriesTask = searchingService.SearchCategoriesByNameAsync(q, 0, 5);
+            Task<BroadcastCategorySearchResult> categoriesTask = searchingService.SearchCategoriesByNameAsync(q, 0, 5);
 
-            Task<Result> usersTask = searchingService.SearchUsersByUsernameAsync(q, 0, 5);
+            Task<UsersSearchResult> usersTask = searchingService.SearchUsersByUsernameAsync(q, 0, 5);
 
             Task.WaitAll(broadcastsTask, categoriesTask, usersTask);
 
-            Broadcasts = (List<BroadcastInfoElasticDto>)broadcastsTask.Result.Items;
-            Categories = (List<BroadcastCategory>)categoriesTask.Result.Items;
-            Users = (List<UserElasticDto>)usersTask.Result.Items;
+            Broadcasts = broadcastsTask.Result.Items;
+            Categories = categoriesTask.Result.Items;
+            Users = usersTask.Result.Items;
 
-            UsersCount = Users.Count;
-            CategoriesCount = Categories.Count;
-            BroadcastsCount = Broadcasts.Count;
+            UsersCount = Users != null ? Users.Count() : 0;
+            CategoriesCount = Categories != null ? Categories.Count() : 0;
+            BroadcastsCount = Broadcasts != null ? Broadcasts.Count() : 0;
         }
 
         public bool Any()
@@ -136,7 +136,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
             }
 
             int start = (pageInt32 - 1) * PAGE_SIZE;
-            Result broadcasts = searchingService.SearchBroadcastsByTitleTagsAsync(Query, 0, 8).GetAwaiter().GetResult();
+            SearchResult broadcasts = searchingService.SearchBroadcastsByTitleTagsAsync(Query, 0, 8).GetAwaiter().GetResult();
 
             int pageCount = (broadcasts.TotalCount / PAGE_SIZE) + 1;
 
@@ -177,7 +177,7 @@ namespace Parus.WebUI.Pages.Overview.Contexts
 
             int start = (pageInt32 - 1) * PAGE_SIZE;
 
-            Result result = searchingService.SearchCategoriesByNameAsync(Query, 0, 8).GetAwaiter().GetResult();
+            BroadcastCategorySearchResult result = searchingService.SearchCategoriesByNameAsync(Query, 0, 8).GetAwaiter().GetResult();
 
             int pageCount = (result.TotalCount / PAGE_SIZE) + 1;
 

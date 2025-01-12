@@ -48,6 +48,8 @@ namespace Parus.Backend
 
             services.ConfigureCors();
 
+            services.AddRefreshTokens(Configuration);
+
             services.ConfigureIdentity();
 
             services.ConfigureRepositories();
@@ -72,7 +74,7 @@ namespace Parus.Backend
             services.AddTransient<ILocalizationService, LocalizationService>();
             services.AddSingleton<BroadcastControl>();
             services.AddSingleton<SharedChatAuthenticatedUsers>();
-            services.AddScoped<ParusUserIdentityService>();
+            services.AddScoped<ParusUserRegisterService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -107,7 +109,7 @@ namespace Parus.Backend
 
 			app.UseAuthentication();
 			
-            app.UseMiddleware<CheckingLoggingInMiddleware>();
+            app.UseMiddleware<ParusAuthenticationMiddleware>();
 
             app.UseAuthorization();
 
