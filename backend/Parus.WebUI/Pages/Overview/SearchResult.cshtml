@@ -32,6 +32,8 @@
         string sector = HttpContext.Request.Query["sector"];
         string q = HttpContext.Request.Query["q"];
 
+        q = System.Web.HttpUtility.JavaScriptStringEncode(q);
+
         if (!String.IsNullOrEmpty(q))
         {
             switch (sector)

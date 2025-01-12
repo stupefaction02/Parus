@@ -8,17 +8,17 @@ namespace Parus.WebUI.Services
     {
         public Task<BroadcastsSearchResult> SearchBroadcastsByTitleTagsAsync(string query, int start, int count)
         {
-            return Task.FromResult(default(BroadcastsSearchResult));
+            return Task.FromResult(new BroadcastsSearchResult());
         }
 
         public Task<BroadcastCategorySearchResult> SearchCategoriesByNameAsync(string query, int start, int count)
         {
-            return Task.FromResult(default(BroadcastCategorySearchResult));
+            return Task.FromResult(new BroadcastCategorySearchResult());
         }
 
         public Task<UsersSearchResult> SearchUsersByUsernameAsync(string query, int start, int count)
         {
-            return Task.FromResult(default(UsersSearchResult));
+            return Task.FromResult(new UsersSearchResult());
         }
     }
 }
