@@ -1,4 +1,0 @@
-dotnet ef migrations add init -p Naturistic.Infrastructure -c LiteDbIdentityContext
-
-dotnet ef database update --project Naturistic.Infrastructure -c ApplicationIdentityDbCo
-ntext

@@ -1,1 +1,0 @@
-dotnet run --project "C:\Users\Ivan\Desktop\Sensorium\NET Projects\ASPNET\Parus\backend\Parus.WebUI"

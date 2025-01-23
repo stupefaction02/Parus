@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "commonjs": "^0.0.1",
-    "hls.js": "^1.4.12",
-    "requirejs": "^2.3.6"
-  }
-}
