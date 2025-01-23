@@ -27,6 +27,9 @@ namespace Parus.WebUI.Pages.Account
 
         public IActionResult OnGet()
         {
+            // 1. AntiForgeryService.UpdateToken(user)
+            // 2. 
+
 			return Page();
         }
     }

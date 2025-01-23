@@ -94,7 +94,7 @@ namespace Parus.Backend.Extensions
 
         public static void ConfigureIdentity(this IServiceCollection services)
         {
-            services.AddScoped<ParusDbContext>();
+            //services.AddScoped<ParusDbContext>();
 
             services.Configure<IdentityOptions>(options =>
                 { options.SignIn.RequireConfirmedEmail = false; }
@@ -140,7 +140,7 @@ namespace Parus.Backend.Extensions
 
         public static void AddRefreshTokens(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<RefreshTokensService>();
+            services.AddSingleton<RefreshTokensService>();
             var section = configuration.GetSection("Authentication:RefreshToken");
             services.Configure<RefreshTokenOptions>(section);
         }

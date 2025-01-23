@@ -34,6 +34,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using MimeKit.Cryptography;
+using Parus.Infrastructure.Middlewares;
 
 namespace Parus.WebUI
 {
@@ -49,7 +50,7 @@ namespace Parus.WebUI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages(options => {
-                options.Conventions.AuthorizeFolder("/Account");
+                options.Conventions.AuthorizeFolder("/login");
                 //options.RootDirectory = "/Placeholder";
             });
 
@@ -80,6 +81,8 @@ namespace Parus.WebUI
             services.AddTransient<IBroadcastInfoRepository, BroadcastsRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
 
+            services.AddSingleton<MetricService>();
+
             services.AddElastic(Configuration);
 
             //ConfigureConfigFiles();
@@ -95,6 +98,8 @@ namespace Parus.WebUI
             }
 
             InitializeJsConfig(env, configuration);
+
+            app.UseMiddleware<MetricMiddleware>();
 
             // solely for .well-known/acme-challenge/{emptyExtensonFile}
             app.UseStaticFiles( new StaticFileOptions { ServeUnknownFileTypes = true } );

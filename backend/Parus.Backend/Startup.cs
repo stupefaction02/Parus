@@ -75,6 +75,8 @@ namespace Parus.Backend
             services.AddSingleton<BroadcastControl>();
             services.AddSingleton<SharedChatAuthenticatedUsers>();
             services.AddScoped<ParusUserRegisterService>();
+
+            services.AddSingleton<MetricService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -110,6 +112,8 @@ namespace Parus.Backend
 			app.UseAuthentication();
 			
             app.UseMiddleware<ParusAuthenticationMiddleware>();
+
+            app.UseMiddleware<MetricMiddleware>();
 
             app.UseAuthorization();
 
