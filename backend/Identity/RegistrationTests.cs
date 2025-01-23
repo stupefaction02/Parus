@@ -1,7 +1,7 @@
 using Parus.Infrastructure.DLA;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
-using Parus.Backend.Controllers;
+using Parus.API.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;

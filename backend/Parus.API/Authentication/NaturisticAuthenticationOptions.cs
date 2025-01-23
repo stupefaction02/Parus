@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 
-namespace Parus.Backend.Authentication
+namespace Parus.API.Authentication
 {
 	public class BearerAuthenticationOptions : AuthenticationOptions, IOptions<BearerAuthenticationOptions>
 	{

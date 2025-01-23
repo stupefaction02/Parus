@@ -5,7 +5,7 @@ using Parus.Core.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client.Events;
 
-namespace Parus.Backend.Services
+namespace Parus.API.Services
 {
     public class RabbitMQService : IMQService
     {

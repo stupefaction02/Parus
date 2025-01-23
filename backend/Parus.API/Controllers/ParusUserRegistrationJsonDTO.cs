@@ -1,7 +1,7 @@
 ﻿using Parus.Core.Entities;
 using System.Text.Json.Serialization;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
     public partial class IdentityController
     {

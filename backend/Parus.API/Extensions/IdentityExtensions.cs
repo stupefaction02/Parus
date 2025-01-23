@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Backend.Extensions
+namespace Parus.API.Extensions
 {
     public static class IdentityExtensions
     {

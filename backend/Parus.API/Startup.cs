@@ -3,25 +3,25 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Parus.Backend.Extensions;
-using Parus.Backend.Services.Chat.SignalR;
+using Parus.API.Extensions;
+using Parus.API.Services.Chat.SignalR;
 using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
-using Parus.Backend.Services;
+using Parus.API.Services;
 using Microsoft.AspNetCore.Routing;
-using Parus.Backend.Middlewares;
+using Parus.API.Middlewares;
 using System;
-using Parus.Backend.Authentication;
+using Parus.API.Authentication;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services;
 using Parus.API.Services;
 using System.Collections.Concurrent;
-using Parus.Backend.Controllers;
+using Parus.API.Controllers;
 using Parus.Infrastructure.Middlewares;
 
-namespace Parus.Backend
+namespace Parus.API
 {
     public class Startup
     {

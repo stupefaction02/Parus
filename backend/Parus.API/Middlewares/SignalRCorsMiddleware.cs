@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Parus.Backend.Middlewares
+namespace Parus.API.Middlewares
 {
     public class SignalRCorsMiddleware
     {

@@ -10,7 +10,7 @@ using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Parus.Backend.Authentication;
+using Parus.API.Authentication;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -23,7 +23,7 @@ using Parus.Infrastructure.Services;
 using Parus.Core.Identity;
 
 
-namespace Parus.Backend.Extensions
+namespace Parus.API.Extensions
 {
     public static class ServicesExtensions
     {

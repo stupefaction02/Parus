@@ -12,16 +12,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Parus.Backend.Services;
+using Parus.API.Services;
 using Parus.Core.Entities;
 using Parus.Core.Identity;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Extensions;
 using Parus.Infrastructure.Identity;
-using static Parus.Backend.Controllers.IdentityController;
+using static Parus.API.Controllers.IdentityController;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
 	[ApiController]
 	public class TestController : ParusController

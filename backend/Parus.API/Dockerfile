@@ -9,13 +9,13 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Parus.Backend/Parus.API.csproj", "Parus.Backend/"]
+COPY ["Parus.API/Parus.API.csproj", "Parus.API/"]
 COPY ["Parus.Common/Parus.Common.csproj", "Parus.Common/"]
 COPY ["Parus.Core/Parus.Core.csproj", "Parus.Core/"]
 COPY ["Parus.Infrastructure/Parus.Infrastructure.csproj", "Parus.Infrastructure/"]
-RUN dotnet restore "./Parus.Backend/./Parus.API.csproj"
+RUN dotnet restore "./Parus.API/./Parus.API.csproj"
 COPY . .
-WORKDIR "/src/Parus.Backend"
+WORKDIR "/src/Parus.API"
 RUN dotnet build "./Parus.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish

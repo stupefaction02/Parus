@@ -16,9 +16,9 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using static Parus.Backend.Controllers.IdentityController;
+using static Parus.API.Controllers.IdentityController;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
     [ApiController]
 	public class AccountController : ParusController

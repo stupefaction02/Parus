@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Parus.Infrastructure.Identity;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Backend.Authentication;
+using Parus.API.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +35,7 @@ using Parus.Core.Authentication;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json.Serialization;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
     // TODO: Rename to UserController
     [ApiController]

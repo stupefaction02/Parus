@@ -17,7 +17,7 @@ using Parus.Infrastructure.Identity;
 using Parus.Infrastructure.Services;
 using static System.Formats.Asn1.AsnWriter;
 
-namespace Parus.Backend.Middlewares
+namespace Parus.API.Middlewares
 {
 	public class ParusAuthenticateFeatures : IAuthenticateResultFeature, IHttpAuthenticationFeature
 	{

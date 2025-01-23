@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Parus.API.Tests
 {
-    public class BackendApiFactory : WebApplicationFactory<Parus.Backend.Program>
+    public class BackendApiFactory : WebApplicationFactory<Parus.API.Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

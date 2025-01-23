@@ -21,7 +21,7 @@ using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.Identity;
 using static Parus.API.CustomHttpContexts;
 
-namespace Parus.Backend.Services.Chat.SignalR
+namespace Parus.API.Services.Chat.SignalR
 {
     public class ChatHub : Hub
     {

@@ -12,7 +12,7 @@ using Parus.Core.Entities;
 using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Backend.Services
+namespace Parus.API.Services
 {
     public class BroadcastControl
     {

@@ -3,7 +3,7 @@ using System;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
 using System.Security.Claims;
-using Parus.Backend.Authentication;
+using Parus.API.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Parus.Core.Authentication;
@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Http;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
     public class ParusController : Controller
     {

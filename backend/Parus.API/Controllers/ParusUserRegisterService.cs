@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Identity;
 
 using Parus.Infrastructure.Identity;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Backend.Authentication;
+using Parus.API.Authentication;
 using Microsoft.AspNetCore.Http;
 using Parus.Common.Utils;
 using Parus.Core.Authentication;
 using Org.BouncyCastle.Ocsp;
-using static Parus.Backend.Controllers.IdentityController;
+using static Parus.API.Controllers.IdentityController;
 using Microsoft.Extensions.Options;
 using Parus.Core.Identity;
 using Parus.Infrastructure.Extensions;
 using Parus.Infrastructure.Services;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
     public struct ParusUserIdentityServiceResult
     {

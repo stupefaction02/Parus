@@ -20,11 +20,11 @@ using Parus.Core.Interfaces.Repositories;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Parus.Backend.Services;
+using Parus.API.Services;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Parus.Backend.Controllers
+namespace Parus.API.Controllers
 {
 	[ApiController] 
 	public class BroadcastController : Controller
