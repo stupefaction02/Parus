@@ -1,1 +1,0 @@
-select * from dbo.Broadcasts b1 right join dbo.BroadcastInfoTag b2 on b2.BroadcastsId = b1.Id right join dbo.Tags t on t.Id = b2.TagsId;

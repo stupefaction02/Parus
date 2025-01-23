@@ -1,6 +1,0 @@
-@Parus.Searching_HostAddress = http://localhost:5039
-
-GET {{Parus.Searching_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

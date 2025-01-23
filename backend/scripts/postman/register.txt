@@ -1,2 +1,0 @@
-# https://localhost:5001/api/register?firstname=Jeff&lastname=Cavailere&nickname=athleanxdotcommer&email=jeffyjeff@gmail.com&password=123456789
-curl -d "firstname=Jeff&lastname=Cavailere&nickname=athleanxdotcommer&email=jeffyjeff@gmail.com&password=123456789" -H "Content-Type: application/x-www-form-urlencoded" -X POST https://localhost:5001/api/register
