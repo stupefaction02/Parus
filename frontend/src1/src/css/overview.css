@@ -1,0 +1,9 @@
+.overview_content {
+     text-align: center;
+     height: 100%;
+}
+
+.overview_content h4 {
+     color: white;
+     font-size: 10em;
+}

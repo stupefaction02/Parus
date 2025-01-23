@@ -1,0 +1,260 @@
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: #9147FF !important;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+    h2 small {
+        font-weight: normal;
+        color: #888;
+        display: block;
+    }
+
+.footer {
+    text-align: center;
+}
+
+    .footer a {
+        color: #53B2C8;
+    }
+
+/* form starting stylings ------------------------------- */
+.group {
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.last_group {
+    margin-bottom: 5px !important;
+}
+
+.form_input {
+    font-size: 18px;
+    padding: 10px 10px 10px 5px;
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #757575;
+}
+
+    .form_input:focus {
+        outline: none;
+    }
+
+/* LABEL ======================================= */
+.input_label {
+    color: #999;
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+.input_error {
+    color: red;
+    width: 100%;
+}
+
+.input_success {
+    color: green;
+    width: 100%;
+}
+
+/* active state */
+.form_input:focus ~ .input_label, .form_input:valid ~ .input_label {
+    top: -20px;
+    font-size: 14px;
+    color: #5264AE;
+}
+
+/* BOTTOM BARS ================================= */
+.bar {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+    .bar:before, .bar:after {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 1px;
+        position: absolute;
+        background: #5264AE;
+        transition: 0.2s ease all;
+        -moz-transition: 0.2s ease all;
+        -webkit-transition: 0.2s ease all;
+    }
+
+    .bar:before {
+        left: 50%;
+    }
+
+    .bar:after {
+        right: 50%;
+    }
+
+/* active state */
+.form_input:focus ~ .bar:before, .form_input:focus ~ .bar:after {
+    width: 50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+    position: absolute;
+    height: 60%;
+    width: 100px;
+    top: 25%;
+    left: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* active state */
+.form_input:focus ~ .highlight {
+    -webkit-animation: inputHighlighter 0.3s ease;
+    -moz-animation: inputHighlighter 0.3s ease;
+    animation: inputHighlighter 0.3s ease;
+}
+
+
+
+.show_hide_password_btn {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    top: -35px;
+    left: 295px;
+}
+
+
+.range_input {
+    border: medium;
+    background: transparent;
+    box-shadow: none;
+    width: 100%;
+    height: 1.6rem;
+    vertical-align: middle;
+    appearance: none;
+    cursor: pointer;
+}
+
+
+.header_search_icon {
+    cursor: pointer;
+    background-color: white;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    width: 3.6em;
+    justify-content: center;
+    align-items: center;
+    border-color: gray;
+  
+    border-style: solid;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 0px;
+    position: relative;
+}
+
+.header_search_icon_highlight {
+    position: absolute;
+    top: -2px;
+    border-right-color: #9147FF;
+    border-right-width: 2px;
+    border-right-style: solid;
+    border-top-color: #9147FF;
+    border-top-width: 2px;
+    border-top-style: solid;
+    border-bottom-color: #9147FF;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-left-color: #9147FF;
+    border-left-width: 2px;
+    border-left-style: solid;
+    background-color: transparent;
+    border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
+    border-left-width: 2px;
+    width: inherit;
+    height: 39px;
+    display: none;
+}
+
+/*.header_search_input:focus ~ .header_search_icon_highlight {
+    display: block;
+}*/
+
+.header_search_input {
+    
+}
+
+.header_search {
+    position: relative;
+    display: flex;
+    width: 245px;
+    height: 35px;
+    margin-right: 12px;
+}
+
+    .header_search svg {
+        fill: #9147FF;
+    }
+
+    .header_search input {
+        border-bottom-left-radius: 6px;
+        border-top-left-radius: 6px;
+        box-shadow: inset 0 0 0 1px #9147FF;
+        padding: 0.3rem 0.8rem !important;
+        border-width: 0px;
+    }
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+    from {
+        background: #5264AE;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+@-moz-keyframes inputHighlighter {
+    from {
+        background: #5264AE;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}
+
+@keyframes inputHighlighter {
+    from {
+        background: #5264AE;
+    }
+
+    to {
+        width: 0;
+        background: transparent;
+    }
+}

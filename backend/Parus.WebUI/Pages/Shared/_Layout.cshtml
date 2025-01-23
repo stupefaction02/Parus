@@ -1,0 +1,110 @@
+﻿
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Routing;
+@using Microsoft.AspNetCore.Routing.Patterns;
+@using Microsoft.Extensions.Logging;
+@using Parus.Core.Interfaces;
+@using Parus.Infrastructure.Identity;
+
+@inject ILocalizationService localization
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Naturistic.WebUI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	
+    <link href="~/lib/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
+    <link href="~/css/popup.css" rel="stylesheet" media="all">
+
+    <link href="~/css/login.css" rel="stylesheet" media="all">
+    <link href="~/css/inputs.css" rel="stylesheet" media="all">
+    <link href="~/css/buttons.css" rel="stylesheet" media="all">
+    <link href="~/css/verification.css" rel="stylesheet" media="all">
+    <link href="~/css/choosebuttons.css" rel="stylesheet" media="all">
+    <link href="~/css/site.css" rel="stylesheet" media="all">
+
+	@RenderSection("AdditionalStyles", required: false)
+</head>
+<body>
+    <header>
+        <partial name="/Pages/Shared/Header.cshtml" />
+    </header>
+
+    <main role="main" class="page-wrapper p-t-130 p-b-100 font-poppins">
+		@RenderBody()
+    </main>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2020 - Naturistic.WebUI - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <div id="site_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="verification_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card">
+                        <partial name="/Pages/Identity/Verification.cshtml" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="login_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card-body"  style="width: 320px">
+                        <partial name="/Pages/Identity/Login.cshtml" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="registration_popup" class="b-popup" style="display: none">
+        <div class="b-popup-content">
+            <div class="wrapper wrapper--w680">
+                <div class="card card-4">
+                    <diV class="popup_content_header">
+                        <a id="registration_close_popup" href="#" class="box-close">×</a>
+                    </div>
+                    <div class="custom_card-body" style="width: 320px">
+                        <partial name="/Pages/Identity/Registration.cshtml" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="side_popup" class="b-popup side_popup" style="display: none">
+        <div class="side_popup_content">
+            <span>Error!</span>
+        </div>
+    </div>
+
+    <div id="debug_popup" class="b-popup side_popup" style="display: none">
+        <div class="side_popup_content debug_side_popup_content">
+            <span>Error!</span>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+	@RenderSection("AdditionalScripts", required: false)
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

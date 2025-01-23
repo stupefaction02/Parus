@@ -1,0 +1,46 @@
+# build
+dotnet build Naturistic.Backend --no-dependencies
+dotnet build Naturistic.WebUI --no-dependencies
+dotnet build Naturistic.Infrastructure --no-dependencies
+
+# run
+dotnet run -p Naturistic.Backend --no-build
+dotnet run -p Naturistic.WebUI --no-build
+
+#build and run
+dotnet build --project Naturistic.WebUI && run --project Naturistic.WebUI
+
+# ef nuget
+EntityFrameworkCore\Update-Database -Project Naturistic.Infrastructure -Context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+EntityFrameworkCore\Add-Migrations -Project Naturistic.Infrastructure -Context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+
+# ef cli
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext
+dotnet ef migrations add IndexingRule --project Parus.Infrastructure --context Parus.Infrastructure.DLA.ApplicationDbContext
+
+dotnet ef migrations add Init.BL --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.DLA.ApplicationDbContext
+
+dotnet ef migrations add InitBilling1 --project Parus.Infrastructure --context Parus.Infrastructure.DLA.BillingDbContext
+dotnet ef database update --project Parus.Infrastr ucture --context Parus.Infrastructure.DLA.BillingDbContext
+
+## users database update
+dotnet ef database update --project Naturistic.Infrastructure --context Naturistic.Infrastructure.Identity.ApplicationIdentityDbContext --startup-project Naturistic.Backend
+
+#cmd
+
+1) dp cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\DummyPublisher\bin\Debug\net5.0
+2) hsl  cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\Naturistic.Hsl\bin\Debug\netcoreapp3.1
+3)	cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend
+	dotnet run --project Naturistic.Backend --launch-profile Naturistic.Backend
+	
+# .ps
+
+Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend & title Backend & echo dotnet run --project Naturistic.Backend --launch-profile Naturistic.Backend`""
+Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend & title HSL Service & echo dotnet run --project Naturistic.Hsl --launch-profile Naturistic.Hsl`""
+Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\DummyPublisher\bin\Debug\net5.0 & title DummyPublisher & echo DummyPublisher.exe`""
+
+## get to the process
+Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend""
+
+// Start-Process cmd -ArgumentList "/k `"c: & cd C:\Users\Ivan\Desktop\Sensorium\.NET\ASP.NET\Projects\NatureForYou\backend\Naturistic.Hsl\bin\Debug\netcoreapp3.1 & title HSL service & echo Naturistic.Hsl.exe`""

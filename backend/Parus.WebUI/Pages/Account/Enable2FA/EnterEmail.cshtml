@@ -1,0 +1,19 @@
+﻿@using Parus.Core.Interfaces;
+@using Parus.WebUI.HtmlHelpers;
+
+@inject ILocalizationService localization
+
+<p style="margin-bottom: 20px">
+    Введите адрес электронной почты, которому вы доверяете. Мы отправим вам 7-значный код безопасности для подтверждения.
+</p>
+<div class="row row-space">
+    <div class="group">
+        <input id="ac_ep_email_input" autocomplete="off" class="form_input" required type="email" name="email">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Email</label>
+    </div>
+
+    <button id="ac_ep_continue_btn" class="color1_btn" type="button" disabled="false">Продолжить</button>
+</div>
+      

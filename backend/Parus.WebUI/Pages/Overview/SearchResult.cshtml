@@ -1,0 +1,61 @@
+﻿@page "/search"
+@model SearchResultModel
+@{
+    ViewData["Title"] = " - Naturistic";
+}
+
+@using Microsoft.Extensions.Configuration;
+@using Parus.Core.Entities;
+@using Parus.Core.Interfaces.Services
+@using Parus.Core.Services.ElasticSearch
+@using Parus.Infrastructure.Identity;
+@using Parus.WebUI.HtmlHelpers;
+@using Parus.WebUI.Pages.Overview.Contexts;
+
+@inject ISearchingService searchingService
+
+@section AdditionalScripts
+{
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/searchingresults.js"></script>
+}
+
+@section AdditionalStyles
+{
+    <link href="~/css/overview.css" rel="stylesheet" media="all">
+    <link href="~/css/searching.css" rel="stylesheet" media="all">
+}
+
+<div class="results">
+
+    @{
+        string sector = HttpContext.Request.Query["sector"];
+        string q = HttpContext.Request.Query["q"];
+
+        q = System.Web.HttpUtility.JavaScriptStringEncode(q);
+
+        if (!String.IsNullOrEmpty(q))
+        {
+            switch (sector)
+            {
+                case "users":
+                    <partial model=@(new AllUsersSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Users.cshtml" />
+                    break;
+                case "broadcasts":
+                    <partial model=@(new AllBroadcastSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Broadcasts.cshtml" />
+                    break;
+                case "categories":
+                    <partial model=@(new AllCategoiresSearchResultContext(q)) name="/Pages/Overview/SearchAllResults_Categories.cshtml" />
+                    break;
+
+                default:
+                    <partial model=@(new OverviewSearchResultContext(searchingService, q)) name="/Pages/Overview/SearchResults_Overview.cshtml" />
+                    break;
+            }
+        }
+    }
+
+</div>
+
+
+

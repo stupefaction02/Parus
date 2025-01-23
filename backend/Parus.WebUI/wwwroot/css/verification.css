@@ -1,0 +1,19 @@
+.verify_number_input {
+    padding: 0px 0px 0px 15px;
+}
+
+.verify_number_input_container {
+    margin-right: 15px;
+}
+
+#verification_info {
+    margin-bottom: 25px;
+}
+
+.verification_container {
+    padding: 0px 35px 35px 35px;
+}
+
+#verification_numbers {
+    margin-bottom: 25px;
+}

@@ -1,0 +1,43 @@
+﻿@using Parus.Core.Interfaces;
+@using Parus.Core.Entities;
+@using Parus.WebUI.HtmlHelpers;
+
+@model PaginationContext
+
+@if (Model.PageCount > 1)
+{
+    <div class="overview_pagination">
+        @{
+            string hrefPar = "?page=";
+            int page = Model.Page;
+
+            bool prevHrefDisabled = page <= 1;
+            bool nextHrefDisabled = page >= Model.PageCount;
+
+            int previousPageHref = prevHrefDisabled ? 1 : (page - 1);
+            int nextPageHref = nextHrefDisabled ? 1 : (page + 1);
+        }
+
+        @if (prevHrefDisabled)
+        {
+            <a class="pagination_arrow" disabled>&laquo;</a>
+        }
+        else
+        {
+            <a class="pagination_arrow" href="@(Model.Path)?page=@previousPageHref">&laquo;</a>
+        }
+
+        @PaginatorHelper.RegularPagination(page, Model.PageCount, hrefPar)
+
+        @if (nextHrefDisabled)
+        {
+            <a class="pagination_arrow" disabled>&raquo;</a>
+        }
+        else
+        {
+            <a class="pagination_arrow" href="@(Model.Path)?page=@nextPageHref">&raquo;</a>
+        }
+
+    </div>
+}
+      

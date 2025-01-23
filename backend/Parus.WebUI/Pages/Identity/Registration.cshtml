@@ -1,0 +1,63 @@
+﻿<h2 class="title" asp-antiforgery="true">Registration Form</h2>
+<div class="row row-space">
+    <div class="group">
+        <input id="firstname" class="form_input" required type="text" name="first_name">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">First name</label>
+        <label id="firstname_input_error" class="input_error" style="display: none"></label>
+    </div>
+</div>
+<div class="row row-space">
+    <div class="group">
+        <input id="lastname" class="form_input" required type="text" name="lastname">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Last name</label>
+        <label id="lastname_input_error" class="input_error" style="display: none"></label>
+    </div>
+</div>
+<div class="row row-space">
+    <div class="group">
+        <input id="nickname_input" class="form_input" required type="text" name="nickname">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Username</label>
+        <label id="nickname_input_error" class="input_error" style="display: none"></label>
+    </div>
+</div>
+<div class="row row-space">
+    <div class="group">
+        <input id="reg_email_input" class="form_input" required type="email" name="email">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Email</label>
+        <label id="email_input_error" class="input_error" style="display: none"></label>
+    </div>
+</div>
+<div class="row row-space">
+    <div class="group last_group">
+        <input id="password_input" class="form_input" style="padding-right: 25px" required type="password" name="password">
+        <span class="highlight"></span>
+        <span class="bar"></span>
+        <label class="input_label">Password</label>
+        <img class="show_hide_password_btn" id="registration_show_hide_password" style="width: 25px; height: 25px" />
+        <label id="password_input_error" class="input_error" style="display: none"></label>
+    </div>
+</div>
+<div style="margin-bottom: 20px; padding-right: 172px">
+    <label style="font-weight: bolder">Gender</label>
+    <div class="rb_group">
+        <label>Male</label>
+        <input type="radio" value="1" name="gender">
+    </div>
+    <div class="rb_group">
+        <label>Female</label>
+        <input type="radio" value="2" name="gender">
+    </div>
+</div>
+<div class="p-t-15">
+    <button id="regform_submit" style="width: 150px" class="color1_btn" type="button">Submit</button>
+    <img id="reg_loading_gif" src="~/gifs/loading-gif.gif" style="display: none" alt="this slowpoke moves" width="35" height="35" />
+</div>
+
