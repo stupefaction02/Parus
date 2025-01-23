@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.API.Tests", "Identity\Parus.API.Tests.csproj", "{E64450A3-5B9E-42B5-9FFA-9A051B858490}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parus.API.Tests", "Parus.API.Tests\Parus.API.Tests.csproj", "{E64450A3-5B9E-42B5-9FFA-9A051B858490}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectPanel", "ProjectPanel\ProjectPanel.csproj", "{136A37E8-4AF7-4B08-8534-1F5C05C838EB}"
 EndProject

@@ -380,7 +380,9 @@ backend/MessageBrocker/
 backend/DummyUser
 backend/DummyPublisher
 backend/TestProject1
-
+backend/ControlPanel
+backend/IdentityTest
+backend/IdentityTests
 
 
 ./IdentityTest
