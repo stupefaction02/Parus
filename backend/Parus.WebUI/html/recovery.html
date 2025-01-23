@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home page - Naturistic.WebUI</title>
+    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="./recovery.css" />
+</head>
+<body>
+	<div id="recovery_container_phase1">
+		<div class="recovery_container">
+			<strong class="p1">Как снова войти в учетную запись Twitch</strong>
+			
+			<div style="margin-bottom: 40px">
+				<label class="label">Введите адрес электронной почты или номер телефона</label>
+				<input id="recovery_container_input" class="input--style-4" style="width: 100%" type="text" name="email">
+			</div>		 
+			<button id="recovery_continue_btn" type="button" disabled="true">Продолжить</button>
+		</div>
+	</div>
+	
+	<div id="recovery_container_phase2" style="display: none">
+		<div class="recovery_container">
+			<strong class="p1">Как снова войти в учетную запись Twitch</strong>
+			
+			<div style="margin-bottom: 40px">
+				<label class="label">Введите адрес электронной почты или номер телефона</label>
+				<input class="input--style-4" style="width: 100%" type="text" name="email">
+			</div>		 
+			<button id="recovery_continue_btn" type="button" disabled="true">Продолжить</button>
+		</div>
+	</div>
+	
+	<script type="module" src="./common.js"></script>
+	<script type="text/javascript" src="./recovery.js"></script>
+</body>
+</html>

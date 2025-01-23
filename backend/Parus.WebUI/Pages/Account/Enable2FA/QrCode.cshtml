@@ -1,0 +1,42 @@
+﻿@using Parus.Core.Interfaces;
+@using Parus.WebUI.HtmlHelpers;
+
+@inject ILocalizationService localization
+
+<label>
+    Шаг 1: загрузите приложение для аутенфикации
+</label>
+<p>
+    Установите приложение Google Authenticator. После чего вы сможете использовать его для аутенфикации
+</p>
+
+<div style="display: flex; flex-direction: column">
+    <label>
+        Шаг 2: отсканируйте QR-код
+    </label>
+    <p>
+        Откройте приложение для аутенфикации и отсканируйте изображение нижу с помощью камеры
+    </p>
+    <img id="qrcode" style="width: 225px; height: 225px" />
+</div>
+
+<div>
+    <label>
+        Шаг 3: потвердите код
+    </label>
+    <p>
+        Введите сгенерированый 6-значный код
+    </p>
+    <div class="row row-space">
+        <div class="group">
+            <input id="code_input" autocomplete="off" class="form_input" maxlength="6" required type="text" name="qrcode">
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <label id="code_error" style="display: none" class="input_error">Неправильный код</label>
+        </div>
+    </div>
+</div>
+
+<button id="2fa_enable_btn" class="color1_btn" type="button">
+    Отправить
+</button>

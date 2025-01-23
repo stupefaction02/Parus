@@ -1,0 +1,400 @@
+Mount shared folder
+sudo mount -t vboxsf -o uid=1000,gid=1000 backend1 /sharedhost1
+
+DNS resolver, get IP from hostname
+	'host' in dnsutils package
+	taken form https://unix.stackexchange.com/questions/20784/how-can-i-resolve-a-hostname-to-an-ip-address-in-a-bash-script
+	
+https://askubuntu.com/questions/161759/how-to-access-a-shared-folder-in-virtualbox
+
+
+Connecting to MSSQL server
+	https://serverfault.com/questions/975149/how-do-i-test-connection-from-linux-to-microsoft-sql-server
+	
+	# sqlcmd
+	https://learn.microsoft.com/en-us/sql/tools/sqlcmd/sqlcmd-utility?view=sql-server-ver16&tabs=go%2Cwindows&pivots=cs1-bash
+	https://learn.microsoft.com/ru-ru/sql/tools/sqlcmd/sqlcmd-connect-database-engine?view=sql-server-ver16
+	
+	https://serverfault.com/questions/975149/how-do-i-test-connection-from-linux-to-microsoft-sql-server
+	
+	nc -zv YOUR_SERVER_NAME_OR_IP 1433
+	sudo apt install mssql-tools
+	
+	# network
+	https://superuser.com/questions/857899/networkmanager-timeout-and-ip-config-unavailable-on-ethernet
+	https://rus-linux.net/MyLDP/vm/VirtualBox-networking.html
+		
+https://mycsharpdeveloper.wordpress.com/2022/11/02/how-to-reverse-proxy-net-core-6-using-nginx-on-ubuntu/
+
+--- USERS AND ROLES ---
+# Adding user
+sudo adduser username
+
+#change password
+
+passwd
+
+# show all users
+awk -F: '{ print $1}' /etc/passwd
+cat /etc/passwd
+
+
+--- NGINX ---
+
+# allow only those IP
+
+
+--- SSH ---
+
+#evrify password
+
+# show recent Accepted request
+journalctl -r -u ssh | grep Accepted
+
+
+
+--- OPENSSL ---
+
+#generating password 
+openssl rand -base64 128
+
+
+
+-files
+---- FILES ----
+
+# where and how to put your scrits
+
+right place: $HOME/.local/share
+echo export PATH=$PATH:$HOME/.local/share >> ~/.bashrc && source ~/.bashrc
+
+
+# show directory files with size
+ls -lha
+
+# unzip
+sudo apt-get install unzip
+
+# watch file updates, watch log file live for example
+tail -f 
+
+--- SECURITY ---
+
+# see open ports
+https://www.cyberciti.biz/faq/how-to-check-open-ports-in-linux-using-the-cli/
+
+nmap -sS -p1-65535 31.13.248.18 -v
+
+22/tcp  open     ssh
+23/tcp  filtered telnet
+25/tcp  open     smtp
+53/tcp  open     domain
+80/tcp  open     http
+110/tcp open     pop3
+143/tcp open     imap
+179/tcp filtered bgp
+443/tcp open     https
+465/tcp open     smtps
+587/tcp open     submission
+993/tcp open     imaps
+995/tcp open     pop3s
+
+--- NETWORK ---
+
+# isntall netstat
+apt install net-tools
+
+# Show all opened ports
+	sudo netstat -tulpn | grep LISTEN
+
+#list all active connections
+
+netstat -tuap
+sudo netstat -nlp - show processes
+
+
+#how to kill tcp connection
+
+Comment:
+You can't kill a single connection of a process.
+But you could block it with iptables. So the connection can't provide or receive data and the client will run in a timeout.
+
+# set interface down/up
+ip link set wg0 up
+ip link set wg0 down
+
+iptables 
+
+#iptables
+https://vasilisc.com/21-examples-iptables
+https://www.opennet.ru/docs/RUS/iptables/
+
+# show rules
+iptables -L INPUT -n -v
+iptables -L INPUT -n --line-numbers
+
+# simple ip restrict
+iptables -A INPUT -s 202.54.1.2 -j DROP
+-A --append
+-I --insert
+-D --delete
+-s --source 
+
+# Дать доступ на порт с опрделененого адреса
+/sbin/iptables -A INPUT -p tcp -s 188.17.155.106 --dport 39391 -j ACCEPT
+
+
+# open port
+
+# delete ip restrict rule
+iptables -D INPUT -s 202.54.1.1 -j DROP
+
+# or delete rule by number
+
+
+## routing
+
+# delete route
+route del -net 10.1.0.0 gw 31.13.248.1 netmask 255.255.255.255 dev eth0
+
+
+
+
+# ???
+iptables -A FORWARD -i wg0 -j ACCEPT;
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+
+# default rules
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+
+::1 - ipv6 localhost
+::: - ipv6 0.0.0.0
+
+--- SYSTEMD ---
+
+# lisl all services
+systemctl
+systemctl list-units --type=service
+systemctl --type=service
+
+# journal for service 
+journalctl -u <servicename>
+
+#set logging level
+
+# Check memory usage
+install Ncdu
+ncdu /
+
+-LOGGING
+# jounralctl
+	Retain only the past two days:
+	journalctl --vacuum-time=2d
+
+	Retain only the past 500 MB:
+	journalctl --vacuum-size=500M
+
+-PACKAGES
+	# remove all packages related to mysql
+	apt-get remove --purge 'mysql-.*'
+
+--- SYSTEM ---
+
+# show kernel version
+cat /etc/os-release
+
+# set variable in single bash session
+PATH=$PATH:~/folder
+PATH=$PATH:~/sbin/
+
+
+
+# show all process
+
+ps -A
+
+
+
+# usefull 
+
+iptables -L INPUT -n -v && iptables -t nat -L --line-numbers
+iptables -L -n -v && iptables -t nat -L --line-numbers
+
+iptables -t nat -X
+iptables -F FORWARD
+
+iptables -t filter -A FORWARD -i tun0 -o eth0 -j ACCEPT
+
+sudo nano /usr/local/etc/xray/config.json
+
+
+--- CURL ---
+# download file
+sudo curl -O https://github.com/EvgenyNerush/easy-xray/archive/refs/heads/main.zip
+
+2. send with headers
+	curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://hostname/resource
+
+account-info operation-history operation-details payment payment-p2p money-source
+scope=payment%20money-source("wallet","card")%20account-info%20operation-history%20operation-details
+curl -i -H "Content-Type: application/x-www-form-urlencoded" -H "Content-Type: application/json" https://yoomoney.com/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=account-info operation-history operation-details payment payment-p2p money-source&instance_name=myowntwich
+curl -i -H "Content-Type: application/x-www-form-urlencoded" https://yoomoney.ru/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=account-info%20operation-history%20operation-details%20payment%20payment-p2p%20money-source&instance_name=myowntwich
+https://yoomoney.ru/oauth/authorize?client_id=FE22284345246A17AAACD2F55AA5F52C911FD3490570CF07A7DDFF4CD8CC330C&response_type=code&redirect_uri=http://myowntwitch.duckdns.org&scope=payment.to-account("4100118608260786")%20money-source("wallet","card")&instance_name=myowntwich
+
+-O means output here
+
+-DNS
+---- DNS ----
+
+# showing what DNS I use
+	cat /etc/resolv.conf 
+
+#Рекурсивный вс итеративный 
+
+При рекурсивном запросе Вы просто обращаетесь к серверу, 
+а он, если не найдет у себя нужной записи, идет к другим серверам и спрашивает у них. 
+Нерекурсивный dns сервер в данном случае просто говорит - "я не знаю, но спроси у этого сервера". И клиент будет слать ещё один запрос. 
+Понятное дело, что при медленном интернете первый вариант лучше.
+
+Почитать еще можно тут: https://hackware.ru/?p=9374
+
+# BIND9
+
+-BIND9 logging: https://kb.isc.org/docs/aa-01526
+
+# see bind9 cache
+/sbin/rndc dumpdb -cache
+nano /var/cache/bind/named_dump.db
+
+
+# DNS articles
+https://habr.com/ru/companies/oleg-bunin/articles/350550/#bind
+
+
+-DOCKER
+
+# installation on Debian
+	https://docs.docker.com/engine/install/debian/
+
+# Stop all the containers
+docker stop $(docker ps -a -q)
+
+# Remove all the containers
+docker rm $(docker ps -a -q)
+
+# remove all container 
+docker container prune
+
+# remove all images 
+docker image prune --all --force
+
+# login into container 
+docker exec -it <container id> /bin/sh
+
+# remove ALL, images, container, volumes, networks and CACHE
+docker system prune 
+https://stackoverflow.com/questions/46672001/is-it-safe-to-clean-docker-overlay2
+
+# standart build command 
+docker buildx build ./ -t parus:api -f ./Parus.API/Dockerfile 
+
+# run sample aspnetapp
+sudo docker run -it --rm -p 39000:8080 --name aspnetcore_sample mcr.microsoft.com/dotnet/samples:aspnetapp
+
+
+-VIRTUALISATION
+# fix Copy and paste
+# set up shared folder 
+	https://askubuntu.com/questions/161759/how-to-access-a-shared-folder-in-virtualbox
+	
+
+-OTHERS
+# purge gnome
+	sudo apt autoremove --purge gnome-session 
+
+-FAIL2BAN
+
+# create your own rule
+
+nano /etc/fail2ban/jail.local 
+и пиши тут правила, например правила бана посл второго трая для почтовых портов
+[sasl]
+enabled = true
+port = smtp,ssmtp,submission,imap2,imap3,imaps,pop3,pop3s
+filter = sasl
+findtime = 20800
+maxretry = 2
+bantime = -1
+action = route
+
+-POSTFIX
+#защита 
+	https://www.linux.org.ru/forum/admin/13305896
+	Создать правило в fail2ban по почтовым портам
+
+# 465 vs 587
+	465 - smtp для приема почты от клиентов, завернутый в чистый SSL (smtps)
+	587 - smtp для приема почты от клиентов (submission)
+	разница только в том, что на 587 диалог начинается открытым текстом, а на 465 - сразу SSL 
+	По 465 порту соединение сразу должно открываться по TLS/SSL. С 587 работают как с 25: соединение в открытом виде, 
+	а для включения шифрования подаётся команда STARTTLS, если сервер заявил о такой возможности в ответ на EHLO от клиента.
+	smtps (465 порт) фича более старая, starttls - более новая и, понятно, более гибкая: можно не выделять новый порт на сервере
+	
+---- GUIDES ----
+
+1. setting up SSH 
+https://selectel.ru/blog/ssh-ubuntu-setup/
+
+2. Backuping 
+
+Let the file-hierarchy(7) man page guide you. If this hierarchy is followed, all the settings should be under /etc/. On the other hand, you should never need to backup anything under, e.g., the section "vendor-supplied operating system resources" (/usr/ & /lib/) as they can be reinstalled, nor the section "virtual kernel and API file systems" (/dev/, /proc/ & /sys/).
+https://manpages.ubuntu.com/manpages/jammy/man7/file-hierarchy.7.html
+
+#soft
+rsnapshot
+	https://hmarketing.ru/blog/server/rsnapshot-v-linux/
+etckeeper 
+	https://ivirt-it.ru/etckeeper-and-git/
+rclone
+	- downloading
+		curl -O https://rclone.org/install.sh
+		bash install.sh
+	- fix drive auth porblem
+		https://forum.rclone.org/t/google-drive-error-400-invalid-request-v1-63-1/40624/2
+	
+3. Delete all trash
+
+apt-get autoremove
+
+4. Good 
+
+5. Setting DNS up
+https://gist.github.com/mrpeardotnet/3f423a5efd86b87b0cf0d07220aca5cb
+
+5. Settings up Zabbix
+
+https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/kak-ustanovit-zabbix-na-ubuntu-i-debian#1
+mysql -uzabbix -p zabbix < schema.sql
+schema.sql в 
+
+---- Scrits ----
+
+1. Install on server
+
+apt-get install ncdu
+
+
+5. Installing Zabbix
+
+https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/kak-ustanovit-zabbix-na-ubuntu-i-debian#2
+
+wget https://repo.zabbix.com/zabbix/7.2/release/debian/pool/main/z/zabbix-release/zabbix-release_7.2-0.1%2Bdebian11_all.deb
+
+apt install zabbix-server-mysql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+apt install zabbix-server-mysql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent
+
+/sbin/iptables -A INPUT -p tcp -s 188.17.155.106 --dport 39391 -j ACCEPT
+

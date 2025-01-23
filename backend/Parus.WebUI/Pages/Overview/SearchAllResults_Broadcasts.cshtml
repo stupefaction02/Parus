@@ -1,0 +1,95 @@
+﻿@using Microsoft.Extensions.Configuration;
+@using Parus.Core.Entities;
+@using Parus.Core.Interfaces;
+@using Parus.Core.Interfaces.Services;
+@using Parus.Core.Services.ElasticSearch
+@using Parus.WebUI.HtmlHelpers;
+@using Parus.WebUI.Pages.Overview.Contexts;
+
+@model AllBroadcastSearchResultContext
+
+@inject ILocalizationService localization
+@inject IConfiguration configuration
+@inject ElasticSearchService searchingService
+
+@{
+    string imageServer = configuration["ImageServer:Url"];
+
+    Model.Prepare(searchingService, Context.Request.Query["page"]);
+}
+
+@if (Model.Broadcasts.Count() > 0)
+{
+    <article class="results_block" style="min-height: 224px; max-height: 1029.2px;">
+        @{
+            <div class="article_h">
+                <span class="article_h_span">Трансляции</span>
+            </div>
+
+            <div class="results_elems">
+
+                @foreach (var broadcast in Model.Broadcasts)
+                {
+                    <div class="broadcast_block">
+                        <a href="@(broadcast.Username)">
+                            <img class="broadcast_block_img" src="@(imageServer)/previews/@(broadcast.Preview)" />
+                        </a>
+                        <div class="broadcast_block_info">
+                            <a href="@(broadcast.Username)" style="display: flex; align-items: center;">
+                                <img class="broadcast_block_info_avatar" src="@(imageServer)/avas/@(broadcast.AvatarPic)" />
+
+                                <div style="margin-top: 12px; width: 85%">
+                                    <h3 class="broadcast_block_info_title">@broadcast.Title</h3>
+                                    <label class="broadcast_block_info_username">@broadcast.Username</label>
+                                </div>
+                            </a>
+
+                            <div style="padding-left: 50px; margin-top: -8px; ">
+                                <label class="broadcast_block_info_category">@broadcast.CategoryName</label>
+
+                                <div class="broadcast_block_info_tags">
+
+                                    @foreach (var tag in broadcast.Tags)
+                                    {
+                                        <a class="broadcast_block_info_tag">
+                                            <span>@tag.Name</span>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="separator">
+                <div class="sidepart">
+                    <div></div>
+                </div>
+                <div class="text">
+                    <button id="show_broadcasts_btn">
+                        <div>
+                            <div>
+                                <div>
+                                    <div class="text_c">
+                                        <p aria-label="Показать все">Показать все</p>
+                                    </div>
+
+                                    <div class="arrow">
+                                        <svg width="2rem" height="2rem" viewBox="0 0 20 20"><path d="M14.5 6.5 10 11 5.5 6.5 4 8l6 6 6-6-1.5-1.5z"></path></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div class="sidepart">
+                    <div></div>
+                </div>
+            </div>
+        }
+    </article>
+}
+
+<partial model=@(Model.Pagination) name="/Pages/Shared/Pagination.cshtml" />

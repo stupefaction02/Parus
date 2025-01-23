@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  parus.webui:
+    image: ${DOCKER_REGISTRY-}paruswebui
+    build:
+      context: .
+      dockerfile: Parus.WebUI/Dockerfile

@@ -1,0 +1,163 @@
+.player_column {
+	width: 75%;
+	float: left;
+	height: 1268px;
+}
+
+.player {
+	width: 976px;
+	background: transparent;
+	height: 482px;
+	margin: 0 auto;
+}
+
+.chat {
+	
+	right: 0px;
+	position: fixed;
+	width: 25%;
+	float: right;
+	height: 100vh;
+	border-left: 1px solid #ccc;
+	display: flex;
+	flex-direction: column;
+}
+
+body {
+	margin: 0px;
+	overflow: hidden
+}
+
+.chat_controls input {
+	width: 100%;
+	height: 34px;
+	background-color: #eee;
+	border: 2px solid #ccc;
+	border-radius: 5px;
+}
+
+.chat .input_box {
+	padding: 0px 18px 0 10px;
+	margin-bottom: 10px;
+}
+
+.chat .chat_messages {
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	
+}
+
+.chat_messages_container {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	height: 78%;
+	padding: 0px 8px 0 8px;
+}
+
+.chat_buttons button {
+	/*font-family: "Helvetica Neue";*/
+	height: 30px;
+	float: right;
+	font-size: 12px;
+	padding: 0px 8px 0 8px;
+}
+
+.chat_buttons {
+	padding-right: 10px;
+}
+
+.message_body {
+	margin: 0px;
+}
+
+.message_sender {
+	float: left;
+	font-weight: bolder;
+}
+
+.chat_message {
+	background-color: #F2F2F2;
+	padding: 5px;
+	font-size: 14px;
+	margin-top: 1px;
+	border-radius: 5px;
+}
+
+.input_box input {
+	/*font-family: "Helvetica Neue";*/
+	font-size: 13px !important;
+	box-sizing: content-box !important;
+	line-height: normal;
+}
+
+.chat_btn {
+	padding-right: 12px !important;
+	padding-left: 12px !important;
+}
+
+.chat_system_message {
+	font-style: italic;
+	color: dimgray;
+}
+
+.player_controls_right svg {
+	pointer-events: none;
+	width: 2rem;
+	height: 2rem;
+	cursor: pointer;
+	fill: white;
+}
+
+
+
+.player_controls_right_div {
+	width: 2em;
+	height: 2em;
+}
+
+.player_controls_right_div {
+	margin-right: 5px;
+}
+
+	.player_controls_right_div:hover {
+		fill: #524b4b;
+	}
+
+.player_controls {
+	position: relative;
+	top: 445px;
+	width: 100%;
+	height: 2em;
+}
+
+.plays_control_right_play_button {
+}
+
+.player_controls_right {
+	display: flex;
+}
+
+.player_video {
+	width: 100%;
+	height: 100%;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	margin-right: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #eee;
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: gray;
+}
+
+@font-face {
+	font-family: "Helvetica Neue";
+	src: url("../fonts/HelveticaNeueCyr-Roman.ttf") format("truetype");
+}

@@ -1,0 +1,52 @@
+﻿@page "/account/recovery"
+
+@model RecoveryModel
+
+@section AdditionalScripts
+{
+    <script type="module" src="~/js/common.js"></script>
+    <script type="module" src="~/js/recovery.js"></script>
+}
+
+@section AdditionalStyles
+{
+    <link href="~/css/recovery.css" rel="stylesheet" media="all">
+    <link href="~/css/buttons.css" rel="stylesheet" media="all">
+}
+
+<div id="recovery_container_phase1"> 
+	<div class="recovery_container">
+		<strong class="p1">@Model.RECOVERY_P1P1</strong>
+
+		<div style="margin-bottom: 40px">
+			<label class="label">@Model.RECOVERY_P1P2</label>
+			<input id="recovery_container_input" style="width: 100%" type="text" name="email">
+		</div>
+		<button id="recovery_continue_btn" class="color1_btn" type="button" disabled="true">Продолжить</button>
+	</div>
+</div>
+
+<div id="recovery_container_phase2">
+	<div class="recovery_container">
+		<strong class="p1">Как снова войти в учетную запись Twitch</strong>
+
+		<div style="margin-bottom: 40px">
+			<label class="label">Теперь предоставьте нам имя пользователя Twitch, с которым у вас возникли проблемы.</label>
+			<input id="username_input" style="width: 100%" type="text" name="email">
+		</div>
+		<button id="send_ref_btn" class="color1_btn" style="width: 188px" type="button" disabled="true">Отправьте мне ссылку для восстановления пароля</button>
+	</div>
+</div>
+
+<div id="recovery_container_phase3">
+	<div class="recovery_container">
+		<strong class="p1">Проверьте свою почту</strong>
+		<p class="p2">Проверьте почту <span id="check_email_span"></span> и щелкните ссылку для сброса пароля, которую мы отправили для вашей учетной записи Twitch <span id="username_span">bowwowwow210</span>.</p>
+		<p class="p3">На ее доставку может потребоваться несколько минут. И на всякий случай проверьте папки спама и рекламы!</p>
+
+		<div class="buttons">
+			<button id="complete_btn" style="padding: 0px 4px 0px 4px; margin-right: 12px" class="color1_btn" type="button">Готово</button>
+			<button id="repeat_btn" class="color2_btn" type="button">Начать заново</button>
+		</div>
+	</div>
+</div>

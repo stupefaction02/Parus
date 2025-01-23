@@ -1,0 +1,25 @@
+.recovery_container {
+	margin-left: auto;
+    margin-right: auto;
+    width: 380px;
+    height: 500px;
+	display:flex;
+    flex-direction: column;
+}
+
+.recovery_container .p1 {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 20px;
+}
+
+#recovery_continue_btn {
+	width: 180px;
+	height: 28px;
+	vertical-align: center;
+}
+
+.recovery_container .buttons {
+	display: flex;
+	flex-flow: row;
+}
