@@ -1,2 +1,0 @@
-dotnet ef migrations add users_init --project Naturistic.Infrastructure --context ApplicationIdentityDbContext -s ./Naturistic.Backend/Naturistic.Backend.csproj -v
-dotnet ef database update --project Naturistic.Infrastructure --context ApplicationIdentityDbContext

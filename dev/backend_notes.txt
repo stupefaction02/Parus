@@ -1,6 +1,0 @@
-todo:
-
-1) RawCode guide - go trugh
-2) See metanit reference
-3) See some API on web
-

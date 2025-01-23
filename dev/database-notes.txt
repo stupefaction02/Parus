@@ -1,3 +1,0 @@
-# ef 
-## login failed
-corrent connection string = "Data Source=DESKTOP-OTM8VD2;Database=Naturistic.Users;TrustServerCertificate=True;Integrated Security=True;";
