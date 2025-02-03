@@ -11,7 +11,7 @@ using Parus.Core.Interfaces.Repositories;
 using Parus.Core.Interfaces.Services;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DataLayer.Repositories
 {
     public class BroadcastCategoryRepository : IBroadcastCategoryRepository
     {
@@ -51,12 +51,12 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         public int Count()
         {
-            return this.context.Broadcasts.Count();
+            return context.Broadcasts.Count();
         }
 
         public IEnumerable<Broadcast> GetInterval(int start, int count)
         {
-            return this.context.Broadcasts
+            return context.Broadcasts
                 .Include(x => x.Category)
                 .Include(x => x.Tags)
                 .Skip(start).Take(count);
@@ -100,7 +100,7 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         const string titleProp = nameof(BroadcastInfoKeyword.Keyword);
 
-        public IEnumerable<Broadcast> Broadcasts { get => this.context.Broadcasts.Include(x => x.Category).Include(x => x.Tags); }
+        public IEnumerable<Broadcast> Broadcasts { get => context.Broadcasts.Include(x => x.Category).Include(x => x.Tags); }
 
         //[Benchmark(Description = "BroadcastInfoRepository.Search")]
         public IEnumerable<Broadcast> Search(string query)

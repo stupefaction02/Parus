@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 using Parus.Infrastructure.Identity;
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Parus.Core;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces;

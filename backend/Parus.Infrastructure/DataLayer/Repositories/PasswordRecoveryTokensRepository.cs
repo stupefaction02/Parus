@@ -9,7 +9,7 @@ using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DataLayer.Repositories
 {
     public class PasswordRecoveryTokensRepository : IPasswordRecoveryTokensRepository
     {
@@ -36,14 +36,14 @@ namespace Parus.Infrastructure.DLA.Repositories
             context.SaveChanges();
         }
 
-		public async Task DeleteAsync(IPasswordRecoveryToken token)
-		{
-			context.PasswordRecoveryTokens.Remove((PasswordRecoveryToken)token);
+        public async Task DeleteAsync(IPasswordRecoveryToken token)
+        {
+            context.PasswordRecoveryTokens.Remove((PasswordRecoveryToken)token);
 
-			await context.SaveChangesAsync();
-		}
+            await context.SaveChangesAsync();
+        }
 
-		public IUser GetUser(string token)
+        public IUser GetUser(string token)
         {
             var tokenEntry = context.PasswordRecoveryTokens.Include(e => e.User)
                 .SingleOrDefault(e => e.Token == token);
@@ -56,27 +56,27 @@ namespace Parus.Infrastructure.DLA.Repositories
             return null;
         }
 
-		public void DeleteAll(Func<IUser, bool> predicate)
-		{
+        public void DeleteAll(Func<IUser, bool> predicate)
+        {
             Expression<Func<PasswordRecoveryToken, bool>> expression = x => predicate(x.User);
 
-			context.PasswordRecoveryTokens.RemoveWhere(expression);
-		}
+            context.PasswordRecoveryTokens.RemoveWhere(expression);
+        }
 
-		public bool Contains(string userId)
-		{
+        public bool Contains(string userId)
+        {
             return context.PasswordRecoveryTokens.Any(t => t.UserId == userId);
-		}
+        }
 
         public IPasswordRecoveryToken OneByUser(string id)
         {
-			return context.PasswordRecoveryTokens.SingleOrDefault(t => t.UserId == id);
-		}
+            return context.PasswordRecoveryTokens.SingleOrDefault(t => t.UserId == id);
+        }
 
-		public void ClearTracking()
-		{
-			context.ChangeTracker.Clear();
-		}
+        public void ClearTracking()
+        {
+            context.ChangeTracker.Clear();
+        }
 
         public IPasswordRecoveryToken GetTokenWithUser(string token)
         {

@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 
 using Parus.Core.Interfaces.Repositories;
-using Parus.Infrastructure.DLA.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Parus.API.Authentication;
@@ -21,6 +19,8 @@ using Parus.Core.Services.MessageQueue;
 using Microsoft.CodeAnalysis;
 using Parus.Infrastructure.Services;
 using Parus.Core.Identity;
+using Parus.Infrastructure.DataLayer;
+using Parus.Infrastructure.DataLayer.Repositories;
 
 
 namespace Parus.API.Extensions

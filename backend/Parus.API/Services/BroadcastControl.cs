@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Parus.Core.Entities;
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Parus.Infrastructure.Identity;
 
 namespace Parus.API.Services

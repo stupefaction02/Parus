@@ -9,7 +9,7 @@ using Parus.Core.Entities;
 using Parus.Infrastructure.Identity;
 using System.Diagnostics;
 
-namespace Parus.Infrastructure.DLA
+namespace Parus.Infrastructure.DataLayer
 {
     public class BillingDbContext : DbContext
     {
@@ -115,7 +115,7 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!String.IsNullOrEmpty(_connectionString))
+            if (!string.IsNullOrEmpty(_connectionString))
             {
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
                 optionsBuilder.UseSqlServer(_connectionString);

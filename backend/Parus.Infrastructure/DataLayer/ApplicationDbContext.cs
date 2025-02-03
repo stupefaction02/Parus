@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Parus.Core.Entities;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Infrastructure.DLA
+namespace Parus.Infrastructure.DataLayer
 {
     public class ApplicationDbContext : DbContext
     {
@@ -15,27 +15,27 @@ namespace Parus.Infrastructure.DLA
         #region System
         public ApplicationDbContext()
         {
-            
+
         }
         #endregion
 
         private string _connectionString;
         private ConnectionType _connectionType;
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL) : base(options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, string connectionString = "", ConnectionType connectionType = ConnectionType.MSSQL) : base(options)
         {
             _connectionString = connectionString;
             _connectionType = connectionType;
         }
 
-		#region Tables
+        #region Tables
 
-		public DbSet<Broadcast> Broadcasts { get; set; }
+        public DbSet<Broadcast> Broadcasts { get; set; }
 
         public DbSet<BroadcastInfoKeyword> BroadcastsKeywords { get; set; }
 
         public DbSet<BroadcastTag> Tags { get; set; }
 
-		public DbSet<BroadcastCategory> Categories { get; set; }
+        public DbSet<BroadcastCategory> Categories { get; set; }
 
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
@@ -59,7 +59,7 @@ namespace Parus.Infrastructure.DLA
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!String.IsNullOrEmpty(_connectionString))
+            if (!string.IsNullOrEmpty(_connectionString))
             {
                 ConfigServer(_connectionString, optionsBuilder);
             }

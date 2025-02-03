@@ -14,8 +14,8 @@ using Microsoft.Extensions.Options;
 using MimeKit.Encodings;
 using Org.BouncyCastle.Tls;
 using Parus.Core.Entities;
-using Parus.Infrastructure.DLA;
-using static Parus.Infrastructure.DLA.ApplicationDbContext;
+using Parus.Infrastructure.DataLayer;
+using static Parus.Infrastructure.DataLayer.ApplicationDbContext;
 
 namespace Parus.Infrastructure.Identity
 {

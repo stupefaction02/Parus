@@ -1,4 +1,4 @@
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Parus.API.Controllers;

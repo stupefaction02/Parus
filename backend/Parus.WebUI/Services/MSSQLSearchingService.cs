@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Identity;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using Microsoft.AspNetCore.Mvc;
+using Parus.Infrastructure.DataLayer;
 
 namespace Parus.WebUI.Services
 {

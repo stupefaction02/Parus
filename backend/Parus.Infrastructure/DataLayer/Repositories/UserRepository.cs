@@ -9,15 +9,15 @@ using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.Identity;
 
-namespace Parus.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DataLayer.Repositories
 {
     public class UserRepository : IUserRepository
     {
         private readonly ParusDbContext context;
 
-		public IEnumerable<IUser> Users => context.Users;
+        public IEnumerable<IUser> Users => context.Users;
 
-		public UserRepository(ParusDbContext context)
+        public UserRepository(ParusDbContext context)
         {
             this.context = context;
         }
@@ -45,14 +45,14 @@ namespace Parus.Infrastructure.DLA.Repositories
         public void Update(Action action)
         {
             action.Invoke();
-            
+
             context.SaveChanges();
         }
 
-		public IUser FindUserByUsername(string nickname)
-		{
-			return context.Users.AsEnumerable().SingleOrDefault(user => user.GetUsername() == nickname);
-		}
+        public IUser FindUserByUsername(string nickname)
+        {
+            return context.Users.AsEnumerable().SingleOrDefault(user => user.GetUsername() == nickname);
+        }
 
         public void RemoveOne(string username)
         {
@@ -60,30 +60,30 @@ namespace Parus.Infrastructure.DLA.Repositories
 
             context.Users.Remove((ParusUser)target);
 
-			context.SaveChanges();
-		}
+            context.SaveChanges();
+        }
 
-		public bool Contains(Func<IUser, bool> predicate)
-		{
-			//Expression<Func<IUser, bool>> expression = x => predicate(x);
+        public bool Contains(Func<IUser, bool> predicate)
+        {
+            //Expression<Func<IUser, bool>> expression = x => predicate(x);
 
             // client-side
-			return context.Users.AsEnumerable().Any(x => predicate(x));
-		}
+            return context.Users.AsEnumerable().Any(x => predicate(x));
+        }
 
         public IUser One(Func<IUser, bool> predicate)
         {
-			return context.Users.Include(x => x.PasswordRecoveryToken)
+            return context.Users.Include(x => x.PasswordRecoveryToken)
                 .Include(x => x.ConfirmCode)
                 .AsEnumerable().SingleOrDefault(predicate);
-		}
+        }
 
         public bool Update(IUser user)
         {
             context.Users.Update((ParusUser)user);
 
             return context.SaveChanges() > 0;
-		}
+        }
 
         public void UpdateWithoutContextSave(IUser user)
         {
@@ -97,8 +97,8 @@ namespace Parus.Infrastructure.DLA.Repositories
 
         public void ClearTracking()
         {
-			context.ChangeTracker.Clear();
-		}
+            context.ChangeTracker.Clear();
+        }
 
         public int GetUserRegionId(string userId)
         {

@@ -16,16 +16,16 @@ using Parus.API.Services;
 using Parus.Core.Entities;
 using Parus.Core.Identity;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Extensions;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.OutputCaching;
 using static Parus.API.Controllers.IdentityController;
 using Microsoft.AspNetCore.Http.Features;
+using Parus.Infrastructure.DataLayer;
 
 namespace Parus.API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	public class TestController : ParusController
 	{
         #region Testing

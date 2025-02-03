@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Parus.Core.Entities;
 using Parus.Core.Interfaces.Repositories;
+using Parus.Infrastructure.DataLayer;
 using Parus.Infrastructure.Identity;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Parus.Infrastructure.DLA.Repositories
+namespace Parus.Infrastructure.DataLayer.Repositories
 {
     public class DapperUserRepository : IDisposable, IUserRepository
     {
@@ -149,10 +150,11 @@ namespace Parus.Infrastructure.DLA.Repositories
                     $"join [Billing].[SubscriptionProfiles] p on s.[ProfileId] = p.[ProfileId] " +
                     $"where s.[PurchaserUserId] = '{purchaserUserId}'";
                 //Console.WriteLine(q);
-                var ret1 =  db.Query<SubscriptionSession, SubscriptionProfile, SubscriptionSession>(q, (session, profile) => {
-                        session.Profile = profile;
-                        return session;
-                    }, splitOn: "ProfileId");
+                var ret1 = db.Query<SubscriptionSession, SubscriptionProfile, SubscriptionSession>(q, (session, profile) =>
+                {
+                    session.Profile = profile;
+                    return session;
+                }, splitOn: "ProfileId");
 
                 var e = ret1.GetEnumerator();
                 if (e.MoveNext())
@@ -200,7 +202,7 @@ namespace Parus.Infrastructure.DLA.Repositories
 
             bool where(SubscriptionSession session)
             {
-                if (session.ExpiresAt > currentDate && currentDate.Minute > (session.ExpiresAt.Minute - clockslew))
+                if (session.ExpiresAt > currentDate && currentDate.Minute > session.ExpiresAt.Minute - clockslew)
                 {
                     Console.WriteLine($"{session.BroadcasterId} true");
                     return true;

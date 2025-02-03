@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Parus.Core.Entities;
 
-namespace Parus.Infrastructure.DLA
+namespace Parus.Infrastructure.DataLayer
 {
     public class PostgressCoreContext : DbContext
     {
@@ -54,7 +54,7 @@ namespace Parus.Infrastructure.DLA
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql(_connectionString);
-            if (!String.IsNullOrEmpty(_connectionString))
+            if (!string.IsNullOrEmpty(_connectionString))
             {
                 Debug.WriteLine($"Seting up connection string for {nameof(ApplicationDbContext)}");
                 optionsBuilder.UseNpgsql(_connectionString);

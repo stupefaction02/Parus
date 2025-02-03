@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Parus.Infrastructure.Identity;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 
 using Parus.Core.Interfaces.Repositories;
-using Parus.Infrastructure.DLA.Repositories;
+using Parus.Infrastructure.DataLayer.Repositories;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

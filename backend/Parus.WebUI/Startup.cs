@@ -23,8 +23,7 @@ using Parus.WebUI.Middlewares;
 using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
 using Parus.Core.Interfaces.Repositories;
-using Parus.Infrastructure.DLA.Repositories;
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Parus.Core.Interfaces.Services;
 using Parus.Core.Services.ElasticSearch;
 using Microsoft.AspNetCore.StaticFiles;
@@ -35,6 +34,7 @@ using System.Net;
 using System.Text;
 using MimeKit.Cryptography;
 using Parus.Infrastructure.Middlewares;
+using Parus.Infrastructure.DataLayer.Repositories;
 
 namespace Parus.WebUI
 {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Parus.API.Extensions;
 using Parus.API.Services.Chat.SignalR;
-using Parus.Infrastructure.DLA;
+using Parus.Infrastructure.DataLayer;
 using Parus.Infrastructure.Identity;
 using Parus.Core.Interfaces;
 using Parus.Core.Services.Localization;
