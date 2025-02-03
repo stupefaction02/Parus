@@ -19,7 +19,9 @@ using Parus.Core.Interfaces.Repositories;
 using Parus.Infrastructure.DLA;
 using Parus.Infrastructure.Extensions;
 using Parus.Infrastructure.Identity;
+using Microsoft.AspNetCore.OutputCaching;
 using static Parus.API.Controllers.IdentityController;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Parus.API.Controllers
 {
@@ -494,13 +496,18 @@ namespace Parus.API.Controllers
 		/// <param name="userRepository"></param>
 		/// <returns></returns>
         [HttpGet]
+		[OutputCache(Duration = 600, Tags = new string[1] { "PlutoUsers" })]
         [Route("api/test/plutousers")]
         public async Task<object> PlutoUsers(
 			[FromServices] IOptions<JwtAuthOptions> authOptions,
             [FromServices] UserManager<ParusUser> userManager)
         {
-			var plutoUsers = await userManager.GetUsersInRoleAsync("TestUsers.Pluto");
+			var t = HttpContext.Features.Get<IEndpointFeature>()?.Endpoint.Metadata;
 
+			var a = t.GetMetadata<OutputCacheAttribute>();
+
+            var plutoUsers = await userManager.GetUsersInRoleAsync("TestUsers.Pluto");
+			Console.WriteLine("GOOOOOAL");
 			var plutoUsersRet = plutoUsers.Select(x => {
                 ParusUser usr = (ParusUser)x;
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ImageServer
@@ -27,11 +28,24 @@ namespace ImageServer
             application.UseCors(options => options.AllowAnyOrigin());
 
             //application.UseHttpsRedirection();
-            application.UseStaticFiles();
+            application.UseStaticFiles(new StaticFileOptions 
+            {
+                // TODO: cacheController.OnFilePrepareResponse
+                // OnFilePrepareResponse() { here is how we cache files depends on path, headers, etc }
+                OnPrepareResponse = OnPrepareResponse
+            });
 
             application.MapPost("/upload", UploadHandler);
 
 			application.Run();
+        }
+
+        
+        private static void OnPrepareResponse(StaticFileResponseContext context)
+        {
+            string path = context.Context.Request.Path.Value;
+
+
         }
 
         private static async Task UploadHandler(HttpContext context, IFormFile file, [FromServices] IWebHostEnvironment env)

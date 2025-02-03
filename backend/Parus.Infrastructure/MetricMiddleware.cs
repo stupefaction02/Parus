@@ -44,11 +44,16 @@ namespace Parus.Infrastructure.Middlewares
 
         public async Task Invoke(HttpContext httpContext)
         {
-            metrics.RequestsCount += 1;
+            Interlocked.Increment(metrics.RequestsCount);
 
-            await _next(httpContext);
-
-            //metrics.RequestsCount -= 1;
+            try
+            {
+                await _next(httpContext);
+            }
+            finally
+            {
+                metrics.RequestsCount -= 1;
+            }
 
             logger.LogInformation($"Total requests: {metrics.RequestsCount}");
         }

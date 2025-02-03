@@ -48,6 +48,8 @@ namespace Parus.API
 
             services.ConfigureCors();
 
+            services.AddOutputCache();
+
             services.AddRefreshTokens(Configuration);
 
             services.ConfigureIdentity();
@@ -90,7 +92,7 @@ namespace Parus.API
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-            
+
             app.UseWebSockets();
 
             if (!env.IsEnvironment("Development_Localhost"))
@@ -99,7 +101,11 @@ namespace Parus.API
             }
             
             app.UseRouting();
-            
+
+            // Very important to put it after UseRouting so it pass trough policy validation
+            // as OutputCacheAttribute is bound to EndPoint only after route processing
+            app.UseOutputCache();
+
             app.UseCors(options =>
 			{
 				options.WithOrigins("https://localhost:5002")
