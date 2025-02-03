@@ -19,9 +19,7 @@ namespace Parus.Infrastructure.Middlewares
 {
     public class MetricService
     {
-        private int requestsCount;
-
-        public int RequestsCount { get { Thread.Sleep(1000); return requestsCount; } set => requestsCount = value; }
+        public int RequestsCount; //{ get { return requestsCount; } set => requestsCount = value; }
     }
 
     public class MetricMiddleware
@@ -44,7 +42,7 @@ namespace Parus.Infrastructure.Middlewares
 
         public async Task Invoke(HttpContext httpContext)
         {
-            Interlocked.Increment(metrics.RequestsCount);
+            Interlocked.Increment(ref metrics.RequestsCount);
 
             try
             {
@@ -52,7 +50,7 @@ namespace Parus.Infrastructure.Middlewares
             }
             finally
             {
-                metrics.RequestsCount -= 1;
+                Interlocked.Decrement(ref metrics.RequestsCount);
             }
 
             logger.LogInformation($"Total requests: {metrics.RequestsCount}");
